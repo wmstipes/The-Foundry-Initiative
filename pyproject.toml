@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "foundry-check"
+version = "0.1.0"
+description = "Evaluate whether a local repository has a reasonable project foundation."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "The Foundry Initiative" }
+]
+dependencies = []
+
+[project.scripts]
+foundry-check = "foundry_check.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
