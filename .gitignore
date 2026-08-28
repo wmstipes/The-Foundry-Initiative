@@ -45,3 +45,14 @@ crash.log
 *.log
 *.tmp
 *.swp
+
+@'
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+.env.*
+.DS_Store
+'@ | Set-Content -Encoding utf8 .gitignore
