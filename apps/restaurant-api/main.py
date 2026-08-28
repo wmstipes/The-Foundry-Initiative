@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+﻿from datetime import datetime, timezone
 import os
 import socket
 from typing import List
@@ -10,10 +10,10 @@ from pydantic import BaseModel, Field
 app = FastAPI(
     title="SignalForge Restaurant API",
     description="A containerized FastAPI service for the SignalForge Kubernetes lab.",
-    version="0.4.0",
+    version="0.5.0",
 )
 
-APP_VERSION = os.getenv("APP_VERSION", "0.4.0")
+APP_VERSION = os.getenv("APP_VERSION", "0.5.0")
 RESTAURANT_NAME = os.getenv("RESTAURANT_NAME", "SignalForge Grill")
 DISTRICT_NAME = os.getenv("DISTRICT_NAME", "SignalForge Restaurant District")
 FEATURE_ANALYZE_ENABLED = os.getenv("FEATURE_ANALYZE_ENABLED", "false").lower() == "true"

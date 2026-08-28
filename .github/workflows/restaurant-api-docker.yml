@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "apps/restaurant-api/**"
-      - ".github/workflows/restaurant-api-docker.yml"
+    tags:
+      - "v*.*.*"
 
   workflow_dispatch:
 
@@ -61,6 +60,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Prepare Docker tags
+        id: docker_tags
+        shell: bash
+        run: |
+          TAGS="${IMAGE_NAME}:latest
+          ${IMAGE_NAME}:${GITHUB_SHA}"
+
+          if [[ "${GITHUB_REF_TYPE}" == "tag" && "${GITHUB_REF_NAME}" == v* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+            TAGS="${TAGS}
+          ${IMAGE_NAME}:${VERSION}"
+          fi
+
+          echo "tags<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$TAGS" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v7.3.0
         with:
@@ -68,6 +84,4 @@ jobs:
           file: apps/restaurant-api/Dockerfile
           platforms: linux/arm64
           push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          tags: ${{ steps.docker_tags.outputs.tags }}
