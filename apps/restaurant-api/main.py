@@ -1,22 +1,67 @@
-﻿from datetime import datetime, timezone
+from datetime import datetime, timezone
 import os
 import socket
 from typing import List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from pydantic import BaseModel, Field
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, generate_latest
 
 
 app = FastAPI(
     title="SignalForge Restaurant API",
     description="A containerized FastAPI service for the SignalForge Kubernetes lab.",
-    version="0.5.0",
+    version="0.6.0",
 )
 
-APP_VERSION = os.getenv("APP_VERSION", "0.5.0")
+APP_VERSION = os.getenv("APP_VERSION", "0.6.0")
 RESTAURANT_NAME = os.getenv("RESTAURANT_NAME", "SignalForge Grill")
 DISTRICT_NAME = os.getenv("DISTRICT_NAME", "SignalForge Restaurant District")
 FEATURE_ANALYZE_ENABLED = os.getenv("FEATURE_ANALYZE_ENABLED", "false").lower() == "true"
+
+REQUEST_COUNTER = Counter(
+    "restaurant_api_requests_total",
+    "Total HTTP requests handled by the Restaurant API.",
+    ["method", "path", "status"],
+)
+
+APP_INFO = Gauge(
+    "restaurant_api_info",
+    "Restaurant API application metadata.",
+    ["version", "restaurant", "district"],
+)
+
+ANALYZE_ENABLED_GAUGE = Gauge(
+    "restaurant_api_analyze_enabled",
+    "Whether the analyze feature is enabled. 1 means enabled, 0 means disabled.",
+)
+
+APP_INFO.labels(
+    version=APP_VERSION,
+    restaurant=RESTAURANT_NAME,
+    district=DISTRICT_NAME,
+).set(1)
+
+ANALYZE_ENABLED_GAUGE.set(1 if FEATURE_ANALYZE_ENABLED else 0)
+
+
+@app.middleware("http")
+async def collect_request_metrics(request: Request, call_next):
+    response = await call_next(request)
+
+    REQUEST_COUNTER.labels(
+        method=request.method,
+        path=request.url.path,
+        status=str(response.status_code),
+    ).inc()
+
+    return response
+
+
+@app.get("/metrics")
+def metrics():
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
 
 
 class AnalyzeRequest(BaseModel):

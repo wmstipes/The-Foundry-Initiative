@@ -7,7 +7,7 @@ EXPECTED_NAMESPACE = "forge-restaurant"
 EXPECTED_APP = "restaurant-api"
 EXPECTED_IMAGE_PREFIX = "wmstipes/signalforge-restaurant-api:"
 EXPECTED_NODEPORT = 30080
-EXPECTED_VERSION = "0.5.0"
+EXPECTED_VERSION = "0.6.0"
 
 REQUIRED_FILES = [
     "namespace.yaml",
@@ -103,3 +103,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

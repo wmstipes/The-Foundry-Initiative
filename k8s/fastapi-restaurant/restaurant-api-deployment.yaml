@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: restaurant-api
-        image: wmstipes/signalforge-restaurant-api:0.5.0
+        image: wmstipes/signalforge-restaurant-api:0.6.0
         imagePullPolicy: IfNotPresent
         envFrom:
         - configMapRef:
@@ -52,3 +52,4 @@ spec:
           limits:
             cpu: "500m"
             memory: "512Mi"
+

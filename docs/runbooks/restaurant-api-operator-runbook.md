@@ -22,12 +22,12 @@ External Lab Service: restaurant-api-nodeport
 
 NodePort: 30080
 
-Current release: 0.5.0
+Current release: 0.6.0
 
 Current image:
 
 ~~~text
-wmstipes/signalforge-restaurant-api:0.5.0
+wmstipes/signalforge-restaurant-api:0.6.0
 ~~~
 
 ## Cluster Nodes
@@ -137,7 +137,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 smoke
 Expected `/version` result includes:
 
 ~~~json
-"version": "0.5.0"
+"version": "0.6.0"
 ~~~
 
 Expected `/status` result includes:
@@ -155,7 +155,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 image
 Expected:
 
 ~~~text
-wmstipes/signalforge-restaurant-api:0.5.0
+wmstipes/signalforge-restaurant-api:0.6.0
 ~~~
 
 ## Check Pods
@@ -583,3 +583,4 @@ The system is considered healthy when:
 - `/version` returns the expected version
 - `/status` returns `status: open`
 - `/docs` is reachable through NodePort from the laptop
+
