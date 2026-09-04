@@ -1,0 +1,10 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restaurant-api-config
+  namespace: forge-restaurant
+data:
+  APP_VERSION: "0.5.0"
+  RESTAURANT_NAME: "SignalForge Grill"
+  DISTRICT_NAME: "SignalForge Restaurant District"
+  FEATURE_ANALYZE_ENABLED: "true"
