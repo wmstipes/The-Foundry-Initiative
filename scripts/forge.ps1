@@ -1,11 +1,14 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes")]
+    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-targets", "metrics-ui")]
     [string]$Command,
 
     [string]$Namespace = "forge-restaurant",
     [string]$Deployment = "restaurant-api",
-    [string]$Service = "restaurant-api"
+    [string]$Service = "restaurant-api",
+    [string]$MetricsNamespace = "forge-observability",
+    [string]$MetricsDeployment = "prometheus",
+    [string]$MetricsService = "prometheus"
 )
 
 Set-StrictMode -Version Latest
@@ -108,5 +111,35 @@ switch ($Command) {
     "logs" {
         Show-Header "Recent Restaurant API logs"
         kubectl logs -n $Namespace -l app=$Deployment --tail=100
+    }
+
+    "metrics-deploy" {
+        Show-Header "Deploy lightweight Prometheus"
+        & "$ScriptDir\deploy-prometheus.ps1"
+    }
+
+    "metrics-status" {
+        Show-Header "Prometheus resources"
+        kubectl get deployment,pods,service -n $MetricsNamespace -l app=$MetricsDeployment -o wide
+
+        Show-Header "Prometheus Pod-discovery permission"
+        kubectl auth can-i list pods `
+            -n $Namespace `
+            --as=system:serviceaccount:${MetricsNamespace}:prometheus
+    }
+
+    "metrics-targets" {
+        Show-Header "Prometheus Restaurant API targets"
+        & "$ScriptDir\test-prometheus-targets.ps1" -Namespace $MetricsNamespace
+    }
+
+    "metrics-ui" {
+        Show-Header "Prometheus UI"
+        Write-Host "Open http://localhost:9090 in a browser."
+        Write-Host "Press Ctrl+C here to stop the port-forward."
+        kubectl port-forward `
+            -n $MetricsNamespace `
+            service/$MetricsService `
+            9090:9090
     }
 }

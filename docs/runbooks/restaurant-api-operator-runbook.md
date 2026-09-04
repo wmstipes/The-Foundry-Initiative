@@ -64,6 +64,7 @@ Useful direct endpoints:
 http://192.168.243.110:30080/version
 http://192.168.243.110:30080/status
 http://192.168.243.110:30080/menu
+http://192.168.243.110:30080/metrics
 ~~~
 
 ## Repository Paths
@@ -78,12 +79,15 @@ Kubernetes manifests:
 
 ~~~text
 k8s/fastapi-restaurant
+k8s/prometheus
 ~~~
 
 Scripts:
 
 ~~~text
 scripts/deploy-restaurant-api.ps1
+scripts/deploy-prometheus.ps1
+scripts/test-prometheus-targets.ps1
 scripts/forge.ps1
 ~~~
 
@@ -185,6 +189,51 @@ Use logs when:
 - Smoke tests fail
 - A Pod restarted
 - An endpoint returns an unexpected response
+
+## Operate Lightweight Prometheus
+
+Deploy Prometheus and wait for all three Restaurant API targets:
+
+~~~powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-deploy
+~~~
+
+Check the Prometheus workload and its namespace-scoped Pod permission:
+
+~~~powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-status
+~~~
+
+Verify that all three Restaurant API Pods are healthy scrape targets:
+
+~~~powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-targets
+~~~
+
+Open the Prometheus UI through a temporary local port-forward:
+
+~~~powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-ui
+~~~
+
+Then open `http://localhost:9090`. Press Ctrl+C in PowerShell to stop the port-forward.
+
+The Prometheus Service is intentionally ClusterIP-only. Its data is stored in a 1 GiB `emptyDir`, so replacing or rescheduling the Prometheus Pod erases the current metrics history.
+
+Useful PromQL queries:
+
+~~~promql
+count(up{job="restaurant-api"} == 1)
+sum by (path, status) (
+  rate(restaurant_api_requests_total{path!~"/(health|ready|metrics)"}[5m])
+)
+~~~
+
+Expected healthy target count:
+
+~~~text
+3
+~~~
 
 ## Manual Kubernetes Checks
 
@@ -583,4 +632,3 @@ The system is considered healthy when:
 - `/version` returns the expected version
 - `/status` returns `status: open`
 - `/docs` is reachable through NodePort from the laptop
-

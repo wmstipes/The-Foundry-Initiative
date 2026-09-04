@@ -1,43 +1,70 @@
 # Project Status
 
-**Last updated:** 2026-07-18
+**Last updated:** 2026-09-04
 
-**Current phase:** Foundation
+**Current phase:** Engineering maturity and observability
 
 ## Summary
 
-The Foundry Initiative has an initial repository scaffold and a documented direction, but no technical artifact has been selected or implemented yet. The immediate priority is to choose a small first project with clear success criteria that can be completed, tested, documented, and demonstrated in a short development cycle.
+The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API and now has a ready-to-deploy lightweight Prometheus collection layer.
 
-## Completed
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, a runbook, and application metrics.
 
-- Established the top-level repository structure for source code, tests, experiments, and documentation.
-- Documented the project vision, principles, focus areas, and sustainability guardrails.
-- Defined a phased roadmap and a practical definition of done.
-- Recorded repository organization and baseline engineering expectations.
-- Added contribution conventions and a lightweight learning journal.
+## Current application
+
+- Application: SignalForge Restaurant API
+- Namespace: `forge-restaurant`
+- Deployment: `restaurant-api`
+- Replicas: 3
+- Release: `0.6.0`
+- Image: `wmstipes/signalforge-restaurant-api:0.6.0`
+- External lab access: NodePort `30080`
+- Metrics endpoint: `/metrics`
+
+## Completed milestones
+
+- 001-009: Cluster foundation and initial Restaurant API workload
+- 010: Restaurant API CI
+- 011: Automated Docker build
+- 012: Versioned release `0.5.0`
+- 013: Kubernetes manifests under version control
+- 014: Laptop `kubectl` access
+- 015: Deployment helper and smoke test
+- 016: SignalForge operator command helper
+- 017: Operator runbook
+- 018: Kubernetes manifest validation in CI
+- 019: Developer command layer
+- 020: Basic application observability with `/metrics`
+- 021: Metrics collection planning
 
 ## In progress
 
-- Refining the scope and success criteria for the first working artifact.
-- Establishing a sustainable rhythm for building, documenting, and reviewing progress.
+Milestone 022 - Lightweight Prometheus Metrics Collection
 
-## Next milestone
+Implementation is present in the repository. Local structural validation passes. Cluster rollout, live target verification, and GitHub Actions `promtool` verification remain to be completed.
 
-Select and define the first working artifact. Before implementation begins, document:
+## Milestone 022 design
 
-1. The problem it solves.
-2. The intended user or use case.
-3. The smallest demonstrable outcome.
-4. The success criteria and appropriate tests.
-5. The constraints that keep the project finishable.
+- Namespace: `forge-observability`
+- One Prometheus replica
+- Image: `prom/prometheus:v3.13.2`
+- Pod discovery restricted to `forge-restaurant`
+- RBAC restricted to get, list, and watch Pods
+- Scrape interval: 30 seconds
+- Retention: 48 hours, capped at 750 MB
+- Storage: 1 GiB ephemeral `emptyDir`
+- Access: ClusterIP plus `kubectl port-forward`
 
-## Current limitations
+## Immediate next step
 
-- `src/`, `tests/`, and `experiments/` contain placeholders only.
-- No implementation language, runtime, or toolchain has been selected.
-- Automated formatting, linting, testing, and continuous integration are not configured.
-- The architecture for the first artifact remains intentionally undecided.
+Deploy Prometheus from the Windows laptop:
 
-## Status update convention
+```powershell
+.\scripts\forge.ps1 metrics-deploy
+```
 
-Update this document when the project changes phase, reaches a milestone, or gains a new immediate priority. Detailed reasoning and lessons learned should remain in the architecture notes, decision records, and learning journal.
+The deployment helper will apply the manifests, verify Pod-discovery permission, wait for the rollout, and require three healthy Restaurant API targets.
+
+## Known temporary limitation
+
+Prometheus history is intentionally ephemeral. Replacing or rescheduling its Pod removes collected history until NVMe-backed persistent storage is designed and introduced.

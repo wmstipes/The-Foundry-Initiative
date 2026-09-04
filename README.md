@@ -50,6 +50,8 @@ It currently includes:
 * rules-based `POST /analyze` troubleshooting endpoint
 * NodePort access for laptop-based testing
 * FastAPI Swagger UI access through `/docs`
+* Prometheus-format application metrics through `/metrics`
+* lightweight in-cluster Prometheus manifests with Pod-level discovery
 
 The long-term goal is to evolve this service into **ForgeOps**, an AI-assisted Kubernetes incident copilot that can help analyze cluster symptoms, summarize likely causes, and recommend next troubleshooting steps.
 
@@ -62,6 +64,7 @@ The-Foundry-Initiative/
 
   k8s/
     fastapi-restaurant/    Kubernetes manifests for the Restaurant API
+    prometheus/            Lightweight Prometheus manifests and scrape configuration
 
   docs/
     milestones/            Project milestones and implementation notes
@@ -91,6 +94,14 @@ Completed SignalForge milestones include:
 * runtime configuration moved into a ConfigMap
 * first structured `/analyze` endpoint added
 * NodePort access and external API testing confirmed
+* Restaurant API testing and GitHub Actions CI added
+* automated ARM64 Docker image publishing added
+* versioned release `0.6.0` deployed
+* Kubernetes manifests and validation stored in Git
+* laptop-based `kubectl`, deployment, smoke-test, and operator helpers added
+* operator runbook added
+* Prometheus-format application metrics added at `/metrics`
+* lightweight metrics-collection architecture selected
 
 ## Earlier utility: foundry-check
 
@@ -115,12 +126,12 @@ The current development workflow is:
 
 Planned next steps include:
 
-* add automated tests for the Restaurant API
-* add GitHub Actions for build and test automation
-* automate Docker image publishing
-* introduce versioned release tags
+* deploy and validate the lightweight Prometheus collector
+* confirm automatic target rediscovery when an application Pod is replaced
+* add persistent NVMe-backed metrics storage when the cluster storage design is ready
+* add Grafana and alerting only after the first collection layer is understood
 * add Ingress as a cleaner external access pattern
-* add observability with Prometheus, Grafana, Loki, and OpenTelemetry
+* evaluate Loki and OpenTelemetry as later observability layers
 * replace the rules-based `/analyze` logic with an AI-assisted troubleshooting workflow
 
 ## Why this project exists
@@ -130,4 +141,3 @@ The Foundry Initiative is not just a code repository.
 It is a structured way to rebuild momentum, sharpen technical skills, and create visible proof of engineering growth through practical systems.
 
 The purpose is to build useful artifacts, document the process, and turn learning into a portfolio of working evidence.
-

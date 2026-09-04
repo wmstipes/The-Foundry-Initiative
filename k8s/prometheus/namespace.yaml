@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: forge-observability
+  labels:
+    project: signalforge
+    purpose: observability
+

@@ -41,3 +41,25 @@ jobs:
       - name: Validate manifests
         run: |
           python scripts/validate-k8s-manifests.py
+
+      - name: Extract Prometheus configuration
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          import yaml
+
+          manifest = yaml.safe_load(
+              Path("k8s/prometheus/prometheus-config.yaml").read_text(encoding="utf-8-sig")
+          )
+          output = Path(os.environ["RUNNER_TEMP"]) / "prometheus.yml"
+          output.write_text(manifest["data"]["prometheus.yml"], encoding="utf-8")
+          PY
+
+      - name: Validate Prometheus configuration with promtool
+        run: |
+          docker run --rm \
+            --entrypoint /bin/promtool \
+            --volume "$RUNNER_TEMP/prometheus.yml:/etc/prometheus/prometheus.yml:ro" \
+            prom/prometheus:v3.13.2 \
+            check config /etc/prometheus/prometheus.yml

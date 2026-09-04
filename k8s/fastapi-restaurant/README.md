@@ -18,4 +18,8 @@ Docker image:
 
 ```text
 wmstipes/signalforge-restaurant-api:0.6.0
+```
 
+## Metrics
+
+Each Restaurant API Pod exposes Prometheus-format metrics at `/metrics` on its named `http` container port. The lightweight collector under `k8s/prometheus` discovers and scrapes the Pods individually.
