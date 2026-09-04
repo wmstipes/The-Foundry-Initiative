@@ -1,4 +1,3 @@
-@'
 # SignalForge Restaurant API Kubernetes Manifests
 
 These manifests define the Kubernetes resources for the SignalForge Restaurant API.
