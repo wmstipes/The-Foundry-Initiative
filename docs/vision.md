@@ -8,6 +8,14 @@ The Foundry Initiative exists to turn experience, curiosity, and recovery into v
 
 Success is a growing collection of small, understandable projects that demonstrate sound engineering judgment, practical AI knowledge, thoughtful documentation, and consistent follow-through.
 
+Success also means being able to return to a project later, understand why it was built a certain way, reproduce its operation, and show concrete evidence that it works.
+
+## Active workstream
+
+SignalForge is the current embodiment of this vision: a four-node Raspberry Pi Kubernetes lab running a versioned FastAPI application and a lightweight observability layer.
+
+The workstream develops one capability at a time—cluster operation, application delivery, CI/CD, infrastructure validation, metrics collection, and operational documentation. Its longer-term direction is ForgeOps, an AI-assisted Kubernetes incident copilot grounded in real platform signals and repeatable troubleshooting practices.
+
 ## Principles
 
 1. **Build small enough to finish.** Scope is deliberately constrained.
@@ -17,7 +25,7 @@ Success is a growing collection of small, understandable projects that demonstra
 5. **Protect sustainability.** The pace should support health, confidence, and long-term growth.
 6. **Make progress visible.** Finished artifacts, tests, notes, and demonstrations provide evidence that effort is producing value.
 
-## Initial focus areas
+## Focus areas
 
 - AI-assisted platform and DevOps engineering
 - Kubernetes and cloud-native systems

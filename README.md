@@ -67,10 +67,13 @@ The-Foundry-Initiative/
     prometheus/            Lightweight Prometheus manifests and scrape configuration
 
   docs/
-    milestones/            Project milestones and implementation notes
+    architecture.md        Current system architecture and constraints
+    vision.md              Project purpose, principles, and direction
+    learning-journal.md    Progress, lessons, and next small steps
+    project-status.md      Current releases, milestones, and priorities
+    milestones/            Chronological implementation evidence
     observability/         PromQL baselines and observability guidance
-    architecture/          Architecture notes and technical decisions
-    learning/              Learning plans, reflections, and study notes
+    runbooks/              Operator procedures and recovery guidance
 
   src/                      Shared or earlier implementation code
   tests/                    Shared or earlier automated tests
