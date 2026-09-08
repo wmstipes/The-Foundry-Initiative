@@ -97,13 +97,14 @@ Completed SignalForge milestones include:
 * NodePort access and external API testing confirmed
 * Restaurant API testing and GitHub Actions CI added
 * automated ARM64 Docker image publishing added
-* versioned release `0.6.0` deployed
+* versioned release `0.7.0` deployed
 * Kubernetes manifests and validation stored in Git
 * laptop-based `kubectl`, deployment, smoke-test, and operator helpers added
 * operator runbook added
 * Prometheus-format application metrics added at `/metrics`
 * lightweight metrics-collection architecture selected
 * lightweight Prometheus deployed with three healthy Pod-level targets
+* request latency, traffic classification, and metric-cardinality protection added
 
 ## Earlier utility: foundry-check
 
@@ -128,8 +129,6 @@ The current development workflow is:
 
 Planned next steps include:
 
-* release and validate Restaurant API `0.7.0` with refined application metrics
-* exercise the baseline PromQL queries against live application traffic
 * decide whether Kubernetes Metrics Server is needed for `kubectl top`
 * add persistent NVMe-backed metrics storage when the cluster storage design is ready
 * add Grafana and alerting only after the first collection layer is understood

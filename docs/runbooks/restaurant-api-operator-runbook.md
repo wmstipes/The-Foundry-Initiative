@@ -22,12 +22,12 @@ External Lab Service: restaurant-api-nodeport
 
 NodePort: 30080
 
-Current release: 0.6.0
+Current release: 0.7.0
 
 Current image:
 
 ~~~text
-wmstipes/signalforge-restaurant-api:0.6.0
+wmstipes/signalforge-restaurant-api:0.7.0
 ~~~
 
 ## Cluster Nodes
@@ -141,7 +141,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 smoke
 Expected `/version` result includes:
 
 ~~~json
-"version": "0.6.0"
+"version": "0.7.0"
 ~~~
 
 Expected `/status` result includes:
@@ -159,7 +159,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 image
 Expected:
 
 ~~~text
-wmstipes/signalforge-restaurant-api:0.6.0
+wmstipes/signalforge-restaurant-api:0.7.0
 ~~~
 
 ## Check Pods
@@ -217,6 +217,10 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-ui
 ~~~
 
 Then open `http://localhost:9090`. Press Ctrl+C in PowerShell to stop the port-forward.
+
+The baseline PromQL queries are documented in `docs/observability/prometheus-queries.md`.
+
+An aggregate query such as `sum(restaurant_api_requests_total{path="unmatched"})` may display a result like `{}` with a numeric value. The empty label set is expected because `sum` removes the source labels.
 
 The Prometheus Service is intentionally ClusterIP-only. Its data is stored in a 1 GiB `emptyDir`, so replacing or rescheduling the Prometheus Pod erases the current metrics history.
 
@@ -578,14 +582,14 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 smoke
 Example tag:
 
 ~~~powershell
-git tag -a v0.6.0 -m "Restaurant API v0.6.0"
-git push origin v0.6.0
+git tag -a v0.7.0 -m "Restaurant API v0.7.0"
+git push origin v0.7.0
 ~~~
 
 Expected Docker image:
 
 ~~~text
-wmstipes/signalforge-restaurant-api:0.6.0
+wmstipes/signalforge-restaurant-api:0.7.0
 ~~~
 
 ## Recovery Checklist

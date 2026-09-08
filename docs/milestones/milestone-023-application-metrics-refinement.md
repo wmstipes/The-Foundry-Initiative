@@ -2,7 +2,9 @@
 
 Started: 2026-09-08
 
-Status: Implementation ready; release and cluster validation pending
+Completed: 2026-09-08
+
+Status: Complete
 
 ## Goal
 
@@ -46,18 +48,29 @@ Adding the `traffic` label creates a new request-counter series shape at the `0.
 
 ## Acceptance criteria
 
-- [ ] Restaurant API tests pass locally.
-- [ ] Kubernetes manifest validation passes locally.
-- [ ] GitHub Actions tests and ARM64 image build pass.
-- [ ] Versioned image `0.7.0` is published.
-- [ ] The Kubernetes rollout completes with three ready Pods.
-- [ ] `/version` reports `0.7.0`.
-- [ ] Prometheus reports three healthy Restaurant API targets.
-- [ ] All three Pods expose `restaurant_api_info{version="0.7.0"}`.
-- [ ] Request-duration histogram buckets are queryable.
-- [ ] Application and synthetic traffic queries return separate results.
-- [ ] An arbitrary missing URL is recorded as `path="unmatched"` rather than its raw path.
-- [ ] Baseline PromQL queries are documented.
+- [x] Restaurant API tests pass locally.
+- [x] Kubernetes manifest validation passes locally.
+- [x] GitHub Actions tests and ARM64 image build pass.
+- [x] Versioned image `0.7.0` is published.
+- [x] The Kubernetes rollout completes with three ready Pods.
+- [x] `/version` reports `0.7.0`.
+- [x] Prometheus reports three healthy Restaurant API targets.
+- [x] All three Pods expose `restaurant_api_info{version="0.7.0"}`.
+- [x] Request-duration histogram buckets are queryable.
+- [x] Application and synthetic traffic queries return separate results.
+- [x] An arbitrary missing URL is recorded as `path="unmatched"` rather than its raw path.
+- [x] Baseline PromQL queries are documented.
+
+## Validation evidence
+
+- Release commit: `a7f28dc`
+- Release tag: `v0.7.0`
+- Deployed image: `wmstipes/signalforge-restaurant-api:0.7.0`
+- Smoke tests returned version `0.7.0` and reached multiple application replicas.
+- Prometheus reported three healthy Restaurant API targets.
+- Version coverage, per-Pod histogram, and traffic-classification queries returned the expected results.
+- A NodePort request to `/missing/12345` returned HTTP 404.
+- The bounded 404 query returned `{}` with value `1`; the empty label set is expected because the outer `sum` removes all labels.
 
 ## Baseline queries
 

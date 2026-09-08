@@ -16,8 +16,8 @@ The project has moved from basic workload deployment into repeatable engineering
 - Namespace: `forge-restaurant`
 - Deployment: `restaurant-api`
 - Replicas: 3
-- Release: `0.6.0`
-- Image: `wmstipes/signalforge-restaurant-api:0.6.0`
+- Release: `0.7.0`
+- Image: `wmstipes/signalforge-restaurant-api:0.7.0`
 - External lab access: NodePort `30080`
 - Metrics endpoint: `/metrics`
 
@@ -37,6 +37,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 020: Basic application observability with `/metrics`
 - 021: Metrics collection planning
 - 022: Lightweight Prometheus metrics collection
+- 023: Application metrics refinement
 
 ## Current observability state
 
@@ -52,14 +53,14 @@ The project has moved from basic workload deployment into repeatable engineering
 - Healthy Restaurant API targets: 3
 - Prometheus Pod: stable with zero restarts after rollout
 - Automatic target rediscovery: confirmed through application Pod replacement
+- Request-duration histogram: available across all three application Pods
+- Traffic classification: `application` and `synthetic`
+- Cardinality protection: unmatched URLs use `path="unmatched"`
+- Baseline queries: `docs/observability/prometheus-queries.md`
 
-## In progress
+## Immediate next step
 
-Milestone 023 — Application Metrics Refinement
-
-Implementation is prepared for Restaurant API `0.7.0`. It adds an aggregatable request-duration histogram, separates application and synthetic traffic through a bounded label, and normalizes unmatched paths to protect metric cardinality.
-
-The immediate next step is to run the full developer preflight, commit and push the change, publish the `0.7.0` release image, deploy it, and verify the baseline PromQL queries against all three replicas.
+Select Milestone 024. The leading candidate is a focused Kubernetes Metrics Server evaluation to decide whether enabling `kubectl top` provides enough operational value for its cluster footprint.
 
 ## Known temporary limitation
 
