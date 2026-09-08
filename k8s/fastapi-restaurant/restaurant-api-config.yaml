@@ -4,8 +4,7 @@ metadata:
   name: restaurant-api-config
   namespace: forge-restaurant
 data:
-  APP_VERSION: "0.6.0"
+  APP_VERSION: "0.7.0"
   RESTAURANT_NAME: "SignalForge Grill"
   DISTRICT_NAME: "SignalForge Restaurant District"
   FEATURE_ANALYZE_ENABLED: "true"
-

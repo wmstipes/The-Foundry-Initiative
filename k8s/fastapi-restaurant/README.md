@@ -12,12 +12,12 @@ These manifests define the Kubernetes resources for the SignalForge Restaurant A
 
 ## Current version
 
-Application version: `0.6.0`
+Application version: `0.7.0`
 
 Docker image:
 
 ```text
-wmstipes/signalforge-restaurant-api:0.6.0
+wmstipes/signalforge-restaurant-api:0.7.0
 ```
 
 ## Metrics

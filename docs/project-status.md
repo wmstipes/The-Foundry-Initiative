@@ -53,9 +53,13 @@ The project has moved from basic workload deployment into repeatable engineering
 - Prometheus Pod: stable with zero restarts after rollout
 - Automatic target rediscovery: confirmed through application Pod replacement
 
-## Immediate next step
+## In progress
 
-Commit the corrected cross-platform target-check helper and the Milestone 022 closeout documentation, then select Milestone 023.
+Milestone 023 — Application Metrics Refinement
+
+Implementation is prepared for Restaurant API `0.7.0`. It adds an aggregatable request-duration histogram, separates application and synthetic traffic through a bounded label, and normalizes unmatched paths to protect metric cardinality.
+
+The immediate next step is to run the full developer preflight, commit and push the change, publish the `0.7.0` release image, deploy it, and verify the baseline PromQL queries against all three replicas.
 
 ## Known temporary limitation
 

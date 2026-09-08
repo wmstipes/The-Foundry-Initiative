@@ -1,20 +1,21 @@
 from datetime import datetime, timezone
 import os
 import socket
+import time
 from typing import List
 
 from fastapi import FastAPI, Request, Response
 from pydantic import BaseModel, Field
-from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, generate_latest
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, Histogram, generate_latest
 
 
 app = FastAPI(
     title="SignalForge Restaurant API",
     description="A containerized FastAPI service for the SignalForge Kubernetes lab.",
-    version="0.6.0",
+    version="0.7.0",
 )
 
-APP_VERSION = os.getenv("APP_VERSION", "0.6.0")
+APP_VERSION = os.getenv("APP_VERSION", "0.7.0")
 RESTAURANT_NAME = os.getenv("RESTAURANT_NAME", "SignalForge Grill")
 DISTRICT_NAME = os.getenv("DISTRICT_NAME", "SignalForge Restaurant District")
 FEATURE_ANALYZE_ENABLED = os.getenv("FEATURE_ANALYZE_ENABLED", "false").lower() == "true"
@@ -22,7 +23,14 @@ FEATURE_ANALYZE_ENABLED = os.getenv("FEATURE_ANALYZE_ENABLED", "false").lower() 
 REQUEST_COUNTER = Counter(
     "restaurant_api_requests_total",
     "Total HTTP requests handled by the Restaurant API.",
-    ["method", "path", "status"],
+    ["method", "path", "status", "traffic"],
+)
+
+REQUEST_DURATION = Histogram(
+    "restaurant_api_request_duration_seconds",
+    "HTTP request duration in seconds for the Restaurant API.",
+    ["method", "path", "status", "traffic"],
+    buckets=(0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0),
 )
 
 APP_INFO = Gauge(
@@ -44,24 +52,45 @@ APP_INFO.labels(
 
 ANALYZE_ENABLED_GAUGE.set(1 if FEATURE_ANALYZE_ENABLED else 0)
 
+SYNTHETIC_PATHS = frozenset({"/health", "/ready", "/metrics"})
+
+
+def metric_path(request: Request) -> str:
+    route = request.scope.get("route")
+    route_path = getattr(route, "path", None)
+    return route_path if route_path else "unmatched"
+
+
+def traffic_type(path: str) -> str:
+    return "synthetic" if path in SYNTHETIC_PATHS else "application"
+
 
 @app.middleware("http")
 async def collect_request_metrics(request: Request, call_next):
-    response = await call_next(request)
+    started_at = time.perf_counter()
+    status_code = 500
 
-    REQUEST_COUNTER.labels(
-        method=request.method,
-        path=request.url.path,
-        status=str(response.status_code),
-    ).inc()
+    try:
+        response = await call_next(request)
+        status_code = response.status_code
+        return response
+    finally:
+        path = metric_path(request)
+        traffic = traffic_type(path)
+        labels = {
+            "method": request.method,
+            "path": path,
+            "status": str(status_code),
+            "traffic": traffic,
+        }
 
-    return response
+        REQUEST_COUNTER.labels(**labels).inc()
+        REQUEST_DURATION.labels(**labels).observe(time.perf_counter() - started_at)
 
 
 @app.get("/metrics")
 def metrics():
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
-
 
 
 class AnalyzeRequest(BaseModel):

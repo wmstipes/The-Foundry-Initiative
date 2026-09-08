@@ -68,6 +68,7 @@ The-Foundry-Initiative/
 
   docs/
     milestones/            Project milestones and implementation notes
+    observability/         PromQL baselines and observability guidance
     architecture/          Architecture notes and technical decisions
     learning/              Learning plans, reflections, and study notes
 
@@ -102,6 +103,7 @@ Completed SignalForge milestones include:
 * operator runbook added
 * Prometheus-format application metrics added at `/metrics`
 * lightweight metrics-collection architecture selected
+* lightweight Prometheus deployed with three healthy Pod-level targets
 
 ## Earlier utility: foundry-check
 
@@ -126,8 +128,8 @@ The current development workflow is:
 
 Planned next steps include:
 
-* establish a small baseline set of useful PromQL queries
-* evaluate application request-latency metrics and synthetic-traffic filtering
+* release and validate Restaurant API `0.7.0` with refined application metrics
+* exercise the baseline PromQL queries against live application traffic
 * decide whether Kubernetes Metrics Server is needed for `kubectl top`
 * add persistent NVMe-backed metrics storage when the cluster storage design is ready
 * add Grafana and alerting only after the first collection layer is understood

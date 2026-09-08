@@ -11,7 +11,8 @@ RESTAURANT_NAMESPACE = "forge-restaurant"
 RESTAURANT_APP = "restaurant-api"
 EXPECTED_IMAGE_PREFIX = "wmstipes/signalforge-restaurant-api:"
 EXPECTED_NODEPORT = 30080
-EXPECTED_VERSION = "0.6.0"
+EXPECTED_VERSION = "0.7.0"
+EXPECTED_RESTAURANT_IMAGE = f"{EXPECTED_IMAGE_PREFIX}{EXPECTED_VERSION}"
 
 PROMETHEUS_NAMESPACE = "forge-observability"
 PROMETHEUS_APP = "prometheus"
@@ -126,7 +127,7 @@ def validate_restaurant_manifests() -> None:
 
     container = containers[0]
     require(container.get("name") == RESTAURANT_APP, "Restaurant container name mismatch")
-    require(container.get("image", "").startswith(EXPECTED_IMAGE_PREFIX), "Restaurant container image prefix mismatch")
+    require(container.get("image") == EXPECTED_RESTAURANT_IMAGE, "Restaurant container image/version mismatch")
     require("readinessProbe" in container, "Restaurant container missing readinessProbe")
     require("livenessProbe" in container, "Restaurant container missing livenessProbe")
     require("resources" in container, "Restaurant container missing resources block")
