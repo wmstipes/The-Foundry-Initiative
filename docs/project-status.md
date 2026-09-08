@@ -1,12 +1,12 @@
 # Project Status
 
-**Last updated:** 2026-09-04
+**Last updated:** 2026-09-08
 
 **Current phase:** Engineering maturity and observability
 
 ## Summary
 
-The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API and now has a ready-to-deploy lightweight Prometheus collection layer.
+The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API and a lightweight Prometheus collection layer.
 
 The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, a runbook, and application metrics.
 
@@ -36,16 +36,11 @@ The project has moved from basic workload deployment into repeatable engineering
 - 019: Developer command layer
 - 020: Basic application observability with `/metrics`
 - 021: Metrics collection planning
+- 022: Lightweight Prometheus metrics collection
 
-## In progress
+## Current observability state
 
-Milestone 022 - Lightweight Prometheus Metrics Collection
-
-Implementation is present in the repository. Local structural validation passes. Cluster rollout, live target verification, and GitHub Actions `promtool` verification remain to be completed.
-
-## Milestone 022 design
-
-- Namespace: `forge-observability`
+- Prometheus namespace: `forge-observability`
 - One Prometheus replica
 - Image: `prom/prometheus:v3.13.2`
 - Pod discovery restricted to `forge-restaurant`
@@ -54,17 +49,16 @@ Implementation is present in the repository. Local structural validation passes.
 - Retention: 48 hours, capped at 750 MB
 - Storage: 1 GiB ephemeral `emptyDir`
 - Access: ClusterIP plus `kubectl port-forward`
+- Healthy Restaurant API targets: 3
+- Prometheus Pod: stable with zero restarts after rollout
+- Automatic target rediscovery: confirmed through application Pod replacement
 
 ## Immediate next step
 
-Deploy Prometheus from the Windows laptop:
-
-```powershell
-.\scripts\forge.ps1 metrics-deploy
-```
-
-The deployment helper will apply the manifests, verify Pod-discovery permission, wait for the rollout, and require three healthy Restaurant API targets.
+Commit the corrected cross-platform target-check helper and the Milestone 022 closeout documentation, then select Milestone 023.
 
 ## Known temporary limitation
 
 Prometheus history is intentionally ephemeral. Replacing or rescheduling its Pod removes collected history until NVMe-backed persistent storage is designed and introduced.
+
+The Kubernetes Metrics API is not installed, so `kubectl top` is not currently available. This is separate from Prometheus application-metrics collection.

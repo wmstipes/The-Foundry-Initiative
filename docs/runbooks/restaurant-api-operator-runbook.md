@@ -220,6 +220,8 @@ Then open `http://localhost:9090`. Press Ctrl+C in PowerShell to stop the port-f
 
 The Prometheus Service is intentionally ClusterIP-only. Its data is stored in a 1 GiB `emptyDir`, so replacing or rescheduling the Prometheus Pod erases the current metrics history.
 
+`kubectl top` requires Kubernetes Metrics Server. SignalForge does not currently provide the `metrics.k8s.io` API, so `kubectl top` returns `Metrics API not available`. This is independent of Prometheus application scraping and is not a Prometheus failure.
+
 Useful PromQL queries:
 
 ~~~promql

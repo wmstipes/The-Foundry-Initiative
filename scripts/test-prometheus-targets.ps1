@@ -10,29 +10,10 @@ $ErrorActionPreference = "Stop"
 
 $Timestamp = Get-Date -Format "yyyyMMddHHmmssfff"
 $PodName = "prometheus-query-$Timestamp"
-$Query = "count(up{job=`"restaurant-api`"} == 1) == $ExpectedTargetCount"
+$Query = "count(up{job=`"restaurant-api`"} == 1)"
 $EncodedQuery = [uri]::EscapeDataString($Query)
 $Url = "http://$Service.$Namespace.svc.cluster.local:9090/api/v1/query?query=$EncodedQuery"
-$Attempts = [Math]::Max(1, [Math]::Ceiling($TimeoutSeconds / 5))
-
-$CheckCommand = @'
-last_response=""
-i=0
-while [ "$i" -lt __ATTEMPTS__ ]; do
-  last_response=$(curl -fsS "__URL__") || last_response=""
-  if echo "$last_response" | grep -q '"result":\[{' ; then
-    echo "$last_response"
-    exit 0
-  fi
-  i=$((i + 1))
-  sleep 5
-done
-echo "$last_response"
-exit 1
-'@
-
-$CheckCommand = $CheckCommand.Replace("__ATTEMPTS__", [string]$Attempts)
-$CheckCommand = $CheckCommand.Replace("__URL__", $Url)
+$PodLifetimeSeconds = [Math]::Max(60, $TimeoutSeconds + 60)
 
 Write-Host "Waiting for $ExpectedTargetCount healthy Restaurant API Prometheus targets..."
 
@@ -41,54 +22,64 @@ try {
         -n $Namespace `
         --image=curlimages/curl:8.22.0 `
         --restart=Never `
-        --command -- sh -c $CheckCommand | Out-Null
+        --command -- sleep $PodLifetimeSeconds | Out-Null
 
     if ($LASTEXITCODE -ne 0) {
         throw "Could not create Prometheus query Pod $PodName"
     }
 
-    $Deadline = (Get-Date).AddSeconds($TimeoutSeconds + 30)
-    $Phase = ""
+    kubectl wait `
+        -n $Namespace `
+        --for=condition=Ready `
+        "pod/$PodName" `
+        --timeout=60s | Out-Null
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Prometheus query Pod $PodName did not become ready"
+    }
+
+    $Deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    $TargetCount = $null
+    $LastQueryError = $null
 
     do {
-        Start-Sleep -Seconds 1
-        $Phase = kubectl get pod $PodName -n $Namespace -o "jsonpath={.status.phase}" 2>$null
+        $Output = kubectl exec `
+            -n $Namespace `
+            $PodName `
+            -- curl -fsS $Url 2>$null
 
-        if ($Phase -eq "Succeeded" -or $Phase -eq "Failed") {
-            break
+        if ($LASTEXITCODE -eq 0 -and $Output) {
+            try {
+                $Response = $Output | ConvertFrom-Json
+                $Results = @($Response.data.result)
+
+                if ($Results.Count -eq 1) {
+                    $TargetCount = [int]$Results[0].value[1]
+
+                    if ($TargetCount -eq $ExpectedTargetCount) {
+                        Write-Host "Healthy Restaurant API targets: $TargetCount"
+                        return
+                    }
+                }
+            }
+            catch {
+                $LastQueryError = $_.Exception.Message
+            }
         }
+
+        Start-Sleep -Seconds 5
     } while ((Get-Date) -lt $Deadline)
 
-    $Output = kubectl logs $PodName -n $Namespace 2>$null
-
-    if ($Phase -ne "Succeeded") {
-        if ($Output) {
-            Write-Host $Output
-        }
-
-        if ($Phase -eq "Failed") {
-            throw "Prometheus did not report $ExpectedTargetCount healthy Restaurant API targets within $TimeoutSeconds seconds"
-        }
-
-        throw "Timed out waiting for Prometheus query Pod $PodName"
-    }
-
-    $Response = $Output | ConvertFrom-Json
-    $Result = $Response.data.result
-
-    if (-not $Result -or $Result.Count -ne 1) {
-        throw "Prometheus target query returned an unexpected result"
-    }
-
-    $TargetCount = [int]$Result[0].value[1]
-
-    if ($TargetCount -ne $ExpectedTargetCount) {
+    if ($null -ne $TargetCount) {
         throw "Expected $ExpectedTargetCount healthy Restaurant API targets, but Prometheus reported $TargetCount"
     }
 
-    Write-Host "Healthy Restaurant API targets: $TargetCount"
+    if ($LastQueryError) {
+        throw "Prometheus returned an unreadable query response: $LastQueryError"
+    }
+
+    throw "Could not query Prometheus within $TimeoutSeconds seconds"
 }
 finally {
     kubectl delete pod $PodName -n $Namespace --ignore-not-found | Out-Null
 }
-

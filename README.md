@@ -126,8 +126,9 @@ The current development workflow is:
 
 Planned next steps include:
 
-* deploy and validate the lightweight Prometheus collector
-* confirm automatic target rediscovery when an application Pod is replaced
+* establish a small baseline set of useful PromQL queries
+* evaluate application request-latency metrics and synthetic-traffic filtering
+* decide whether Kubernetes Metrics Server is needed for `kubectl top`
 * add persistent NVMe-backed metrics storage when the cluster storage design is ready
 * add Grafana and alerting only after the first collection layer is understood
 * add Ingress as a cleaner external access pattern
