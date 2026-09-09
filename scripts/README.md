@@ -38,12 +38,24 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-ui
 
 `metrics-ui` keeps running while the port-forward is open. Press Ctrl+C to stop it.
 
+Kubernetes resource-metrics commands:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-server-deploy
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-server-status
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 top
+```
+
+`metrics-server-status` checks the deployment, secure kubelet-CA argument, aggregated API availability, node-metric coverage, recent scrape errors, and current usage. `top` shows current node, Restaurant API, Prometheus, and Metrics Server CPU and memory usage.
+
 ## Direct helpers
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\deploy-restaurant-api.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\deploy-prometheus.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\test-prometheus-targets.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\deploy-metrics-server.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\test-metrics-server.ps1
 ```
 
 ## Manifest validation

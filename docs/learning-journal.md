@@ -78,3 +78,39 @@ Release sequencing also required care: application changes, GitHub Actions, a ve
 ### Next small step
 
 Select Milestone 024. Evaluate whether Kubernetes Metrics Server provides enough operational value to justify its footprint in the Raspberry Pi cluster.
+
+---
+
+## 2026-09-08 - Milestone 024
+
+### What I worked on
+
+Evaluated Kubernetes Metrics Server for SignalForge, repaired the cluster's kubelet serving-certificate configuration, and enabled current node and Pod resource visibility.
+
+### What I learned
+
+- Prometheus application metrics and the Kubernetes resource Metrics API are complementary rather than interchangeable.
+- A healthy kubelet can still present a serving certificate that is unsuitable for a secure metrics client.
+- `rotateCertificates: true` controls kubelet client-certificate rotation; `serverTLSBootstrap: true` is separately required for signed serving certificates.
+- Core Kubernetes does not automatically approve kubelet serving CSRs because an operator must confirm that the requested DNS names and IP addresses belong to the requesting node.
+- A TLS-authenticated request can correctly return HTTP 401. That response proves the certificate and connection succeeded while unauthenticated application access was rejected.
+- `kubectl top` is useful for immediate operational checks, while historical analysis still belongs in Prometheus.
+
+### What was difficult
+
+The initial failure appeared to be a Metrics Server installation problem, but testing exposed three underlying identity issues: Windows SSH used the wrong username, the cluster nodes lacked durable hostname mappings, and kubelets served self-signed certificates containing only DNS SANs. Repairing the trust chain required verified SSH host keys, one-node-at-a-time kubelet changes, and manual inspection of every serving CSR.
+
+### What I finished
+
+- Restored verified, passwordless administrative SSH from `forge-head` to all workers.
+- Made the SignalForge hostname mappings durable against cloud-init regeneration.
+- Enabled kubelet serving-certificate bootstrap locally and in the kubeadm ConfigMap.
+- Reviewed and approved four node-specific `kubernetes.io/kubelet-serving` CSRs.
+- Verified Kubernetes-CA trust and InternalIP SANs on every kubelet endpoint.
+- Deployed pinned Metrics Server v0.9.0 without `--kubelet-insecure-tls`.
+- Enabled `kubectl top nodes` and `kubectl top pods` for all four nodes.
+- Measured Metrics Server at 4m CPU and 21 MiB memory and retained it.
+
+### Next small step
+
+Plan persistent NVMe-backed Prometheus storage before replacing the intentionally ephemeral `emptyDir` volume.

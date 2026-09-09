@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-targets", "metrics-ui")]
+    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-targets", "metrics-ui", "metrics-server-deploy", "metrics-server-status", "top")]
     [string]$Command,
 
     [string]$Namespace = "forge-restaurant",
@@ -8,7 +8,9 @@
     [string]$Service = "restaurant-api",
     [string]$MetricsNamespace = "forge-observability",
     [string]$MetricsDeployment = "prometheus",
-    [string]$MetricsService = "prometheus"
+    [string]$MetricsService = "prometheus",
+    [string]$MetricsServerNamespace = "kube-system",
+    [string]$MetricsServerDeployment = "metrics-server"
 )
 
 Set-StrictMode -Version Latest
@@ -141,5 +143,42 @@ switch ($Command) {
             -n $MetricsNamespace `
             service/$MetricsService `
             9090:9090
+    }
+
+    "metrics-server-deploy" {
+        Show-Header "Deploy Kubernetes Metrics Server"
+        & "$ScriptDir\deploy-metrics-server.ps1"
+    }
+
+    "metrics-server-status" {
+        Show-Header "Metrics APIService"
+        kubectl get apiservice v1beta1.metrics.k8s.io
+
+        Show-Header "Metrics Server workload"
+        kubectl get deployment,pod `
+            -n $MetricsServerNamespace `
+            -l k8s-app=$MetricsServerDeployment `
+            -o wide
+
+        Show-Header "Metrics Server validation"
+        & "$ScriptDir\test-metrics-server.ps1" `
+            -Namespace $MetricsServerNamespace `
+            -Deployment $MetricsServerDeployment
+    }
+
+    "top" {
+        Show-Header "Cluster node usage"
+        kubectl top nodes
+
+        Show-Header "Restaurant API Pod usage"
+        kubectl top pods -n $Namespace
+
+        Show-Header "Prometheus Pod usage"
+        kubectl top pods -n $MetricsNamespace
+
+        Show-Header "Metrics Server Pod usage"
+        kubectl top pod `
+            -n $MetricsServerNamespace `
+            -l k8s-app=$MetricsServerDeployment
     }
 }

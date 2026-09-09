@@ -17,6 +17,9 @@ flowchart TD
     Client["Laptop or client"] --> NodePort["NodePort 30080"]
     NodePort --> API["Restaurant API Pods (3)"]
     Prometheus["Prometheus (1)"] -->|scrape /metrics| API
+    Operator["Operator kubectl"] -->|top request| APIServer["Kubernetes API server"]
+    APIServer --> MetricsServer["Metrics Server (1)"]
+    MetricsServer -->|verified TLS on 10250| Kubelets["Kubelets (4)"]
     Actions["GitHub Actions"] -->|publish ARM64 image| Registry["Docker Hub"]
     Registry -->|versioned image| API
 ```
@@ -56,6 +59,22 @@ flowchart TD
 
 Prometheus is deliberately lightweight at this stage. Grafana, Alertmanager, node-exporter, kube-state-metrics, and the Prometheus Operator are not installed.
 
+### Kubernetes resource metrics
+
+- Manifests: `k8s/metrics-server`
+- Namespace: `kube-system`
+- Collector: one Metrics Server replica using `registry.k8s.io/metrics-server/metrics-server:v0.9.0`
+- API: aggregated `metrics.k8s.io/v1beta1`
+- Collection: current CPU and memory samples every 15 seconds
+- Kubelet addressing: InternalIP first
+- Kubelet trust: Kubernetes service-account CA
+- Operator access: `kubectl top nodes` and `kubectl top pods`
+- Observed footprint: 4m CPU and 21 MiB memory
+
+Every kubelet uses a Kubernetes-CA-signed serving certificate containing its hostname and InternalIP as SANs. Metrics Server explicitly supplies `--kubelet-certificate-authority` and does not use `--kubelet-insecure-tls`.
+
+Metrics Server and Prometheus have different responsibilities. Metrics Server retains only the latest resource samples needed by Kubernetes operations and autoscaling. Prometheus retains application time series for querying behavior over time.
+
 ## Application metric design
 
 The Restaurant API publishes:
@@ -76,13 +95,14 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 4. GitHub Actions builds and publishes the ARM64 container image to Docker Hub.
 5. Version tags produce versioned release images.
 6. PowerShell helpers apply the manifests and wait for Kubernetes rollouts.
-7. Smoke tests and Prometheus target checks validate the live deployment.
+7. Smoke tests, Prometheus target checks, and Metrics API checks validate the live deployment.
 
 ## Repository organization
 
 - `apps/restaurant-api` contains the FastAPI source, container definition, dependencies, and tests.
 - `k8s/fastapi-restaurant` contains the Restaurant API Kubernetes resources.
 - `k8s/prometheus` contains the lightweight metrics-collection resources.
+- `k8s/metrics-server` contains the Kubernetes resource-metrics API resources.
 - `scripts` contains developer, deployment, smoke-test, and validation helpers.
 - `.github/workflows` contains application CI, manifest validation, and ARM64 image publishing.
 - `docs/milestones` preserves chronological implementation evidence.
@@ -95,6 +115,7 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 - Keep configuration outside application source code.
 - Pin release and infrastructure image versions.
 - Apply least-privilege Kubernetes access.
+- Prefer trusted serving certificates over disabling TLS validation.
 - Protect metric label cardinality.
 - Automate repeatable validation and preserve manual troubleshooting skills.
 - Keep externally reachable services intentional; Prometheus remains ClusterIP-only.
@@ -103,20 +124,20 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 ## Current constraints
 
 - Prometheus storage is ephemeral and is lost when its Pod is replaced or rescheduled.
-- The Kubernetes Metrics API is not installed, so `kubectl top` is unavailable.
 - NodePort is appropriate for the private lab but is not the long-term ingress design.
-- Observability currently focuses on application metrics rather than full cluster telemetry.
+- Metrics Server provides current CPU and memory samples but no historical resource-metrics store.
+- The upstream APIService uses `insecureSkipTLSVerify` for the API server-to-Metrics Server connection because the serving certificate is generated dynamically. This is separate from the secured Metrics Server-to-kubelet path.
+- Kubelet serving-certificate rotation requests require deliberate operator review and approval.
 
 ## Expected evolution
 
 Potential next architecture steps include:
 
-1. Evaluate Kubernetes Metrics Server for lightweight CPU and memory visibility.
-2. Move Prometheus data to persistent NVMe-backed storage.
-3. Add Grafana and alerting after the collection layer is understood.
-4. Introduce Ingress for cleaner external access.
-5. Evaluate Loki and OpenTelemetry for logs and traces.
-6. Evolve the rules-based `/analyze` endpoint into the ForgeOps AI-assisted incident copilot.
+1. Plan and implement persistent NVMe-backed Prometheus storage.
+2. Add Grafana and alerting after the collection layer is understood.
+3. Introduce Ingress for cleaner external access.
+4. Evaluate Loki and OpenTelemetry for logs and traces.
+5. Evolve the rules-based `/analyze` endpoint into the ForgeOps AI-assisted incident copilot.
 
 ## Decision records
 

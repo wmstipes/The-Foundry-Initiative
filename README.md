@@ -52,6 +52,7 @@ It currently includes:
 * FastAPI Swagger UI access through `/docs`
 * Prometheus-format application metrics through `/metrics`
 * lightweight in-cluster Prometheus manifests with Pod-level discovery
+* Kubernetes Metrics Server for current node and Pod CPU/memory visibility
 
 The long-term goal is to evolve this service into **ForgeOps**, an AI-assisted Kubernetes incident copilot that can help analyze cluster symptoms, summarize likely causes, and recommend next troubleshooting steps.
 
@@ -65,6 +66,7 @@ The-Foundry-Initiative/
   k8s/
     fastapi-restaurant/    Kubernetes manifests for the Restaurant API
     prometheus/            Lightweight Prometheus manifests and scrape configuration
+    metrics-server/        Kubernetes resource-metrics API manifests
 
   docs/
     architecture.md        Current system architecture and constraints
@@ -108,6 +110,7 @@ Completed SignalForge milestones include:
 * lightweight metrics-collection architecture selected
 * lightweight Prometheus deployed with three healthy Pod-level targets
 * request latency, traffic classification, and metric-cardinality protection added
+* secure Kubernetes Metrics Server deployed with all four nodes available through `kubectl top`
 
 ## Earlier utility: foundry-check
 
@@ -132,7 +135,6 @@ The current development workflow is:
 
 Planned next steps include:
 
-* decide whether Kubernetes Metrics Server is needed for `kubectl top`
 * add persistent NVMe-backed metrics storage when the cluster storage design is ready
 * add Grafana and alerting only after the first collection layer is understood
 * add Ingress as a cleaner external access pattern

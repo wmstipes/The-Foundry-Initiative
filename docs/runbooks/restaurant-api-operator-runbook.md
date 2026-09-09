@@ -80,6 +80,7 @@ Kubernetes manifests:
 ~~~text
 k8s/fastapi-restaurant
 k8s/prometheus
+k8s/metrics-server
 ~~~
 
 Scripts:
@@ -88,6 +89,8 @@ Scripts:
 scripts/deploy-restaurant-api.ps1
 scripts/deploy-prometheus.ps1
 scripts/test-prometheus-targets.ps1
+scripts/deploy-metrics-server.ps1
+scripts/test-metrics-server.ps1
 scripts/forge.ps1
 ~~~
 
@@ -101,6 +104,7 @@ Runbooks:
 
 ~~~text
 docs/runbooks
+docs/runbooks/kubelet-serving-certificates.md
 ~~~
 
 ## Normal Operating Workflow
@@ -224,7 +228,7 @@ An aggregate query such as `sum(restaurant_api_requests_total{path="unmatched"})
 
 The Prometheus Service is intentionally ClusterIP-only. Its data is stored in a 1 GiB `emptyDir`, so replacing or rescheduling the Prometheus Pod erases the current metrics history.
 
-`kubectl top` requires Kubernetes Metrics Server. SignalForge does not currently provide the `metrics.k8s.io` API, so `kubectl top` returns `Metrics API not available`. This is independent of Prometheus application scraping and is not a Prometheus failure.
+Metrics Server is separate from Prometheus. Metrics Server provides current CPU and memory samples for Kubernetes operations; Prometheus retains Restaurant API application metrics over time.
 
 Useful PromQL queries:
 
@@ -239,6 +243,121 @@ Expected healthy target count:
 
 ~~~text
 3
+~~~
+
+## Operate Kubernetes Metrics Server
+
+Deploy the pinned Metrics Server manifests and run the acceptance checks:
+
+~~~powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-server-deploy
+~~~
+
+Check the APIService, secure kubelet configuration, node coverage, logs, and current usage:
+
+~~~powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-server-status
+~~~
+
+Show current resource usage for nodes and the primary SignalForge workloads:
+
+~~~powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 top
+~~~
+
+Direct commands:
+
+~~~powershell
+kubectl top nodes
+kubectl top pods -n forge-restaurant
+kubectl top pods -n forge-observability
+kubectl top pod -n kube-system -l k8s-app=metrics-server
+~~~
+
+Expected security argument:
+
+~~~text
+--kubelet-certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+~~~
+
+The Metrics Server Deployment must never include `--kubelet-insecure-tls`. All four kubelets use Kubernetes-CA-signed serving certificates containing their hostname and InternalIP SANs.
+
+Metrics Server retains only the latest resource samples. Use Prometheus for historical application behavior.
+
+## Review Kubelet Serving-Certificate Requests
+
+Kubelet serving certificates expire and rotate. Core Kubernetes does not automatically approve `kubernetes.io/kubelet-serving` requests.
+
+List requests:
+
+~~~powershell
+kubectl get csr --sort-by=.metadata.creationTimestamp
+~~~
+
+Before approving a serving CSR, confirm all of the following:
+
+- Signer is `kubernetes.io/kubelet-serving`.
+- Requester is `system:node:<expected-node-name>`.
+- Groups include `system:nodes` and `system:authenticated`.
+- ECDSA usages are only `digital signature` and `server auth`.
+- Subject is `O=system:nodes, CN=system:node:<expected-node-name>`.
+- DNS and IP SANs belong only to that Kubernetes Node.
+
+Decode a request from a Linux administrative host:
+
+~~~bash
+csr="<csr-name>"
+csr_file="$(mktemp)"
+
+kubectl get csr "$csr" -o jsonpath='{.spec.request}' |
+  base64 --decode > "$csr_file"
+
+openssl req -in "$csr_file" -noout -verify -subject
+openssl req -in "$csr_file" -noout -text |
+  sed -n '/Requested Extensions:/,/Signature Algorithm:/p'
+
+rm -f "$csr_file"
+~~~
+
+Approve only the exact validated request:
+
+~~~powershell
+$CsrName = "csr-xxxxx"
+kubectl certificate approve $CsrName
+kubectl get csr $CsrName
+~~~
+
+Expected condition: `Approved,Issued`.
+
+## Common Issue: Metrics API Not Available
+
+Symptoms:
+
+~~~text
+error: Metrics API not available
+~~~
+
+Check the aggregated API and workload:
+
+~~~powershell
+kubectl get apiservice v1beta1.metrics.k8s.io
+kubectl get deployment,pod -n kube-system -l k8s-app=metrics-server -o wide
+kubectl logs -n kube-system deployment/metrics-server --tail=100
+~~~
+
+Likely causes:
+
+- Metrics Server is not deployed or not Ready.
+- The APIService is unavailable.
+- A kubelet serving certificate is untrusted or lacks its InternalIP SAN.
+- A renewed kubelet serving CSR is still pending approval.
+- Metrics Server cannot reach a kubelet on TCP 10250.
+- Kubelet webhook authentication or authorization is disabled.
+
+Do not add `--kubelet-insecure-tls` as a recovery shortcut. Validate the certificate chain and node identity, repair the underlying PKI issue, and rerun:
+
+~~~powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-server-status
 ~~~
 
 ## Manual Kubernetes Checks
@@ -604,8 +723,9 @@ When something breaks, check in this order:
 6. Current deployed image
 7. Service and endpoints
 8. Application logs
-9. In-cluster smoke tests
-10. Browser or NodePort access
+9. Metrics API and resource usage
+10. In-cluster smoke tests
+11. Browser or NodePort access
 
 ## Restaurant Analogy
 
@@ -625,6 +745,10 @@ The NodePort is the public front door.
 
 The ConfigMap is the settings sheet.
 
+Metrics Server is the district's live staffing-and-capacity board.
+
+Prometheus is the operations log used to study application behavior over time.
+
 The runbook is the manager checklist.
 
 ## Success Standard
@@ -638,3 +762,7 @@ The system is considered healthy when:
 - `/version` returns the expected version
 - `/status` returns `status: open`
 - `/docs` is reachable through NodePort from the laptop
+- Prometheus reports three healthy Restaurant API targets
+- The Metrics APIService is Available
+- `kubectl top nodes` reports all four nodes
+- Metrics Server logs contain no current certificate or scrape errors

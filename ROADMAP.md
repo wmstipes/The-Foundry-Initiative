@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-023 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, and lightweight Prometheus metrics collection.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-024 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, and Kubernetes resource metrics.
 
 The project is moving from its initial application-observability layer into broader operational visibility.
 
@@ -60,23 +60,37 @@ Related milestones: 020-023.
 
 ## Phase 4 — Operational visibility and durable monitoring
 
-**Status:** Next
+**Status:** In progress
 
-### Recommended Milestone 024 — Kubernetes Metrics Server evaluation
+### Milestone 024 — Kubernetes Metrics Server evaluation
 
-Determine whether Metrics Server provides enough operational value for its resource footprint on SignalForge.
+**Status:** Complete
+
+Delivered outcomes:
+
+- Repaired kubelet serving PKI without disabling TLS verification.
+- Enabled durable kubelet serving-certificate bootstrap configuration.
+- Deployed pinned Metrics Server v0.9.0 on ARM64.
+- Enabled and validated `kubectl top nodes` and `kubectl top pods` across all four nodes.
+- Measured an observed Metrics Server footprint of 4m CPU and 21 MiB memory.
+- Retained Metrics Server based on its low footprint and immediate operational value.
+- Preserved Prometheus as the separate historical application-metrics system.
+
+### Recommended Milestone 025 — Persistent Prometheus storage planning
+
+Design the first durable storage layer before changing the live Prometheus deployment.
 
 The milestone should:
 
-- measure the proposed component's CPU and memory footprint
-- confirm compatibility with the cluster's ARM64 nodes and kubelet configuration
-- enable and validate `kubectl top nodes` and `kubectl top pods`
-- document how resource metrics differ from Prometheus application metrics
-- retain or remove Metrics Server based on observed value rather than assumption
+- choose the NVMe-backed storage location and Kubernetes volume model
+- define what happens when the Prometheus Pod or storage-hosting node fails
+- set practical retention and capacity expectations
+- document backup, restore, and rollback procedures
+- preserve a reversible path from the current 1 GiB `emptyDir`
 
 ### Later outcomes in this phase
 
-- Move Prometheus from ephemeral storage to persistent NVMe-backed storage.
+- Implement the selected persistent Prometheus storage design.
 - Establish practical retention, backup, and recovery expectations.
 - Add a small Grafana deployment with purpose-built SignalForge dashboards.
 - Add a limited alerting layer only after normal behavior and useful thresholds are understood.
