@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-storage", "metrics-persistence", "metrics-targets", "metrics-ui", "metrics-server-deploy", "metrics-server-status", "top")]
+    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-storage", "metrics-persistence", "metrics-backup", "metrics-restore-test", "metrics-targets", "metrics-ui", "metrics-server-deploy", "metrics-server-status", "top")]
     [string]$Command,
 
     [string]$Namespace = "forge-restaurant",
@@ -9,6 +9,7 @@
     [string]$MetricsNamespace = "forge-observability",
     [string]$MetricsDeployment = "prometheus",
     [string]$MetricsService = "prometheus",
+    [string]$BackupPath = "",
     [string]$MetricsServerNamespace = "kube-system",
     [string]$MetricsServerDeployment = "metrics-server"
 )
@@ -143,6 +144,24 @@ switch ($Command) {
     "metrics-persistence" {
         Show-Header "Prometheus Pod-replacement persistence test"
         & "$ScriptDir\test-prometheus-persistence.ps1" -Namespace $MetricsNamespace
+    }
+
+    "metrics-backup" {
+        Show-Header "Prometheus cold backup"
+        & "$ScriptDir\backup-prometheus.ps1" -Namespace $MetricsNamespace
+    }
+
+    "metrics-restore-test" {
+        Show-Header "Prometheus non-destructive restore validation"
+
+        if ($BackupPath) {
+            & "$ScriptDir\test-prometheus-restore.ps1" `
+                -Namespace $MetricsNamespace `
+                -BackupPath $BackupPath
+        }
+        else {
+            & "$ScriptDir\test-prometheus-restore.ps1" -Namespace $MetricsNamespace
+        }
     }
 
     "metrics-targets" {

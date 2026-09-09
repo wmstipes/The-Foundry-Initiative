@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: prometheus-backup
+  namespace: forge-observability
+  labels:
+    app: prometheus-backup
+    project: signalforge
+spec:
+  restartPolicy: Never
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+    fsGroup: 65534
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  containers:
+  - name: backup
+    image: busybox:1.37.0
+    imagePullPolicy: IfNotPresent
+    command:
+    - /bin/sh
+    - -c
+    args:
+    - sleep 900
+    readinessProbe:
+      exec:
+        command:
+        - /bin/sh
+        - -c
+        - test -d /prometheus/wal && test -r /prometheus/wal
+      periodSeconds: 2
+      timeoutSeconds: 1
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+    resources:
+      requests:
+        cpu: 5m
+        memory: 8Mi
+      limits:
+        cpu: 100m
+        memory: 64Mi
+    volumeMounts:
+    - name: storage
+      mountPath: /prometheus
+      readOnly: true
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: prometheus-data
+      readOnly: true

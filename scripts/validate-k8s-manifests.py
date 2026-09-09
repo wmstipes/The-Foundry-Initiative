@@ -24,6 +24,9 @@ PROMETHEUS_PERSISTENT_VOLUME_CLAIM = "prometheus-data"
 PROMETHEUS_STORAGE_NODE = "forge-head"
 PROMETHEUS_LOCAL_PATH = "/mnt/signalforge-prometheus/data"
 PROMETHEUS_STORAGE_PREFLIGHT = "prometheus-storage-preflight"
+PROMETHEUS_BACKUP_POD = "prometheus-backup"
+PROMETHEUS_RESTORE_VALIDATION_POD = "prometheus-restore-validation"
+PROMETHEUS_RESTORE_PATH = "/mnt/signalforge-prometheus/restore-validation"
 
 METRICS_SERVER_NAMESPACE = "kube-system"
 METRICS_SERVER_APP = "metrics-server"
@@ -51,6 +54,8 @@ REQUIRED_PROMETHEUS_FILES = [
     "prometheus-local-pv.yaml",
     "prometheus-data-pvc.yaml",
     "prometheus-storage-preflight-pod.yaml",
+    "prometheus-backup-pod.yaml",
+    "prometheus-restore-validation-pod.yaml",
     "prometheus-deployment.yaml",
     "prometheus-service.yaml",
 ]
@@ -204,6 +209,8 @@ def validate_prometheus_manifests() -> None:
     persistent_volume = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-local-pv.yaml")
     persistent_volume_claim = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-data-pvc.yaml")
     storage_preflight = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-storage-preflight-pod.yaml")
+    backup_pod = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-backup-pod.yaml")
+    restore_validation_pod = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-restore-validation-pod.yaml")
     deployment = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-deployment.yaml")
     service = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-service.yaml")
 
@@ -394,6 +401,97 @@ def validate_prometheus_manifests() -> None:
         "Storage preflight Pod must mount the Prometheus PVC",
     )
     ok("Prometheus storage first-consumer preflight manifest is valid")
+
+    require(backup_pod.get("kind") == "Pod", "Prometheus backup manifest must be kind Pod")
+    require(backup_pod.get("metadata", {}).get("name") == PROMETHEUS_BACKUP_POD, "Prometheus backup Pod name mismatch")
+    require(backup_pod.get("metadata", {}).get("namespace") == PROMETHEUS_NAMESPACE, "Prometheus backup Pod namespace mismatch")
+    backup_spec = backup_pod.get("spec", {})
+    require(backup_spec.get("restartPolicy") == "Never", "Prometheus backup Pod restart policy must be Never")
+    require("nodeSelector" not in backup_spec, "Backup Pod placement must come from PV node affinity")
+    require(
+        backup_spec.get("tolerations") == [
+            {
+                "key": "node-role.kubernetes.io/control-plane",
+                "operator": "Exists",
+                "effect": "NoSchedule",
+            }
+        ],
+        "Backup Pod must have only the exact control-plane toleration",
+    )
+    backup_security_context = backup_spec.get("securityContext", {})
+    require(backup_security_context.get("runAsNonRoot") is True, "Backup Pod must run as non-root")
+    require(backup_security_context.get("runAsUser") == 65534, "Backup Pod UID must be 65534")
+    require(backup_security_context.get("runAsGroup") == 65534, "Backup Pod GID must be 65534")
+    require(backup_security_context.get("fsGroup") == 65534, "Backup Pod fsGroup must be 65534")
+    backup_containers = backup_spec.get("containers", [])
+    require(len(backup_containers) == 1, "Backup Pod must have exactly one container")
+    backup_container = backup_containers[0]
+    require(backup_container.get("image") == "busybox:1.37.0", "Backup Pod image must be pinned")
+    require("readinessProbe" in backup_container, "Backup Pod must verify that the TSDB is readable")
+    backup_mounts = [mount for mount in backup_container.get("volumeMounts", []) if mount.get("name") == "storage"]
+    require(
+        backup_mounts == [{"name": "storage", "mountPath": "/prometheus", "readOnly": True}],
+        "Backup Pod must mount the TSDB read-only at /prometheus",
+    )
+    backup_volumes = [volume for volume in backup_spec.get("volumes", []) if volume.get("name") == "storage"]
+    require(len(backup_volumes) == 1, "Backup Pod must define one storage volume")
+    require(
+        backup_volumes[0].get("persistentVolumeClaim")
+        == {"claimName": PROMETHEUS_PERSISTENT_VOLUME_CLAIM, "readOnly": True},
+        "Backup Pod must mount the Prometheus PVC read-only",
+    )
+    ok("Prometheus cold-backup Pod manifest is valid")
+
+    require(restore_validation_pod.get("kind") == "Pod", "Prometheus restore-validation manifest must be kind Pod")
+    require(
+        restore_validation_pod.get("metadata", {}).get("name") == PROMETHEUS_RESTORE_VALIDATION_POD,
+        "Prometheus restore-validation Pod name mismatch",
+    )
+    require(
+        restore_validation_pod.get("metadata", {}).get("namespace") == PROMETHEUS_NAMESPACE,
+        "Prometheus restore-validation Pod namespace mismatch",
+    )
+    restore_spec = restore_validation_pod.get("spec", {})
+    require(restore_spec.get("restartPolicy") == "Never", "Restore-validation Pod restart policy must be Never")
+    require(
+        restore_spec.get("nodeSelector") == {"kubernetes.io/hostname": PROMETHEUS_STORAGE_NODE},
+        "Restore-validation Pod must target only forge-head",
+    )
+    require(
+        restore_spec.get("tolerations") == [
+            {
+                "key": "node-role.kubernetes.io/control-plane",
+                "operator": "Exists",
+                "effect": "NoSchedule",
+            }
+        ],
+        "Restore-validation Pod must have only the exact control-plane toleration",
+    )
+    restore_security_context = restore_spec.get("securityContext", {})
+    require(restore_security_context.get("runAsNonRoot") is True, "Restore-validation Pod must run as non-root")
+    require(restore_security_context.get("runAsUser") == 65534, "Restore-validation Pod UID must be 65534")
+    require(restore_security_context.get("runAsGroup") == 65534, "Restore-validation Pod GID must be 65534")
+    restore_containers = restore_spec.get("containers", [])
+    require(len(restore_containers) == 1, "Restore-validation Pod must have exactly one container")
+    restore_container = restore_containers[0]
+    require(restore_container.get("image") == PROMETHEUS_IMAGE, "Restore-validation image must match Prometheus")
+    require("readinessProbe" in restore_container, "Restore-validation Pod must write-test its isolated directory")
+    restore_mounts = [mount for mount in restore_container.get("volumeMounts", []) if mount.get("name") == "restored-data"]
+    require(
+        restore_mounts == [{"name": "restored-data", "mountPath": "/validation"}],
+        "Restore-validation Pod must mount only the isolated restored copy at /validation",
+    )
+    restore_volumes = [volume for volume in restore_spec.get("volumes", []) if volume.get("name") == "restored-data"]
+    require(len(restore_volumes) == 1, "Restore-validation Pod must define one restored-data volume")
+    require(
+        restore_volumes[0].get("hostPath") == {"path": PROMETHEUS_RESTORE_PATH, "type": "Directory"},
+        "Restore-validation Pod hostPath must be the exact isolated restore directory",
+    )
+    require(
+        restore_volumes[0].get("hostPath", {}).get("path") != PROMETHEUS_LOCAL_PATH,
+        "Restore-validation Pod must never mount the active Prometheus data path",
+    )
+    ok("Prometheus isolated restore-validation Pod manifest is valid")
 
     require(deployment.get("kind") == "Deployment", "prometheus-deployment.yaml must be kind Deployment")
     require(deployment.get("metadata", {}).get("name") == PROMETHEUS_APP, "Prometheus Deployment name mismatch")

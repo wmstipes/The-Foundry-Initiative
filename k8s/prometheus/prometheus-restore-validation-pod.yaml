@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: prometheus-restore-validation
+  namespace: forge-observability
+  labels:
+    app: prometheus-restore-validation
+    project: signalforge
+spec:
+  restartPolicy: Never
+  nodeSelector:
+    kubernetes.io/hostname: forge-head
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+    seccompProfile:
+      type: RuntimeDefault
+  tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  containers:
+  - name: restore-validation
+    image: prom/prometheus:v3.13.2
+    imagePullPolicy: IfNotPresent
+    command:
+    - /bin/sh
+    - -c
+    args:
+    - |
+      set -eu
+      marker=/validation/.signalforge-restore-write-test
+      printf 'signalforge-restore-validation\n' > "$marker"
+      test "$(cat "$marker")" = signalforge-restore-validation
+      rm "$marker"
+      touch /tmp/signalforge-restore-ready
+      sleep 900
+    readinessProbe:
+      exec:
+        command:
+        - /bin/sh
+        - -c
+        - test -f /tmp/signalforge-restore-ready
+      periodSeconds: 2
+      timeoutSeconds: 1
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    volumeMounts:
+    - name: restored-data
+      mountPath: /validation
+  volumes:
+  - name: restored-data
+    hostPath:
+      path: /mnt/signalforge-prometheus/restore-validation
+      type: Directory

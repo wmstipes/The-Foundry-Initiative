@@ -28,6 +28,8 @@ No Grafana, Alertmanager, node-exporter, kube-state-metrics, Prometheus Operator
 - `prometheus-local-pv.yaml` represents `/mnt/signalforge-prometheus/data` on `forge-head` and retains its data after claim release.
 - `prometheus-data-pvc.yaml` reserves the named local PV for Prometheus.
 - `prometheus-storage-preflight-pod.yaml` is a temporary first consumer that binds and write-tests the PVC before cutover.
+- `prometheus-backup-pod.yaml` mounts the stopped TSDB read-only while a cold archive streams off-node.
+- `prometheus-restore-validation-pod.yaml` mounts only an isolated restored copy for `promtool` validation.
 - `prometheus-deployment.yaml` mounts the PVC and runs Prometheus with bounded resources and retention.
 - `prometheus-service.yaml` provides an internal-only ClusterIP.
 
@@ -75,6 +77,26 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-persistence
 ```
 
 This command deletes only the current Prometheus Pod. The Deployment recreates it against the same retained PVC, and the test queries a sample recorded before replacement at its original timestamp.
+
+## Back up and validate recovery
+
+Create a cold backup on the Windows operator laptop:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-backup
+```
+
+The command scales Prometheus to zero, waits for graceful shutdown, mounts the PVC read-only in a temporary Pod, and uses binary-safe Windows redirection to stream the compressed archive directly to `%USERPROFILE%\SignalForge-Backups\prometheus`. It records SHA-256, retains four archives, scales Prometheus back to one, and verifies three healthy targets.
+
+Validate the newest retained archive without overwriting the active TSDB:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-restore-test
+```
+
+The restore check verifies the laptop copy's checksum, refuses to overwrite an existing validation directory, creates `/mnt/signalforge-prometheus/restore-validation`, streams the archive into it, and runs `promtool tsdb list` and `promtool tsdb analyze` against that isolated copy. It never mounts `/mnt/signalforge-prometheus/data` and removes only the temporary restored copy afterward. The command may prompt for the `forge-head` sudo password.
+
+Wait until Prometheus has collected for at least two hours before the first acceptance backup so the archive contains a compacted block for `promtool tsdb analyze`.
 
 ## Open the Prometheus UI
 

@@ -34,11 +34,17 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-deploy
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-status
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-storage
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-persistence
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-backup
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-restore-test
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-targets
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-ui
 ```
 
-`metrics-storage` checks the static StorageClass, PV, PVC, node placement, retention, and ClusterIP-only access. `metrics-persistence` deliberately replaces the Prometheus Pod and proves that a known historical sample survives. `metrics-ui` keeps running while the port-forward is open; press Ctrl+C to stop it.
+`metrics-storage` checks the static StorageClass, PV, PVC, node placement, retention, and ClusterIP-only access. `metrics-persistence` deliberately replaces the Prometheus Pod and proves that a known historical sample survives.
+
+`metrics-backup` briefly scales Prometheus to zero and streams a cold archive directly to `%USERPROFILE%\SignalForge-Backups\prometheus`; it retains the four newest archives and always attempts to restore the collector to one replica. `metrics-restore-test` verifies the newest archive's checksum, restores it into an isolated NVMe directory, runs `promtool` against that copy, and removes only the temporary restored copy. It may prompt for the `forge-head` sudo password when creating and removing the isolated directory.
+
+`metrics-ui` keeps running while the port-forward is open; press Ctrl+C to stop it.
 
 Kubernetes resource-metrics commands:
 
@@ -55,8 +61,10 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 top
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\deploy-restaurant-api.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\deploy-prometheus.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\backup-prometheus.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\test-prometheus-storage.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\test-prometheus-persistence.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\test-prometheus-restore.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\test-prometheus-targets.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\deploy-metrics-server.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\test-metrics-server.ps1
