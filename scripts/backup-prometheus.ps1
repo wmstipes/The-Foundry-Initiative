@@ -46,6 +46,10 @@ if (Test-Path $BackupPath) {
 Write-Host "Prometheus cold-backup destination: $BackupPath"
 Write-Host "The Deployment will be restored to one replica even if the archive operation fails."
 
+& "$ScriptDir\test-prometheus-backup-ready.ps1" `
+    -Namespace $Namespace `
+    -TimeoutSeconds 60
+
 $OriginalReplicas = kubectl get deployment $Deployment `
     -n $Namespace `
     -o "jsonpath={.spec.replicas}"

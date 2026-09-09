@@ -83,10 +83,11 @@ This command deletes only the current Prometheus Pod. The Deployment recreates i
 Create a cold backup on the Windows operator laptop:
 
 ```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-backup-ready
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-backup
 ```
 
-The command scales Prometheus to zero, waits for graceful shutdown, mounts the PVC read-only in a temporary Pod, and uses binary-safe Windows redirection to stream the compressed archive directly to `%USERPROFILE%\SignalForge-Backups\prometheus`. It records SHA-256, retains four archives, scales Prometheus back to one, and verifies three healthy targets.
+The readiness command confirms that Prometheus has at least one compacted block. The backup command enforces that gate again before downtime, scales Prometheus to zero, waits for graceful shutdown, mounts the PVC read-only in a temporary Pod, and uses binary-safe Windows redirection to stream the compressed archive directly to `%USERPROFILE%\SignalForge-Backups\prometheus`. It records SHA-256, retains four archives, scales Prometheus back to one, and verifies three healthy targets.
 
 Validate the newest retained archive without overwriting the active TSDB:
 
@@ -96,7 +97,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-restore-tes
 
 The restore check verifies the laptop copy's checksum, refuses to overwrite an existing validation directory, creates `/mnt/signalforge-prometheus/restore-validation`, streams the archive into it, and runs `promtool tsdb list` and `promtool tsdb analyze` against that isolated copy. It never mounts `/mnt/signalforge-prometheus/data` and removes only the temporary restored copy afterward. The command may prompt for the `forge-head` sudo password.
 
-Wait until Prometheus has collected for at least two hours before the first acceptance backup so the archive contains a compacted block for `promtool tsdb analyze`.
+The first compacted block can take roughly three hours to appear. Use `metrics-backup-ready` rather than relying on elapsed time before the first acceptance backup.
 
 ## Open the Prometheus UI
 

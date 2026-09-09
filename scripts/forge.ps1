@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-storage", "metrics-persistence", "metrics-backup", "metrics-restore-test", "metrics-targets", "metrics-ui", "metrics-server-deploy", "metrics-server-status", "top")]
+    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-storage", "metrics-persistence", "metrics-backup-ready", "metrics-backup", "metrics-restore-test", "metrics-targets", "metrics-ui", "metrics-server-deploy", "metrics-server-status", "top")]
     [string]$Command,
 
     [string]$Namespace = "forge-restaurant",
@@ -144,6 +144,11 @@ switch ($Command) {
     "metrics-persistence" {
         Show-Header "Prometheus Pod-replacement persistence test"
         & "$ScriptDir\test-prometheus-persistence.ps1" -Namespace $MetricsNamespace
+    }
+
+    "metrics-backup-ready" {
+        Show-Header "Prometheus acceptance-backup readiness"
+        & "$ScriptDir\test-prometheus-backup-ready.ps1" -Namespace $MetricsNamespace
     }
 
     "metrics-backup" {
