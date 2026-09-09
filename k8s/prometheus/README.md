@@ -54,4 +54,6 @@ Then open `http://localhost:9090`.
 
 ## Expected data-loss behavior
 
-Metrics history is intentionally ephemeral. Replacing or rescheduling the Prometheus Pod deletes its stored history. Persistent storage is deferred until SignalForge has an agreed NVMe-backed storage design.
+Metrics history is intentionally ephemeral. Replacing or rescheduling the Prometheus Pod deletes its stored history.
+
+Milestone 025 approved a static local-PV design backed by a dedicated ext4 partition on the `forge-head` NVMe. These manifests remain unchanged until Milestone 026 verifies the physical device and implements the design. Do not infer from the approved plan that persistent storage is already active.

@@ -111,6 +111,7 @@ Completed SignalForge milestones include:
 * lightweight Prometheus deployed with three healthy Pod-level targets
 * request latency, traffic classification, and metric-cardinality protection added
 * secure Kubernetes Metrics Server deployed with all four nodes available through `kubectl top`
+* persistent Prometheus storage design selected for the head-node NVMe
 
 ## Earlier utility: foundry-check
 
@@ -135,7 +136,7 @@ The current development workflow is:
 
 Planned next steps include:
 
-* add persistent NVMe-backed metrics storage when the cluster storage design is ready
+* implement the approved static local-PV design for persistent NVMe-backed Prometheus storage
 * add Grafana and alerting only after the first collection layer is understood
 * add Ingress as a cleaner external access pattern
 * evaluate Loki and OpenTelemetry as later observability layers

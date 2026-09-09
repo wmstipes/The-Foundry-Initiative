@@ -1,6 +1,6 @@
 # Project Status
 
-**Last updated:** 2026-09-08
+**Last updated:** 2026-09-09
 
 **Current phase:** Operational visibility and durable monitoring
 
@@ -39,6 +39,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 022: Lightweight Prometheus metrics collection
 - 023: Application metrics refinement
 - 024: Kubernetes Metrics Server evaluation and secure kubelet PKI
+- 025: Persistent Prometheus storage planning
 
 ## Current observability state
 
@@ -75,12 +76,26 @@ The project has moved from basic workload deployment into repeatable engineering
 - Observed Metrics Server footprint: 4m CPU and 21 MiB memory
 - `kubectl top nodes` and `kubectl top pods`: available
 
+## Approved persistent-storage design
+
+Milestone 025 selected but did not deploy the following Prometheus storage target:
+
+- Dedicated 32 GiB ext4 partition on the `forge-head` Samsung 970 EVO Plus NVMe
+- Static 30 GiB Kubernetes `local` PV and PVC
+- Non-default `signalforge-local-nvme` StorageClass with `WaitForFirstConsumer`
+- `ReadWriteOnce` access, `Retain` reclaim policy, and exact `forge-head` PV node affinity
+- One Prometheus replica using the `Recreate` strategy
+- Retention of 30 days or 24 GB, whichever is reached first
+- Weekly cold backups copied off `forge-head`, with the four newest retained
+- Recovery objectives of RPO at or below 7 days and RTO at or below 1 hour
+- Existing ClusterIP and `kubectl port-forward` access model preserved
+
 ## Immediate next step
 
-Plan Milestone 025 around persistent NVMe-backed Prometheus storage. Define storage placement, failure behavior, retention, backup expectations, and recovery steps before changing the live collector.
+Implement Milestone 026 only after verifying the NVMe device identity, partition table, filesystems, mounts, and absence of needed data. Then prove the PVC is correctly bound, the Pod runs on `forge-head`, history survives Pod replacement, backups are recoverable, and all three Restaurant API targets remain healthy.
 
 ## Known temporary limitation
 
-Prometheus history is intentionally ephemeral. Replacing or rescheduling its Pod removes collected history until NVMe-backed persistent storage is designed and introduced.
+Prometheus history remains intentionally ephemeral. Replacing or rescheduling its Pod removes collected history until the approved NVMe-backed local-PV design is implemented.
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.

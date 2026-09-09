@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-08
+**Last updated:** 2026-09-09
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -58,6 +58,14 @@ flowchart TD
 - Storage: 1 GiB `emptyDir`, 48-hour retention, and a 750 MB retention cap
 
 Prometheus is deliberately lightweight at this stage. Grafana, Alertmanager, node-exporter, kube-state-metrics, and the Prometheus Operator are not installed.
+
+### Approved persistent-storage target
+
+Milestone 025 selected a static Kubernetes `local` PersistentVolume backed by a dedicated ext4 partition on the `forge-head` NVMe. The target design uses a non-default `WaitForFirstConsumer` StorageClass, a 30 GiB `ReadWriteOnce` claim, `Retain` reclaim policy, exact PV node affinity for `forge-head`, and Prometheus retention of 30 days or 24 GB.
+
+This is an approved future state, not the live state. No partition, StorageClass, PV, or PVC has been created, and the current Prometheus Deployment still uses its 1 GiB `emptyDir`. Milestone 026 will implement the design only after verifying the NVMe identity and existing contents.
+
+The design provides persistence across Pod replacement, not high availability. If `forge-head` is unavailable, Prometheus remains unavailable because the local volume cannot move to another node. Weekly cold backups will be copied off the head node so an NVMe failure does not make the node-local copy the only recovery source.
 
 ### Kubernetes resource metrics
 
@@ -123,7 +131,7 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 
 ## Current constraints
 
-- Prometheus storage is ephemeral and is lost when its Pod is replaced or rescheduled.
+- Prometheus storage is still ephemeral and is lost when its Pod is replaced or rescheduled; the approved static local-PV design has not yet been implemented.
 - NodePort is appropriate for the private lab but is not the long-term ingress design.
 - Metrics Server provides current CPU and memory samples but no historical resource-metrics store.
 - The upstream APIService uses `insecureSkipTLSVerify` for the API server-to-Metrics Server connection because the serving certificate is generated dynamically. This is separate from the secured Metrics Server-to-kubelet path.
@@ -133,7 +141,7 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 
 Potential next architecture steps include:
 
-1. Plan and implement persistent NVMe-backed Prometheus storage.
+1. Implement and validate the approved static local-PV design for Prometheus.
 2. Add Grafana and alerting after the collection layer is understood.
 3. Introduce Ingress for cleaner external access.
 4. Evaluate Loki and OpenTelemetry for logs and traces.

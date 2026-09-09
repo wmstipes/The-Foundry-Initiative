@@ -1,12 +1,12 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-08
+**Last updated:** 2026-09-09
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-024 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, and Kubernetes resource metrics.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-025 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, and Kubernetes resource metrics. A static local-PV design has been approved for persistent Prometheus storage but is not yet deployed.
 
 The project is moving from its initial application-observability layer into broader operational visibility.
 
@@ -76,21 +76,26 @@ Delivered outcomes:
 - Retained Metrics Server based on its low footprint and immediate operational value.
 - Preserved Prometheus as the separate historical application-metrics system.
 
-### Recommended Milestone 025 — Persistent Prometheus storage planning
+### Milestone 025 — Persistent Prometheus storage planning
 
-Design the first durable storage layer before changing the live Prometheus deployment.
+**Status:** Complete
 
-The milestone should:
+Delivered outcomes:
 
-- choose the NVMe-backed storage location and Kubernetes volume model
-- define what happens when the Prometheus Pod or storage-hosting node fails
-- set practical retention and capacity expectations
-- document backup, restore, and rollback procedures
-- preserve a reversible path from the current 1 GiB `emptyDir`
+- Selected a static Kubernetes `local` PV backed by a dedicated ext4 partition on the `forge-head` NVMe.
+- Defined a 32 GiB partition, 30 GiB PV/PVC, and 30-day or 24 GB Prometheus retention limits.
+- Made `forge-head` placement and the lack of automatic node failover explicit through PV node affinity.
+- Chose a non-default `WaitForFirstConsumer` StorageClass without a dynamic provisioner.
+- Defined weekly off-node cold backups, four-backup retention, and recovery objectives.
+- Documented missing-mount safeguards, recovery behavior, migration, and rollback.
+- Preserved the current live `emptyDir` deployment until implementation validation.
+
+### Recommended Milestone 026 — Persistent Prometheus storage implementation
+
+Implement the approved design only after verifying the NVMe identity, existing contents, partition table, and mount state. Prove that Prometheus writes to the NVMe, survives Pod replacement, preserves three healthy scrape targets, and remains accessible only through `kubectl port-forward`.
 
 ### Later outcomes in this phase
 
-- Implement the selected persistent Prometheus storage design.
 - Establish practical retention, backup, and recovery expectations.
 - Add a small Grafana deployment with purpose-built SignalForge dashboards.
 - Add a limited alerting layer only after normal behavior and useful thresholds are understood.

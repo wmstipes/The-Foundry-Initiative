@@ -114,3 +114,39 @@ The initial failure appeared to be a Metrics Server installation problem, but te
 ### Next small step
 
 Plan persistent NVMe-backed Prometheus storage before replacing the intentionally ephemeral `emptyDir` volume.
+
+---
+
+## 2026-09-09 - Milestone 025
+
+### What I worked on
+
+Compared practical persistent-storage designs for the SignalForge Prometheus server and converted the result into an explicit implementation and recovery plan before touching the NVMe or live cluster.
+
+### What I learned
+
+- Persistence and high availability are separate properties. A local PV preserves data across Pod replacement but cannot follow the workload to another node.
+- PV node affinity lets the Kubernetes scheduler understand a local disk's physical location; a plain `hostPath` does not express that relationship as safely in a multi-node cluster.
+- Prometheus's TSDB favors a local POSIX filesystem and does not support NFS, even when network storage initially appears more flexible.
+- A retention-size limit needs free space for the WAL, head chunks, and compaction. The application limit should stay below the filesystem's full capacity.
+- A missing-mount safeguard matters as much as the normal mount path. Otherwise, a valid directory can silently redirect heavy writes back to the SD card.
+- Backups must leave the storage node and be restore-tested; `Retain` protects data from Kubernetes deletion behavior but is not a backup.
+
+### What was difficult
+
+The main tradeoff was accepting that the lightest design is intentionally node-bound. Adding NFS or a distributed storage platform would appear to improve mobility, but it would either conflict with Prometheus storage guidance or add more operational burden than this single workload justifies.
+
+It also required keeping the planning milestone distinct from implementation. The approved design is now documented, but the repository still truthfully describes the live collector as ephemeral.
+
+### What I finished
+
+- Selected a static `local` PV on a dedicated ext4 partition of the `forge-head` NVMe.
+- Defined capacity, retention, StorageClass, reclaim, affinity, and workload-strategy decisions.
+- Documented Pod, node, NVMe, deletion, and missing-mount failure behavior.
+- Defined weekly off-node cold backups, recovery objectives, restore validation, migration, and rollback.
+- Created a strict pre-deployment acceptance gate for Milestone 026.
+- Made no live cluster or storage changes.
+
+### Next small step
+
+Implement Milestone 026 by verifying the NVMe identity first, then creating and validating the partition, mount, static storage resources, Prometheus cutover, backup, and rollback path.
