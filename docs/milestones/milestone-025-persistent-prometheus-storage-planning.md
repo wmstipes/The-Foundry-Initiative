@@ -12,7 +12,9 @@ Choose a safe, lightweight persistent-storage design for Prometheus before chang
 
 ## Result
 
-Selected a statically provisioned Kubernetes `local` PersistentVolume backed by a dedicated ext4 partition on the Samsung 970 EVO Plus NVMe attached to `forge-head`.
+Selected a statically provisioned Kubernetes `local` PersistentVolume backed by a dedicated ext4 partition on the NVMe attached to `forge-head`.
+
+The planning input identified that device as a 2 TB Samsung 970 EVO Plus. Milestone 026's required physical inventory found the installed device to be a 512 GB Samsung SSD 950 PRO instead. The design remains valid at the approved 32 GiB partition size, and the operator explicitly approved using the verified 950 PRO before destructive work began.
 
 This milestone records the decision and implementation gate only. It does not partition the NVMe, create Kubernetes storage resources, or change the live Prometheus Deployment. Prometheus continues to use its existing 1 GiB `emptyDir` until Milestone 026 is deliberately executed and validated.
 
@@ -20,7 +22,7 @@ This milestone records the decision and implementation gate only. It does not pa
 
 | Item | Decision |
 |---|---|
-| Storage device | Samsung 970 EVO Plus NVMe on `forge-head` |
+| Storage device | Verified Samsung SSD 950 PRO 512GB on `forge-head` (`S2GMNCAGB06236R`) |
 | Physical allocation | Dedicated 32 GiB partition |
 | Filesystem | ext4 |
 | Host mount point | `/mnt/signalforge-prometheus` |
@@ -90,7 +92,7 @@ Before destructive disk work, the implementation must identify the NVMe by model
 
 The dedicated partition will be formatted ext4 and mounted by UUID at `/mnt/signalforge-prometheus`. The Prometheus data subdirectory must be created only after the NVMe filesystem is mounted. It must not exist on the underlying root filesystem, because an otherwise valid path could allow fallback writes to the SD card when the NVMe mount is absent.
 
-The initial 32 GiB partition leaves most of the 2 TB NVMe unallocated for later lab uses. Future capacity changes require expanding the partition and filesystem deliberately; changing only the PV capacity is not a physical resize mechanism.
+The initial 32 GiB partition leaves most of the 512 GB NVMe unallocated for later lab uses. Future capacity changes require expanding the partition and filesystem deliberately; changing only the PV capacity is not a physical resize mechanism.
 
 ## Backup and recovery strategy
 

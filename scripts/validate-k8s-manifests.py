@@ -18,6 +18,12 @@ PROMETHEUS_NAMESPACE = "forge-observability"
 PROMETHEUS_APP = "prometheus"
 PROMETHEUS_IMAGE = "prom/prometheus:v3.13.2"
 PROMETHEUS_ROLE = "prometheus-restaurant-pod-reader"
+PROMETHEUS_STORAGE_CLASS = "signalforge-local-nvme"
+PROMETHEUS_PERSISTENT_VOLUME = "prometheus-local-nvme"
+PROMETHEUS_PERSISTENT_VOLUME_CLAIM = "prometheus-data"
+PROMETHEUS_STORAGE_NODE = "forge-head"
+PROMETHEUS_LOCAL_PATH = "/mnt/signalforge-prometheus/data"
+PROMETHEUS_STORAGE_PREFLIGHT = "prometheus-storage-preflight"
 
 METRICS_SERVER_NAMESPACE = "kube-system"
 METRICS_SERVER_APP = "metrics-server"
@@ -41,6 +47,10 @@ REQUIRED_PROMETHEUS_FILES = [
     "restaurant-pod-reader-role.yaml",
     "restaurant-pod-reader-role-binding.yaml",
     "prometheus-config.yaml",
+    "prometheus-storage-class.yaml",
+    "prometheus-local-pv.yaml",
+    "prometheus-data-pvc.yaml",
+    "prometheus-storage-preflight-pod.yaml",
     "prometheus-deployment.yaml",
     "prometheus-service.yaml",
 ]
@@ -190,6 +200,10 @@ def validate_prometheus_manifests() -> None:
     role = load_yaml(PROMETHEUS_MANIFEST_DIR / "restaurant-pod-reader-role.yaml")
     role_binding = load_yaml(PROMETHEUS_MANIFEST_DIR / "restaurant-pod-reader-role-binding.yaml")
     config_map = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-config.yaml")
+    storage_class = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-storage-class.yaml")
+    persistent_volume = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-local-pv.yaml")
+    persistent_volume_claim = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-data-pvc.yaml")
+    storage_preflight = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-storage-preflight-pod.yaml")
     deployment = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-deployment.yaml")
     service = load_yaml(PROMETHEUS_MANIFEST_DIR / "prometheus-service.yaml")
 
@@ -277,20 +291,147 @@ def validate_prometheus_manifests() -> None:
 
     ok("Prometheus scrape configuration is valid")
 
+    require(storage_class.get("kind") == "StorageClass", "Prometheus StorageClass manifest must be kind StorageClass")
+    require(storage_class.get("metadata", {}).get("name") == PROMETHEUS_STORAGE_CLASS, "Prometheus StorageClass name mismatch")
+    require(storage_class.get("provisioner") == "kubernetes.io/no-provisioner", "Prometheus StorageClass must use no-provisioner")
+    require(storage_class.get("reclaimPolicy") == "Retain", "Prometheus StorageClass reclaim policy must be Retain")
+    require(storage_class.get("volumeBindingMode") == "WaitForFirstConsumer", "Prometheus StorageClass must use WaitForFirstConsumer")
+    storage_annotations = storage_class.get("metadata", {}).get("annotations", {})
+    require(
+        storage_annotations.get("storageclass.kubernetes.io/is-default-class") != "true"
+        and storage_annotations.get("storageclass.beta.kubernetes.io/is-default-class") != "true",
+        "Prometheus StorageClass must not be a default StorageClass",
+    )
+    ok("Prometheus non-default local StorageClass manifest is valid")
+
+    require(persistent_volume.get("kind") == "PersistentVolume", "Prometheus PV manifest must be kind PersistentVolume")
+    require(persistent_volume.get("metadata", {}).get("name") == PROMETHEUS_PERSISTENT_VOLUME, "Prometheus PV name mismatch")
+    pv_spec = persistent_volume.get("spec", {})
+    require(pv_spec.get("capacity", {}).get("storage") == "30Gi", "Prometheus PV capacity must be 30Gi")
+    require(pv_spec.get("volumeMode") == "Filesystem", "Prometheus PV volumeMode must be Filesystem")
+    require(pv_spec.get("accessModes") == ["ReadWriteOnce"], "Prometheus PV must use only ReadWriteOnce")
+    require(pv_spec.get("persistentVolumeReclaimPolicy") == "Retain", "Prometheus PV reclaim policy must be Retain")
+    require(pv_spec.get("storageClassName") == PROMETHEUS_STORAGE_CLASS, "Prometheus PV StorageClass mismatch")
+    require(pv_spec.get("local", {}).get("path") == PROMETHEUS_LOCAL_PATH, "Prometheus PV local path mismatch")
+    require(
+        pv_spec.get("claimRef") == {
+            "namespace": PROMETHEUS_NAMESPACE,
+            "name": PROMETHEUS_PERSISTENT_VOLUME_CLAIM,
+        },
+        "Prometheus PV must be reserved for the intended PVC",
+    )
+
+    node_terms = pv_spec.get("nodeAffinity", {}).get("required", {}).get("nodeSelectorTerms", [])
+    require(len(node_terms) == 1, "Prometheus PV must contain exactly one required node selector term")
+    node_expressions = node_terms[0].get("matchExpressions", [])
+    require(
+        node_expressions == [
+            {
+                "key": "kubernetes.io/hostname",
+                "operator": "In",
+                "values": [PROMETHEUS_STORAGE_NODE],
+            }
+        ],
+        "Prometheus PV must use exact forge-head hostname node affinity",
+    )
+    ok("Prometheus static local PersistentVolume manifest is valid")
+
+    require(persistent_volume_claim.get("kind") == "PersistentVolumeClaim", "Prometheus PVC manifest must be kind PersistentVolumeClaim")
+    require(persistent_volume_claim.get("metadata", {}).get("name") == PROMETHEUS_PERSISTENT_VOLUME_CLAIM, "Prometheus PVC name mismatch")
+    require(persistent_volume_claim.get("metadata", {}).get("namespace") == PROMETHEUS_NAMESPACE, "Prometheus PVC namespace mismatch")
+    pvc_spec = persistent_volume_claim.get("spec", {})
+    require(pvc_spec.get("accessModes") == ["ReadWriteOnce"], "Prometheus PVC must request only ReadWriteOnce")
+    require(pvc_spec.get("volumeMode") == "Filesystem", "Prometheus PVC volumeMode must be Filesystem")
+    require(pvc_spec.get("storageClassName") == PROMETHEUS_STORAGE_CLASS, "Prometheus PVC StorageClass mismatch")
+    require(pvc_spec.get("volumeName") == PROMETHEUS_PERSISTENT_VOLUME, "Prometheus PVC must name the dedicated PV")
+    require(pvc_spec.get("resources", {}).get("requests", {}).get("storage") == "30Gi", "Prometheus PVC request must be 30Gi")
+    ok("Prometheus reserved PersistentVolumeClaim manifest is valid")
+
+    require(storage_preflight.get("kind") == "Pod", "Prometheus storage preflight manifest must be kind Pod")
+    require(storage_preflight.get("metadata", {}).get("name") == PROMETHEUS_STORAGE_PREFLIGHT, "Prometheus storage preflight Pod name mismatch")
+    require(storage_preflight.get("metadata", {}).get("namespace") == PROMETHEUS_NAMESPACE, "Prometheus storage preflight Pod namespace mismatch")
+    preflight_spec = storage_preflight.get("spec", {})
+    require(preflight_spec.get("restartPolicy") == "Never", "Prometheus storage preflight Pod restart policy must be Never")
+    require("nodeSelector" not in preflight_spec, "Storage preflight placement must come from PV node affinity")
+    require(
+        preflight_spec.get("tolerations") == [
+            {
+                "key": "node-role.kubernetes.io/control-plane",
+                "operator": "Exists",
+                "effect": "NoSchedule",
+            }
+        ],
+        "Storage preflight Pod must have only the exact control-plane toleration",
+    )
+    preflight_security_context = preflight_spec.get("securityContext", {})
+    require(preflight_security_context.get("runAsNonRoot") is True, "Storage preflight Pod must run as non-root")
+    require(preflight_security_context.get("runAsUser") == 65534, "Storage preflight UID must be 65534")
+    require(preflight_security_context.get("runAsGroup") == 65534, "Storage preflight GID must be 65534")
+    require(preflight_security_context.get("fsGroup") == 65534, "Storage preflight fsGroup must be 65534")
+    require(
+        preflight_security_context.get("fsGroupChangePolicy") == "OnRootMismatch",
+        "Storage preflight must avoid unnecessary recursive ownership changes",
+    )
+    preflight_containers = preflight_spec.get("containers", [])
+    require(len(preflight_containers) == 1, "Storage preflight Pod must have exactly one container")
+    preflight_container = preflight_containers[0]
+    require(preflight_container.get("image") == "busybox:1.37.0", "Storage preflight image must be pinned")
+    require(
+        ".signalforge-storage-preflight" in "\n".join(preflight_container.get("args", [])),
+        "Storage preflight must write and verify its marker",
+    )
+    require("readinessProbe" in preflight_container, "Storage preflight container must gate readiness on its write test")
+    preflight_mounts = [mount for mount in preflight_container.get("volumeMounts", []) if mount.get("name") == "storage"]
+    require(
+        preflight_mounts == [{"name": "storage", "mountPath": "/prometheus"}],
+        "Storage preflight container must mount the PVC at /prometheus",
+    )
+    preflight_volumes = [volume for volume in preflight_spec.get("volumes", []) if volume.get("name") == "storage"]
+    require(len(preflight_volumes) == 1, "Storage preflight Pod must define one storage volume")
+    require(
+        preflight_volumes[0].get("persistentVolumeClaim", {}).get("claimName")
+        == PROMETHEUS_PERSISTENT_VOLUME_CLAIM,
+        "Storage preflight Pod must mount the Prometheus PVC",
+    )
+    ok("Prometheus storage first-consumer preflight manifest is valid")
+
     require(deployment.get("kind") == "Deployment", "prometheus-deployment.yaml must be kind Deployment")
     require(deployment.get("metadata", {}).get("name") == PROMETHEUS_APP, "Prometheus Deployment name mismatch")
     require(deployment.get("metadata", {}).get("namespace") == PROMETHEUS_NAMESPACE, "Prometheus Deployment namespace mismatch")
     require(deployment.get("spec", {}).get("replicas") == 1, "Prometheus must use one replica")
+    require(deployment.get("spec", {}).get("strategy", {}).get("type") == "Recreate", "Prometheus must use the Recreate strategy")
 
     pod_spec = deployment.get("spec", {}).get("template", {}).get("spec", {})
     require(pod_spec.get("serviceAccountName") == PROMETHEUS_APP, "Prometheus Deployment ServiceAccount mismatch")
+    require("nodeSelector" not in pod_spec, "Prometheus placement must come from PV node affinity, not a nodeSelector")
+    require(
+        pod_spec.get("tolerations") == [
+            {
+                "key": "node-role.kubernetes.io/control-plane",
+                "operator": "Exists",
+                "effect": "NoSchedule",
+            }
+        ],
+        "Prometheus must have only the exact control-plane NoSchedule toleration",
+    )
+
+    pod_security_context = pod_spec.get("securityContext", {})
+    require(pod_security_context.get("runAsNonRoot") is True, "Prometheus Pod must run as non-root")
+    require(pod_security_context.get("runAsUser") == 65534, "Prometheus runtime UID must be 65534")
+    require(pod_security_context.get("runAsGroup") == 65534, "Prometheus runtime GID must be 65534")
+    require(pod_security_context.get("fsGroup") == 65534, "Prometheus fsGroup must be 65534")
+    require(
+        pod_security_context.get("fsGroupChangePolicy") == "OnRootMismatch",
+        "Prometheus must avoid unnecessary recursive volume ownership changes",
+    )
+
     containers = pod_spec.get("containers", [])
     require(len(containers) == 1, "Prometheus Deployment should have exactly one container")
     container = containers[0]
     require(container.get("name") == PROMETHEUS_APP, "Prometheus container name mismatch")
     require(container.get("image") == PROMETHEUS_IMAGE, "Prometheus image must be pinned to the approved version")
-    require("--storage.tsdb.retention.time=48h" in container.get("args", []), "Prometheus retention time must be 48h")
-    require("--storage.tsdb.retention.size=750MB" in container.get("args", []), "Prometheus retention size must be 750MB")
+    require("--storage.tsdb.retention.time=30d" in container.get("args", []), "Prometheus retention time must be 30d")
+    require("--storage.tsdb.retention.size=24GB" in container.get("args", []), "Prometheus retention size must be 24GB")
     require("readinessProbe" in container, "Prometheus container missing readinessProbe")
     require("livenessProbe" in container, "Prometheus container missing livenessProbe")
 
@@ -302,7 +443,11 @@ def validate_prometheus_manifests() -> None:
 
     storage_volumes = [volume for volume in pod_spec.get("volumes", []) if volume.get("name") == "storage"]
     require(len(storage_volumes) == 1, "Prometheus Deployment must define one storage volume")
-    require(storage_volumes[0].get("emptyDir", {}).get("sizeLimit") == "1Gi", "Prometheus emptyDir size limit must be 1Gi")
+    require(
+        storage_volumes[0].get("persistentVolumeClaim", {}).get("claimName") == PROMETHEUS_PERSISTENT_VOLUME_CLAIM,
+        "Prometheus storage volume must use the dedicated PVC",
+    )
+    require("emptyDir" not in storage_volumes[0], "Prometheus storage must not use emptyDir")
     ok("Prometheus Deployment manifest is valid")
 
     require(service.get("kind") == "Service", "prometheus-service.yaml must be kind Service")

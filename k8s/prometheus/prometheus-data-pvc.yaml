@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-data
+  namespace: forge-observability
+  labels:
+    app: prometheus
+    project: signalforge
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: signalforge-local-nvme
+  volumeName: prometheus-local-nvme
+  resources:
+    requests:
+      storage: 30Gi

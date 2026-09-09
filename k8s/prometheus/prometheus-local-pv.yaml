@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prometheus-local-nvme
+  labels:
+    app: prometheus
+    project: signalforge
+spec:
+  capacity:
+    storage: 30Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: signalforge-local-nvme
+  claimRef:
+    namespace: forge-observability
+    name: prometheus-data
+  local:
+    path: /mnt/signalforge-prometheus/data
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - forge-head

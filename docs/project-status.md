@@ -76,11 +76,11 @@ The project has moved from basic workload deployment into repeatable engineering
 - Observed Metrics Server footprint: 4m CPU and 21 MiB memory
 - `kubectl top nodes` and `kubectl top pods`: available
 
-## Approved persistent-storage design
+## Persistent-storage implementation
 
-Milestone 025 selected but did not deploy the following Prometheus storage target:
+Milestone 025 selected the following Prometheus storage target:
 
-- Dedicated 32 GiB ext4 partition on the `forge-head` Samsung 970 EVO Plus NVMe
+- Dedicated 32 GiB ext4 partition on the verified `forge-head` Samsung SSD 950 PRO 512GB NVMe
 - Static 30 GiB Kubernetes `local` PV and PVC
 - Non-default `signalforge-local-nvme` StorageClass with `WaitForFirstConsumer`
 - `ReadWriteOnce` access, `Retain` reclaim policy, and exact `forge-head` PV node affinity
@@ -90,9 +90,22 @@ Milestone 025 selected but did not deploy the following Prometheus storage targe
 - Recovery objectives of RPO at or below 7 days and RTO at or below 1 hour
 - Existing ClusterIP and `kubectl port-forward` access model preserved
 
+Milestone 026 host preparation is complete:
+
+- Verified `/dev/nvme0n1` as Samsung SSD 950 PRO 512GB, serial `S2GMNCAGB06236R`
+- Backed up the prior partition table before the explicitly approved disk erase
+- Completed a destructive four-pattern write/read test of the new 32 GiB partition with zero bad blocks
+- Confirmed the NVMe media-error count remained 215 before and after that test
+- Created ext4 filesystem UUID `4f2feee5-72a7-4f32-a351-b4253c4a0854`
+- Mounted the filesystem by UUID at `/mnt/signalforge-prometheus`
+- Created `data` as `65534:65534` with mode `0750` and verified writes as that identity
+- Proved the data path disappears when the NVMe is unmounted, preventing silent SD-card fallback writes
+
+The live Prometheus Deployment still uses `emptyDir` until the Kubernetes resources are applied and verified.
+
 ## Immediate next step
 
-Implement Milestone 026 only after verifying the NVMe device identity, partition table, filesystems, mounts, and absence of needed data. Then prove the PVC is correctly bound, the Pod runs on `forge-head`, history survives Pod replacement, backups are recoverable, and all three Restaurant API targets remain healthy.
+Apply the Milestone 026 StorageClass, local PV, and reserved PVC. Only after the claim is `Bound`, cut Prometheus over to the claim and prove node placement, history across Pod replacement, backup recoverability, and three healthy Restaurant API targets.
 
 ## Known temporary limitation
 

@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-targets", "metrics-ui", "metrics-server-deploy", "metrics-server-status", "top")]
+    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-storage", "metrics-persistence", "metrics-targets", "metrics-ui", "metrics-server-deploy", "metrics-server-status", "top")]
     [string]$Command,
 
     [string]$Namespace = "forge-restaurant",
@@ -124,10 +124,25 @@ switch ($Command) {
         Show-Header "Prometheus resources"
         kubectl get deployment,pods,service -n $MetricsNamespace -l app=$MetricsDeployment -o wide
 
+        Show-Header "Prometheus persistent storage"
+        kubectl get storageclass signalforge-local-nvme
+        kubectl get pv prometheus-local-nvme
+        kubectl get pvc prometheus-data -n $MetricsNamespace
+
         Show-Header "Prometheus Pod-discovery permission"
         kubectl auth can-i list pods `
             -n $Namespace `
             --as=system:serviceaccount:${MetricsNamespace}:prometheus
+    }
+
+    "metrics-storage" {
+        Show-Header "Prometheus persistent-storage validation"
+        & "$ScriptDir\test-prometheus-storage.ps1" -Namespace $MetricsNamespace
+    }
+
+    "metrics-persistence" {
+        Show-Header "Prometheus Pod-replacement persistence test"
+        & "$ScriptDir\test-prometheus-persistence.ps1" -Namespace $MetricsNamespace
     }
 
     "metrics-targets" {

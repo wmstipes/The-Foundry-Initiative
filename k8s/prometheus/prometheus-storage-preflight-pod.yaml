@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: prometheus-storage-preflight
+  namespace: forge-observability
+  labels:
+    app: prometheus-storage-preflight
+    project: signalforge
+spec:
+  restartPolicy: Never
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+    fsGroup: 65534
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  containers:
+  - name: storage-preflight
+    image: busybox:1.37.0
+    imagePullPolicy: IfNotPresent
+    command:
+    - /bin/sh
+    - -c
+    args:
+    - |
+      set -eu
+      marker=/prometheus/.signalforge-storage-preflight
+      printf 'signalforge-storage-preflight\n' > "$marker"
+      sync
+      test "$(cat "$marker")" = signalforge-storage-preflight
+      rm "$marker"
+      touch /tmp/signalforge-storage-preflight-ready
+      sleep 300
+    readinessProbe:
+      exec:
+        command:
+        - /bin/sh
+        - -c
+        - test -f /tmp/signalforge-storage-preflight-ready
+      periodSeconds: 2
+      timeoutSeconds: 1
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+    resources:
+      requests:
+        cpu: 5m
+        memory: 8Mi
+      limits:
+        cpu: 50m
+        memory: 32Mi
+    volumeMounts:
+    - name: storage
+      mountPath: /prometheus
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: prometheus-data

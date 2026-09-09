@@ -10,12 +10,12 @@ These manifests deploy a single Prometheus server for the Restaurant API.
 - Pod discovery limited to `forge-restaurant`
 - Scrape target limited to Restaurant API containers on the named `http` port
 - Scrape interval: 30 seconds
-- Retention time: 48 hours
-- Retention size: 750 MB
-- Storage: 1 GiB `emptyDir`
+- Retention time: 30 days
+- Retention size: 24 GB
+- Storage: static 30 GiB local PV on the `forge-head` NVMe
 - Access: `kubectl port-forward` only
 
-No Grafana, Alertmanager, node-exporter, kube-state-metrics, operator, or persistent storage is installed in this milestone.
+No Grafana, Alertmanager, node-exporter, kube-state-metrics, Prometheus Operator, dynamic provisioner, or distributed storage platform is installed.
 
 ## Resources
 
@@ -24,8 +24,31 @@ No Grafana, Alertmanager, node-exporter, kube-state-metrics, operator, or persis
 - `restaurant-pod-reader-role.yaml` grants read-only Pod discovery in `forge-restaurant`.
 - `restaurant-pod-reader-role-binding.yaml` binds that Role to the Prometheus ServiceAccount.
 - `prometheus-config.yaml` defines the Restaurant API scrape job.
-- `prometheus-deployment.yaml` runs Prometheus with bounded resources and retention.
+- `prometheus-storage-class.yaml` defines the non-default, no-provisioner local StorageClass.
+- `prometheus-local-pv.yaml` represents `/mnt/signalforge-prometheus/data` on `forge-head` and retains its data after claim release.
+- `prometheus-data-pvc.yaml` reserves the named local PV for Prometheus.
+- `prometheus-storage-preflight-pod.yaml` is a temporary first consumer that binds and write-tests the PVC before cutover.
+- `prometheus-deployment.yaml` mounts the PVC and runs Prometheus with bounded resources and retention.
 - `prometheus-service.yaml` provides an internal-only ClusterIP.
+
+## Host prerequisite
+
+The storage manifests assume that `forge-head` already has the dedicated ext4 filesystem mounted at `/mnt/signalforge-prometheus` and that its `data` directory is writable only by the Prometheus runtime identity (`65534:65534`). The data directory must not exist on the underlying root filesystem when the NVMe is unmounted.
+
+For this cluster, the verified filesystem is:
+
+```text
+Device: /dev/nvme0n1p1
+Model: Samsung SSD 950 PRO 512GB
+Serial: S2GMNCAGB06236R
+Filesystem UUID: 4f2feee5-72a7-4f32-a351-b4253c4a0854
+Mount: /mnt/signalforge-prometheus
+Data path: /mnt/signalforge-prometheus/data
+```
+
+Host partitioning and formatting are intentionally not automated by the deployment helper.
+
+Because the StorageClass uses `WaitForFirstConsumer`, the helper briefly creates the preflight Pod before applying the new Deployment. PV node affinity schedules that Pod on `forge-head`; it writes and removes a marker as UID/GID 65534, then the helper removes it. A binding, scheduling, mount, or write failure stops the operation while the existing `emptyDir`-backed Prometheus Deployment is still unchanged.
 
 ## Deploy
 
@@ -39,10 +62,19 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-deploy
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-status
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-storage
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-targets
 ```
 
 The target query should return `3` while all three Restaurant API Pods are ready.
+
+After the initial deployment, prove that a known sample survives deliberate Pod replacement:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-persistence
+```
+
+This command deletes only the current Prometheus Pod. The Deployment recreates it against the same retained PVC, and the test queries a sample recorded before replacement at its original timestamp.
 
 ## Open the Prometheus UI
 
@@ -52,8 +84,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-ui
 
 Then open `http://localhost:9090`.
 
-## Expected data-loss behavior
+## Persistence and availability
 
-Metrics history is intentionally ephemeral. Replacing or rescheduling the Prometheus Pod deletes its stored history.
+Replacing the Prometheus Pod preserves history on the local PV. The volume is node-local rather than replicated, so Prometheus remains unavailable while `forge-head` or its NVMe is unavailable.
 
-Milestone 025 approved a static local-PV design backed by a dedicated ext4 partition on the `forge-head` NVMe. These manifests remain unchanged until Milestone 026 verifies the physical device and implements the design. Do not infer from the approved plan that persistent storage is already active.
+The PV and StorageClass both use `Retain`. Deleting a claim does not authorize deletion of `/mnt/signalforge-prometheus/data`; recovery and reuse are deliberate operator actions.

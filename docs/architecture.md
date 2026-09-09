@@ -63,7 +63,9 @@ Prometheus is deliberately lightweight at this stage. Grafana, Alertmanager, nod
 
 Milestone 025 selected a static Kubernetes `local` PersistentVolume backed by a dedicated ext4 partition on the `forge-head` NVMe. The target design uses a non-default `WaitForFirstConsumer` StorageClass, a 30 GiB `ReadWriteOnce` claim, `Retain` reclaim policy, exact PV node affinity for `forge-head`, and Prometheus retention of 30 days or 24 GB.
 
-This is an approved future state, not the live state. No partition, StorageClass, PV, or PVC has been created, and the current Prometheus Deployment still uses its 1 GiB `emptyDir`. Milestone 026 will implement the design only after verifying the NVMe identity and existing contents.
+The host-storage portion is prepared. Physical inventory identified the installed device as a 512 GB Samsung SSD 950 PRO, and its first 32 GiB partition is an ext4 filesystem mounted by UUID at `/mnt/signalforge-prometheus`. The `data` directory exists only on that mounted filesystem and is owned by Prometheus's verified `65534:65534` runtime identity.
+
+The Kubernetes cutover is not yet live. No StorageClass, PV, or PVC has been created in the cluster, and the current Prometheus Deployment still uses its 1 GiB `emptyDir`. Milestone 026 will apply and validate those resources before replacing the existing storage.
 
 The design provides persistence across Pod replacement, not high availability. If `forge-head` is unavailable, Prometheus remains unavailable because the local volume cannot move to another node. Weekly cold backups will be copied off the head node so an NVMe failure does not make the node-local copy the only recovery source.
 
@@ -131,7 +133,7 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 
 ## Current constraints
 
-- Prometheus storage is still ephemeral and is lost when its Pod is replaced or rescheduled; the approved static local-PV design has not yet been implemented.
+- Prometheus storage is still ephemeral and is lost when its Pod is replaced or rescheduled; the NVMe host filesystem is ready, but the static local-PV cutover is not yet live.
 - NodePort is appropriate for the private lab but is not the long-term ingress design.
 - Metrics Server provides current CPU and memory samples but no historical resource-metrics store.
 - The upstream APIService uses `insecureSkipTLSVerify` for the API server-to-Metrics Server connection because the serving certificate is generated dynamically. This is separate from the secured Metrics Server-to-kubelet path.

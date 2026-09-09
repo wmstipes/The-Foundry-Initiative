@@ -26,8 +26,13 @@ spec:
         runAsUser: 65534
         runAsGroup: 65534
         fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
+      tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
       containers:
       - name: prometheus
         image: prom/prometheus:v3.13.2
@@ -35,8 +40,8 @@ spec:
         args:
         - --config.file=/etc/prometheus/prometheus.yml
         - --storage.tsdb.path=/prometheus
-        - --storage.tsdb.retention.time=48h
-        - --storage.tsdb.retention.size=750MB
+        - --storage.tsdb.retention.time=30d
+        - --storage.tsdb.retention.size=24GB
         ports:
         - name: web
           containerPort: 9090
@@ -77,5 +82,5 @@ spec:
         configMap:
           name: prometheus-config
       - name: storage
-        emptyDir:
-          sizeLimit: 1Gi
+        persistentVolumeClaim:
+          claimName: prometheus-data

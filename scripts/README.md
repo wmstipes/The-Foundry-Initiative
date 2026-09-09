@@ -32,11 +32,13 @@ Prometheus commands:
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-deploy
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-status
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-storage
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-persistence
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-targets
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-ui
 ```
 
-`metrics-ui` keeps running while the port-forward is open. Press Ctrl+C to stop it.
+`metrics-storage` checks the static StorageClass, PV, PVC, node placement, retention, and ClusterIP-only access. `metrics-persistence` deliberately replaces the Prometheus Pod and proves that a known historical sample survives. `metrics-ui` keeps running while the port-forward is open; press Ctrl+C to stop it.
 
 Kubernetes resource-metrics commands:
 
@@ -53,6 +55,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 top
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\deploy-restaurant-api.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\deploy-prometheus.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\test-prometheus-storage.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\test-prometheus-persistence.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\test-prometheus-targets.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\deploy-metrics-server.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\test-metrics-server.ps1
