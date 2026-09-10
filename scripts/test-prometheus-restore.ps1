@@ -82,7 +82,7 @@ $BlockMetadata = @(
 )
 
 if ($BlockMetadata.Count -eq 0) {
-    throw "The backup contains no compacted TSDB block. Create a newer backup after at least two hours of collection, then rerun this validation."
+    throw "The backup contains no compacted TSDB block. Run metrics-backup-ready, then create a newer backup when it passes."
 }
 
 Write-Host "Validated local archive checksum: $ActualHash"
@@ -162,15 +162,17 @@ exit /b %errorlevel%
         throw "Backup extraction failed with exit code $ExtractExitCode"
     }
 
-    kubectl exec -n $Namespace $ValidationPod -- /bin/sh -c 'test -d /validation/wal && test -n "$(ls -A /validation/wal)"'
+    # Use direct argv calls: Windows PowerShell can strip nested sh -c quotes.
+    $RestoredWalEntries = @(kubectl exec -n $Namespace $ValidationPod -- /bin/ls -A /validation/wal)
 
-    if ($LASTEXITCODE -ne 0) {
+    if ($LASTEXITCODE -ne 0 -or $RestoredWalEntries.Count -eq 0) {
         throw "Restored TSDB does not contain a readable WAL"
     }
 
-    kubectl exec -n $Namespace $ValidationPod -- /bin/sh -c 'set -- /validation/*/meta.json; test -f "$1"'
+    $RestoredMetadataPath = "/validation/" + $BlockMetadata[0].Substring(2)
+    $RestoredMetadata = kubectl exec -n $Namespace $ValidationPod -- /bin/cat $RestoredMetadataPath
 
-    if ($LASTEXITCODE -ne 0) {
+    if ($LASTEXITCODE -ne 0 -or -not $RestoredMetadata) {
         throw "Restored TSDB does not contain readable block metadata"
     }
 
