@@ -134,7 +134,11 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Milestone 028 is complete. Lightweight Grafana is deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return. The next bounded Phase 4 step is to plan a limited alerting layer using the normal behavior and thresholds observed through Prometheus and Grafana.
+Milestone 028 is complete. Lightweight Grafana is deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
+
+The Milestone 029 [limited-alerting design](observability/limited-alerting-specification.md) was accepted by Mike on 2026-09-10. It covers reduced scrape coverage and no-healthy-target conditions using the manual three-replica baseline. Five-minute and two-minute delays remain provisional, not measured operational thresholds. Repository commit and merge remain pending. Performance alerts, notification channels, Alertmanager, and broader monitoring coverage remain deferred. Design acceptance is not authorization to implement or activate alerting.
+
+This is documentation-only work: no alert rules or cluster changes are introduced, and the current live observability state above is unchanged. Review the [Milestone 029 acceptance checklist](milestones/milestone-029-limited-alerting-planning.md) before recording planning completion or authorizing implementation.
 
 ## Known temporary limitation
 

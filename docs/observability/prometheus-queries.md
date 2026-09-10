@@ -45,20 +45,27 @@ sum by (method, path, status) (
 Calculate the percentage of application requests returning HTTP 5xx responses:
 
 ```promql
-100
-*
-(
-  sum(rate(restaurant_api_requests_total{traffic="application",status=~"5.."}[5m]))
-  or vector(0)
+100 * (
+  sum(rate(restaurant_api_requests_total{
+    job="restaurant-api",namespace="forge-restaurant",
+    traffic="application",status=~"5.."
+  }[5m]))
+  or
+  (0 * sum(rate(restaurant_api_requests_total{
+    job="restaurant-api",namespace="forge-restaurant",traffic="application"
+  }[5m])))
 )
 /
-clamp_min(
-  sum(rate(restaurant_api_requests_total{traffic="application"}[5m])),
-  0.001
+(
+  sum(rate(restaurant_api_requests_total{
+    job="restaurant-api",namespace="forge-restaurant",traffic="application"
+  }[5m])) > 0
 )
 ```
 
-The denominator floor prevents division by zero during idle periods.
+This matches the dashboard expression accepted in Milestone 028. Positive traffic with no 5xx series gives zero percent; idle traffic or insufficient samples gives no value. The comparison deliberately omits `bool`, retaining the actual positive denominator. There is no denominator floor to bias very low positive rates. Inspect target health to distinguish idle traffic from missing collection; a query error is not a successful empty result.
+
+The other examples below remain historical query examples, not approved alert expressions. In particular, the average-latency denominator floor can bias very low rates and must not be adopted as an alert threshold calculation without review. See the [limited-alerting specification](limited-alerting-specification.md) for Milestone 029's planning-only scope.
 
 ## Application p95 latency
 
