@@ -43,6 +43,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 026: Persistent Prometheus storage implementation and recovery validation
 - 027: Lightweight Grafana design and dashboard requirements accepted
 - 028: Lightweight Grafana implementation, persistence and recovery validation
+- 029: Limited alerting design accepted and merged; no alert activation
 
 ## Current observability state
 
@@ -136,9 +137,9 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 Milestone 028 is complete. Lightweight Grafana is deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
-The Milestone 029 [limited-alerting design](observability/limited-alerting-specification.md) was accepted by Mike on 2026-09-10. It covers reduced scrape coverage and no-healthy-target conditions using the manual three-replica baseline. Five-minute and two-minute delays remain provisional, not measured operational thresholds. Repository commit and merge remain pending. Performance alerts, notification channels, Alertmanager, and broader monitoring coverage remain deferred. Design acceptance is not authorization to implement or activate alerting.
+The Milestone 029 [limited-alerting design](observability/limited-alerting-specification.md) was accepted by Mike and merged through PR #4 at `1837868` on 2026-09-10. It covers reduced scrape coverage and no-healthy-target conditions using the manual three-replica baseline. Five-minute and two-minute delays remain provisional, not measured operational thresholds. Performance alerts, notification channels, Alertmanager, and broader monitoring coverage remain deferred.
 
-This is documentation-only work: no alert rules or cluster changes are introduced, and the current live observability state above is unchanged. Review the [Milestone 029 acceptance checklist](milestones/milestone-029-limited-alerting-planning.md) before recording planning completion or authorizing implementation.
+[Milestone 030](milestones/milestone-030-limited-alerting-implementation.md) is in progress with offline candidate rules, generated fixtures, static guardrails, and CI validation tooling. Available local source checks passed; pinned-promtool execution and CI results remain pending. The candidates are not wired into Prometheus, and no cluster changes have been made. The live observability state above is unchanged. Obtain offline execution evidence before reviewing and separately approving activation.
 
 ## Known temporary limitation
 

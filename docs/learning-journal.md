@@ -161,3 +161,11 @@ Lessons: a metric exposed by Prometheus is not automatically stored in its query
 Recovery evidence must stay precise: six blocks were listed and the newest analyzed, but full service recovery and the one-hour RTO were not measured. Weekly backups remain manual. The temporary rollback Pod became Ready; its target check was blocked, while the restored persistent collector passed all three-target checks and loaded six retained blocks.
 
 Next small step: plan lightweight Grafana and dashboard requirements for proposed Milestone 027.
+
+## 2026-09-10 - Milestone 030 offline preparation
+
+Milestone 029 was accepted and merged at `1837868`. The next increment translates its two scrape-coverage conditions into unactivated rules and synthetic test cases.
+
+Engineering notes: alert identity belongs in stable labels; changing diagnostic counts belong in annotations. Failed scrapes, missing discovery series, and stopped evaluation are different situations. A transition between warning and critical conditions starts the other rule's independent delay, so an explicit pending-only interval is part of the accepted design. The critical expression's absent branch does not return a healthy-target count and must not be described as one.
+
+Source-level tests and inactive-configuration guards passed, but they do not prove PromQL behavior. The preparation environment lacked promtool and Docker; pinned evaluator execution remains a CI/operator gate. Next: obtain that evidence before reviewing any rule-loading or cluster-change proposal.

@@ -2,7 +2,7 @@
 
 Started: 2026-09-10
 
-Status: Design accepted on 2026-09-10; repository commit and merge pending.
+Status: Complete. Design accepted and merged on 2026-09-10.
 
 ## Goal
 
@@ -28,7 +28,9 @@ The archive permits source review but is not current live-cluster evidence. The 
 
 The operator applied the documentation patch successfully and reported a clean staged whitespace check with six Markdown files changed (195 insertions, 14 deletions before this acceptance update). Local checks also verified patch application against the supplied archive, relative links, and equivalence of the revised error-percentage expression to the existing dashboard source. No promtool execution is claimed.
 
-Next: commit and merge the accepted planning documents through the repository review workflow. A later, separately approved implementation step must begin with offline rule validation and a bounded activation plan; notification design remains deferred.
+Completion evidence: commit `037d7c1` was merged through [PR #4](https://github.com/wmstipes/The-Foundry-Initiative/pull/4) at `1837868`. The operator confirmed clean, synchronized `main`; GitHub independently confirms the merged PR. Planning completion does not claim promtool execution or alert activation.
+
+Next: [Milestone 030](milestone-030-limited-alerting-implementation.md) begins with offline rule preparation and validation. Live wiring and activation remain behind a separate review/approval gate; notification design remains deferred.
 
 ## Acceptance checklist
 
@@ -36,5 +38,5 @@ Next: commit and merge the accepted planning documents through the repository re
 - [x] Draft bounded conditions, limitations, response guidance, and future offline test cases.
 - [x] Keep changes confined to Markdown documentation.
 - [x] Operator accepts the scope, provisional delays, blind spots, and validation contract.
-- [ ] Documentation patch is applied, reviewed, and version controlled on the intended branch.
+- [x] Documentation patch is applied, reviewed, and version controlled on the intended branch.
 - [x] Record planning acceptance and a separately scoped next step; do not silently activate rules.

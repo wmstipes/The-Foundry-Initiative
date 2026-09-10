@@ -1,0 +1,58 @@
+name: Offline Alert Rule Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'monitoring/alerts/**'
+      - 'scripts/*alert*'
+      - 'tests/test_alert_rules.py'
+      - 'k8s/prometheus/**'
+      - 'k8s/grafana/config/grafana.ini'
+      - '.github/workflows/alert-rule-validation.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'monitoring/alerts/**'
+      - 'scripts/*alert*'
+      - 'tests/test_alert_rules.py'
+      - 'k8s/prometheus/**'
+      - 'k8s/grafana/config/grafana.ini'
+      - '.github/workflows/alert-rule-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate offline alert rules
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Install existing validation dependency
+        run: python -m pip install pyyaml==6.0.2
+      - name: Validate scope and negative regressions
+        run: |
+          python scripts/validate-alert-rules.py
+          python -m unittest discover -s tests -p 'test_alert_rules.py'
+      - name: Prepare offline fixtures
+        run: python scripts/export-alert-rule-tests.py "$RUNNER_TEMP/alerts.test.yaml"
+      - name: Validate with pinned Prometheus tooling and no container network
+        shell: bash
+        run: |
+          set -euo pipefail
+          image=prom/prometheus:v3.13.2
+          docker pull "$image"
+          options=(--rm --network none --read-only --cap-drop ALL
+            --security-opt no-new-privileges --tmpfs /tmp:rw,noexec,nosuid,size=128m
+            --memory 512m --cpus 1 --entrypoint /bin/promtool
+            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE:ro"
+            --volume "$RUNNER_TEMP/alerts.test.yaml:/fixtures/alerts.test.yaml:ro")
+          docker run "${options[@]}" "$image" --version
+          docker run "${options[@]}" "$image" check rules "$GITHUB_WORKSPACE/monitoring/alerts/restaurant-scrape.rules.yaml"
+          docker run "${options[@]}" "$image" test rules /fixtures/alerts.test.yaml

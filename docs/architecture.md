@@ -99,6 +99,8 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 
 ## Delivery and validation flow
 
+Milestone 029's limited-alerting design is accepted and merged. Milestone 030 adds candidate rules under `monitoring/alerts` and offline validation tooling only. They are not referenced by the live Prometheus configuration. Source-level checks and synthetic pinned-promtool tests are separate evidence categories; evaluator execution and later activation approval remain pending. Grafana unified alerting remains disabled, and no notification path is configured by this work.
+
 1. Application and infrastructure changes are developed in Git.
 2. Restaurant API tests run through GitHub Actions.
 3. Kubernetes manifests are checked by the repository validator and `promtool` where appropriate.
@@ -143,8 +145,8 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 
 Potential next architecture steps include:
 
-1. Plan lightweight Grafana deployment and dashboard requirements.
-2. Add Grafana and alerting after the collection layer is understood.
+1. Preserve the Grafana implementation and recovery baseline completed in Milestone 028.
+2. Validate the accepted limited-alerting design offline, then review a separately approved activation step.
 3. Introduce Ingress for cleaner external access.
 4. Evaluate Loki and OpenTelemetry for logs and traces.
 5. Evolve the rules-based `/analyze` endpoint into the ForgeOps AI-assisted incident copilot.
