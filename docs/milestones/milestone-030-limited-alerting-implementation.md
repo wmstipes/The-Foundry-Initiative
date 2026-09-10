@@ -2,7 +2,7 @@
 
 Started: 2026-09-10
 
-Status: In progress, offline preparation only. Promtool execution, CI, and activation review pending.
+Status: In progress. Offline validation passed in CI on 2026-09-10; PR review and activation review remain pending.
 
 ## Baseline
 
@@ -26,11 +26,17 @@ The [offline package README](../../monitoring/alerts/README.md) contains executi
 - 13 source-level/negative regression tests passed. Expected negative-test failures verify runner fail-closed behavior; they are not PromQL test results.
 - Existing repository manifest validation passed.
 - All 17 existing Grafana regression tests passed.
-- Full repository unittest discovery passed all 43 tests. Generated fixtures contain 122 firing-result assertions and 61 state-vector assertions across 19 scenarios; these are pending actual promtool execution.
+- Full repository unittest discovery passed all 43 tests. Generated fixtures contain 122 firing-result assertions and 61 state-vector assertions across 19 scenarios; these subsequently passed actual promtool execution in CI.
 - Python compilation, workflow shell syntax, relative documentation links, and the unchanged Kubernetes/application file boundary passed local checks.
-- Promtool and Docker were not installed in the preparation workspace, and the official binary download timed out. No actual PromQL execution, pinned-rule timing validation, or workflow run is claimed.
+- Promtool and Docker were not installed in the preparation workspace, and the official binary download timed out. No local PromQL execution is claimed; subsequent CI evidence is recorded below.
 
 The CI job must execute `promtool check rules` and all generated `promtool test rules` cases with version 3.13.2. Failed fixtures must be investigated against the accepted design; do not weaken expectations merely to make CI pass. Static expression matching constrains the candidate design but cannot establish correctness in Prometheus.
+
+## Pinned-evaluator CI evidence
+
+On 2026-09-10, [GitHub Actions run 34542077003](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/34542077003) completed successfully for commit `29a6e31d3ee5a0f2d73a80d3eac44f8adbc117bb` in draft PR #5. Job `103086712923` passed all steps. Its real evaluator reported `promtool, version 3.13.2` (revision `bb5dff00cf8fdfbf5c65e0531aa835fa238a43a2`), `SUCCESS: 2 rules found`, and successful execution of all 19 generated scenarios. The 13 source-level regression tests also passed in that run.
+
+This supplies synthetic rule-evaluation evidence, not a live rollout-timing measurement, ARM64 runtime test, delivered notification, or activation approval. The rules, fixtures, and workflow were unchanged by this evidence-only documentation update. Draft PR review remains pending.
 
 ## Unchanged runtime boundary
 
@@ -40,10 +46,11 @@ No file under `k8s/`, application code, existing deployment helper, storage reso
 
 - [x] Prepare offline rule candidates and source-level checks.
 - [x] Run available local checks and document their limits.
-- [ ] Run pinned promtool checks and resolve any fixture/implementation failures.
-- [ ] Review and commit the offline change; obtain GitHub Actions evidence.
+- [x] Run pinned promtool checks and resolve any fixture/implementation failures.
+- [x] Commit the offline change and obtain GitHub Actions evidence.
+- [ ] Complete final review of draft PR #5 before marking it ready or merging.
 - [ ] Review rollout timing and explicit trial-delay acceptance before activation.
 - [ ] Present minimal rule wiring, observation, maintenance, and rollback procedures for operator approval.
 - [ ] Only after separate approval, implement and validate live rule loading without implying delivered notifications.
 
-Milestone 030 is not complete. The immediate next step is offline test execution, not deployment. Alertmanager, notification channels, performance thresholds, and monitoring-system self-health remain outside this increment.
+Milestone 030 is not complete. The immediate next step is final review of the offline PR, not deployment. Alertmanager, notification channels, performance thresholds, and monitoring-system self-health remain outside this increment.
