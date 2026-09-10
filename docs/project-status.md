@@ -40,6 +40,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 023: Application metrics refinement
 - 024: Kubernetes Metrics Server evaluation and secure kubelet PKI
 - 025: Persistent Prometheus storage planning
+- 026: Persistent Prometheus storage implementation and recovery validation
 
 ## Current observability state
 
@@ -105,7 +106,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Finish Milestone 026 port-forward verification and rollback testing before closing the milestone.
+Milestone 026 is complete: port-forward access and storage rollback/return also passed. Plan Milestone 027 around lightweight Grafana and useful dashboard requirements.
 
 ## Known temporary limitation
 

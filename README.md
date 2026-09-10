@@ -136,7 +136,7 @@ The current development workflow is:
 
 Planned next steps include:
 
-* finish port-forward and rollback acceptance checks for persistent Prometheus storage
+* plan a lightweight Grafana deployment and useful SignalForge dashboards
 * add Grafana and alerting only after the first collection layer is understood
 * add Ingress as a cleaner external access pattern
 * evaluate Loki and OpenTelemetry as later observability layers

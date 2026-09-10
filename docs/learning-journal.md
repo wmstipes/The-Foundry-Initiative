@@ -150,3 +150,14 @@ It also required keeping the planning milestone distinct from implementation. Th
 ### Next small step
 
 Implement Milestone 026 by verifying the NVMe identity first, then creating and validating the partition, mount, static storage resources, Prometheus cutover, backup, and rollback path.
+
+
+## 2026-09-10 - Milestone 026
+
+Completed the NVMe-backed Prometheus cutover, Pod-replacement persistence test, off-node cold backup, isolated restore analysis, port-forward check, and rollback/return drill. The installed disk was a Samsung 950 PRO 512GB rather than the originally planned 2 TB device; inventory and destructive-testing gates caught that discrepancy before deployment.
+
+Lessons: a metric exposed by Prometheus is not automatically stored in its query database; readiness must read `/metrics` when self-scraping is absent. Windows PowerShell nested-shell quoting broke a restore check, so direct command arguments replaced it. A try/finally recovery path restored persistent collection even when execution policy blocked a test script. Use the established process-scoped execution-policy invocation for operator helpers.
+
+Recovery evidence must stay precise: six blocks were listed and the newest analyzed, but full service recovery and the one-hour RTO were not measured. Weekly backups remain manual. The temporary rollback Pod became Ready; its target check was blocked, while the restored persistent collector passed all three-target checks and loaded six retained blocks.
+
+Next small step: plan lightweight Grafana and dashboard requirements for proposed Milestone 027.

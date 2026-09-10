@@ -109,6 +109,35 @@ Then open `http://localhost:9090`.
 
 ## Persistence and availability
 
+### Storage rollback and return
+
+Use a brief maintenance window and retain a verified off-node backup. Do not delete the PV, PVC, or NVMe files. Inspect `kubectl rollout history deployment/prometheus -n forge-observability` and the selected revision before rollback; revision numbers change over time. The tested emptyDir revision was 1 (48h/750MB retention, 1 GiB volume). The rollout strategy remains `Recreate`.
+
+After verifying that revision 1 is still the intended temporary-storage template:
+
+```powershell
+try {
+    kubectl rollout undo deployment/prometheus -n forge-observability --to-revision=1
+    if ($LASTEXITCODE -ne 0) { throw "Rollback failed" }
+    kubectl rollout status deployment/prometheus -n forge-observability --timeout=180s
+    if ($LASTEXITCODE -ne 0) { throw "Rollback rollout failed" }
+    powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-targets
+    if ($LASTEXITCODE -ne 0) { throw "Temporary collector target check failed" }
+}
+finally {
+    kubectl apply -f .\k8s\prometheus\prometheus-deployment.yaml
+    if ($LASTEXITCODE -ne 0) { throw "Persistent configuration restore failed" }
+    kubectl rollout status deployment/prometheus -n forge-observability --timeout=180s
+    if ($LASTEXITCODE -ne 0) { throw "Persistent rollout failed" }
+}
+
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-storage
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-targets
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-backup-ready
+```
+
+Keep the terminal open through recovery. If interrupted, reapply the committed Deployment and wait for rollout before running the final checks. Rollout undo restores the Pod template but does not update the last-applied annotation; the return explicitly applies the committed persistent manifest. The rollback produces collection gaps; temporary emptyDir samples are discarded on return. Persistent history remains on the retained PV. Milestone 026 records the tested outcome and the temporary-phase target-check limitation.
+
 Replacing the Prometheus Pod preserves history on the local PV. The volume is node-local rather than replicated, so Prometheus remains unavailable while `forge-head` or its NVMe is unavailable.
 
 The PV and StorageClass both use `Retain`. Deleting a claim does not authorize deletion of `/mnt/signalforge-prometheus/data`; recovery and reuse are deliberate operator actions.

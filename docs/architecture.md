@@ -65,7 +65,7 @@ Milestone 025 selected a static Kubernetes `local` PersistentVolume backed by a 
 
 The host-storage portion is prepared. Physical inventory identified the installed device as a 512 GB Samsung SSD 950 PRO, and its first 32 GiB partition is an ext4 filesystem mounted by UUID at `/mnt/signalforge-prometheus`. The `data` directory exists only on that mounted filesystem and is owned by Prometheus's verified `65534:65534` runtime identity.
 
-The cutover is live. Prometheus uses the bound local claim on `forge-head`. Pod-replacement persistence and six-block off-node backup/restore analysis passed; port-forward verification and rollback testing remain open.
+The cutover is live. Prometheus uses the bound local claim on `forge-head`. Pod-replacement persistence and six-block off-node backup/restore analysis passed; port-forward verification and storage rollback/return also passed.
 
 The design provides persistence across Pod replacement, not high availability. If `forge-head` is unavailable, Prometheus remains unavailable because the local volume cannot move to another node. Weekly cold backups will be copied off the head node so an NVMe failure does not make the node-local copy the only recovery source.
 
@@ -143,7 +143,7 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 
 Potential next architecture steps include:
 
-1. Finish port-forward verification and rollback testing for the deployed local-PV design.
+1. Plan lightweight Grafana deployment and dashboard requirements.
 2. Add Grafana and alerting after the collection layer is understood.
 3. Introduce Ingress for cleaner external access.
 4. Evaluate Loki and OpenTelemetry for logs and traces.

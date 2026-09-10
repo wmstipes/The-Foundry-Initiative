@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-025 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, and Kubernetes resource metrics. NVMe-backed Prometheus is deployed, with persistence and isolated backup/restore validation passed; Milestone 026 still has port-forward and rollback acceptance checks open.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-026 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, and Kubernetes resource metrics. NVMe-backed Prometheus is deployed, with persistence and isolated backup/restore validation passed; Milestone 026 is complete, including port-forward and storage rollback/return checks.
 
 The project is moving from its initial application-observability layer into broader operational visibility.
 
@@ -92,7 +92,11 @@ Delivered outcomes:
 
 ### Milestone 026 — Persistent Prometheus storage implementation
 
-**Status:** In progress. NVMe preparation, deployment, Pod-replacement persistence, three-target health, and isolated off-node backup/restore validation passed. Finish port-forward verification and rollback testing before closing the milestone.
+**Status:** Complete. NVMe preparation, deployment, persistence, backup/restore analysis, UI access, and storage rollback/return validation passed.
+
+### Proposed Milestone 027 — Lightweight Grafana planning
+
+Define a small deployment and dashboard requirements before adding the next observability component.
 
 ### Later outcomes in this phase
 

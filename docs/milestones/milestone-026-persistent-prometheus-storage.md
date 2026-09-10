@@ -2,7 +2,9 @@
 
 Started: 2026-09-09
 
-Status: In progress
+Completed: 2026-09-10
+
+Status: Complete
 
 ## Goal
 
@@ -12,7 +14,7 @@ Implement and validate the static local-PV design approved in Milestone 025. Pro
 
 The host-storage gate is complete. The repository now contains the StorageClass, pre-reserved local PV and PVC, Prometheus PVC cutover, guarded deployment helper, static configuration validator, and live storage and persistence checks.
 
-The Kubernetes cutover is live. PVC binding and its write test preceded cutover. Pod-replacement persistence and off-node backup/restore validation have passed. Port-forward verification and rollback testing remain open.
+The Kubernetes cutover is live. PVC binding and its write test preceded cutover. Pod-replacement persistence and off-node backup/restore validation have passed. Port-forward verification and rollback/return testing also passed.
 
 ## Physical inventory correction
 
@@ -88,7 +90,7 @@ The repository implementation defines:
 
 The deployment helper applies the storage objects first and refuses to update the existing Prometheus Deployment unless the named PVC is `Bound` to the named PV.
 
-## Remaining acceptance checks
+## Acceptance checks
 
 - [x] Verified the exact physical device and protected the previous partition table.
 - [x] Received explicit device-specific authorization before destructive work.
@@ -101,10 +103,10 @@ The deployment helper applies the storage objects first and refuses to update th
 - [x] Verify Prometheus is Ready on `forge-head` with 30-day/24-GB retention.
 - [x] Verify three healthy Restaurant API targets.
 - [x] Verify a known historical sample survives Prometheus Pod replacement.
-- [ ] Confirm Prometheus remains ClusterIP-only and port-forward access still works.
+- [x] Confirm Prometheus remains ClusterIP-only and port-forward access still works.
 - [x] Create an off-node cold backup and complete a non-destructive restore-validation drill.
-- [ ] Test and document rollback without deleting or altering retained PV data.
-- [ ] Update current-state documentation and complete the milestone.
+- [x] Test and document rollback without deleting or altering retained PV data.
+- [x] Update current-state documentation and complete the milestone.
 
 ## Operator acceptance evidence through 2026-09-10
 
@@ -121,6 +123,16 @@ Compacted blocks: 6
 
 Cold backup restored the collector to one replica and three healthy targets. Restore validation verified the checksum, extracted into `/mnt/signalforge-prometheus/restore-validation`, checked WAL presence and metadata, listed all six blocks, and analyzed newest block `01M25XAGEKB8AJ22F53Y9K0YMP` with 309 series. Isolated-copy cleanup passed; active data and the archive were retained.
 
-The drill demonstrates isolated extraction and block analysis, not full service restoration, archived WAL replay, a measured one-hour RTO, or rollback to ephemeral storage. Weekly backups remain an operator procedure rather than a scheduled job.
+The drill demonstrates isolated extraction and block analysis, not full service restoration, archived WAL replay, a measured one-hour RTO. Weekly backups remain an operator procedure rather than a scheduled job.
 
 Acceptance exposed two helper defects, now corrected: readiness reads `/metrics` directly because this collector does not scrape itself; restore checks use direct commands to avoid Windows PowerShell nested-shell quoting failures. The earlier WAL-only backup is separate from this six-block acceptance archive.
+
+## Final access and rollback evidence
+
+The operator opened the UI through `metrics-ui` and confirmed three `up{job="restaurant-api"}` series, each equal to 1.
+
+The operator inspected revision 1 (1 GiB emptyDir, 48h/750MB) and revision 2 (PVC, 30d/24GB), then rolled back to revision 1. The temporary Pod became Ready on `forge-node-03`; the retained PV and PVC remained Bound. Windows execution policy blocked the direct target-script invocation during this temporary phase, so scrape health in that phase was not verified. The finally block reapplied the committed persistent Deployment and its rollout succeeded.
+
+Subsequent checks passed: Ready on `forge-head`, bound 30 GiB RWO retained storage, 30d/24GB retention, ClusterIP-only access, three healthy targets, and six loaded blocks. This satisfies the storage rollback/return gate without another disruptive drill. No PV, PVC, or retained data was deleted. Kubernetes warned that rollout undo does not update the last-applied annotation; the return used kubectl apply with the committed manifest.
+
+The operational procedure is in `k8s/prometheus/README.md`. Next proposed work: Milestone 027, lightweight Grafana planning and dashboard requirements; no additional platform has been installed.
