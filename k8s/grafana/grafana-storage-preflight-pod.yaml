@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: grafana-storage-preflight
+  labels:
+    app: grafana-storage-preflight
+    project: signalforge
+  namespace: forge-observability
+spec:
+  restartPolicy: Never
+  serviceAccountName: grafana
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 472
+    runAsGroup: 0
+    fsGroup: 0
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  containers:
+  - name: check
+    image: grafana/grafana:13.2.1@sha256:f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283
+    command:
+    - /bin/sh
+    - -ec
+    args:
+    - test "$(id -u)" = 472; test "$(id -g)" = 0; test -d /var/lib/grafana; f=$(mktemp
+      /var/lib/grafana/.preflight.XXXXXX); printf "grafana storage check\n" > "$f";
+      test -s "$f"; rm "$f"; id
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+        - ALL
+    volumeMounts:
+    - name: data
+      mountPath: /var/lib/grafana
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: grafana-data

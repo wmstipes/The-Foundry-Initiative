@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-data
+  labels:
+    app: grafana
+    project: signalforge
+  namespace: forge-observability
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: signalforge-local-nvme
+  volumeName: grafana-local-nvme
+  resources:
+    requests:
+      storage: 3Gi

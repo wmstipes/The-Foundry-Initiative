@@ -1,4 +1,5 @@
 import sys
+import runpy
 from pathlib import Path
 
 import yaml
@@ -692,6 +693,7 @@ def main() -> None:
     validate_restaurant_manifests()
     validate_prometheus_manifests()
     validate_metrics_server_manifests()
+    runpy.run_path(str(Path(__file__).with_name('validate-grafana.py')), run_name='__main__')
     print()
     print("All Kubernetes manifest checks passed.")
 
