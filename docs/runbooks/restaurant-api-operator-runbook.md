@@ -226,7 +226,7 @@ The baseline PromQL queries are documented in `docs/observability/prometheus-que
 
 An aggregate query such as `sum(restaurant_api_requests_total{path="unmatched"})` may display a result like `{}` with a numeric value. The empty label set is expected because `sum` removes the source labels.
 
-The Prometheus Service is intentionally ClusterIP-only. Its data is stored in a 1 GiB `emptyDir`, so replacing or rescheduling the Prometheus Pod erases the current metrics history.
+The Prometheus Service is intentionally ClusterIP-only. Data resides on the retained 30 GiB local PV on the head NVMe with 30-day/24-GB retention and survives Pod replacement. See `k8s/prometheus/README.md` for backup and isolated restore-validation commands. Run backups weekly and before maintenance; scheduling is manual.
 
 Metrics Server is separate from Prometheus. Metrics Server provides current CPU and memory samples for Kubernetes operations; Prometheus retains Restaurant API application metrics over time.
 

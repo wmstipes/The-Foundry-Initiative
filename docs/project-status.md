@@ -1,6 +1,6 @@
 # Project Status
 
-**Last updated:** 2026-09-09
+**Last updated:** 2026-09-10
 
 **Current phase:** Operational visibility and durable monitoring
 
@@ -49,8 +49,8 @@ The project has moved from basic workload deployment into repeatable engineering
 - Pod discovery restricted to `forge-restaurant`
 - RBAC restricted to get, list, and watch Pods
 - Scrape interval: 30 seconds
-- Retention: 48 hours, capped at 750 MB
-- Storage: 1 GiB ephemeral `emptyDir`
+- Retention: 30 days or 24 GB
+- Storage: 30 GiB retained local PV on the head NVMe
 - Access: ClusterIP plus `kubectl port-forward`
 - Healthy Restaurant API targets: 3
 - Prometheus Pod: stable with zero restarts after rollout
@@ -101,14 +101,14 @@ Milestone 026 host preparation is complete:
 - Created `data` as `65534:65534` with mode `0750` and verified writes as that identity
 - Proved the data path disappears when the NVMe is unmounted, preventing silent SD-card fallback writes
 
-The live Prometheus Deployment still uses `emptyDir` until the Kubernetes resources are applied and verified.
+The NVMe cutover is live. Pod-replacement persistence and six-block off-node backup/restore validation passed. See Milestone 026 for the checksum and evidence.
 
 ## Immediate next step
 
-Apply the Milestone 026 StorageClass, local PV, and reserved PVC. Only after the claim is `Bound`, cut Prometheus over to the claim and prove node placement, history across Pod replacement, backup recoverability, and three healthy Restaurant API targets.
+Finish Milestone 026 port-forward verification and rollback testing before closing the milestone.
 
 ## Known temporary limitation
 
-Prometheus history remains intentionally ephemeral. Replacing or rescheduling its Pod removes collected history until the approved NVMe-backed local-PV design is implemented.
+Prometheus remains unavailable during head-node or NVMe failure. Weekly off-node backups remain manual; full service-restoration timing has not been measured.
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.

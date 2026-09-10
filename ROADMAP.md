@@ -1,12 +1,12 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-09
+**Last updated:** 2026-09-10
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-025 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, and Kubernetes resource metrics. A static local-PV design has been approved for persistent Prometheus storage but is not yet deployed.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-025 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, and Kubernetes resource metrics. NVMe-backed Prometheus is deployed, with persistence and isolated backup/restore validation passed; Milestone 026 still has port-forward and rollback acceptance checks open.
 
 The project is moving from its initial application-observability layer into broader operational visibility.
 
@@ -90,9 +90,9 @@ Delivered outcomes:
 - Documented missing-mount safeguards, recovery behavior, migration, and rollback.
 - Preserved the current live `emptyDir` deployment until implementation validation.
 
-### Recommended Milestone 026 — Persistent Prometheus storage implementation
+### Milestone 026 — Persistent Prometheus storage implementation
 
-Implement the approved design only after verifying the NVMe identity, existing contents, partition table, and mount state. Prove that Prometheus writes to the NVMe, survives Pod replacement, preserves three healthy scrape targets, and remains accessible only through `kubectl port-forward`.
+**Status:** In progress. NVMe preparation, deployment, Pod-replacement persistence, three-target health, and isolated off-node backup/restore validation passed. Finish port-forward verification and rollback testing before closing the milestone.
 
 ### Later outcomes in this phase
 

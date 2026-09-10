@@ -12,7 +12,7 @@ Implement and validate the static local-PV design approved in Milestone 025. Pro
 
 The host-storage gate is complete. The repository now contains the StorageClass, pre-reserved local PV and PVC, Prometheus PVC cutover, guarded deployment helper, static configuration validator, and live storage and persistence checks.
 
-The Kubernetes resources have not yet been applied. The running Prometheus Pod still uses its prior `emptyDir` until the PVC binds successfully and the deployment helper performs the cutover.
+The Kubernetes cutover is live. PVC binding and its write test preceded cutover. Pod-replacement persistence and off-node backup/restore validation have passed. Port-forward verification and rollback testing remain open.
 
 ## Physical inventory correction
 
@@ -97,11 +97,30 @@ The deployment helper applies the storage objects first and refuses to update th
 - [x] Verified runtime ownership, writes as UID/GID 65534, and missing-mount fallback protection.
 - [x] Confirmed the live control-plane `NoSchedule` taint on `forge-head`.
 - [x] Added the static StorageClass, PV, PVC, Prometheus cutover, and validation tooling to the repository.
-- [ ] Bind the PVC to the intended retained PV before the workload cutover.
-- [ ] Verify Prometheus is Ready on `forge-head` with 30-day/24-GB retention.
-- [ ] Verify three healthy Restaurant API targets.
-- [ ] Verify a known historical sample survives Prometheus Pod replacement.
+- [x] Bind the PVC to the intended retained PV before the workload cutover.
+- [x] Verify Prometheus is Ready on `forge-head` with 30-day/24-GB retention.
+- [x] Verify three healthy Restaurant API targets.
+- [x] Verify a known historical sample survives Prometheus Pod replacement.
 - [ ] Confirm Prometheus remains ClusterIP-only and port-forward access still works.
-- [ ] Create an off-node cold backup and complete a non-destructive restore-validation drill.
+- [x] Create an off-node cold backup and complete a non-destructive restore-validation drill.
 - [ ] Test and document rollback without deleting or altering retained PV data.
 - [ ] Update current-state documentation and complete the milestone.
+
+## Operator acceptance evidence through 2026-09-10
+
+Deployment checks confirmed one Ready Prometheus Pod on `forge-head`, the bound 30 GiB retained PV/PVC, 30-day/24-GB retention, ClusterIP-only access, and three healthy targets. Pod replacement recovered the exact `up` sample for `restaurant-api-6dfbf8dd9b-4nnlb`: value `1`, timestamp `1788988641.573`.
+
+Acceptance archive on the Windows NUC:
+
+```text
+C:\Users\Michael Stipes\SignalForge-Backups\prometheus\prometheus-tsdb-20260910-150206Z.tar.gz
+Bytes: 477532
+SHA-256: 68e00637d6fd05db21bc8e5dbefa7bbb7d65a7548dd3de0eec5c2faae574dc24
+Compacted blocks: 6
+```
+
+Cold backup restored the collector to one replica and three healthy targets. Restore validation verified the checksum, extracted into `/mnt/signalforge-prometheus/restore-validation`, checked WAL presence and metadata, listed all six blocks, and analyzed newest block `01M25XAGEKB8AJ22F53Y9K0YMP` with 309 series. Isolated-copy cleanup passed; active data and the archive were retained.
+
+The drill demonstrates isolated extraction and block analysis, not full service restoration, archived WAL replay, a measured one-hour RTO, or rollback to ephemeral storage. Weekly backups remain an operator procedure rather than a scheduled job.
+
+Acceptance exposed two helper defects, now corrected: readiness reads `/metrics` directly because this collector does not scrape itself; restore checks use direct commands to avoid Windows PowerShell nested-shell quoting failures. The earlier WAL-only backup is separate from this six-block acceptance archive.

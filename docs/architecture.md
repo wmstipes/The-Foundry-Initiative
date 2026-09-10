@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-09
+**Last updated:** 2026-09-10
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -55,7 +55,7 @@ flowchart TD
 - Authorization: namespace-scoped Role granting only `get`, `list`, and `watch` on Pods
 - Scrape model: each Restaurant API Pod is scraped independently every 30 seconds
 - Access: ClusterIP Service and temporary `kubectl port-forward`
-- Storage: 1 GiB `emptyDir`, 48-hour retention, and a 750 MB retention cap
+- Storage: retained 30 GiB local PV on the head NVMe, 30-day retention, and a 24 GB cap
 
 Prometheus is deliberately lightweight at this stage. Grafana, Alertmanager, node-exporter, kube-state-metrics, and the Prometheus Operator are not installed.
 
@@ -65,7 +65,7 @@ Milestone 025 selected a static Kubernetes `local` PersistentVolume backed by a 
 
 The host-storage portion is prepared. Physical inventory identified the installed device as a 512 GB Samsung SSD 950 PRO, and its first 32 GiB partition is an ext4 filesystem mounted by UUID at `/mnt/signalforge-prometheus`. The `data` directory exists only on that mounted filesystem and is owned by Prometheus's verified `65534:65534` runtime identity.
 
-The Kubernetes cutover is not yet live. No StorageClass, PV, or PVC has been created in the cluster, and the current Prometheus Deployment still uses its 1 GiB `emptyDir`. Milestone 026 will apply and validate those resources before replacing the existing storage.
+The cutover is live. Prometheus uses the bound local claim on `forge-head`. Pod-replacement persistence and six-block off-node backup/restore analysis passed; port-forward verification and rollback testing remain open.
 
 The design provides persistence across Pod replacement, not high availability. If `forge-head` is unavailable, Prometheus remains unavailable because the local volume cannot move to another node. Weekly cold backups will be copied off the head node so an NVMe failure does not make the node-local copy the only recovery source.
 
@@ -133,7 +133,7 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 
 ## Current constraints
 
-- Prometheus storage is still ephemeral and is lost when its Pod is replaced or rescheduled; the NVMe host filesystem is ready, but the static local-PV cutover is not yet live.
+- Prometheus storage is node-local; head-node or NVMe failure requires recovery. Weekly backups remain manual, and full service-restoration timing has not been measured.
 - NodePort is appropriate for the private lab but is not the long-term ingress design.
 - Metrics Server provides current CPU and memory samples but no historical resource-metrics store.
 - The upstream APIService uses `insecureSkipTLSVerify` for the API server-to-Metrics Server connection because the serving certificate is generated dynamically. This is separate from the secured Metrics Server-to-kubelet path.
@@ -143,7 +143,7 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 
 Potential next architecture steps include:
 
-1. Implement and validate the approved static local-PV design for Prometheus.
+1. Finish port-forward verification and rollback testing for the deployed local-PV design.
 2. Add Grafana and alerting after the collection layer is understood.
 3. Introduce Ingress for cleaner external access.
 4. Evaluate Loki and OpenTelemetry for logs and traces.
