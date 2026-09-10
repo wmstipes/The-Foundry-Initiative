@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import re
+import shlex
 import shutil
 import subprocess
 import tempfile
@@ -18,8 +19,15 @@ class StorageProbeTests(unittest.TestCase):
             prefix='set -eu\npart=/dev/fixture\nblkid() { test "$*" = "-p --no-part-details -o export /dev/fixture" || return 4; printf "%s" "$FIXTURE_TEXT"; return "$FIXTURE_RC"; }\n'
             for rc, output, accepted in [(0,'',True),(2,'',True),(0,'TYPE=ext4\n',False),(8,'',False),(4,'probe error',False),(2,'read error',False)]:
                 with self.subTest(helper=name,rc=rc,output=output):
-                    env=dict(os.environ,FIXTURE_TEXT=output,FIXTURE_RC=str(rc))
-                    result=subprocess.run([shutil.which('bash'),'-s'],input=prefix+gate,text=True,env=env,capture_output=True)
+                    fixture = (
+                        f'FIXTURE_TEXT={shlex.quote(output)}\n'
+                        f'FIXTURE_RC={shlex.quote(str(rc))}\n'
+                    )
+                    result=subprocess.run(
+                        [shutil.which('bash'),'-s'],
+                        input=(fixture+prefix+gate).encode('utf-8'),
+                        capture_output=True,
+                    )
                     self.assertEqual(result.returncode==0,accepted,result.stderr)
 
     def test_resume_has_no_partition_mutation_and_parses(self):
@@ -29,7 +37,7 @@ class StorageProbeTests(unittest.TestCase):
         self.assertNotIn('--append',body)
         self.assertNotIn('partx --add',body)
         self.assertIn('A8E50BC1-1B9C-419B-A13D-3EE72C29FF56',body)
-        result=subprocess.run([shutil.which('bash'),'-n'],input=body,text=True,capture_output=True)
+        result=subprocess.run([shutil.which('bash'),'-n'],input=body.encode('utf-8'),capture_output=True)
         self.assertEqual(result.returncode,0,result.stderr)
 
 

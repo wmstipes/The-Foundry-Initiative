@@ -82,9 +82,11 @@ class GrafanaBoundaryTests(unittest.TestCase):
     def test_storage_host_script_syntax_without_execution(self):
         helper = (ROOT/'scripts/prepare-grafana-storage.ps1').read_text()
         body = re.search(r"\$HostScript = @'\n(.*?)\n'@",helper,re.S).group(1)
-        path = Path(self.tmp.name)/'host-check.sh'
-        path.write_text(body,encoding='utf-8')
-        result = subprocess.run([shutil.which('bash'),'-n',str(path)],capture_output=True)
+        result = subprocess.run(
+            [shutil.which('bash'),'-n'],
+            input=body.encode('utf-8'),
+            capture_output=True,
+        )
         self.assertEqual(result.returncode,0,result.stderr)
 
 
