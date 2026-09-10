@@ -8,7 +8,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-028 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, Kubernetes resource metrics, and a lightweight Grafana visualization layer. NVMe-backed Prometheus and Grafana both use retained local storage with tested persistence and recovery procedures.
 
-Milestone 028 is complete. The next bounded Phase 4 step is planning a limited alerting layer based on observed normal behavior and useful operational thresholds.
+Milestone 028 is complete. The Milestone 029 documentation-only limited-alerting design was accepted on 2026-09-10; repository commit and merge remain pending. Its scrape-coverage delays remain provisional. No alerting is activated by this planning work.
 
 ## Phase 1 — Cluster and application foundation
 
@@ -124,6 +124,20 @@ Delivered outcomes:
 - Measured 41 seconds to restore-Pod readiness and 262 seconds / 4.37 minutes through usable validated dashboards.
 - Verified independent protected recovery of Grafana administrative credentials and encryption key.
 - Confirmed Prometheus continued collecting all three application targets while Grafana was intentionally stopped.
+
+### Milestone 029 — Limited alerting planning
+
+**Status:** Design accepted on 2026-09-10; repository commit and merge pending.
+
+Bounded outcomes:
+
+- Propose two mutually exclusive service-level scrape-coverage conditions using the existing Restaurant API metrics.
+- Document provisional delays, missing-data behavior, the manual three-replica baseline, first-response guidance, and monitoring-system blind spots.
+- Define future offline tests and evidence requirements before activation.
+- Defer performance thresholds, notification channels, Alertmanager, and broader telemetry.
+- Reconcile historical error-ratio documentation and Grafana specification status without changing runtime configuration.
+
+See [Milestone 029](docs/milestones/milestone-029-limited-alerting-planning.md) and the [limited-alerting specification](docs/observability/limited-alerting-specification.md). Planning completion requires operator acceptance and version-controlled documentation; implementation requires separate approval.
 
 ### Later outcomes in this phase
 

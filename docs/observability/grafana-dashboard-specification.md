@@ -2,13 +2,13 @@
 
 Date: 2026-09-10
 
-Status: Design accepted for Milestone 027 on 2026-09-10; implementation validation pending
+Status: Design accepted for Milestone 027; implementation and acceptance completed in Milestone 028 on 2026-09-10.
 
 Data source UID: `signalforge-prometheus`
 
 Baseline: Restaurant API v0.7.0 at repository commit `653ffa6`
 
-These twelve candidate panels use only metric names and discovery labels present in the reviewed repository. They have been checked against source definitions, not executed against live Prometheus during planning. Validate their results and presentation in the implementation milestone.
+These twelve panels use only metric names and discovery labels present in the reviewed repository. During Milestone 027 they were checked against source definitions, not live Prometheus. Milestone 028 subsequently records query, presentation, idle/missing-data, and recovery acceptance. The requirements below retain the original design baseline; see [Milestone 028](../milestones/milestone-028-lightweight-grafana.md) for actual implementation evidence.
 
 ## Shared behavior
 
@@ -77,7 +77,7 @@ Stat with sparkline, percent from 0 to 100, using the following expression:
 
 The comparison deliberately omits `bool`: a positive denominator retains its actual request rate; zero is filtered out. The fallback creates zero errors only when an application request-rate series exists. With positive traffic and no 5xx series, the result is zero percent. With zero traffic or no usable samples, display `No data` with description `No application traffic or insufficient samples; inspect traffic and target health.`
 
-This is a proposed refinement of the baseline query's denominator floor. A floor of 0.001 can bias percentages at very low rates. The dashboard expression avoids that bias and does not present an idle interval as an observed zero-error success. A successful query with missing data still needs the target-health panel to distinguish causes; a failed data-source query must remain an error.
+This refinement of the original baseline query's denominator floor was accepted in Milestone 028. A floor of 0.001 can bias percentages at very low rates. The dashboard expression avoids that bias and does not present an idle interval as an observed zero-error success. A successful query with missing data still needs the target-health panel to distinguish causes; a failed data-source query must remain an error. Milestone 029 reconciles the older query documentation with this expression without changing deployed dashboards.
 
 ### Panel 4 Application p95 latency by route
 
