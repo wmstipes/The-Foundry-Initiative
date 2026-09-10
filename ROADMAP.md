@@ -6,9 +6,9 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-028 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, Kubernetes resource metrics, and a lightweight Grafana visualization layer. NVMe-backed Prometheus and Grafana both use retained local storage with tested persistence and recovery procedures.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-029 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, Kubernetes resource metrics, and a lightweight Grafana visualization layer. NVMe-backed Prometheus and Grafana both use retained local storage with tested persistence and recovery procedures.
 
-Milestone 028 is complete. The Milestone 029 documentation-only limited-alerting design was accepted on 2026-09-10; repository commit and merge remain pending. Its scrape-coverage delays remain provisional. No alerting is activated by this planning work.
+Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030 is in offline preparation: candidate rules and validation tooling are present, with real promtool 3.13.2 validation of both rules and all 19 scenarios now passed in GitHub Actions run `34542077003` for commit `29a6e31`. Scrape-coverage delays remain provisional and no alerting is activated.
 
 ## Phase 1 — Cluster and application foundation
 
@@ -127,7 +127,7 @@ Delivered outcomes:
 
 ### Milestone 029 — Limited alerting planning
 
-**Status:** Design accepted on 2026-09-10; repository commit and merge pending.
+**Status:** Complete. Accepted and merged on 2026-09-10 through PR #4 at `1837868`.
 
 Bounded outcomes:
 
@@ -137,7 +137,18 @@ Bounded outcomes:
 - Defer performance thresholds, notification channels, Alertmanager, and broader telemetry.
 - Reconcile historical error-ratio documentation and Grafana specification status without changing runtime configuration.
 
-See [Milestone 029](docs/milestones/milestone-029-limited-alerting-planning.md) and the [limited-alerting specification](docs/observability/limited-alerting-specification.md). Planning completion requires operator acceptance and version-controlled documentation; implementation requires separate approval.
+See [Milestone 029](docs/milestones/milestone-029-limited-alerting-planning.md) and the [limited-alerting specification](docs/observability/limited-alerting-specification.md). Planning acceptance and version control are complete; this does not establish live alerting coverage.
+
+### Milestone 030 — Limited alerting implementation
+
+**Status:** In progress; offline validation passed in CI, final PR review and activation approval pending.
+
+- Implement two candidate scrape-coverage rules outside the deployment manifests.
+- Validate static boundaries and generate 19 synthetic scenarios for pinned-promtool evaluation.
+- Offline CI passed both rule validation and all 19 scenarios on 2026-09-10; complete final PR review before proposing live wiring.
+- Review observation, maintenance, rollback, and explicit activation approval separately.
+
+See [Milestone 030](docs/milestones/milestone-030-limited-alerting-implementation.md). No deployment, receiver, or notification delivery is included in the current increment.
 
 ### Later outcomes in this phase
 

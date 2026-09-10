@@ -77,3 +77,12 @@ powershell -ExecutionPolicy Bypass -File .\scripts\test-metrics-server.ps1
 ```powershell
 python .\scripts\validate-k8s-manifests.py
 ```
+
+## Offline alert validation (Milestone 030)
+
+```powershell
+python .\scripts\validate-alert-rules.py
+python -m unittest discover -s tests -p 'test_alert_rules.py'
+```
+
+These are source-level checks only. For actual rule evaluation with an existing promtool 3.13.2 binary, use `python .\scripts\test-alert-rules.py --promtool "C:\path\to\promtool.exe"` or the new offline alert CI job. Missing/wrong-version tooling fails rather than reporting a skipped success. See [offline alert validation](../monitoring/alerts/README.md) for the full procedure and limits. No cluster commands are executed by these helpers.

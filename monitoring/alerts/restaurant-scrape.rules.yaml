@@ -1,0 +1,34 @@
+# Offline candidate only. Not mounted or referenced by live Prometheus.
+# Accepted design: docs/observability/limited-alerting-specification.md
+groups:
+  - name: signalforge-restaurant-scrape
+    interval: 30s
+    rules:
+      - alert: RestaurantScrapeCoverageDegraded
+        expr: |
+          (sum(up{job="restaurant-api",namespace="forge-restaurant"}) > 0)
+          and
+          (sum(up{job="restaurant-api",namespace="forge-restaurant"}) < 3)
+        for: 5m
+        labels:
+          job: restaurant-api
+          namespace: forge-restaurant
+          severity: warning
+        annotations:
+          summary: Restaurant API scrape coverage below three targets
+          description: '{{ $value }} healthy scrape targets; expected 3. Investigate scrape errors, discovery and rollout context. This does not establish user-facing availability.'
+          runbook_url: https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/runbooks/restaurant-api-operator-runbook.md
+      - alert: RestaurantNoHealthyScrapeTargets
+        expr: |
+          (sum(up{job="restaurant-api",namespace="forge-restaurant"}) == 0)
+          or
+          absent(sum(up{job="restaurant-api",namespace="forge-restaurant"}))
+        for: 2m
+        labels:
+          job: restaurant-api
+          namespace: forge-restaurant
+          severity: critical
+        annotations:
+          summary: No healthy Restaurant API scrape targets observed
+          description: 'All scoped scrapes are failing or scoped target series are absent. Inspect discovery and scrape errors; separately verify user-facing access. The evaluator cannot detect its own outage.'
+          runbook_url: https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/runbooks/restaurant-api-operator-runbook.md

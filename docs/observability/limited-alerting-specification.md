@@ -4,7 +4,7 @@ Date: 2026-09-10
 
 Status: Planning design accepted by Mike on 2026-09-10 for Milestone 029. No alerting is deployed by this plan.
 
-Acceptance includes the provisional five-minute warning and two-minute critical delays, manual three-target baseline, monitoring blind spots, and future offline validation contract. It does not validate the expressions or authorize implementation, activation, or notification delivery. Commit and merge remain pending.
+Acceptance includes the provisional five-minute warning and two-minute critical delays, manual three-target baseline, monitoring blind spots, and future offline validation contract. It does not validate the expressions or authorize implementation, activation, or notification delivery. The accepted design was committed as `037d7c1` and merged through PR #4 at `1837868` on 2026-09-10. Subsequent [Milestone 030 offline preparation](../milestones/milestone-030-limited-alerting-implementation.md) is tracked separately; no live activation is implied.
 
 Baseline: uploaded Git archive for `801174052d7eef801920870946f75dfa978768cd` (Milestone 028 complete).
 
