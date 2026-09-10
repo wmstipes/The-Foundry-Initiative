@@ -9,9 +9,7 @@ $ErrorActionPreference = "Stop"
 
 $Timestamp = Get-Date -Format "yyyyMMddHHmmssfff"
 $PodName = "prometheus-block-check-$Timestamp"
-$Query = "prometheus_tsdb_blocks_loaded"
-$EncodedQuery = [uri]::EscapeDataString($Query)
-$Url = "http://$Service.$Namespace.svc.cluster.local:9090/api/v1/query?query=$EncodedQuery"
+$Url = "http://$Service.$Namespace.svc.cluster.local:9090/metrics"
 $PodLifetimeSeconds = [Math]::Max(60, $TimeoutSeconds + 60)
 
 Write-Host "Checking whether Prometheus has a compacted TSDB block..."
@@ -45,11 +43,14 @@ try {
 
         if ($LASTEXITCODE -eq 0 -and $Output) {
             try {
-                $Response = $Output | ConvertFrom-Json
-                $Results = @($Response.data.result)
+                # Read exposition directly: this collector does not scrape itself.
+                $BlockMetric = [regex]::Matches(
+                    ($Output -join "`n"),
+                    '(?m)^prometheus_tsdb_blocks_loaded[ \t]+([0-9]+)[ \t]*\r?$'
+                )
 
-                if ($Results.Count -eq 1) {
-                    $BlocksLoaded = [int]$Results[0].value[1]
+                if ($BlockMetric.Count -eq 1) {
+                    $BlocksLoaded = [long]::Parse($BlockMetric[0].Groups[1].Value)
                     break
                 }
             }
