@@ -41,6 +41,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 024: Kubernetes Metrics Server evaluation and secure kubelet PKI
 - 025: Persistent Prometheus storage planning
 - 026: Persistent Prometheus storage implementation and recovery validation
+- 027: Lightweight Grafana design and dashboard requirements accepted
 
 ## Current observability state
 
@@ -106,7 +107,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Milestone 026 is complete: port-forward access and storage rollback/return also passed. Plan Milestone 027 around lightweight Grafana and useful dashboard requirements.
+Milestone 027 planning is complete and its design is accepted. Milestone 028 implementation is prepared for review, including Grafana manifests, provisioned dashboards and operator helpers. Run the read-only Grafana preflight from the NUC before storage preparation. Grafana is not yet deployed; all live acceptance remains pending.
 
 ## Known temporary limitation
 
