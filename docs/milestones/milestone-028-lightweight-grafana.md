@@ -2,7 +2,7 @@
 
 Started: 2026-09-10
 
-Status: Implementation prepared; live preflight and deployment pending
+Status: Complete
 
 ## Goal
 
@@ -85,19 +85,44 @@ The completion script reached its final success marker after the write check, un
 
 Evidence: NUC directory `C:\Users\Michael Stipes\SignalForge-Backups\storage\grafana-20260910-162247Z`; host directory `/var/tmp/signalforge-grafana-storage.RUbKr3`. No Kubernetes objects were created by the storage helper. The next step is to apply the implementation patch on a focused repository branch, create the protected bootstrap Secret, and run the gated deployment helper using the verified context and filesystem UUID. Do not run either formatting helper again.
 
-## Live acceptance still required
+## Live implementation and acceptance evidence
+
+Live implementation and recovery acceptance completed on 2026-09-10.
+
+- Grafana OSS 13.2.1 is deployed in `forge-observability` using the pinned image `grafana/grafana:13.2.1@sha256:f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283`.
+- Dedicated Grafana ext4 filesystem UUID `a506c674-127a-46da-9c7d-d158b6d1bb75` is mounted at `/mnt/signalforge-grafana`.
+- `grafana-data` is Bound to retained local PV `grafana-local-nvme`; the existing Prometheus PV/PVC remained intact throughout implementation and testing.
+- Grafana schedules successfully on `forge-head`, authenticated localhost access works, and anonymous dashboard access is rejected.
+- Both provisioned SignalForge dashboards render successfully. Automated validation accepted all panel queries, including three independent Restaurant API targets. The error-percentage panel correctly renders missing data during a zero-denominator idle interval rather than inventing zero errors.
+- Representative Restaurant API traffic populated request-rate and latency panels while retaining three healthy targets and application version `0.7.0`.
+- Deleting the Grafana Pod and allowing Kubernetes to replace it preserved database-backed personal settings.
+- During the extended observation, Grafana remained at zero restarts. Sampled resource use was approximately 5m CPU and 192-202 MiB memory, well below the configured 1 GiB memory limit. Prometheus remained healthy. No dashboard load above five seconds was observed during the acceptance checks.
+- The Windows backup destination is BitLocker protected with protection enabled and XTS-AES 128 encryption.
+- Cold backup `grafana-weekly-20260910-204714Z.tar.gz` was copied off-node and independently checksum verified. Archive size was 110129 bytes with SHA-256 `a1adffafa4de866097cc30828b0256c0df703ebaf119e44ceb84ed41c6fbe95e`.
+- The backup records Git commit `a5771c97507383d501549ee7664d41dbaa970e9a` and the pinned Grafana image digest.
+- An isolated restore used bounded `emptyDir` storage and no production Grafana PVC. The restore-validation Pod ran independently on `forge-node-03` while production Grafana and Prometheus remained intact.
+- Isolated recovery reached Pod readiness in 41 seconds. Authentication, provisioning, all dashboard queries, browser rendering, and the persisted personal setting passed.
+- Total measured recovery time from restore start through usable validated dashboards was 262 seconds (4.37 minutes), comfortably inside the one-hour RTO objective.
+- The accepted backup metadata now records `restoreVerified=true`, the 41-second readiness measurement, and the 262-second usable-dashboard RTO.
+- Rollback testing scaled Grafana fully to zero while retaining its PV, PVC, Secret, data and configuration. During the outage, Prometheus continued reporting all three Restaurant API targets healthy.
+- Grafana returned as a new Pod with zero restarts; automated query validation passed again and the saved personal setting remained present.
+- Grafana admin username, password and encryption `secret-key` are stored in a protected password-manager entry independent of the NUC-only DPAPI recovery file. The protected `secret-key` copy was verified byte-for-byte against the Kubernetes Secret without displaying the value.
+- Weekly backups and the <=7-day RPO remain an operator responsibility. The recovery drill demonstrates the restore path and RTO, but continued RPO compliance depends on maintaining the documented backup cadence.
+- Local-PV placement still makes `forge-head` and its NVMe a Grafana availability dependency. Full head-node or NVMe reconstruction remains outside the measured 262-second service-restore result.
+
+## Live acceptance results
 
 - [x] Inventory and health authorize an exact unused 4 GiB allocation; current partition table and Prometheus backup are protected off-node.
 - [x] New UUID-mounted filesystem, ownership and missing-mount protection pass; Prometheus boundaries and UUID remain intact.
 - [x] Context, DNS suffix, taint, resource capacity and shared StorageClass match the reviewed configuration.
-- [ ] Credentials are created and independently recoverable outside the NUC-only DPAPI file.
-- [ ] Server-side manifest checks, apply diff and runtime UID/GID preflight pass; PVC binds to `grafana-local-nvme`.
-- [ ] Grafana becomes Ready on `forge-head`; authenticated localhost forwarding works and anonymous access fails.
-- [ ] Two dashboards, twelve panels and all queries pass; browser layout, idle states, missing data and failure states are inspected.
-- [ ] Pod replacement preserves accounts and a known database-backed preference.
-- [ ] Thirty-minute observation records resource use, dashboard response time, no OOM/restarts and healthy Prometheus collection.
-- [ ] Cold backup verifies off-node; isolated Grafana restore passes login, preferences and queries, with measured recovery time.
-- [ ] Initial rollback and return pass while preserving retained storage and all Prometheus resources.
-- [ ] Update this milestone and current-state documentation with actual evidence, limitations and completion status.
+- [x] Credentials are created and independently recoverable outside the NUC-only DPAPI file.
+- [x] Server-side manifest checks, apply diff and runtime UID/GID preflight pass; PVC binds to `grafana-local-nvme`.
+- [x] Grafana becomes Ready on `forge-head`; authenticated localhost forwarding works and anonymous access fails.
+- [x] Two dashboards, twelve panels and all queries pass; browser layout, idle states, missing data and failure states are inspected.
+- [x] Pod replacement preserves accounts and a known database-backed preference.
+- [x] Thirty-minute observation records resource use, dashboard response time, no OOM/restarts and healthy Prometheus collection.
+- [x] Cold backup verifies off-node; isolated Grafana restore passes login, preferences and queries, with measured recovery time.
+- [x] Initial rollback and return pass while preserving retained storage and all Prometheus resources.
+- [x] Update this milestone and current-state documentation with actual evidence, limitations and completion status.
 
 See `k8s/grafana/README.md` for the ordered operator procedure and Milestone 027 for the full acceptance contract.

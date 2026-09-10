@@ -6,9 +6,9 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-026 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, and Kubernetes resource metrics. NVMe-backed Prometheus is deployed, with persistence and isolated backup/restore validation passed; Milestone 026 is complete, including port-forward and storage rollback/return checks.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-028 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, Kubernetes resource metrics, and a lightweight Grafana visualization layer. NVMe-backed Prometheus and Grafana both use retained local storage with tested persistence and recovery procedures.
 
-The project is moving from its initial application-observability layer into broader operational visibility.
+Milestone 028 is complete. The next bounded Phase 4 step is planning a limited alerting layer based on observed normal behavior and useful operational thresholds.
 
 ## Phase 1 — Cluster and application foundation
 
@@ -94,15 +94,41 @@ Delivered outcomes:
 
 **Status:** Complete. NVMe preparation, deployment, persistence, backup/restore analysis, UI access, and storage rollback/return validation passed.
 
-### Proposed Milestone 027 — Lightweight Grafana planning
+### Milestone 027 — Lightweight Grafana planning
 
-Define a small deployment and dashboard requirements before adding the next observability component.
+**Status:** Complete
+
+Delivered outcomes:
+
+- Defined a lightweight Grafana architecture appropriate for the Raspberry Pi cluster.
+- Selected a pinned ARM64-compatible Grafana OSS image and conservative resource limits.
+- Defined retained local storage, authenticated localhost access, least-privilege runtime controls, provisioning, backup, restore, and rollback requirements.
+- Designed two purpose-built SignalForge dashboards with twelve total panels.
+- Defined persistence, resource-observation, recovery, and rollback acceptance criteria before implementation.
+
+### Milestone 028 — Lightweight Grafana implementation
+
+**Status:** Complete
+
+Delivered outcomes:
+
+- Deployed Grafana OSS 13.2.1 with a pinned image digest.
+- Provisioned the SignalForge Restaurant Overview and SignalForge Scrape Diagnostics dashboards.
+- Added a retained 3 GiB local PV/PVC backed by the `forge-head` NVMe.
+- Verified authenticated localhost access and rejection of anonymous dashboard access.
+- Confirmed dashboard queries, idle/missing-data behavior, representative traffic, and three healthy Restaurant API targets.
+- Verified database-backed settings survive Pod replacement and complete scale-to-zero rollback/return.
+- Observed stable Grafana resource use with zero restarts during acceptance.
+- Created and checksum-verified an encrypted off-node cold backup.
+- Restored the accepted backup into an isolated Pod without mounting the production PVC.
+- Measured 41 seconds to restore-Pod readiness and 262 seconds / 4.37 minutes through usable validated dashboards.
+- Verified independent protected recovery of Grafana administrative credentials and encryption key.
+- Confirmed Prometheus continued collecting all three application targets while Grafana was intentionally stopped.
 
 ### Later outcomes in this phase
 
-- Establish practical retention, backup, and recovery expectations.
-- Add a small Grafana deployment with purpose-built SignalForge dashboards.
 - Add a limited alerting layer only after normal behavior and useful thresholds are understood.
+- Continue exercising backup cadence and recovery procedures so RPO assumptions remain demonstrated over time.
 - Reevaluate whether the lightweight collector remains sufficient before considering `kube-prometheus-stack`.
 
 ## Phase 5 — Platform access and broader telemetry

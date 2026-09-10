@@ -6,7 +6,7 @@
 
 ## Summary
 
-The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, a lightweight Prometheus collection layer, and Kubernetes Metrics Server.
+The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, a lightweight Prometheus collection layer, Kubernetes Metrics Server, and a lightweight Grafana visualization layer.
 
 The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility.
 
@@ -42,6 +42,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 025: Persistent Prometheus storage planning
 - 026: Persistent Prometheus storage implementation and recovery validation
 - 027: Lightweight Grafana design and dashboard requirements accepted
+- 028: Lightweight Grafana implementation, persistence and recovery validation
 
 ## Current observability state
 
@@ -61,6 +62,32 @@ The project has moved from basic workload deployment into repeatable engineering
 - Traffic classification: `application` and `synthetic`
 - Cardinality protection: unmatched URLs use `path="unmatched"`
 - Baseline queries: `docs/observability/prometheus-queries.md`
+
+## Current Grafana state
+
+- Namespace: `forge-observability`
+- Deployment: `grafana`
+- Replicas: 1
+- Grafana OSS version: `13.2.1`
+- Image: `grafana/grafana:13.2.1@sha256:f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283`
+- Access: ClusterIP plus authenticated `kubectl port-forward`; anonymous dashboard access is rejected
+- Storage: 3 GiB retained local PV `grafana-local-nvme` on the `forge-head` NVMe
+- Filesystem UUID: `a506c674-127a-46da-9c7d-d158b6d1bb75`
+- Mount: `/mnt/signalforge-grafana`
+- Dashboards: SignalForge Restaurant Overview and SignalForge Scrape Diagnostics
+- Dashboard panels: 12 total, with provisioned Prometheus data source and stable dashboard/data-source UIDs
+- Healthy Restaurant API targets represented in dashboards: 3
+- Pod replacement persistence: confirmed for database-backed personal settings
+- Extended observation: zero Grafana restarts; sampled use approximately 5m CPU and 192-202 MiB memory
+- Dashboard responsiveness: no load above five seconds observed during acceptance checks
+- Cold backup: verified off-node with independent SHA-256 validation
+- Isolated restore: passed authentication, provisioning, dashboard queries, browser rendering and persisted-setting recovery
+- Restore readiness: 41 seconds
+- Measured recovery time through usable validated dashboards: 262 seconds / 4.37 minutes
+- Recovery objective: demonstrated inside the one-hour Grafana RTO target
+- Rollback/return: passed while retaining Grafana storage and credentials and preserving Prometheus collection
+- Protected recovery material: Grafana admin username, password and encryption `secret-key` stored independently in the password manager
+- Backup cadence: weekly and before upgrades when appropriate; four successful weekly archives retained manually
 
 ## Current Kubernetes resource-metrics state
 
@@ -107,10 +134,10 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Milestone 027 planning is complete and its design is accepted. Milestone 028 implementation is prepared for review, including Grafana manifests, provisioned dashboards and operator helpers. Run the read-only Grafana preflight from the NUC before storage preparation. Grafana is not yet deployed; all live acceptance remains pending.
+Milestone 028 is complete. Lightweight Grafana is deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return. The next bounded Phase 4 step is to plan a limited alerting layer using the normal behavior and thresholds observed through Prometheus and Grafana.
 
 ## Known temporary limitation
 
-Prometheus remains unavailable during head-node or NVMe failure. Weekly off-node backups remain manual; full service-restoration timing has not been measured.
+Prometheus and Grafana remain dependent on `forge-head` and its local NVMe during head-node or device failure. Weekly off-node backups remain manual. Grafana service recovery from an accepted backup was measured at 4.37 minutes on a functioning cluster, but full head-node or NVMe reconstruction remains outside that result. Prometheus full service-restoration timing remains a separate limitation.
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
