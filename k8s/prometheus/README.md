@@ -23,7 +23,7 @@ No Grafana, Alertmanager, node-exporter, kube-state-metrics, Prometheus Operator
 - `prometheus-service-account.yaml` provides the Prometheus workload identity.
 - `restaurant-pod-reader-role.yaml` grants read-only Pod discovery in `forge-restaurant`.
 - `restaurant-pod-reader-role-binding.yaml` binds that Role to the Prometheus ServiceAccount.
-- `prometheus-config.yaml` defines the Restaurant API scrape job and embeds the two accepted limited-alerting rules. The repository candidate is not proof that the live ConfigMap has been activated.
+- `prometheus-config.yaml` defines the Restaurant API scrape job and embeds the two accepted limited-alerting rules. Milestone 030 records the explicitly approved activation and live verification.
 - `prometheus-storage-class.yaml` defines the non-default, no-provisioner local StorageClass.
 - `prometheus-local-pv.yaml` represents `/mnt/signalforge-prometheus/data` on `forge-head` and retains its data after claim release.
 - `prometheus-data-pvc.yaml` reserves the named local PV for Prometheus.
@@ -70,15 +70,15 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-targets
 
 The target query should return `3` while all three Restaurant API Pods are ready.
 
-## Review limited-alert activation
+## Check limited alerts
 
-Run the read-only activation plan before any cluster change:
+Run the read-only plan to verify the live ConfigMap, targets and rule state:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-alerts-plan
 ```
 
-The direct `manage-prometheus-alerts.ps1 -Activate` path remains behind separate operator approval. It applies only this ConfigMap, restarts only Prometheus, and writes a validated baseline recovery file before mutation. The [activation review](../../docs/observability/limited-alerting-activation-review.md) documents the approval boundary and rollback command. Do not use the broad `metrics-deploy` helper as a substitute for this guarded first activation.
+The initial direct `manage-prometheus-alerts.ps1 -Activate` path was separately approved and completed on 2026-09-11. It applied only this ConfigMap, restarted only Prometheus, and wrote a validated baseline recovery file before mutation. The [activation review](../../docs/observability/limited-alerting-activation-review.md) records the evidence and rollback command. Do not rerun activation when the helper reports the candidate is already active.
 
 After the initial deployment, prove that a known sample survives deliberate Pod replacement:
 
