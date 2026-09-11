@@ -1,6 +1,6 @@
 # Limited alerting activation review
 
-Status: Repository activation candidate prepared for Milestone 030. No live activation is claimed or authorized by this document.
+Status: Activated and verified on 2026-09-11 after explicit operator approval. No notification delivery is claimed.
 
 ## Exact change
 
@@ -28,9 +28,9 @@ While the live ConfigMap remains at the pre-activation baseline, the broad `metr
 
 Review the reported history for normal rollouts or maintenance that would make the provisional five-minute warning or two-minute critical delays noisy. Missing history is not success. The plan does not generate traffic or inject failure, and its history query cannot establish user-facing availability.
 
-## Separately approved activation
+## Approved activation procedure
 
-Only after the plan output and diff are accepted, run the explicit direct command:
+After the plan output and diff were accepted, the operator ran the explicit direct command:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\manage-prometheus-alerts.ps1 -Activate
@@ -39,6 +39,20 @@ powershell -ExecutionPolicy Bypass -File .\scripts\manage-prometheus-alerts.ps1 
 Activation is allowed only from the exact Milestone 030 baseline ConfigMap. Before applying anything, the helper saves and re-reads a recovery ConfigMap under `%USERPROFILE%\SignalForge-Backups\prometheus`. It then applies only `prometheus-config`, restarts only `deployment/prometheus`, waits for rollout, confirms three healthy Restaurant API targets, and requires exactly two accepted alert rules with `health=ok` and `state=inactive`.
 
 This creates evaluator-visible rules only. With no Alertmanager or receiver, firing state is visible through Prometheus but no message is delivered. A successful inactive check does not prove warning/critical live timing; record subsequent naturally occurring evidence without causing an outage.
+
+## Activation evidence
+
+- Approval: Mike explicitly approved Milestone 030 alert activation after PR #6 merged at `f54b961` and clean `main` was confirmed.
+- Preflight: exact baseline ConfigMap, three healthy targets, no candidate rules loaded, and 2,881 of 2,881 30-second samples at three targets over the preceding 24 hours.
+- Change: only `configmap/prometheus-config` was configured; only `deployment/prometheus` was restarted.
+- Rollout: completed successfully.
+- Immediate validation: three healthy targets; both accepted rules loaded with `health=ok` and `state=inactive`.
+- Independent follow-up: live ConfigMap classified as `candidate`, the repository diff was empty, and both rules remained healthy and inactive.
+- Recovery file: `C:\Users\wmsti\SignalForge-Backups\prometheus\alert-activation-20260911-154646Z.json`, 1,587 bytes, written at 2026-09-11 15:46:46 UTC.
+- Recovery SHA-256: `BE7D39DD99715B70A99E5151D7E268EBA197F8F7C1F7E61D6C338468558403FA`.
+- Rollback: not invoked because all post-change validation passed.
+
+No failure was injected. This evidence establishes rule loading and healthy inactive evaluation, not delivered notifications, real-incident timing, application availability, or independent evaluator monitoring.
 
 ## Failure and rollback
 

@@ -1,6 +1,6 @@
 # Project Status
 
-**Last updated:** 2026-09-10
+**Last updated:** 2026-09-11
 
 **Current phase:** Operational visibility and durable monitoring
 
@@ -43,8 +43,8 @@ The project has moved from basic workload deployment into repeatable engineering
 - 026: Persistent Prometheus storage implementation and recovery validation
 - 027: Lightweight Grafana design and dashboard requirements accepted
 - 028: Lightweight Grafana implementation, persistence and recovery validation
-- 029: Limited alerting design accepted and merged; no alert activation
-- 030: Offline limited-alerting package merged; activation candidate under review
+- 029: Limited alerting design accepted and merged
+- 030: Limited alerting rules validated, activated and verified without notification delivery
 
 ## Current observability state
 
@@ -64,6 +64,11 @@ The project has moved from basic workload deployment into repeatable engineering
 - Traffic classification: `application` and `synthetic`
 - Cardinality protection: unmatched URLs use `path="unmatched"`
 - Baseline queries: `docs/observability/prometheus-queries.md`
+- Alert evaluator: two Restaurant API scrape-coverage rules loaded by Prometheus
+- Alert state at acceptance: both rules `health=ok` and `state=inactive`
+- Trial delays: five-minute warning and two-minute critical, still provisional operational thresholds
+- Alert delivery: none; no Alertmanager or receiver is configured
+- Alert rollback: validated baseline ConfigMap retained off-cluster with SHA-256 recorded in Milestone 030
 
 ## Current Grafana state
 
@@ -140,7 +145,9 @@ Milestone 028 is complete. Lightweight Grafana is deployed with retained storage
 
 The Milestone 029 [limited-alerting design](observability/limited-alerting-specification.md) was accepted by Mike and merged through PR #4 at `1837868` on 2026-09-10. It covers reduced scrape coverage and no-healthy-target conditions using the manual three-replica baseline. Five-minute and two-minute delays remain provisional, not measured operational thresholds. Performance alerts, notification channels, Alertmanager, and broader monitoring coverage remain deferred.
 
-[Milestone 030](milestones/milestone-030-limited-alerting-implementation.md) remains in progress. Its offline candidate rules, fixtures and CI tooling were merged through PR #5 at `604e38e` after successful real promtool 3.13.2 validation of both rules and all 19 scenarios in [GitHub Actions run 34542077003](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/34542077003). A later activation-review branch now proposes only ConfigMap rule wiring plus a guarded plan/activation/rollback helper. No cluster change or live rule state is claimed yet. Review the read-only live plan and separately approve activation; passing synthetic tests and repository wiring do not authorize it.
+[Milestone 030](milestones/milestone-030-limited-alerting-implementation.md) is complete. Its offline package merged through PR #5 at `604e38e` after real promtool 3.13.2 passed both rules and all 19 scenarios. The guarded activation candidate merged through PR #6 at `f54b961`. After explicit approval on 2026-09-11, only the Prometheus ConfigMap changed and only Prometheus restarted. Immediate and independent checks confirmed three healthy targets, an exact live/repository configuration match, and both accepted rules loaded, healthy and inactive. A checksum-recorded baseline recovery file is retained. No Alertmanager, receiver or notification delivery exists.
+
+The immediate next step is to observe naturally occurring rule behavior and periodically run `metrics-alerts-plan`. Do not inject a failure merely to produce firing evidence. Revisit the provisional delays and whether a notification path is justified only after useful operational evidence accumulates.
 
 ## Known temporary limitation
 
