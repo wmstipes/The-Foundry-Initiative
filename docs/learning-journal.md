@@ -177,3 +177,11 @@ The activation candidate reuses the ConfigMap already mounted at `/etc/prometheu
 The safety boundary belongs in the operator path as well as the manifest. The helper therefore defaults to inspection, classifies the live ConfigMap by normalized hashes, requires the known context/image/replica/target baseline, shows recent coverage history and `kubectl diff`, and stops before mutation. Explicit activation first writes a validated recovery object; failed post-change verification triggers rollback. Repository desired state, evaluator-visible firing state and delivered notification are three different claims and must remain separate.
 
 Next small step: review the repository diff and read-only live plan. Only a separate operator decision can authorize activation.
+
+## 2026-09-11 - Milestone 030 guarded activation
+
+The read-only plan found the exact baseline, three healthy targets, no loaded rules, and no below-three samples across 24 hours. Its first two attempts exposed a Windows-specific detail: `kubectl diff` needs an external `diff.exe`, while Windows PowerShell defines `diff` as an alias for `Compare-Object`. Restricting detection to an application and locating Git for Windows' bundled executable made the review portable without changing the cluster.
+
+After PR #6 merged and Mike explicitly approved activation, the helper saved and verified the baseline ConfigMap, applied only the accepted ConfigMap, restarted only Prometheus, and completed all post-change checks. An independent plan then found no repository/live diff and reconfirmed three healthy targets with both rules healthy and inactive. The recovery file is retained with a recorded SHA-256; rollback was not needed.
+
+The main lesson is that desired state, evaluator state and notification delivery are separate evidence claims. Milestone 030 establishes the first two, while notification delivery and independent monitoring remain deliberately deferred. Next: observe natural behavior rather than manufacturing a failure, then revisit the trial delays before considering delivery.
