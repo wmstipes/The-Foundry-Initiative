@@ -13,13 +13,13 @@ These manifests define the planned SignalForge deployment of the browser-local F
 Version:
 
 ```text
-0.1.0
+0.1.1
 ```
 
 Immutable image reference:
 
 ```text
-wmstipes/signalforge-yaml-workbench:0.1.0@sha256:dee700a8754c39f736b94f85c7ad484b2ebe6c41647cf7fa5d37c905c25ae190
+wmstipes/signalforge-yaml-workbench:0.1.1@sha256:50e3d115641941bc8f7eaa303463c08ccbafe5842cc07304d4b71dbd4aef8669
 ```
 
 The OCI image index contains both `linux/amd64` and `linux/arm64`. No floating image tag is used.
