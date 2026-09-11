@@ -27,6 +27,10 @@ Each pull request should explain:
 - how it was validated
 - any known limitations or follow-up work
 
+## Git patch reference
+
+See [Understanding Git patch files](docs/reference/git-patch-files.md) for the patch format, safe application workflow, common failures, and recovery guidance used by this repository.
+
 ## Project values
 
 - Progress over perfection
