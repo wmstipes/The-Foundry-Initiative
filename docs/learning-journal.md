@@ -168,4 +168,12 @@ Milestone 029 was accepted and merged at `1837868`. The next increment translate
 
 Engineering notes: alert identity belongs in stable labels; changing diagnostic counts belong in annotations. Failed scrapes, missing discovery series, and stopped evaluation are different situations. A transition between warning and critical conditions starts the other rule's independent delay, so an explicit pending-only interval is part of the accepted design. The critical expression's absent branch does not return a healthy-target count and must not be described as one.
 
-Source-level tests and inactive-configuration guards passed, but they do not prove PromQL behavior. The preparation environment lacked promtool and Docker; subsequent [GitHub Actions run 34542077003](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/34542077003) supplied the missing evidence for commit `29a6e31`: real promtool 3.13.2 validated both rules and passed all 19 scenarios. Next: finish review of draft PR #5, then separately review any rule-loading or cluster-change proposal. Offline correctness does not establish operational delay suitability or authorize activation.
+Source-level tests and inactive-configuration guards passed, but they do not prove PromQL behavior. The preparation environment lacked promtool and Docker; subsequent [GitHub Actions run 34542077003](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/34542077003) supplied the missing evidence for commit `29a6e31`: real promtool 3.13.2 validated both rules and passed all 19 scenarios. PR #5 later merged at `604e38e`. Offline correctness does not establish operational delay suitability or authorize activation.
+
+## 2026-09-10 - Milestone 030 activation review preparation
+
+The activation candidate reuses the ConfigMap already mounted at `/etc/prometheus`: one embedded canonical rule file and one exact `rule_files` entry are sufficient, with no Deployment, RBAC, storage, Grafana or receiver change.
+
+The safety boundary belongs in the operator path as well as the manifest. The helper therefore defaults to inspection, classifies the live ConfigMap by normalized hashes, requires the known context/image/replica/target baseline, shows recent coverage history and `kubectl diff`, and stops before mutation. Explicit activation first writes a validated recovery object; failed post-change verification triggers rollback. Repository desired state, evaluator-visible firing state and delivered notification are three different claims and must remain separate.
+
+Next small step: review the repository diff and read-only live plan. Only a separate operator decision can authorize activation.

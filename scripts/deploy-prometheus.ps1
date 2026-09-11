@@ -32,6 +32,29 @@ if ($LASTEXITCODE -ne 0) {
     throw "kubectl does not have a working current context"
 }
 
+# A repository activation candidate must not turn the broad deployment helper
+# into an unreviewed first-activation path. Once the exact candidate is already
+# live, ordinary redeployment remains available.
+$PrometheusConfigPath = Join-Path $ResolvedManifestPath "prometheus-config.yaml"
+$CandidateIncludesRules = Select-String `
+    -LiteralPath $PrometheusConfigPath `
+    -SimpleMatch "/etc/prometheus/restaurant-scrape.rules.yaml" `
+    -Quiet
+
+if ($CandidateIncludesRules) {
+    $LiveConfigJson = kubectl get configmap prometheus-config -n $Namespace -o json 2>$null
+    $LiveIncludesRules = $false
+    if ($LASTEXITCODE -eq 0 -and $LiveConfigJson) {
+        $LiveConfig = ($LiveConfigJson | Out-String | ConvertFrom-Json)
+        $LiveIncludesRules = `
+            $LiveConfig.data.PSObject.Properties.Name -contains "restaurant-scrape.rules.yaml" -and `
+            ([string]$LiveConfig.data.'prometheus.yml').Contains("/etc/prometheus/restaurant-scrape.rules.yaml")
+    }
+    if (-not $LiveIncludesRules) {
+        throw "Refusing first alert activation through metrics-deploy. Run metrics-alerts-plan, obtain separate approval, then use manage-prometheus-alerts.ps1 -Activate."
+    }
+}
+
 Write-Host ""
 Write-Host "Checking the local-volume node and control-plane taint..."
 $NodeJson = kubectl get node $ExpectedNode -o json

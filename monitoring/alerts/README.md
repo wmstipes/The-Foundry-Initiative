@@ -1,16 +1,18 @@
-# Offline Restaurant API alert rules
+# Restaurant API limited-alert rules
 
-Milestone 030, offline phase only. Nothing in this directory is mounted into or referenced by the live Prometheus configuration. These files are not Kubernetes manifests. Do not run a deployment helper or add `rule_files` to activate them during this phase.
+The Milestone 030 offline package was merged through PR #5 at `604e38e`. The activation-review candidate embeds the canonical file in the existing Prometheus ConfigMap and loads it through that ConfigMap's existing read-only mount. Repository wiring does not prove or authorize live activation.
 
 The accepted [Milestone 029 specification](../../docs/observability/limited-alerting-specification.md) defines two service-level scrape-coverage conditions: warning for one or two healthy targets over five minutes, and critical for no healthy targets over two minutes. The expected three-target baseline and both delays remain provisional operator choices, not measured SLOs.
 
 ## Files and checks
 
 - `restaurant-scrape.rules.yaml`: the two candidate rules, stable static labels, diagnostic annotations, and existing runbook link.
-- `scripts/validate-alert-rules.py`: static design and inactive-configuration guardrails; not a PromQL parser.
+- `scripts/validate-alert-rules.py`: static design, exact embedded-rule and no-receiver guardrails; not a PromQL parser.
 - `scripts/export-alert-rule-tests.py`: deterministic generator for 19 synthetic promtool scenarios, with expected states independent of the rule file.
 - `scripts/test-alert-rules.py`: local runner requiring an existing promtool 3.13.2 binary; fails if missing, wrong-version, or any validation step fails.
-- `tests/test_alert_rules.py`: source-level and negative regression tests, not execution of the PromQL expressions.
+- `tests/test_alert_rules.py`: source-level, wiring-drift and negative regression tests, not execution of the PromQL expressions.
+- `scripts/manage-prometheus-alerts.ps1`: guarded read-only plan, explicit activation, verification and exact-baseline rollback.
+- `tests/test_prometheus_alert_activation.py`: source-level operator-guard and candidate-hash regression checks.
 - `.github/workflows/alert-rule-validation.yml`: PR/main CI using the same Prometheus 3.13.2 image version as existing repository validation. Containers run with no network and read-only repository mounts; pulling the image and installing PyYAML require network before offline evaluation.
 
 ## Local validation
@@ -46,10 +48,10 @@ The critical expression's numeric value differs between all-down and absent bran
 
 ## Current evidence and activation gate
 
-Local static validation, 13 regression tests, existing manifest validation, and 17 Grafana regression tests passed during preparation. Promtool and Docker were unavailable in the preparation workspace; an attempted official binary download timed out. They were not executed locally. Subsequently, [GitHub Actions run 34542077003](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/34542077003) passed on 2026-09-10 for commit `29a6e31`: real promtool 3.13.2 validated both rules and passed all 19 scenarios, and all 13 source-level tests passed. No rule or fixture changes were needed. This is offline synthetic evidence, not live-cluster validation; PR #5 remains in draft.
+Local static validation, 13 regression tests, existing manifest validation, and 17 Grafana regression tests passed during offline preparation. Promtool and Docker were unavailable in that workspace. Subsequently, [GitHub Actions run 34542077003](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/34542077003) passed on 2026-09-10 for commit `29a6e31`: real promtool 3.13.2 validated both rules and passed all 19 scenarios, and all 13 source-level tests passed. No rule or fixture changes were needed. PR #5 was reviewed and merged at `604e38e`. This remains synthetic evidence, not live-cluster validation.
 
-With pinned-evaluator evidence recorded, the remaining activation prerequisites include review of ordinary rollout/replacement timing, confirm the manual replica baseline, and review a minimal rule-loading change plus rollback. Separately approve any cluster mutation. An eventual activation review must define how rule state is inspected without implying notification delivery, handle planned maintenance, and confirm the monitoring-system failure blind spot. No receiver, Alertmanager, self-scrape, dashboard change, or new exporter is included here.
+The [activation review](../../docs/observability/limited-alerting-activation-review.md) now defines ordinary-history review, the manual replica baseline, minimal rule loading, rule-state inspection, maintenance interpretation, recovery and automatic rollback. Run its non-mutating plan before separately approving any cluster mutation. No receiver, Alertmanager, self-scrape, dashboard change or new exporter is included.
 
-Rollback for this offline phase is to revert the repository change; there is no live configuration to roll back. Live rollback procedures belong to the later activation review, not to this unactivated package.
+Before activation, repository rollback is an ordinary revert. After an explicitly approved activation, use the exact recovery file produced by the guarded helper; do not delete the ConfigMap or retained storage.
 
 Reference: [Prometheus rule unit testing](https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/) and [alerting rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/).

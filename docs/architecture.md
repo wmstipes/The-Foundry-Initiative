@@ -99,7 +99,7 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 
 ## Delivery and validation flow
 
-Milestone 029's limited-alerting design is accepted and merged. Milestone 030 adds candidate rules under `monitoring/alerts` and offline validation tooling only. They are not referenced by the live Prometheus configuration. Source-level checks and synthetic pinned-promtool tests are separate evidence categories; real promtool 3.13.2 execution passed both rules and all 19 scenarios in GitHub Actions run `34542077003` for commit `29a6e31`, while final PR review and later activation approval remain pending. Grafana unified alerting remains disabled, and no notification path is configured by this work.
+Milestone 029's limited-alerting design is accepted and merged. Milestone 030's canonical rules and offline validation package were merged through PR #5 at `604e38e`; real promtool 3.13.2 passed both rules and all 19 scenarios. The next candidate embeds those same rules in the existing ConfigMap and adds one `rule_files` entry, relying on the Deployment's existing read-only `/etc/prometheus` ConfigMap mount. A guarded helper separates read-only planning from explicit activation, saves the exact baseline before mutation, and rolls back on failed verification. The live ConfigMap remains the source of runtime truth; repository wiring does not claim activation. Grafana unified alerting remains disabled, and no Alertmanager, receiver, or notification path is configured.
 
 1. Application and infrastructure changes are developed in Git.
 2. Restaurant API tests run through GitHub Actions.

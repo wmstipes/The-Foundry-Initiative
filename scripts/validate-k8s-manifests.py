@@ -28,6 +28,7 @@ PROMETHEUS_STORAGE_PREFLIGHT = "prometheus-storage-preflight"
 PROMETHEUS_BACKUP_POD = "prometheus-backup"
 PROMETHEUS_RESTORE_VALIDATION_POD = "prometheus-restore-validation"
 PROMETHEUS_RESTORE_PATH = "/mnt/signalforge-prometheus/restore-validation"
+PROMETHEUS_RULE_PATH = "/etc/prometheus/restaurant-scrape.rules.yaml"
 
 METRICS_SERVER_NAMESPACE = "kube-system"
 METRICS_SERVER_APP = "metrics-server"
@@ -249,6 +250,12 @@ def validate_prometheus_manifests() -> None:
     require(config_map.get("metadata", {}).get("namespace") == PROMETHEUS_NAMESPACE, "Prometheus ConfigMap namespace mismatch")
     prometheus_text = config_map.get("data", {}).get("prometheus.yml")
     require(isinstance(prometheus_text, str), "Prometheus ConfigMap must contain prometheus.yml")
+    rule_text = config_map.get("data", {}).get("restaurant-scrape.rules.yaml")
+    require(isinstance(rule_text, str), "Prometheus ConfigMap must contain the Restaurant API alert rules")
+    require(
+        set(config_map.get("data", {})) == {"prometheus.yml", "restaurant-scrape.rules.yaml"},
+        "Prometheus ConfigMap must contain only the approved server and rule files",
+    )
 
     try:
         prometheus_config = yaml.safe_load(prometheus_text)
@@ -258,6 +265,20 @@ def validate_prometheus_manifests() -> None:
     global_config = prometheus_config.get("global", {})
     require(global_config.get("scrape_interval") == "30s", "Prometheus scrape interval must be 30s")
     require(global_config.get("scrape_timeout") == "10s", "Prometheus scrape timeout must be 10s")
+    require(global_config.get("evaluation_interval") == "30s", "Prometheus evaluation interval must be 30s")
+    require(
+        prometheus_config.get("rule_files") == [PROMETHEUS_RULE_PATH],
+        "Prometheus must load only the approved Restaurant API alert rule file",
+    )
+    require("alerting" not in prometheus_config, "Prometheus must not configure Alertmanager or receivers")
+
+    try:
+        embedded_rules = yaml.safe_load(rule_text)
+        canonical_rules = load_yaml(Path("monitoring/alerts/restaurant-scrape.rules.yaml"))
+    except yaml.YAMLError as exc:
+        fail(f"Embedded alert rules could not be parsed: {exc}")
+
+    require(embedded_rules == canonical_rules, "Embedded alert rules must match the canonical validated rules")
 
     scrape_jobs = prometheus_config.get("scrape_configs", [])
     restaurant_jobs = [job for job in scrape_jobs if job.get("job_name") == RESTAURANT_APP]

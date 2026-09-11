@@ -7,8 +7,10 @@ on:
     paths:
       - "k8s/**"
       - "scripts/validate-k8s-manifests.py"
+      - "scripts/manage-prometheus-alerts.ps1"
       - "scripts/*grafana*"
       - "tests/test_grafana*.py"
+      - "tests/test_prometheus_alert_activation.py"
       - ".github/workflows/k8s-manifest-validation.yml"
 
   pull_request:
@@ -17,8 +19,10 @@ on:
     paths:
       - "k8s/**"
       - "scripts/validate-k8s-manifests.py"
+      - "scripts/manage-prometheus-alerts.ps1"
       - "scripts/*grafana*"
       - "tests/test_grafana*.py"
+      - "tests/test_prometheus_alert_activation.py"
       - ".github/workflows/k8s-manifest-validation.yml"
 
   workflow_dispatch:
@@ -46,6 +50,22 @@ jobs:
         run: |
           python scripts/validate-k8s-manifests.py
           python -m unittest discover -s tests -p 'test_grafana*.py'
+          python -m unittest discover -s tests -p 'test_prometheus_alert_activation.py'
+
+      - name: Parse guarded alert operator helper
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            "$PWD/scripts/manage-prometheus-alerts.ps1",
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_ }
+            exit 1
+          }
 
       - name: Extract Prometheus configuration
         run: |
@@ -57,8 +77,14 @@ jobs:
           manifest = yaml.safe_load(
               Path("k8s/prometheus/prometheus-config.yaml").read_text(encoding="utf-8-sig")
           )
-          output = Path(os.environ["RUNNER_TEMP"]) / "prometheus.yml"
-          output.write_text(manifest["data"]["prometheus.yml"], encoding="utf-8")
+          output = Path(os.environ["RUNNER_TEMP"]) / "prometheus-config"
+          output.mkdir()
+          (output / "prometheus.yml").write_text(
+              manifest["data"]["prometheus.yml"], encoding="utf-8"
+          )
+          (output / "restaurant-scrape.rules.yaml").write_text(
+              manifest["data"]["restaurant-scrape.rules.yaml"], encoding="utf-8"
+          )
           PY
 
       - name: Validate Grafana panel PromQL and idle traffic behavior
@@ -74,6 +100,6 @@ jobs:
         run: |
           docker run --rm \
             --entrypoint /bin/promtool \
-            --volume "$RUNNER_TEMP/prometheus.yml:/etc/prometheus/prometheus.yml:ro" \
+            --volume "$RUNNER_TEMP/prometheus-config:/etc/prometheus:ro" \
             prom/prometheus:v3.13.2 \
             check config /etc/prometheus/prometheus.yml

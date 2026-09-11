@@ -76,18 +76,35 @@ class AlertScopeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'not a healthy-target count'):
             validator.validate(self.root)
 
-    def test_rejects_active_wiring_and_receivers(self):
+    def test_rejects_changed_wiring_and_receivers(self):
         path = self.root/'k8s/prometheus/prometheus-config.yaml'
         original = yaml.safe_load(path.read_text())
-        for field in ('rule_files', 'alerting'):
-            with self.subTest(field=field):
-                config = yaml.safe_load(original['data']['prometheus.yml'])
-                config[field] = []
-                doc = dict(original)
-                doc['data'] = {'prometheus.yml': yaml.safe_dump(config)}
-                path.write_text(yaml.safe_dump(doc))
-                with self.assertRaisesRegex(ValueError, 'Offline phase'):
-                    validator.validate(self.root)
+        config = yaml.safe_load(original['data']['prometheus.yml'])
+        config['alerting'] = {'alertmanagers': []}
+        original['data']['prometheus.yml'] = yaml.safe_dump(config)
+        path.write_text(yaml.safe_dump(original))
+        with self.assertRaisesRegex(ValueError, 'receivers'):
+            validator.validate(self.root)
+
+    def test_rejects_unapproved_rule_file(self):
+        path = self.root/'k8s/prometheus/prometheus-config.yaml'
+        doc = yaml.safe_load(path.read_text())
+        config = yaml.safe_load(doc['data']['prometheus.yml'])
+        config['rule_files'].append('/etc/prometheus/extra.rules.yaml')
+        doc['data']['prometheus.yml'] = yaml.safe_dump(config)
+        path.write_text(yaml.safe_dump(doc))
+        with self.assertRaisesRegex(ValueError, 'accepted embedded rule file'):
+            validator.validate(self.root)
+
+    def test_rejects_embedded_rule_drift(self):
+        path = self.root/'k8s/prometheus/prometheus-config.yaml'
+        doc = yaml.safe_load(path.read_text())
+        embedded = yaml.safe_load(doc['data']['restaurant-scrape.rules.yaml'])
+        embedded['groups'][0]['rules'][0]['for'] = '4m'
+        doc['data']['restaurant-scrape.rules.yaml'] = yaml.safe_dump(embedded)
+        path.write_text(yaml.safe_dump(doc))
+        with self.assertRaisesRegex(ValueError, 'match the canonical'):
+            validator.validate(self.root)
 
     def test_fixture_structure(self):
         suite = exporter.build_suite()
