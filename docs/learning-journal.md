@@ -185,3 +185,40 @@ The read-only plan found the exact baseline, three healthy targets, no loaded ru
 After PR #6 merged and Mike explicitly approved activation, the helper saved and verified the baseline ConfigMap, applied only the accepted ConfigMap, restarted only Prometheus, and completed all post-change checks. An independent plan then found no repository/live diff and reconfirmed three healthy targets with both rules healthy and inactive. The recovery file is retained with a recorded SHA-256; rollback was not needed.
 
 The main lesson is that desired state, evaluator state and notification delivery are separate evidence claims. Milestone 030 establishes the first two, while notification delivery and independent monitoring remain deliberately deferred. Next: observe natural behavior rather than manufacturing a failure, then revisit the trial delays before considering delivery.
+
+
+---
+
+## 2026-09-11 - Milestone 032
+
+### What I worked on
+
+Built and deployed Forge YAML Workbench, a browser-local Kubernetes manifest inspector with multi-document parsing, formatting, human-readable summaries, bounded operational findings, and an expandable object tree.
+
+### What I learned
+
+- A static browser application can provide useful manifest review without Kubernetes credentials, backend storage, or server-side processing.
+- Release safety improves when source tests, multi-architecture image builds, immutable digests, server-side dry-run, live diff, and explicit deployment approval remain separate gates.
+- A formatter must round-trip multi-document input; preserving a document's existing start marker while also joining documents with `---` can silently create an empty document.
+- Browser acceptance catches interaction defects that source-level tests may miss. The failed test directly produced a sixth regression test and corrected patch release.
+- Idempotent UI actions may need visible confirmation even when they succeed and produce little visual change.
+
+### What was difficult
+
+The first `0.1.0` deployment was healthy at the container and Kubernetes layers, but clicking Format on the sample exposed an application defect. The YAML library preserved the second document's start marker, while the formatter added another separator. That created an empty Document 2 despite the original sample being valid.
+
+Windows `kubectl diff` also required Git for Windows' bundled `diff.exe` to be added temporarily to `PATH`. Keeping the investigation read-only until each mutation was separately approved preserved a clear operational boundary.
+
+### What I finished
+
+- Added locked Node dependencies, six analyzer tests, CI, audit, and AMD64/ARM64 container validation.
+- Published versioned images through a guarded tag workflow without a floating `latest` tag.
+- Deployed a restricted, non-root, read-only Workbench with no Kubernetes identity or persisted YAML.
+- Published and pinned corrected release `0.1.1` at OCI index digest `sha256:50e3d115641941bc8f7eaa303463c08ccbafe5842cc07304d4b71dbd4aef8669`.
+- Verified one Ready replica with zero restarts, matching runtime ImageID, NodePort health, security headers, and browser behavior.
+- Confirmed multi-document formatting retains the Deployment and Service, and visibly reformatted flow-style YAML remains valid.
+
+### Next small step
+
+Complete final review and merge of PR #8 with explicit approval. Treat any positive format-status message or broader schema validation as a separate future increment.
+

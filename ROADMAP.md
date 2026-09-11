@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, Kubernetes resource metrics, Grafana visualization, and a limited Prometheus rule-evaluation layer. NVMe-backed Prometheus and Grafana both use retained local storage with tested persistence and recovery procedures.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench `0.1.1`. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -151,6 +151,20 @@ See [Milestone 029](docs/milestones/milestone-029-limited-alerting-planning.md) 
 
 See [Milestone 030](docs/milestones/milestone-030-limited-alerting-implementation.md) and the [activation review](docs/observability/limited-alerting-activation-review.md). No receiver or notification delivery is included.
 
+### Milestone 032 — Forge YAML Workbench
+
+**Status:** Complete. Source, CI, multi-architecture release, hardened deployment and browser acceptance passed.
+
+Delivered outcomes:
+
+- Built a browser-local Kubernetes YAML inspector with multi-document parsing, formatting, summaries, bounded operational findings, and an expandable object tree.
+- Added locked dependencies, six analyzer tests, build and audit checks, and guarded AMD64/ARM64 image publication.
+- Published corrected release `0.1.1` and pinned OCI index digest `sha256:50e3d115641941bc8f7eaa303463c08ccbafe5842cc07304d4b71dbd4aef8669`.
+- Deployed one restricted, non-root, read-only replica in `forge-tools` through NodePort `30081`, without Kubernetes credentials or server-side YAML persistence.
+- Found a multi-document formatting defect during browser acceptance, added a round-trip regression test, published the patch, and verified the corrected live behavior.
+
+See [Milestone 032](docs/milestones/milestone-032-forge-yaml-workbench.md) and the [Workbench deployment guide](k8s/forge-yaml-workbench/README.md).
+
 ### Later outcomes in this phase
 
 - Observe naturally occurring alert behavior and revisit provisional delays before designing notification delivery.
@@ -221,3 +235,4 @@ A milestone is complete when:
 - operating steps and known limitations are documented
 - the milestone record contains enough evidence for someone returning later
 - the next step is identified without silently expanding the completed milestone's scope
+

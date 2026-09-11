@@ -1,6 +1,6 @@
 # Forge YAML Workbench Kubernetes Manifests
 
-These manifests define the planned SignalForge deployment of the browser-local Forge YAML Workbench.
+These manifests define the deployed SignalForge browser-local Forge YAML Workbench.
 
 ## Resources
 
@@ -41,9 +41,9 @@ From the repository root:
 python .\scripts\validate-k8s-manifests.py
 ```
 
-## Pre-deployment review
+## Change review
 
-After the validation checkpoint is committed, preview the resources against the live API without applying them:
+Before any update, preview the exact resources against the live API without applying them:
 
 ```powershell
 kubectl apply --dry-run=server -f .\k8s\forge-yaml-workbench\namespace.yaml
@@ -52,4 +52,15 @@ kubectl apply --dry-run=server -f .\k8s\forge-yaml-workbench\forge-yaml-workbenc
 kubectl diff -f .\k8s\forge-yaml-workbench
 ```
 
-Do not apply these manifests until the dry-run and diff are reviewed and explicit approval is given.
+Do not apply a change until the dry-run and diff are reviewed and explicit approval is given.
+
+After approval, apply only the reviewed resource and verify the rollout. For a Deployment-only image update:
+
+```powershell
+kubectl apply -f .\k8s\forge-yaml-workbench\forge-yaml-workbench-deployment.yaml
+kubectl rollout status deployment/forge-yaml-workbench -n forge-tools --timeout=180s
+kubectl get deployment,pods,service -n forge-tools -o wide
+```
+
+The accepted `0.1.1` deployment has one available Ready replica with zero restarts and a runtime ImageID matching the pinned OCI index digest. NodePort `30081`, `/healthz`, the application page, security headers, multi-document formatting, and flow-to-block formatting passed live acceptance.
+

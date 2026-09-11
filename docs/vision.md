@@ -12,7 +12,7 @@ Success also means being able to return to a project later, understand why it wa
 
 ## Active workstream
 
-SignalForge is the current embodiment of this vision: a four-node Raspberry Pi Kubernetes lab running a versioned FastAPI application, lightweight Prometheus collection, and Kubernetes resource metrics.
+SignalForge is the current embodiment of this vision: a four-node Raspberry Pi Kubernetes lab running a versioned FastAPI application, lightweight Prometheus collection, Kubernetes resource metrics, Grafana dashboards, bounded alert evaluation, and a browser-local YAML Workbench.
 
 The workstream develops one capability at a time—cluster operation, application delivery, CI/CD, infrastructure validation, application and resource metrics, and operational documentation. Its longer-term direction is ForgeOps, an AI-assisted Kubernetes incident copilot grounded in real platform signals and repeatable troubleshooting practices.
 
@@ -33,3 +33,4 @@ The workstream develops one capability at a time—cluster operation, applicatio
 - infrastructure automation and security
 - applied machine learning experiments
 - architecture and systems thinking
+
