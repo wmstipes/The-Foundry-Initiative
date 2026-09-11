@@ -54,4 +54,13 @@ describe("Forge YAML Workbench analysis", () => {
   it("formats valid YAML", () => {
     expect(formatYaml("kind:  Pod\nmetadata: {name: demo}\n")).toContain("metadata:\n  name: demo");
   });
+
+  it("formats multi-document YAML without creating an empty document", () => {
+    const formatted = formatYaml(SAMPLE_YAML);
+    const result = analyzeYaml(formatted);
+
+    expect(formatted).not.toContain("---\n---");
+    expect(result.errors).toHaveLength(0);
+    expect(result.documents.map((document) => document.kind)).toEqual(["Deployment", "Service"]);
+  });
 });
