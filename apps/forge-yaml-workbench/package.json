@@ -9,10 +9,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "yaml": "2.8.1"
+    "yaml": "2.9.0"
   },
   "devDependencies": {
-    "vite": "7.1.5",
-    "vitest": "3.2.4"
+    "vite": "7.3.6",
+    "vitest": "3.2.7"
   }
 }
