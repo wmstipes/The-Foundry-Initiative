@@ -1,6 +1,6 @@
 # Restaurant API limited-alert rules
 
-The Milestone 030 offline package was merged through PR #5 at `604e38e`. The activation-review candidate embeds the canonical file in the existing Prometheus ConfigMap and loads it through that ConfigMap's existing read-only mount. Repository wiring does not prove or authorize live activation.
+The Milestone 030 offline package was merged through PR #5 at `604e38e`. The guarded activation candidate merged through PR #6 at `f54b961`, then was explicitly approved, activated and independently verified on 2026-09-11. The canonical rules are embedded in the existing Prometheus ConfigMap and loaded through its existing read-only mount.
 
 The accepted [Milestone 029 specification](../../docs/observability/limited-alerting-specification.md) defines two service-level scrape-coverage conditions: warning for one or two healthy targets over five minutes, and critical for no healthy targets over two minutes. The expected three-target baseline and both delays remain provisional operator choices, not measured SLOs.
 
@@ -46,12 +46,12 @@ Every checkpoint asserts both rule firing results and the complete `ALERTS` vect
 
 The critical expression's numeric value differs between all-down and absent branches; its annotation intentionally does not call `$value` a target count. Query errors and a stopped evaluator are not simulated as successful empty vectors. No promtool fixture here demonstrates monitoring self-health, delivered notifications, or real discovery timing.
 
-## Current evidence and activation gate
+## Current evidence and live state
 
 Local static validation, 13 regression tests, existing manifest validation, and 17 Grafana regression tests passed during offline preparation. Promtool and Docker were unavailable in that workspace. Subsequently, [GitHub Actions run 34542077003](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/34542077003) passed on 2026-09-10 for commit `29a6e31`: real promtool 3.13.2 validated both rules and passed all 19 scenarios, and all 13 source-level tests passed. No rule or fixture changes were needed. PR #5 was reviewed and merged at `604e38e`. This remains synthetic evidence, not live-cluster validation.
 
-The [activation review](../../docs/observability/limited-alerting-activation-review.md) now defines ordinary-history review, the manual replica baseline, minimal rule loading, rule-state inspection, maintenance interpretation, recovery and automatic rollback. Run its non-mutating plan before separately approving any cluster mutation. No receiver, Alertmanager, self-scrape, dashboard change or new exporter is included.
+The [activation review](../../docs/observability/limited-alerting-activation-review.md) records the approved change and evidence. At acceptance, the live ConfigMap exactly matched merged `main`, all three Restaurant API targets were healthy, and both rules reported `health=ok` and `state=inactive`. The preceding 24-hour review contained 2,881 samples with no below-three result. No receiver, Alertmanager, self-scrape, dashboard change or new exporter is included.
 
-Before activation, repository rollback is an ordinary revert. After an explicitly approved activation, use the exact recovery file produced by the guarded helper; do not delete the ConfigMap or retained storage.
+For rollback, use the exact checksum-recorded recovery file produced by the guarded helper; do not delete the ConfigMap or retained storage. Continue using `metrics-alerts-plan` for non-mutating state checks and record naturally occurring pending/firing behavior without injecting failure.
 
 Reference: [Prometheus rule unit testing](https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/) and [alerting rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/).
