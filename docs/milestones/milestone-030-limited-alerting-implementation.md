@@ -2,7 +2,7 @@
 
 Started: 2026-09-10
 
-Status: In progress. Offline package merged on 2026-09-10; activation candidate prepared but not activated.
+Status: Complete. Offline validation, guarded activation, live verification and recovery evidence passed by 2026-09-11.
 
 ## Baseline
 
@@ -40,11 +40,21 @@ This supplies synthetic rule-evaluation evidence, not a live rollout-timing meas
 
 ## Activation-review increment
 
-The next repository candidate embeds the exact canonical rules in the existing `prometheus-config` ConfigMap and adds one `rule_files` entry. The existing Deployment already mounts that ConfigMap at `/etc/prometheus`; no workload template, image, RBAC, Service, storage, Grafana, Alertmanager, receiver, credential or application change is needed.
+PR #6 embedded the exact canonical rules in the existing `prometheus-config` ConfigMap and added one `rule_files` entry. The existing Deployment already mounted that ConfigMap at `/etc/prometheus`; no workload template, image, RBAC, Service, storage, Grafana, Alertmanager, receiver, credential or application change was needed. The guarded candidate and Git patch reference merged at `f54b96138e9ac0521c6a854055dd1dd4ae0e1ed9`.
 
 `manage-prometheus-alerts.ps1` defaults to read-only planning. It checks the exact live baseline, context, image, replicas, three healthy targets and current rule state; summarizes 24 hours of scoped target-count samples; performs server-side validation and shows the diff. Explicit `-Activate` is separate. It saves and verifies the live baseline ConfigMap before applying, restarts only Prometheus, requires both rules to be healthy and inactive, and automatically rolls back on failed post-change validation. Explicit rollback accepts only the known baseline recovery file. See the [activation review](../observability/limited-alerting-activation-review.md).
 
-No cluster command, reload, rollout, traffic generation, failure injection, notification setup or external Git write was performed while preparing this candidate. Local checks cannot claim the current live state.
+No cluster command, reload, rollout, traffic generation, failure injection or notification setup was performed while preparing the candidate. Live activation occurred only after the candidate was reviewed, CI was green, PR #6 was merged, `main` was synchronized, and Mike explicitly approved the mutation.
+
+## Live activation evidence
+
+At 2026-09-11 15:46:46 UTC, the guarded helper reconfirmed the exact baseline ConfigMap, three healthy Restaurant API targets, no loaded candidate alerts, and a 24-hour history containing 2,881 samples with minimum target count 3 and no below-three interval. Server-side dry-run passed and `kubectl diff` showed only the accepted `rule_files` entry and embedded rules.
+
+Before mutation, the helper saved and re-read `C:\Users\wmsti\SignalForge-Backups\prometheus\alert-activation-20260911-154646Z.json`. The 1,587-byte recovery file has SHA-256 `BE7D39DD99715B70A99E5151D7E268EBA197F8F7C1F7E61D6C338468558403FA`.
+
+The helper applied only `configmap/prometheus-config`, restarted only `deployment/prometheus`, and observed a successful rollout. Immediate and independent follow-up checks both reported three healthy targets and exactly two accepted rules with `health=ok` and `state=inactive`. The second plan classified the live ConfigMap as `candidate` and produced an empty diff against merged `main`. Automatic rollback was not invoked.
+
+This proves live rule loading and healthy inactive evaluation under the normal three-target condition. It does not prove firing timing from a real incident, notification delivery, Prometheus self-health, or user-facing availability. No failure was injected and no Alertmanager or receiver exists.
 
 ## Remaining gates
 
@@ -54,8 +64,8 @@ No cluster command, reload, rollout, traffic generation, failure injection, noti
 - [x] Commit the offline change and obtain GitHub Actions evidence.
 - [x] Complete final review and merge PR #5.
 - [x] Present minimal rule wiring, observation, maintenance and rollback procedures for review.
-- [ ] Run and review the non-mutating live plan, including recent normal rollout/maintenance timing.
-- [ ] Explicitly accept or revise the provisional trial delays before activation.
-- [ ] Only after separate approval, implement and validate live rule loading without implying delivered notifications.
+- [x] Run and review the non-mutating live plan, including recent normal rollout/maintenance timing.
+- [x] Explicitly accept the provisional five-minute warning and two-minute critical trial delays.
+- [x] After separate approval, activate and validate live rule loading without implying delivered notifications.
 
-Milestone 030 is not complete. The immediate next step is repository review and the read-only live plan, not activation. Alertmanager, notification channels, performance thresholds, failure injection, and monitoring-system self-health remain outside this increment.
+Milestone 030 is complete. The next step is observation of naturally occurring behavior and periodic read-only rule-state checks before deciding whether a notification design is justified. Alertmanager, notification channels, performance thresholds, failure injection, and monitoring-system self-health remain outside this milestone.
