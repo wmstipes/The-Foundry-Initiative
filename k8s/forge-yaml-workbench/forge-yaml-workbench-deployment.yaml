@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forge-yaml-workbench
+  namespace: forge-tools
+  labels:
+    app: forge-yaml-workbench
+    project: signalforge
+    app.kubernetes.io/name: forge-yaml-workbench
+    app.kubernetes.io/part-of: signalforge
+    app.kubernetes.io/version: "0.1.0"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: forge-yaml-workbench
+  template:
+    metadata:
+      labels:
+        app: forge-yaml-workbench
+        project: signalforge
+        app.kubernetes.io/name: forge-yaml-workbench
+        app.kubernetes.io/part-of: signalforge
+        app.kubernetes.io/version: "0.1.0"
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: forge-yaml-workbench
+        image: wmstipes/signalforge-yaml-workbench:0.1.0@sha256:dee700a8754c39f736b94f85c7ad484b2ebe6c41647cf7fa5d37c905c25ae190
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 25m
+            memory: 32Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+        startupProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          periodSeconds: 2
+          timeoutSeconds: 1
+          failureThreshold: 30
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          periodSeconds: 20
+          timeoutSeconds: 2
+          failureThreshold: 3
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: 32Mi
