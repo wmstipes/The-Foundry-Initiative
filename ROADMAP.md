@@ -1,14 +1,14 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-10
+**Last updated:** 2026-09-11
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-029 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, Kubernetes resource metrics, and a lightweight Grafana visualization layer. NVMe-backed Prometheus and Grafana both use retained local storage with tested persistence and recovery procedures.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, Kubernetes resource metrics, Grafana visualization, and a limited Prometheus rule-evaluation layer. NVMe-backed Prometheus and Grafana both use retained local storage with tested persistence and recovery procedures.
 
-Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules and validation were merged through PR #5 at `604e38e` after real promtool 3.13.2 passed both rules and all 19 scenarios. A minimal ConfigMap-only activation candidate and guarded plan/rollback helper are now under review. Scrape-coverage delays remain provisional and no live activation is claimed.
+Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
 ## Phase 1 — Cluster and application foundation
 
@@ -141,18 +141,19 @@ See [Milestone 029](docs/milestones/milestone-029-limited-alerting-planning.md) 
 
 ### Milestone 030 — Limited alerting implementation
 
-**Status:** In progress; offline package merged, guarded activation candidate under review.
+**Status:** Complete. Offline validation, guarded activation, recovery capture and live verification passed.
 
 - Implement two candidate scrape-coverage rules and validate them before wiring.
 - Validate static boundaries and generate 19 synthetic scenarios for pinned-promtool evaluation.
 - Offline CI passed both rule validation and all 19 scenarios on 2026-09-10; PR #5 merged at `604e38e`.
-- Review a ConfigMap-only wiring change, read-only live plan, recovery snapshot, automatic rollback, maintenance interpretation, and explicit activation approval separately.
+- Activated only the ConfigMap wiring after a read-only live plan and explicit approval; retained a checksum-recorded recovery snapshot and verified an exact live/repository match.
+- Confirmed three healthy targets and two loaded rules with healthy inactive state; no receiver or notification path was added.
 
 See [Milestone 030](docs/milestones/milestone-030-limited-alerting-implementation.md) and the [activation review](docs/observability/limited-alerting-activation-review.md). No receiver or notification delivery is included.
 
 ### Later outcomes in this phase
 
-- Add a limited alerting layer only after normal behavior and useful thresholds are understood.
+- Observe naturally occurring alert behavior and revisit provisional delays before designing notification delivery.
 - Continue exercising backup cadence and recovery procedures so RPO assumptions remain demonstrated over time.
 - Reevaluate whether the lightweight collector remains sufficient before considering `kube-prometheus-stack`.
 
