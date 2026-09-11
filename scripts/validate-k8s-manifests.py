@@ -38,6 +38,20 @@ METRICS_SERVER_CA_ARGUMENT = (
     "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 )
 
+WORKBENCH_MANIFEST_DIR = Path("k8s/forge-yaml-workbench")
+WORKBENCH_NAMESPACE = "forge-tools"
+WORKBENCH_APP = "forge-yaml-workbench"
+WORKBENCH_VERSION = "0.1.0"
+WORKBENCH_IMAGE_DIGEST = (
+    "sha256:dee700a8754c39f736b94f85c7ad484b2ebe6c41647cf7fa5d37c905c25ae190"
+)
+WORKBENCH_IMAGE = (
+    f"wmstipes/signalforge-yaml-workbench:{WORKBENCH_VERSION}"
+    f"@{WORKBENCH_IMAGE_DIGEST}"
+)
+WORKBENCH_CONTAINER_PORT = 8080
+WORKBENCH_NODEPORT = 30081
+
 REQUIRED_RESTAURANT_FILES = [
     "namespace.yaml",
     "restaurant-api-config.yaml",
@@ -68,6 +82,12 @@ REQUIRED_METRICS_SERVER_FILES = [
     "metrics-server-service.yaml",
     "metrics-server-deployment.yaml",
     "metrics-server-api-service.yaml",
+]
+
+REQUIRED_WORKBENCH_FILES = [
+    "namespace.yaml",
+    "forge-yaml-workbench-deployment.yaml",
+    "forge-yaml-workbench-service.yaml",
 ]
 
 
@@ -710,10 +730,216 @@ def validate_metrics_server_manifests() -> None:
     ok("Metrics APIService manifest is valid")
 
 
+def validate_workbench_manifests() -> None:
+    require_files(WORKBENCH_MANIFEST_DIR, REQUIRED_WORKBENCH_FILES)
+    ok("All required Forge YAML Workbench manifest files exist")
+
+    namespace = load_yaml(WORKBENCH_MANIFEST_DIR / "namespace.yaml")
+    deployment = load_yaml(
+        WORKBENCH_MANIFEST_DIR / "forge-yaml-workbench-deployment.yaml"
+    )
+    service = load_yaml(
+        WORKBENCH_MANIFEST_DIR / "forge-yaml-workbench-service.yaml"
+    )
+
+    require(
+        namespace.get("kind") == "Namespace",
+        "Workbench namespace manifest must be kind Namespace",
+    )
+    require(
+        namespace.get("metadata", {}).get("name") == WORKBENCH_NAMESPACE,
+        "Workbench namespace must be forge-tools",
+    )
+    namespace_labels = namespace.get("metadata", {}).get("labels", {})
+    for mode in ("enforce", "audit", "warn"):
+        require(
+            namespace_labels.get(f"pod-security.kubernetes.io/{mode}")
+            == "restricted",
+            f"Workbench namespace must set Pod Security {mode} to restricted",
+        )
+        require(
+            namespace_labels.get(f"pod-security.kubernetes.io/{mode}-version")
+            == "v1.36",
+            f"Workbench namespace must pin Pod Security {mode} to v1.36",
+        )
+    ok("Workbench restricted namespace manifest is valid")
+
+    require(
+        deployment.get("kind") == "Deployment",
+        "forge-yaml-workbench-deployment.yaml must be kind Deployment",
+    )
+    deployment_metadata = deployment.get("metadata", {})
+    require(
+        deployment_metadata.get("name") == WORKBENCH_APP,
+        "Workbench Deployment name mismatch",
+    )
+    require(
+        deployment_metadata.get("namespace") == WORKBENCH_NAMESPACE,
+        "Workbench Deployment namespace mismatch",
+    )
+
+    deployment_spec = deployment.get("spec", {})
+    require(
+        deployment_spec.get("replicas") == 1,
+        "Workbench must use one replica",
+    )
+    require(
+        deployment_spec.get("strategy", {}).get("type") == "RollingUpdate",
+        "Workbench must use RollingUpdate",
+    )
+    require(
+        deployment_spec.get("strategy", {}).get("rollingUpdate")
+        == {"maxUnavailable": 0, "maxSurge": 1},
+        "Workbench rolling-update bounds mismatch",
+    )
+    selector = deployment_spec.get("selector", {}).get("matchLabels", {})
+    require(
+        selector == {"app": WORKBENCH_APP},
+        "Workbench Deployment selector mismatch",
+    )
+
+    template = deployment_spec.get("template", {})
+    require(
+        template.get("metadata", {}).get("labels", {}).get("app")
+        == WORKBENCH_APP,
+        "Workbench Pod label app mismatch",
+    )
+    pod_spec = template.get("spec", {})
+    require(
+        pod_spec.get("automountServiceAccountToken") is False,
+        "Workbench must not mount a ServiceAccount token",
+    )
+    require(
+        "serviceAccountName" not in pod_spec,
+        "Workbench must not request a Kubernetes identity",
+    )
+    require(
+        pod_spec.get("enableServiceLinks") is False,
+        "Workbench must disable injected Service environment variables",
+    )
+    pod_security = pod_spec.get("securityContext", {})
+    require(
+        pod_security.get("runAsNonRoot") is True,
+        "Workbench Pod must run as non-root",
+    )
+    require(
+        pod_security.get("seccompProfile") == {"type": "RuntimeDefault"},
+        "Workbench Pod must use RuntimeDefault seccomp",
+    )
+
+    containers = pod_spec.get("containers", [])
+    require(
+        len(containers) == 1,
+        "Workbench Deployment must have exactly one container",
+    )
+    container = containers[0]
+    require(
+        container.get("name") == WORKBENCH_APP,
+        "Workbench container name mismatch",
+    )
+    require(
+        container.get("image") == WORKBENCH_IMAGE,
+        "Workbench image must use the approved version and OCI index digest",
+    )
+    require(
+        container.get("imagePullPolicy") == "IfNotPresent",
+        "Workbench imagePullPolicy must be IfNotPresent",
+    )
+    require(
+        container.get("ports")
+        == [
+            {
+                "name": "http",
+                "containerPort": WORKBENCH_CONTAINER_PORT,
+                "protocol": "TCP",
+            }
+        ],
+        "Workbench container port mismatch",
+    )
+
+    container_security = container.get("securityContext", {})
+    require(
+        container_security.get("allowPrivilegeEscalation") is False,
+        "Workbench must forbid privilege escalation",
+    )
+    require(
+        container_security.get("readOnlyRootFilesystem") is True,
+        "Workbench root filesystem must be read-only",
+    )
+    require(
+        container_security.get("capabilities") == {"drop": ["ALL"]},
+        "Workbench must drop all Linux capabilities",
+    )
+    require(
+        container.get("resources")
+        == {
+            "requests": {"cpu": "25m", "memory": "32Mi"},
+            "limits": {"cpu": "250m", "memory": "128Mi"},
+        },
+        "Workbench resource requests or limits mismatch",
+    )
+
+    for probe_name in ("startupProbe", "readinessProbe", "livenessProbe"):
+        probe = container.get(probe_name, {})
+        require(
+            probe.get("httpGet") == {"path": "/healthz", "port": "http"},
+            f"Workbench {probe_name} must use /healthz on the named HTTP port",
+        )
+
+    require(
+        container.get("volumeMounts") == [{"name": "tmp", "mountPath": "/tmp"}],
+        "Workbench container must mount only the temporary writable directory",
+    )
+    require(
+        pod_spec.get("volumes")
+        == [{"name": "tmp", "emptyDir": {"sizeLimit": "32Mi"}}],
+        "Workbench must use only a bounded ephemeral temporary volume",
+    )
+    ok("Workbench hardened Deployment manifest is valid")
+
+    require(
+        service.get("kind") == "Service",
+        "forge-yaml-workbench-service.yaml must be kind Service",
+    )
+    service_metadata = service.get("metadata", {})
+    require(
+        service_metadata.get("name") == WORKBENCH_APP,
+        "Workbench Service name mismatch",
+    )
+    require(
+        service_metadata.get("namespace") == WORKBENCH_NAMESPACE,
+        "Workbench Service namespace mismatch",
+    )
+    service_spec = service.get("spec", {})
+    require(
+        service_spec.get("type") == "NodePort",
+        "Workbench Service must be NodePort",
+    )
+    require(
+        service_spec.get("selector") == {"app": WORKBENCH_APP},
+        "Workbench Service selector mismatch",
+    )
+    require(
+        service_spec.get("ports")
+        == [
+            {
+                "name": "http",
+                "port": 80,
+                "targetPort": "http",
+                "nodePort": WORKBENCH_NODEPORT,
+                "protocol": "TCP",
+            }
+        ],
+        "Workbench NodePort Service mismatch",
+    )
+    ok("Workbench NodePort Service manifest is valid")
+
+
 def main() -> None:
     validate_restaurant_manifests()
     validate_prometheus_manifests()
     validate_metrics_server_manifests()
+    validate_workbench_manifests()
     runpy.run_path(str(Path(__file__).with_name('validate-grafana.py')), run_name='__main__')
     print()
     print("All Kubernetes manifest checks passed.")
