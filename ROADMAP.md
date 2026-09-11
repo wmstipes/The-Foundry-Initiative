@@ -8,7 +8,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-029 are complete, and Restaurant API `0.7.0` is running as three replicas with automated delivery, version-controlled Kubernetes manifests, operator tooling, lightweight Prometheus metrics collection, Kubernetes resource metrics, and a lightweight Grafana visualization layer. NVMe-backed Prometheus and Grafana both use retained local storage with tested persistence and recovery procedures.
 
-Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030 is in offline preparation: candidate rules and validation tooling are present, with real promtool 3.13.2 validation of both rules and all 19 scenarios now passed in GitHub Actions run `34542077003` for commit `29a6e31`. Scrape-coverage delays remain provisional and no alerting is activated.
+Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules and validation were merged through PR #5 at `604e38e` after real promtool 3.13.2 passed both rules and all 19 scenarios. A minimal ConfigMap-only activation candidate and guarded plan/rollback helper are now under review. Scrape-coverage delays remain provisional and no live activation is claimed.
 
 ## Phase 1 — Cluster and application foundation
 
@@ -141,14 +141,14 @@ See [Milestone 029](docs/milestones/milestone-029-limited-alerting-planning.md) 
 
 ### Milestone 030 — Limited alerting implementation
 
-**Status:** In progress; offline validation passed in CI, final PR review and activation approval pending.
+**Status:** In progress; offline package merged, guarded activation candidate under review.
 
-- Implement two candidate scrape-coverage rules outside the deployment manifests.
+- Implement two candidate scrape-coverage rules and validate them before wiring.
 - Validate static boundaries and generate 19 synthetic scenarios for pinned-promtool evaluation.
-- Offline CI passed both rule validation and all 19 scenarios on 2026-09-10; complete final PR review before proposing live wiring.
-- Review observation, maintenance, rollback, and explicit activation approval separately.
+- Offline CI passed both rule validation and all 19 scenarios on 2026-09-10; PR #5 merged at `604e38e`.
+- Review a ConfigMap-only wiring change, read-only live plan, recovery snapshot, automatic rollback, maintenance interpretation, and explicit activation approval separately.
 
-See [Milestone 030](docs/milestones/milestone-030-limited-alerting-implementation.md). No deployment, receiver, or notification delivery is included in the current increment.
+See [Milestone 030](docs/milestones/milestone-030-limited-alerting-implementation.md) and the [activation review](docs/observability/limited-alerting-activation-review.md). No receiver or notification delivery is included.
 
 ### Later outcomes in this phase
 

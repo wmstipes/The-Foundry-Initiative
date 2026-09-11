@@ -7,11 +7,47 @@ metadata:
     app: prometheus
     project: signalforge
 data:
+  restaurant-scrape.rules.yaml: |
+    groups:
+      - name: signalforge-restaurant-scrape
+        interval: 30s
+        rules:
+          - alert: RestaurantScrapeCoverageDegraded
+            expr: |
+              (sum(up{job="restaurant-api",namespace="forge-restaurant"}) > 0)
+              and
+              (sum(up{job="restaurant-api",namespace="forge-restaurant"}) < 3)
+            for: 5m
+            labels:
+              job: restaurant-api
+              namespace: forge-restaurant
+              severity: warning
+            annotations:
+              summary: Restaurant API scrape coverage below three targets
+              description: '{{ $value }} healthy scrape targets; expected 3. Investigate scrape errors, discovery and rollout context. This does not establish user-facing availability.'
+              runbook_url: https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/runbooks/restaurant-api-operator-runbook.md
+          - alert: RestaurantNoHealthyScrapeTargets
+            expr: |
+              (sum(up{job="restaurant-api",namespace="forge-restaurant"}) == 0)
+              or
+              absent(sum(up{job="restaurant-api",namespace="forge-restaurant"}))
+            for: 2m
+            labels:
+              job: restaurant-api
+              namespace: forge-restaurant
+              severity: critical
+            annotations:
+              summary: No healthy Restaurant API scrape targets observed
+              description: 'All scoped scrapes are failing or scoped target series are absent. Inspect discovery and scrape errors; separately verify user-facing access. The evaluator cannot detect its own outage.'
+              runbook_url: https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/runbooks/restaurant-api-operator-runbook.md
   prometheus.yml: |
     global:
       scrape_interval: 30s
       scrape_timeout: 10s
       evaluation_interval: 30s
+
+    rule_files:
+    - /etc/prometheus/restaurant-scrape.rules.yaml
 
     scrape_configs:
     - job_name: restaurant-api

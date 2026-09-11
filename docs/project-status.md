@@ -44,6 +44,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 027: Lightweight Grafana design and dashboard requirements accepted
 - 028: Lightweight Grafana implementation, persistence and recovery validation
 - 029: Limited alerting design accepted and merged; no alert activation
+- 030: Offline limited-alerting package merged; activation candidate under review
 
 ## Current observability state
 
@@ -139,7 +140,7 @@ Milestone 028 is complete. Lightweight Grafana is deployed with retained storage
 
 The Milestone 029 [limited-alerting design](observability/limited-alerting-specification.md) was accepted by Mike and merged through PR #4 at `1837868` on 2026-09-10. It covers reduced scrape coverage and no-healthy-target conditions using the manual three-replica baseline. Five-minute and two-minute delays remain provisional, not measured operational thresholds. Performance alerts, notification channels, Alertmanager, and broader monitoring coverage remain deferred.
 
-[Milestone 030](milestones/milestone-030-limited-alerting-implementation.md) is in progress with offline candidate rules, generated fixtures, static guardrails, and CI validation tooling. Available local source checks passed, followed by successful real promtool 3.13.2 validation of both rules and all 19 scenarios in [GitHub Actions run 34542077003](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/34542077003) for commit `29a6e31`. The candidates are not wired into Prometheus, and no cluster changes have been made. The live observability state above is unchanged. Draft PR #5 still requires final review. Live wiring and activation require separate review and approval; the passing offline tests do not authorize cluster changes.
+[Milestone 030](milestones/milestone-030-limited-alerting-implementation.md) remains in progress. Its offline candidate rules, fixtures and CI tooling were merged through PR #5 at `604e38e` after successful real promtool 3.13.2 validation of both rules and all 19 scenarios in [GitHub Actions run 34542077003](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/34542077003). A later activation-review branch now proposes only ConfigMap rule wiring plus a guarded plan/activation/rollback helper. No cluster change or live rule state is claimed yet. Review the read-only live plan and separately approve activation; passing synthetic tests and repository wiring do not authorize it.
 
 ## Known temporary limitation
 

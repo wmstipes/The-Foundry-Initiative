@@ -78,11 +78,19 @@ powershell -ExecutionPolicy Bypass -File .\scripts\test-metrics-server.ps1
 python .\scripts\validate-k8s-manifests.py
 ```
 
-## Offline alert validation (Milestone 030)
+## Limited alert validation and guarded activation (Milestone 030)
 
 ```powershell
 python .\scripts\validate-alert-rules.py
 python -m unittest discover -s tests -p 'test_alert_rules.py'
 ```
 
-These are source-level checks only. For actual rule evaluation with an existing promtool 3.13.2 binary, use `python .\scripts\test-alert-rules.py --promtool "C:\path\to\promtool.exe"` or the new offline alert CI job. Missing/wrong-version tooling fails rather than reporting a skipped success. See [offline alert validation](../monitoring/alerts/README.md) for the full procedure and limits. No cluster commands are executed by these helpers.
+These are source-level checks only. For actual rule evaluation with an existing promtool 3.13.2 binary, use `python .\scripts\test-alert-rules.py --promtool "C:\path\to\promtool.exe"` or the alert-rule CI job. Missing/wrong-version tooling fails rather than reporting a skipped success.
+
+The guarded operator helper defaults to a non-mutating plan:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-alerts-plan
+```
+
+It checks the exact live ConfigMap state, context, image, replica and target baseline; reports 24 hours of scoped coverage history; performs server-side validation and `kubectl diff`; and exits without changing cluster objects. There is deliberately no generic `forge.ps1` activation command. After separate approval, use the direct helper with `-Activate`; it snapshots the baseline ConfigMap, rolls out only Prometheus, verifies both rules are healthy and inactive, and automatically rolls back on failure. See the [activation review](../docs/observability/limited-alerting-activation-review.md) for commands, constraints and recovery.

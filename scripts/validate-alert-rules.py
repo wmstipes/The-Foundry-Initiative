@@ -54,17 +54,24 @@ def validate(root=ROOT):
         if severity == 'critical':
             require('$value' not in annotations['description'],
                     'Critical expression value is not a healthy-target count')
-    # An offline-only package must not introduce active rule wiring or receivers.
+    # The activation candidate embeds the canonical rules in the already-mounted
+    # ConfigMap. No receiver or other alerting subsystem is approved.
     manifest = yaml.safe_load((root/'k8s/prometheus/prometheus-config.yaml').read_text(encoding='utf-8-sig'))
-    config = yaml.safe_load(manifest['data']['prometheus.yml'])
-    require('rule_files' not in config and 'alerting' not in config,
-            'Offline phase must not wire rules or notification receivers into Prometheus')
+    data = manifest.get('data', {})
+    require(set(data) == {'prometheus.yml', 'restaurant-scrape.rules.yaml'},
+            'Prometheus ConfigMap must contain only the server config and accepted rules')
+    config = yaml.safe_load(data['prometheus.yml'])
+    require(config.get('rule_files') == ['/etc/prometheus/restaurant-scrape.rules.yaml'],
+            'Prometheus must load only the accepted embedded rule file')
+    require('alerting' not in config, 'Notification receivers and Alertmanager remain prohibited')
     require(config['global']['evaluation_interval'] == '30s', 'Evaluator interval drift')
+    embedded = yaml.safe_load(data['restaurant-scrape.rules.yaml'])
+    require(embedded == doc, 'Embedded rules must match the canonical offline-validated rules')
     grafana = configparser.ConfigParser(interpolation=None)
     grafana.read(root/'k8s/grafana/config/grafana.ini')
     require(not grafana.getboolean('unified_alerting', 'enabled'),
             'Grafana alerting must stay disabled')
-    print('PASS: static alert scope and inactive configuration; PromQL execution not checked here.')
+    print('PASS: activation candidate matches the accepted rules; no receiver configuration present.')
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-storage", "metrics-persistence", "metrics-backup-ready", "metrics-backup", "metrics-restore-test", "metrics-targets", "metrics-ui", "metrics-server-deploy", "metrics-server-status", "top")]
+    [ValidateSet("status", "deploy", "smoke", "pods", "logs", "image", "nodes", "metrics-deploy", "metrics-status", "metrics-storage", "metrics-persistence", "metrics-backup-ready", "metrics-backup", "metrics-restore-test", "metrics-targets", "metrics-alerts-plan", "metrics-ui", "metrics-server-deploy", "metrics-server-status", "top")]
     [string]$Command,
 
     [string]$Namespace = "forge-restaurant",
@@ -172,6 +172,14 @@ switch ($Command) {
     "metrics-targets" {
         Show-Header "Prometheus Restaurant API targets"
         & "$ScriptDir\test-prometheus-targets.ps1" -Namespace $MetricsNamespace
+    }
+
+    "metrics-alerts-plan" {
+        Show-Header "Prometheus limited-alerting activation plan"
+        & "$ScriptDir\manage-prometheus-alerts.ps1" `
+            -Namespace $MetricsNamespace `
+            -Deployment $MetricsDeployment `
+            -Service $MetricsService
     }
 
     "metrics-ui" {
