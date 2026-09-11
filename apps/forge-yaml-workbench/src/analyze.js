@@ -164,7 +164,11 @@ export function formatYaml(source) {
 
   const output = parsed
     .filter((document) => document.contents !== null)
-    .map((document) => document.toString({ collectionStyle: "block", indent: 2, lineWidth: 0 }).trimEnd())
+    .map((document) => {
+      const clone = document.clone();
+      clone.directives.docStart = false;
+      return clone.toString({ collectionStyle: "block", indent: 2, lineWidth: 0 }).trimEnd();
+    })
     .join("\n---\n");
 
   return output ? output + "\n" : "";
