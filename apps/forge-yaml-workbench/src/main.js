@@ -210,7 +210,10 @@ function render() {
   document.querySelector("#results").innerHTML = views[activeTab](analysis);
 }
 
-editor.addEventListener("input", render);
+editor.addEventListener("input", () => {
+  announce("Editing YAML");
+  render();
+});
 document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click", () => {
   setActiveTab(tab.dataset.tab);
   render();

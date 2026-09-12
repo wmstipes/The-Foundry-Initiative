@@ -45,6 +45,16 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(editor.selectionEnd).toBe(editor.value.length - 1);
   });
 
+  it("clears a stale formatting failure when editing resumes", () => {
+    replaceEditor("apiVersion: v1\nkind: Pod\nkind: Service\n");
+    document.querySelector("#format").click();
+    expect(document.querySelector("#action-status").textContent).toBe("Formatting failed — see Validation");
+
+    replaceEditor("apiVersion: v1\nkind: Pod\nmetadata:\n  name: corrected\n");
+    expect(document.querySelector("#action-status").textContent).toBe("Editing YAML");
+    expect(document.querySelector("#status").textContent).toBe("1 valid document");
+  });
+
   it("protects unsaved YAML from accidental clearing", () => {
     replaceEditor(editor.value + "# local change\n");
     Object.defineProperty(window, "confirm", {
