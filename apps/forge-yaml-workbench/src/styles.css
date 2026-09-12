@@ -29,11 +29,15 @@ main { max-width: 1800px; margin: auto; padding: 22px 24px 14px; }
 .toolbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 18px; }
 .toolbar h1 { margin: 0 0 5px; font-size: clamp(1.3rem, 2vw, 1.8rem); }
 .toolbar p { margin: 0; color: var(--muted); }
+.toolbar-controls { display: grid; justify-items: end; gap: 8px; }
 .actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 button { min-height: 38px; padding: 0 13px; border: 1px solid var(--line); border-radius: 7px; color: var(--text); background: var(--panel-2); cursor: pointer; }
 button:hover { border-color: #596b7e; background: #1e2b37; }
 button:focus-visible, textarea:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 button.quiet { color: var(--muted); background: transparent; }
+.action-status { min-height: 1.1rem; color: var(--muted); font-size: .75rem; }
+.action-status.success { color: var(--teal); }
+.action-status.error { color: var(--red); }
 .workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(400px, 1fr); min-height: calc(100vh - 180px); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); box-shadow: 0 24px 65px rgba(0, 0, 0, .3); }
 .pane { min-width: 0; }
 .editor-pane { border-right: 1px solid var(--line); background: #0f151d; }
@@ -81,6 +85,7 @@ code { color: #dbe7f2; font-family: "Cascadia Code", Consolas, monospace; font-s
 .message.note > span { background: rgba(104, 185, 245, .12); color: var(--blue); }
 .message strong { font-size: .86rem; }
 .message p { margin: 4px 0 0; color: var(--muted); font-size: .82rem; line-height: 1.5; }
+.message-location { min-height: 0; margin-top: 8px; padding: 3px 7px; border-color: #3c5064; color: var(--blue); background: transparent; font-family: monospace; font-size: .72rem; }
 .empty { min-height: 350px; display: grid; place-content: center; justify-items: center; padding: 30px; text-align: center; }
 .empty > div { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--amber); font-family: monospace; font-weight: 800; }
 .empty h3 { margin: 0; }
@@ -100,6 +105,7 @@ footer { display: flex; justify-content: space-between; padding: 12px 4px 0; col
   .privacy { display: none; }
   main { padding: 16px; }
   .toolbar { align-items: stretch; flex-direction: column; }
+  .toolbar-controls { justify-items: start; }
   .actions { justify-content: flex-start; }
   .workspace { grid-template-columns: 1fr; }
   .editor-pane { border-right: 0; border-bottom: 1px solid var(--line); }

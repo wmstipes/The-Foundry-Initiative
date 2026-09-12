@@ -165,6 +165,24 @@ Delivered outcomes:
 
 See [Milestone 032](docs/milestones/milestone-032-forge-yaml-workbench.md) and the [Workbench deployment guide](k8s/forge-yaml-workbench/README.md).
 
+### Milestone 033 — Forge YAML Workbench usability
+
+**Status:** In progress
+
+Planned bounded outcomes:
+
+- Add explicit action feedback, precise parser locations, and click-to-focus diagnostics.
+- Preserve filenames, add keyboard shortcuts, and protect unsaved edits from accidental clearing.
+- Add DOM interaction tests without changing the Workbench's local-only trust boundary.
+
+See [Milestone 033](docs/milestones/milestone-033-workbench-usability.md).
+
+### Planned Workbench follow-ons
+
+- Milestone 034: deeper deterministic Kubernetes checks with YAML paths and suggested corrections.
+- Milestone 035: browser-local schema validation against a pinned Kubernetes version, with explicit handling for schemas unavailable for CRDs.
+- Later increments: before/after formatting diff, copy and report export, finding filters, tree search, drag-and-drop, display preferences, and bounded large-file processing.
+
 ### Later outcomes in this phase
 
 - Observe naturally occurring alert behavior and revisit provisional delays before designing notification delivery.
@@ -235,4 +253,3 @@ A milestone is complete when:
 - operating steps and known limitations are documented
 - the milestone record contains enough evidence for someone returning later
 - the next step is identified without silently expanding the completed milestone's scope
-

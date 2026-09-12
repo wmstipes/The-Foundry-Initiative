@@ -1,4 +1,4 @@
-import { parseAllDocuments } from "yaml";
+import { LineCounter, parseAllDocuments } from "yaml";
 
 const WORKLOADS = new Set(["Pod", "Deployment", "StatefulSet", "DaemonSet", "ReplicaSet", "Job", "CronJob"]);
 
@@ -137,19 +137,37 @@ export function summarizeResource(resource, index) {
 export function analyzeYaml(source) {
   if (!source.trim()) return { documents: [], errors: [], warnings: [] };
 
-  const parsed = parseAllDocuments(source, { prettyErrors: true, uniqueKeys: true });
+  const lineCounter = new LineCounter();
+  const parsed = parseAllDocuments(source, { lineCounter, prettyErrors: true, uniqueKeys: true });
   const result = { documents: [], errors: [], warnings: [] };
 
+  const diagnostic = (item, parsedDocument, documentNumber) => {
+    const position = item.linePos?.[0] || lineCounter.linePos(item.pos?.[0] ?? parsedDocument.range?.[0] ?? 0);
+    return {
+      document: documentNumber,
+      message: item.message,
+      line: position?.line,
+      column: position?.col
+    };
+  };
+
   parsed.forEach((document, index) => {
-    document.errors.forEach((error) => result.errors.push({ document: index + 1, message: error.message }));
-    document.warnings.forEach((warning) => result.warnings.push({ document: index + 1, message: warning.message }));
+    const documentNumber = index + 1;
+    document.errors.forEach((error) => result.errors.push(diagnostic(error, document, documentNumber)));
+    document.warnings.forEach((warning) => result.warnings.push(diagnostic(warning, document, documentNumber)));
 
     if (document.errors.length === 0 && document.contents !== null) {
       const value = document.toJS({ maxAliasCount: 100 });
       if (!value || typeof value !== "object" || Array.isArray(value)) {
-        result.errors.push({ document: index + 1, message: "A Kubernetes manifest must be a YAML mapping/object at its root." });
+        const position = lineCounter.linePos(document.range?.[0] ?? 0);
+        result.errors.push({
+          document: documentNumber,
+          message: "A Kubernetes manifest must be a YAML mapping/object at its root.",
+          line: position.line,
+          column: position.col
+        });
       } else {
-        result.documents.push(summarizeResource(value, index + 1));
+        result.documents.push(summarizeResource(value, documentNumber));
       }
     }
   });

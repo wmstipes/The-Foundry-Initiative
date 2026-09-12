@@ -107,5 +107,4 @@ Release `0.1.1` passed both browser checks:
 - [x] Multi-document formatting defect corrected and regression-tested.
 - [x] Architecture, status, roadmap, learning, and milestone documentation reconciled.
 
-Milestone 032 is complete pending final review and explicit merge approval for PR #8.
-
+Milestone 032 was merged through PR #8 at `3b6bac5` on 2026-09-12.

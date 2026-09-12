@@ -21,7 +21,8 @@ describe("Forge YAML Workbench analysis", () => {
   });
 
   it("reports duplicate keys", () => {
-    expect(analyzeYaml("kind: Pod\nkind: Service\n").errors.length).toBeGreaterThan(0);
+    const [error] = analyzeYaml("apiVersion: v1\nkind: Pod\nkind: Service\n").errors;
+    expect(error).toMatchObject({ document: 1, line: 3, column: 1 });
   });
 
   it("flags risky workload settings", () => {
