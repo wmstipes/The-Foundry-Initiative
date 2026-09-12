@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032 are complete, and Milestone 033 has completed implementation, publication, deployment, and live acceptance in draft PR #9. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench `0.1.2`. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-033 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench `0.1.2`. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 034 is adding deeper deterministic checks without introducing cluster access or schema-validation claims.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -167,7 +167,7 @@ See [Milestone 032](docs/milestones/milestone-032-forge-yaml-workbench.md) and t
 
 ### Milestone 033 — Forge YAML Workbench usability
 
-**Status:** Complete in draft PR #9. Implementation, publication, approved deployment, and live browser acceptance passed; final review and merge remain separate checkpoints.
+**Status:** Complete. Merged through PR #9 at `7aadedd` on 2026-09-12 after implementation, publication, approved deployment, and live browser acceptance passed.
 
 Delivered outcomes:
 
@@ -180,8 +180,18 @@ See [Milestone 033](docs/milestones/milestone-033-workbench-usability.md).
 
 ### Planned Workbench follow-ons
 
-- Milestone 034: deeper deterministic Kubernetes checks with YAML paths and suggested corrections.
+#### Milestone 034 — Deeper deterministic checks
+
+**Status:** Accepted `0.2.0` release candidate in draft PR #10; publication, deployment, final review, and merge remain separate checkpoints.
+
+- Attach clickable YAML paths, explanations, recommended changes, copyable examples, operational cautions, and initial OWASP K01:2025 references to operational findings.
+- Check workload selector consistency, duplicate resource identities, Service-to-workload selectors, named target ports, host namespaces, and container hardening settings.
+- Keep all evaluation deterministic and browser-local; do not claim API-server schema or admission validation.
+
+See [Milestone 034](docs/milestones/milestone-034-workbench-deterministic-checks.md).
+
 - Milestone 035: browser-local schema validation against a pinned Kubernetes version, with explicit handling for schemas unavailable for CRDs.
+- Milestone 036: a pinned OWASP Kubernetes Top 10:2025 review profile with direct, partial, and cluster-context-required coverage labels.
 - Later increments: before/after formatting diff, copy and report export, finding filters, tree search, drag-and-drop, display preferences, and bounded large-file processing.
 
 ### Later outcomes in this phase
