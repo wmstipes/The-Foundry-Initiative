@@ -2,7 +2,7 @@
 
 Started: 2026-09-12
 
-Status: Implementation and local verification complete on the milestone branch. Pull-request CI, browser acceptance, release publication, deployment, and merge remain separate checkpoints.
+Status: Implementation, local verification, pull-request CI, non-publishing multi-architecture build, and browser acceptance complete in draft PR #10. Release publication, deployment, final review, and merge remain separate checkpoints.
 
 ## Goal
 
@@ -42,8 +42,8 @@ Make each Workbench operational finding more actionable and add bounded cross-re
 - [x] Analyzer tests cover paths, corrections, selector mismatch, selector expressions, duplicate identities, Service selection, named target ports, host namespaces, container hardening, seccomp, and OWASP K01 remediation metadata.
 - [x] DOM coverage confirms paths, expandable guidance, cautions, OWASP references, and copyable YAML are rendered in Validation.
 - [x] Locked clean installation, 23-test suite, production build, dependency audit, repository manifest validation, and whitespace checks pass locally.
-- [ ] Pull-request CI and non-publishing multi-architecture image build pass.
-- [ ] Browser acceptance passes against representative valid and intentionally flawed manifests.
+- [x] Pull-request CI and non-publishing multi-architecture image build pass.
+- [x] Browser acceptance passes for clickable paths, expandable remediation guidance, copyable YAML, cautions, and OWASP references.
 - [ ] Any versioned publication is separately approved and verified.
 - [ ] Any live Deployment update is separately dry-run, diff-reviewed, approved, and verified.
 - [ ] Final review and merge are separately approved.
