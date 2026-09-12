@@ -2,7 +2,9 @@
 
 Started: 2026-09-12
 
-Status: Implementation, browser acceptance, and versioned `0.1.2` publication complete in draft PR #9. Deployment, final documentation reconciliation, and merge remain pending separate checkpoints.
+Completed: 2026-09-12
+
+Status: Complete in draft PR #9. Implementation, versioned publication, approved deployment, and live browser acceptance passed. Final review and merge remain separate checkpoints.
 
 ## Goal
 
@@ -53,6 +55,19 @@ Platform manifests:
 - AMD64: `sha256:b52ee9a984cfc5041eb4eecb61f1f0a4cdaa0ffbdea2174801e46fbe80e43404`
 - ARM64: `sha256:1682d1564dce644c9d19918a97f8898d72eedcc16b0e781d9570b3dccf43f585`
 
+## Live deployment
+
+Mike separately approved the reviewed Deployment-only update after server-side dry-run and `kubectl diff` showed only the version labels and immutable image reference changing from `0.1.1` to `0.1.2`. The rollout completed successfully without changing the Service or any other cluster resource.
+
+Live verification confirmed:
+
+- one available Ready replica with zero restarts
+- runtime ImageID matching OCI index digest `sha256:07f34be33c55bca5b7bf5321e5d149e4831ce520c9efbdd98233468a1a50e3c7`
+- a ready EndpointSlice backend on container port `8080`
+- NodePort `30081`, `/healthz`, and the application page returning HTTP 200
+- expected frame, content-type, referrer, and content-security headers
+- live browser acceptance for sample loading, already-formatted feedback, editing feedback, the format shortcut, and YAML download
+
 ## Deferred follow-on milestones
 
 - Milestone 034: deeper deterministic operational checks with paths, explanations, and suggested corrections.
@@ -68,4 +83,4 @@ Platform manifests:
 - [x] Pull-request CI and multi-architecture non-publishing image build pass.
 - [x] Browser acceptance confirms feedback, diagnostic navigation, filename preservation, shortcuts, and clear protection.
 - [x] Version `0.1.2` publication was separately approved and verified.
-- [ ] Any live Deployment update is separately dry-run, diff-reviewed, approved, and verified.
+- [x] The live Deployment update was separately dry-run, diff-reviewed, approved, rolled out, and verified.

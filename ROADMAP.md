@@ -1,12 +1,12 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-11
+**Last updated:** 2026-09-12
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench `0.1.1`. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032 are complete, and Milestone 033 has completed implementation, publication, deployment, and live acceptance in draft PR #9. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench `0.1.2`. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -167,13 +167,14 @@ See [Milestone 032](docs/milestones/milestone-032-forge-yaml-workbench.md) and t
 
 ### Milestone 033 — Forge YAML Workbench usability
 
-**Status:** Implementation, browser acceptance, and versioned `0.1.2` publication complete in draft PR #9; deployment and merge checkpoints remain pending.
+**Status:** Complete in draft PR #9. Implementation, publication, approved deployment, and live browser acceptance passed; final review and merge remain separate checkpoints.
 
-Planned bounded outcomes:
+Delivered outcomes:
 
 - Add explicit action feedback, precise parser locations, and click-to-focus diagnostics.
 - Preserve filenames, add keyboard shortcuts, and protect unsaved edits from accidental clearing.
 - Add DOM interaction tests without changing the Workbench's local-only trust boundary.
+- Publish and deploy immutable `0.1.2`, then verify its runtime digest, ready endpoint, health response, security headers, and live browser interactions.
 
 See [Milestone 033](docs/milestones/milestone-033-workbench-usability.md).
 

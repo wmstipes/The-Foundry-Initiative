@@ -14,7 +14,7 @@ Forge YAML Workbench is a browser-based Kubernetes manifest inspector for the Si
 
 ## Milestone 033 usability improvements
 
-The next patch keeps the same browser-local trust boundary while improving interaction precision:
+The `0.1.2` release keeps the same browser-local trust boundary while improving interaction precision:
 
 - explicit feedback when formatting changes YAML or the input is already normalized
 - parser diagnostics with clickable line and column locations
