@@ -167,7 +167,7 @@ See [Milestone 032](docs/milestones/milestone-032-forge-yaml-workbench.md) and t
 
 ### Milestone 033 — Forge YAML Workbench usability
 
-**Status:** Implementation and browser acceptance complete in draft PR #9; release and merge checkpoints remain pending.
+**Status:** Implementation, browser acceptance, and versioned `0.1.2` publication complete in draft PR #9; deployment and merge checkpoints remain pending.
 
 Planned bounded outcomes:
 

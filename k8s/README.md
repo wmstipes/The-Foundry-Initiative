@@ -24,7 +24,7 @@ This directory contains the pinned Metrics Server v0.9.0 workload, upstream RBAC
 
 Path: `k8s/forge-yaml-workbench`
 
-This directory contains the restricted `forge-tools` namespace, hardened stateless Workbench Deployment, and NodePort Service on `30081`. The workload uses the immutable `0.1.1` multi-architecture image index, has no Kubernetes API identity or mounted ServiceAccount token, and processes pasted YAML only in the browser.
+This directory contains the restricted `forge-tools` namespace, hardened stateless Workbench Deployment, and NodePort Service on `30081`. The manifest pins the immutable `0.1.2` multi-architecture image index, has no Kubernetes API identity or mounted ServiceAccount token, and processes pasted YAML only in the browser. The live cluster remains on `0.1.1` until the candidate is separately reviewed and approved.
 
 ## Validation
 
