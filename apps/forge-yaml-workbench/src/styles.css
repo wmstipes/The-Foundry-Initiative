@@ -92,6 +92,16 @@ code { color: #dbe7f2; font-family: "Cascadia Code", Consolas, monospace; font-s
 .message-path code { padding: 3px 6px; border: 1px solid #344455; border-radius: 4px; background: #19232e; color: var(--blue); overflow-wrap: anywhere; }
 .message .message-suggestion { margin-top: 8px; color: #c5d1dc; }
 .message-suggestion b { color: var(--text); font-size: .78rem; }
+.fix-guidance { margin-top: 9px; border: 1px solid #304050; border-radius: 6px; background: #111a23; }
+.fix-guidance summary { padding: 8px 10px; color: var(--blue); cursor: pointer; font-size: .78rem; font-weight: 700; }
+.fix-guidance > div { padding: 0 10px 10px; border-top: 1px solid #283746; }
+.guidance-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 9px; font-size: .76rem; }
+.copy-guidance { min-height: 0; padding: 4px 8px; color: var(--blue); background: #192736; font-size: .7rem; }
+.fix-guidance pre { max-width: 100%; margin: 7px 0 0; padding: 10px; overflow-x: auto; border: 1px solid #344455; border-radius: 5px; background: #0a1118; white-space: pre; }
+.fix-guidance pre code { color: #d8e6cf; font-size: .76rem; line-height: 1.5; }
+.message .guidance-caution, .message .guidance-standard { margin-top: 9px; color: #aebdca; }
+.guidance-caution b, .guidance-standard b { color: var(--text); }
+.guidance-standard a { color: var(--blue); }
 .message-location { min-height: 0; margin-top: 8px; padding: 3px 7px; border-color: #3c5064; color: var(--blue); background: transparent; font-family: monospace; font-size: .72rem; }
 .empty { min-height: 350px; display: grid; place-content: center; justify-items: center; padding: 30px; text-align: center; }
 .empty > div { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--amber); font-family: monospace; font-weight: 800; }

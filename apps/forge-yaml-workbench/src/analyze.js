@@ -2,6 +2,11 @@ import { isMap, isSeq, LineCounter, parseAllDocuments } from "yaml";
 
 const WORKLOADS = new Set(["Pod", "Deployment", "StatefulSet", "DaemonSet", "ReplicaSet", "Job", "CronJob"]);
 const SELECTOR_WORKLOADS = new Set(["Deployment", "StatefulSet", "DaemonSet", "ReplicaSet"]);
+const OWASP_K01 = {
+  id: "K01:2025",
+  title: "Insecure Workload Configurations",
+  url: "https://github.com/OWASP/www-project-kubernetes-top-ten/blob/main/2025/en/src/K01-Insecure-Workload-Configurations.md"
+};
 
 function object(value) {
   return value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -51,8 +56,16 @@ function labels(value) {
   return Object.entries(object(value)).map(([key, item]) => key + "=" + item);
 }
 
-function finding(level, title, path, explanation, suggestion) {
-  return { level, title, path, detail: explanation, explanation, suggestion };
+function finding(level, title, path, explanation, suggestion, guidance = {}) {
+  return { level, title, path, detail: explanation, explanation, suggestion, ...guidance };
+}
+
+function k01(example, caution) {
+  return { example, caution, standard: OWASP_K01 };
+}
+
+function hasSeccompProfile(type) {
+  return type === "RuntimeDefault" || type === "Localhost";
 }
 
 function summarizeContainer(container, type, path) {
@@ -103,28 +116,33 @@ function findings(resource, containers, pod) {
     }
     if (container.type === "container" && !container.probes.readiness) add("note", container.name + ": no readiness probe", container.path + ".readinessProbe", "Traffic may reach the container before it is ready.", "Add a readinessProbe that represents whether this container can receive traffic.");
     if (container.type === "container" && !container.probes.liveness) add("note", container.name + ": no liveness probe", container.path + ".livenessProbe", "Kubernetes cannot detect every stuck process.", "Add a livenessProbe only when the application has a reliable self-health signal.");
-    if (Object.keys(object(container.resources.requests)).length === 0) add("warning", container.name + ": no resource requests", container.path + ".resources.requests", "Scheduling will not account for expected CPU and memory use.", "Set measured CPU and memory requests.");
-    if (Object.keys(object(container.resources.limits)).length === 0) add("note", container.name + ": no resource limits", container.path + ".resources.limits", "The container has no explicit CPU or memory ceiling.", "Set an appropriate memory limit and evaluate whether a CPU limit fits the workload.");
-    if (container.securityContext.privileged === true) add("warning", container.name + ": privileged container", container.path + ".securityContext.privileged", "Privileged mode grants broad host-level access.", "Remove privileged: true unless the workload has a documented host-level requirement.");
-    if (container.securityContext.runAsUser === 0) add("warning", container.name + ": runs as root", container.path + ".securityContext.runAsUser", "UID 0 runs the container process as root.", "Use a non-zero runAsUser and set runAsNonRoot: true when the image supports it.");
-    if (container.securityContext.allowPrivilegeEscalation !== false) add("note", container.name + ": privilege escalation not disabled", container.path + ".securityContext.allowPrivilegeEscalation", "The container does not explicitly prevent gaining additional process privileges.", "Set securityContext.allowPrivilegeEscalation: false.");
-    if (container.securityContext.readOnlyRootFilesystem !== true) add("note", container.name + ": root filesystem is writable", container.path + ".securityContext.readOnlyRootFilesystem", "A writable image filesystem increases the container's mutation surface.", "Set readOnlyRootFilesystem: true and mount bounded writable volumes where required.");
-    if (!array(container.securityContext.capabilities?.drop).includes("ALL")) add("note", container.name + ": Linux capabilities not fully dropped", container.path + ".securityContext.capabilities.drop", "The container does not explicitly drop every inherited Linux capability.", "Set securityContext.capabilities.drop to [ALL], then add back only documented requirements.");
+    if (Object.keys(object(container.resources.requests)).length === 0) add("warning", container.name + ": no resource requests", container.path + ".resources.requests", "Scheduling will not account for expected CPU and memory use.", "Set measured CPU and memory requests.", k01("resources:\n  requests:\n    cpu: 100m\n    memory: 128Mi", "These values are examples, not sizing recommendations. Measure the workload and adjust them before deployment."));
+    if (Object.keys(object(container.resources.limits)).length === 0) add("note", container.name + ": no resource limits", container.path + ".resources.limits", "The container has no explicit CPU or memory ceiling.", "Set an appropriate memory limit and evaluate whether a CPU limit fits the workload.", k01("resources:\n  limits:\n    memory: 512Mi", "An undersized memory limit can cause OOM termination. CPU limits can also introduce throttling, so evaluate them separately."));
+    if (container.securityContext.privileged === true) add("warning", container.name + ": privileged container", container.path + ".securityContext.privileged", "Privileged mode grants broad host-level access.", "Remove privileged: true unless the workload has a documented host-level requirement.", k01("securityContext:\n  privileged: false", "Changing this can break workloads that intentionally manage host devices or kernel facilities. Confirm that privileged access is truly unnecessary."));
+    if (container.securityContext.runAsUser === 0) add("warning", container.name + ": runs as root", container.path + ".securityContext.runAsUser", "UID 0 runs the container process as root.", "Use a non-zero runAsUser and set runAsNonRoot: true when the image supports it.", k01("securityContext:\n  runAsNonRoot: true\n  runAsUser: 1000", "The UID must exist or be supported by the image, and required files and ports must remain accessible to that user."));
+    if (container.securityContext.allowPrivilegeEscalation !== false) add("note", container.name + ": privilege escalation not disabled", container.path + ".securityContext.allowPrivilegeEscalation", "The container does not explicitly prevent gaining additional process privileges.", "Set securityContext.allowPrivilegeEscalation: false.", k01("securityContext:\n  allowPrivilegeEscalation: false", "This is appropriate for most applications, but confirm that the process does not rely on setuid or setgid behavior."));
+    if (container.securityContext.readOnlyRootFilesystem !== true) add("note", container.name + ": root filesystem is writable", container.path + ".securityContext.readOnlyRootFilesystem", "A writable image filesystem increases the container's mutation surface.", "Set readOnlyRootFilesystem: true and mount bounded writable volumes where required.", k01("securityContext:\n  readOnlyRootFilesystem: true", "The application may need explicit writable volumes for paths such as /tmp, caches, uploads, or generated configuration."));
+    if (!array(container.securityContext.capabilities?.drop).includes("ALL")) add("note", container.name + ": Linux capabilities not fully dropped", container.path + ".securityContext.capabilities.drop", "The container does not explicitly drop every inherited Linux capability.", "Set securityContext.capabilities.drop to [ALL], then add back only documented requirements.", k01("securityContext:\n  capabilities:\n    drop:\n      - ALL", "If the application needs a Linux capability, add back only that documented capability after testing."));
     if (pod.spec.securityContext?.runAsNonRoot !== true && container.securityContext.runAsNonRoot !== true && container.securityContext.runAsUser == null) {
-      add("note", container.name + ": non-root execution not required", container.path + ".securityContext.runAsNonRoot", "Neither the Pod nor container security context explicitly requires non-root execution.", "Set runAsNonRoot: true at the Pod or container level when the image supports it.");
+      add("note", container.name + ": non-root execution not required", container.path + ".securityContext.runAsNonRoot", "Neither the Pod nor container security context explicitly requires non-root execution.", "Set runAsNonRoot: true at the Pod or container level when the image supports it.", k01("securityContext:\n  runAsNonRoot: true", "Images that default to UID 0 will fail to start until they are rebuilt or configured to use a non-zero UID."));
+    }
+    const podSeccompType = pod.spec.securityContext?.seccompProfile?.type;
+    const containerSeccompType = container.securityContext.seccompProfile?.type;
+    if (!hasSeccompProfile(podSeccompType) && !hasSeccompProfile(containerSeccompType)) {
+      const unconfined = podSeccompType === "Unconfined" || containerSeccompType === "Unconfined";
+      add(unconfined ? "warning" : "note", container.name + ": RuntimeDefault seccomp profile not required", container.path + ".securityContext.seccompProfile.type", "Neither the Pod nor this container explicitly requires a default or locally managed syscall filter.", "Set the Pod or container seccomp profile type to RuntimeDefault unless a reviewed Localhost profile is required.", k01("securityContext:\n  seccompProfile:\n    type: RuntimeDefault", "Test application startup and normal operations after enabling seccomp. A Localhost profile is also valid when it is deliberately managed on every eligible node."));
     }
   }
 
-  if (pod.spec.hostNetwork === true) add("warning", "Host networking enabled", pod.path + ".hostNetwork", "The Pod shares the node network namespace.", "Remove hostNetwork: true unless direct node networking is required and reviewed.");
-  if (pod.spec.hostPID === true) add("warning", "Host PID namespace enabled", pod.path + ".hostPID", "The Pod can observe processes in the node PID namespace.", "Remove hostPID: true unless host process visibility is explicitly required.");
-  if (pod.spec.hostIPC === true) add("warning", "Host IPC namespace enabled", pod.path + ".hostIPC", "The Pod shares the node IPC namespace.", "Remove hostIPC: true unless host IPC access is explicitly required.");
+  if (pod.spec.hostNetwork === true) add("warning", "Host networking enabled", pod.path + ".hostNetwork", "The Pod shares the node network namespace.", "Remove hostNetwork: true unless direct node networking is required and reviewed.", k01("hostNetwork: false", "Removing host networking changes the Pod's network identity and may require Service, DNS, or port configuration changes."));
+  if (pod.spec.hostPID === true) add("warning", "Host PID namespace enabled", pod.path + ".hostPID", "The Pod can observe processes in the node PID namespace.", "Remove hostPID: true unless host process visibility is explicitly required.", k01("hostPID: false", "Host-level monitoring and troubleshooting agents may intentionally need this access; document and isolate any exception."));
+  if (pod.spec.hostIPC === true) add("warning", "Host IPC namespace enabled", pod.path + ".hostIPC", "The Pod shares the node IPC namespace.", "Remove hostIPC: true unless host IPC access is explicitly required.", k01("hostIPC: false", "Applications that intentionally communicate through host IPC will need another supported communication mechanism."));
   array(pod.spec.volumes).forEach((volume, index) => {
-    if (volume.hostPath) add("warning", "HostPath volume present", pod.path + ".volumes[" + index + "].hostPath", "The Pod directly accesses a node filesystem path.", "Prefer a PVC, ConfigMap, Secret, or bounded emptyDir when possible.");
+    if (volume.hostPath) add("warning", "HostPath volume present", pod.path + ".volumes[" + index + "].hostPath", "The Pod directly accesses a node filesystem path.", "Prefer a PVC, ConfigMap, Secret, or bounded emptyDir when possible.", k01("volumes:\n  - name: app-data\n    persistentVolumeClaim:\n      claimName: app-data", "This is a structural example. Select a volume type and access mode that match the application's storage and lifecycle requirements."));
   });
   if (WORKLOADS.has(resource.kind) && pod.spec.automountServiceAccountToken !== false) {
-    add("note", "ServiceAccount token may be mounted", pod.path + ".automountServiceAccountToken", "The default token mount may provide Kubernetes API credentials the workload does not need.", "Set automountServiceAccountToken: false when the workload does not call the Kubernetes API.");
+    add("note", "ServiceAccount token may be mounted", pod.path + ".automountServiceAccountToken", "The default token mount may provide Kubernetes API credentials the workload does not need.", "Set automountServiceAccountToken: false when the workload does not call the Kubernetes API.", k01("automountServiceAccountToken: false", "Do not disable the token if this workload legitimately calls the Kubernetes API. In that case, use a dedicated least-privilege ServiceAccount."));
   }
-
   if (resource.kind === "Service" && Object.keys(object(resource.spec?.selector)).length === 0 && resource.spec?.type !== "ExternalName") {
     add("warning", "Service has no selector", ".spec.selector", "Kubernetes will not automatically select Pods for this Service.", "Add a selector or document how EndpointSlices are managed separately.");
   }

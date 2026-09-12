@@ -191,6 +191,7 @@ See [Milestone 033](docs/milestones/milestone-033-workbench-usability.md).
 See [Milestone 034](docs/milestones/milestone-034-workbench-deterministic-checks.md).
 
 - Milestone 035: browser-local schema validation against a pinned Kubernetes version, with explicit handling for schemas unavailable for CRDs.
+- Milestone 036: a pinned OWASP Kubernetes Top 10:2025 review profile with direct, partial, and cluster-context-required coverage labels.
 - Later increments: before/after formatting diff, copy and report export, finding filters, tree search, drag-and-drop, display preferences, and bounded large-file processing.
 
 ### Later outcomes in this phase

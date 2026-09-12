@@ -225,6 +225,54 @@ describe("Forge YAML Workbench analysis", () => {
     expect(findings.map((item) => item.title)).not.toContain("app: non-root execution not required");
   });
 
+  it("provides OWASP K01 remediation examples and cautions", () => {
+    const source = [
+      "apiVersion: v1",
+      "kind: Pod",
+      "metadata: {name: hardening-guidance}",
+      "spec:",
+      "  containers:",
+      "    - name: app",
+      "      image: example/app:1.0.0",
+      ""
+    ].join("\n");
+
+    const findings = analyzeYaml(source).documents[0].findings;
+    const privilegeEscalation = findings.find((item) => item.title === "app: privilege escalation not disabled");
+    expect(privilegeEscalation).toMatchObject({
+      example: "securityContext:\n  allowPrivilegeEscalation: false",
+      standard: {
+        id: "K01:2025",
+        title: "Insecure Workload Configurations"
+      }
+    });
+    expect(privilegeEscalation.caution).toContain("setuid");
+
+    const seccomp = findings.find((item) => item.title === "app: RuntimeDefault seccomp profile not required");
+    expect(seccomp).toMatchObject({
+      path: ".spec.containers[0].securityContext.seccompProfile.type",
+      example: "securityContext:\n  seccompProfile:\n    type: RuntimeDefault"
+    });
+  });
+
+  it("accepts an explicit RuntimeDefault seccomp profile", () => {
+    const source = [
+      "apiVersion: v1",
+      "kind: Pod",
+      "metadata: {name: secured}",
+      "spec:",
+      "  securityContext:",
+      "    seccompProfile: {type: RuntimeDefault}",
+      "  containers:",
+      "    - name: app",
+      "      image: example/app:1.0.0",
+      ""
+    ].join("\n");
+
+    const titles = analyzeYaml(source).documents[0].findings.map((item) => item.title);
+    expect(titles).not.toContain("app: RuntimeDefault seccomp profile not required");
+  });
+
   it("separates registry ports from image tags", () => {
     expect(splitImage("registry.example:5000/team/app:2.4.0")).toEqual({
       repository: "registry.example:5000/team/app",

@@ -79,6 +79,20 @@ function containerCard(container) {
   ].join("");
 }
 
+function fixGuidance(item) {
+  if (!item.example && !item.caution && !item.standard) return "";
+  const example = item.example ? [
+    '<div class="guidance-heading"><b>Recommended YAML</b><button class="copy-guidance" data-example="' +
+      escapeHtml(encodeURIComponent(item.example)) + '">Copy YAML</button></div>',
+    '<pre><code>' + escapeHtml(item.example) + "</code></pre>"
+  ].join("") : "";
+  const caution = item.caution ? '<p class="guidance-caution"><b>Before applying:</b> ' + escapeHtml(item.caution) + "</p>" : "";
+  const standard = item.standard ? '<p class="guidance-standard"><b>Security reference:</b> <a href="' +
+    escapeHtml(item.standard.url) + '" target="_blank" rel="noopener noreferrer">OWASP ' +
+    escapeHtml(item.standard.id) + " · " + escapeHtml(item.standard.title) + "</a></p>" : "";
+  return '<details class="fix-guidance"><summary>Fix guidance</summary><div>' + example + caution + standard + "</div></details>";
+}
+
 function messages(title, items, fallbackLevel) {
   return '<section class="messages"><h3>' + escapeHtml(title) + "</h3>" + items.map((item) => {
     const level = item.level || fallbackLevel;
@@ -86,13 +100,13 @@ function messages(title, items, fallbackLevel) {
       ? '<button class="message-path" data-line="' + item.line + '" data-column="' + (item.column || 1) +
         '" aria-label="Go to ' + escapeHtml(item.path) + ' in the YAML editor"><span>YAML path</span><code>' + escapeHtml(item.path) + "</code></button>"
       : '<div class="message-path"><span>YAML path</span><code>' + escapeHtml(item.path) + "</code></div>") : "";
-    const suggestion = item.suggestion ? '<p class="message-suggestion"><b>Suggested correction:</b> ' +
+    const suggestion = item.suggestion ? '<p class="message-suggestion"><b>Recommended change:</b> ' +
       escapeHtml(item.suggestion) + "</p>" : "";
     const location = item.line ? '<button class="message-location" data-line="' + item.line + '" data-column="' +
       (item.column || 1) + '">Line ' + item.line + (item.column ? ", column " + item.column : "") + "</button>" : "";
     return '<div class="message ' + level + '"><span>' + escapeHtml(level) + "</span><div><strong>" +
       escapeHtml(item.title || "Document " + item.document) + "</strong><p>" +
-      escapeHtml(item.explanation || item.detail || item.message) + "</p>" + path + suggestion + location + "</div></div>";
+      escapeHtml(item.explanation || item.detail || item.message) + "</p>" + path + suggestion + fixGuidance(item) + location + "</div></div>";
   }).join("") + "</section>";
 }
 
@@ -124,6 +138,23 @@ function focusEditorLocation(line, column = 1) {
   const end = lineStart + (lines[lineIndex]?.length || 0);
   editor.focus();
   editor.setSelectionRange(start, Math.max(start, end));
+}
+
+async function copyText(value) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const temporary = document.createElement("textarea");
+  temporary.value = value;
+  temporary.setAttribute("readonly", "");
+  temporary.style.position = "fixed";
+  temporary.style.opacity = "0";
+  document.body.appendChild(temporary);
+  temporary.select();
+  document.execCommand("copy");
+  temporary.remove();
 }
 
 function loadEditor(value, filename, message) {
@@ -274,7 +305,17 @@ document.querySelector("#download").addEventListener("click", () => {
   cleanSnapshot = editor.value;
   announce(currentFilename + " downloaded", "success");
 });
-document.querySelector("#results").addEventListener("click", (event) => {
+document.querySelector("#results").addEventListener("click", async (event) => {
+  const copy = event.target.closest(".copy-guidance");
+  if (copy) {
+    try {
+      await copyText(decodeURIComponent(copy.dataset.example));
+      announce("Suggested YAML copied", "success");
+    } catch {
+      announce("Could not copy automatically — select the example manually", "error");
+    }
+    return;
+  }
   const location = event.target.closest(".message-location, .message-path[data-line]");
   if (location) focusEditorLocation(location.dataset.line, location.dataset.column);
 });
