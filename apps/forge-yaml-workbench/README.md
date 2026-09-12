@@ -23,6 +23,20 @@ The `0.1.2` release keeps the same browser-local trust boundary while improving 
 - confirmation before clearing unsaved edits
 - DOM interaction coverage alongside the analyzer tests
 
+## Milestone 034 deterministic checks
+
+The current source branch deepens the bounded operational review with:
+
+- precise YAML paths, plain-language explanations, and suggested corrections for every operational finding
+- workload selector and Pod-template label consistency checks
+- duplicate resource identity detection across multi-document input
+- Service selector and named target-port checks against workloads included in the same file
+- host PID and IPC namespace findings
+- explicit container checks for privilege escalation, writable root filesystems, Linux capabilities, and non-root execution
+- parsed-document and finding counts that avoid implying API-server validity
+
+These checks are deterministic and browser-local. They do not replace Kubernetes OpenAPI validation, admission control, or server-side dry-run.
+
 ## Validation boundary
 
 The Workbench performs YAML parsing and deterministic operational checks. It does not currently perform complete Kubernetes OpenAPI schema validation or contact the Kubernetes API server. A successful report does not prove that a manifest will be admitted or run successfully.

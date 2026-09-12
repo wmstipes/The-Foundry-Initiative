@@ -82,11 +82,14 @@ function containerCard(container) {
 function messages(title, items, fallbackLevel) {
   return '<section class="messages"><h3>' + escapeHtml(title) + "</h3>" + items.map((item) => {
     const level = item.level || fallbackLevel;
+    const path = item.path ? '<div class="message-path"><span>YAML path</span><code>' + escapeHtml(item.path) + "</code></div>" : "";
+    const suggestion = item.suggestion ? '<p class="message-suggestion"><b>Suggested correction:</b> ' +
+      escapeHtml(item.suggestion) + "</p>" : "";
     const location = item.line ? '<button class="message-location" data-line="' + item.line + '" data-column="' +
       (item.column || 1) + '">Line ' + item.line + (item.column ? ", column " + item.column : "") + "</button>" : "";
     return '<div class="message ' + level + '"><span>' + escapeHtml(level) + "</span><div><strong>" +
       escapeHtml(item.title || "Document " + item.document) + "</strong><p>" +
-      escapeHtml(item.detail || item.message) + "</p>" + location + "</div></div>";
+      escapeHtml(item.explanation || item.detail || item.message) + "</p>" + path + suggestion + location + "</div></div>";
   }).join("") + "</section>";
 }
 
@@ -203,7 +206,8 @@ function render() {
     status.textContent = analysis.errors.length + " parse error" + (analysis.errors.length === 1 ? "" : "s");
   } else {
     status.className = "status " + (findingCount ? "warning" : "valid");
-    status.textContent = analysis.documents.length + " valid document" + (analysis.documents.length === 1 ? "" : "s");
+    status.textContent = analysis.documents.length + " parsed document" + (analysis.documents.length === 1 ? "" : "s") +
+      (findingCount ? " · " + findingCount + " finding" + (findingCount === 1 ? "" : "s") : " · no findings");
   }
 
   const views = { summary: summaryView, validation: validationView, tree: treeView };

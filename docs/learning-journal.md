@@ -248,4 +248,4 @@ Improved Forge YAML Workbench interaction clarity and diagnostic precision witho
 
 ### Next small step
 
-Complete final review and merge of PR #9, then begin Milestone 034 as a separate bounded change for deeper deterministic Kubernetes checks with precise YAML paths and suggested corrections.
+PR #9 merged at `7aadedd`. Begin Milestone 034 as a separate bounded change for deeper deterministic Kubernetes checks with precise YAML paths and suggested corrections.

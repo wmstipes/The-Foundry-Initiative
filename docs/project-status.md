@@ -166,9 +166,9 @@ The Milestone 029 [limited-alerting design](observability/limited-alerting-speci
 
 `Milestone 032` is complete and merged through PR #8 at `3b6bac5`.
 
-`Milestone 033` implementation, publication, deployment, and live browser acceptance are complete in draft PR #9. Forge YAML Workbench `0.1.2` runs as one Ready replica with zero restarts from the pinned OCI index digest. NodePort routing, `/healthz`, the application page, security headers, sample loading, format feedback, editing state, the format shortcut, and YAML download all passed live verification. Final PR review and merge remain separate checkpoints.
+`Milestone 033` is complete and merged through PR #9 at `7aadedd`. Forge YAML Workbench `0.1.2` runs as one Ready replica with zero restarts from the pinned OCI index digest. NodePort routing, `/healthz`, the application page, security headers, sample loading, format feedback, editing state, the format shortcut, and YAML download all passed live verification.
 
-Next, complete final review and merge of PR #9. Milestone 034 will add deeper deterministic Kubernetes checks with precise YAML paths and suggested corrections. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
+Milestone 034 is in progress as a source-only Workbench increment. It adds deeper deterministic Kubernetes checks with precise YAML paths, explanations, and suggested corrections while preserving browser-local analysis. Release publication and live deployment remain separate future checkpoints. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
 
 ## Known temporary limitation
 
@@ -177,4 +177,3 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
 Forge YAML Workbench performs YAML parsing and bounded operational review, not complete Kubernetes OpenAPI validation or admission testing. NodePort `30081` uses plain HTTP and is intended only for the private lab. Complete browser-local schema validation remains deferred to Milestone 035.
-

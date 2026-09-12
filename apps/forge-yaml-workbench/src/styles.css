@@ -85,6 +85,11 @@ code { color: #dbe7f2; font-family: "Cascadia Code", Consolas, monospace; font-s
 .message.note > span { background: rgba(104, 185, 245, .12); color: var(--blue); }
 .message strong { font-size: .86rem; }
 .message p { margin: 4px 0 0; color: var(--muted); font-size: .82rem; line-height: 1.5; }
+.message-path { display: flex; flex-wrap: wrap; align-items: baseline; gap: 7px; margin-top: 8px; }
+.message-path span { color: var(--muted); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
+.message-path code { padding: 3px 6px; border: 1px solid #344455; border-radius: 4px; background: #19232e; color: var(--blue); overflow-wrap: anywhere; }
+.message .message-suggestion { margin-top: 8px; color: #c5d1dc; }
+.message-suggestion b { color: var(--text); font-size: .78rem; }
 .message-location { min-height: 0; margin-top: 8px; padding: 3px 7px; border-color: #3c5064; color: var(--blue); background: transparent; font-family: monospace; font-size: .72rem; }
 .empty { min-height: 350px; display: grid; place-content: center; justify-items: center; padding: 30px; text-align: center; }
 .empty > div { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--amber); font-family: monospace; font-weight: 800; }

@@ -52,7 +52,7 @@ describe("Forge YAML Workbench browser interactions", () => {
 
     replaceEditor("apiVersion: v1\nkind: Pod\nmetadata:\n  name: corrected\n");
     expect(document.querySelector("#action-status").textContent).toBe("Editing YAML");
-    expect(document.querySelector("#status").textContent).toBe("1 valid document");
+    expect(document.querySelector("#status").textContent).toContain("1 parsed document");
   });
 
   it("protects unsaved YAML from accidental clearing", () => {
@@ -104,5 +104,15 @@ describe("Forge YAML Workbench browser interactions", () => {
     document.querySelector("#download").click();
     expect(downloadedAs).toBe("opened.yml");
     expect(document.querySelector("#action-status").textContent).toBe("opened.yml downloaded");
+  });
+
+  it("renders operational YAML paths and suggested corrections", () => {
+    replaceEditor("apiVersion: v1\nkind: Pod\nmetadata:\n  name: empty\nspec: {}\n");
+    document.querySelector('[data-tab="validation"]').click();
+
+    const message = [...document.querySelectorAll(".message")].find((item) =>
+      item.textContent.includes("No containers found"));
+    expect(message.querySelector(".message-path code").textContent).toBe(".spec.containers");
+    expect(message.querySelector(".message-suggestion").textContent).toContain("Add at least one container");
   });
 });
