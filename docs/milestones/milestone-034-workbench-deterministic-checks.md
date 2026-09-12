@@ -2,7 +2,7 @@
 
 Started: 2026-09-12
 
-Status: Implementation, local verification, pull-request CI, and non-publishing multi-architecture build complete in draft PR #10. Browser acceptance, release publication, deployment, and merge remain separate checkpoints.
+Status: Implementation and local verification complete on the milestone branch. Pull-request CI, browser acceptance, release publication, deployment, and merge remain separate checkpoints.
 
 ## Goal
 
@@ -11,6 +11,7 @@ Make each Workbench operational finding more actionable and add bounded cross-re
 ## Bounded scope
 
 - Give every operational finding a precise YAML path.
+- Make each YAML path navigate to the nearest existing editor location, including a useful parent location for a missing field.
 - Separate the explanation of the risk from a suggested correction.
 - Detect missing or mismatched workload selectors.
 - Detect duplicate resource identities in multi-document input.
@@ -37,7 +38,7 @@ Make each Workbench operational finding more actionable and add bounded cross-re
 - [x] Analyzer tests cover paths, corrections, selector mismatch, selector expressions, duplicate identities, Service selection, named target ports, host namespaces, and container hardening.
 - [x] DOM coverage confirms paths and suggested corrections are rendered in Validation.
 - [x] Locked clean installation, 20-test suite, production build, dependency audit, repository manifest validation, and whitespace checks pass locally.
-- [x] Pull-request CI and non-publishing multi-architecture image build pass.
+- [ ] Pull-request CI and non-publishing multi-architecture image build pass.
 - [ ] Browser acceptance passes against representative valid and intentionally flawed manifests.
 - [ ] Any versioned publication is separately approved and verified.
 - [ ] Any live Deployment update is separately dry-run, diff-reviewed, approved, and verified.

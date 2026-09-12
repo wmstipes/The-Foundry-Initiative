@@ -114,5 +114,8 @@ describe("Forge YAML Workbench browser interactions", () => {
       item.textContent.includes("No containers found"));
     expect(message.querySelector(".message-path code").textContent).toBe(".spec.containers");
     expect(message.querySelector(".message-suggestion").textContent).toContain("Add at least one container");
+
+    message.querySelector(".message-path").click();
+    expect(editor.value.slice(editor.selectionStart, editor.selectionEnd)).toBe("spec: {}");
   });
 });

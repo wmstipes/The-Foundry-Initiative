@@ -27,7 +27,7 @@ The `0.1.2` release keeps the same browser-local trust boundary while improving 
 
 The current source branch deepens the bounded operational review with:
 
-- precise YAML paths, plain-language explanations, and suggested corrections for every operational finding
+- clickable YAML paths, plain-language explanations, and suggested corrections for every operational finding
 - workload selector and Pod-template label consistency checks
 - duplicate resource identity detection across multi-document input
 - Service selector and named target-port checks against workloads included in the same file

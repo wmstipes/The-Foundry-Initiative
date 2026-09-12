@@ -82,7 +82,10 @@ function containerCard(container) {
 function messages(title, items, fallbackLevel) {
   return '<section class="messages"><h3>' + escapeHtml(title) + "</h3>" + items.map((item) => {
     const level = item.level || fallbackLevel;
-    const path = item.path ? '<div class="message-path"><span>YAML path</span><code>' + escapeHtml(item.path) + "</code></div>" : "";
+    const path = item.path ? (item.line
+      ? '<button class="message-path" data-line="' + item.line + '" data-column="' + (item.column || 1) +
+        '" aria-label="Go to ' + escapeHtml(item.path) + ' in the YAML editor"><span>YAML path</span><code>' + escapeHtml(item.path) + "</code></button>"
+      : '<div class="message-path"><span>YAML path</span><code>' + escapeHtml(item.path) + "</code></div>") : "";
     const suggestion = item.suggestion ? '<p class="message-suggestion"><b>Suggested correction:</b> ' +
       escapeHtml(item.suggestion) + "</p>" : "";
     const location = item.line ? '<button class="message-location" data-line="' + item.line + '" data-column="' +
@@ -272,7 +275,7 @@ document.querySelector("#download").addEventListener("click", () => {
   announce(currentFilename + " downloaded", "success");
 });
 document.querySelector("#results").addEventListener("click", (event) => {
-  const location = event.target.closest(".message-location");
+  const location = event.target.closest(".message-location, .message-path[data-line]");
   if (location) focusEditorLocation(location.dataset.line, location.dataset.column);
 });
 document.addEventListener("keydown", (event) => {

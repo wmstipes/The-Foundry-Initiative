@@ -69,7 +69,9 @@ describe("Forge YAML Workbench analysis", () => {
       item.title === "Selector does not match Pod template labels");
     expect(finding).toMatchObject({
       level: "error",
-      path: ".spec.selector.matchLabels"
+      path: ".spec.selector.matchLabels",
+      line: 7,
+      column: 1
     });
     expect(finding.explanation).toContain("selector label");
     expect(finding.suggestion).toContain("template.metadata.labels");
@@ -130,7 +132,9 @@ describe("Forge YAML Workbench analysis", () => {
     const targetPort = service.findings.find((item) => item.title === "Named targetPort is not exposed by the selected workload");
     expect(targetPort).toMatchObject({
       level: "warning",
-      path: ".spec.ports[0].targetPort"
+      path: ".spec.ports[0].targetPort",
+      line: 24,
+      column: 1
     });
     expect(targetPort.suggestion).toContain("existing container port name");
   });
@@ -173,7 +177,8 @@ describe("Forge YAML Workbench analysis", () => {
     expect(finding).toMatchObject({
       level: "error",
       title: "Duplicate resource identity",
-      path: ".metadata.name"
+      path: ".metadata.name",
+      line: 7
     });
     expect(finding.explanation).toContain("Document 1");
   });

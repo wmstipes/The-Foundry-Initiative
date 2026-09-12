@@ -1,4 +1,4 @@
-import { LineCounter, parseAllDocuments } from "yaml";
+import { isMap, isSeq, LineCounter, parseAllDocuments } from "yaml";
 
 const WORKLOADS = new Set(["Pod", "Deployment", "StatefulSet", "DaemonSet", "ReplicaSet", "Job", "CronJob"]);
 const SELECTOR_WORKLOADS = new Set(["Deployment", "StatefulSet", "DaemonSet", "ReplicaSet"]);
@@ -147,6 +147,50 @@ function selectorMatches(selector, candidateLabels) {
   return Object.entries(object(selector)).every(([key, value]) => candidateLabels[key] === value);
 }
 
+function pathSegments(path) {
+  const segments = [];
+  String(path || "").replace(/\.([^.[\]]+)|\[(\d+)\]/g, (_match, key, index) => {
+    segments.push(index === undefined ? key : Number(index));
+    return "";
+  });
+  return segments;
+}
+
+function nearestNodeAtPath(parsedDocument, segments) {
+  let node = parsedDocument.contents;
+  let nearest = node;
+
+  for (const segment of segments) {
+    if (typeof segment === "number" && isSeq(node)) {
+      if (!node.items[segment]) break;
+      node = node.items[segment];
+      nearest = node;
+    } else if (typeof segment === "string" && isMap(node)) {
+      const pair = node.items.find((item) => item.key?.value === segment);
+      if (!pair) break;
+      nearest = pair.key;
+      node = pair.value;
+    } else {
+      break;
+    }
+  }
+
+  return nearest;
+}
+
+function attachFindingLocations(parsed, documents, lineCounter) {
+  documents.forEach((document) => {
+    const parsedDocument = parsed[document.index - 1];
+    document.findings.forEach((item) => {
+      const segments = pathSegments(item.path);
+      const node = nearestNodeAtPath(parsedDocument, segments);
+      const position = node?.range ? lineCounter.linePos(node.range[0]) : undefined;
+      item.line = position?.line;
+      item.column = position ? 1 : undefined;
+    });
+  });
+}
+
 function addBundleFindings(documents) {
   const workloads = documents.filter((document) => WORKLOADS.has(document.kind));
 
@@ -270,6 +314,7 @@ export function analyzeYaml(source) {
   });
 
   addBundleFindings(result.documents);
+  attachFindingLocations(parsed, result.documents, lineCounter);
 
   return result;
 }
