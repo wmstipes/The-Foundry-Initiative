@@ -4,6 +4,8 @@ import "./styles.css";
 
 const app = document.querySelector("#app");
 let activeTab = "summary";
+let currentFilename = "signalforge-sample.yaml";
+let cleanSnapshot = SAMPLE_YAML;
 
 app.innerHTML = [
   '<header class="topbar">',
@@ -13,9 +15,12 @@ app.innerHTML = [
   '<main>',
   '  <section class="toolbar">',
   '    <div><h1>Kubernetes manifest inspection</h1><p>Parse structure and review important fields before deployment.</p></div>',
+  '    <div class="toolbar-controls">',
   '    <div class="actions">',
   '      <input id="file-input" type="file" accept=".yaml,.yml,text/yaml,application/yaml" hidden />',
-  '      <button id="upload">Open file</button><button id="sample">Load sample</button><button id="format">Format</button><button id="download">Download</button><button id="clear" class="quiet">Clear</button>',
+  '      <button id="upload" aria-keyshortcuts="Control+O Meta+O" title="Open file (Ctrl+O)">Open file</button><button id="sample">Load sample</button><button id="format" aria-keyshortcuts="Control+Shift+F Meta+Shift+F" title="Format (Ctrl+Shift+F)">Format</button><button id="download" aria-keyshortcuts="Control+S Meta+S" title="Download (Ctrl+S)">Download</button><button id="clear" class="quiet">Clear</button>',
+  '    </div>',
+  '    <div id="action-status" class="action-status" role="status" aria-live="polite" aria-atomic="true">Ready</div>',
   '    </div>',
   '  </section>',
   '  <section class="workspace">',
@@ -25,7 +30,7 @@ app.innerHTML = [
   '    </div>',
   '    <div class="pane results-pane">',
   '      <div class="pane-heading"><div><span class="eyebrow">ANALYSIS</span><h2>Manifest report</h2></div><div id="status" class="status neutral"></div></div>',
-  '      <div class="tabs" role="tablist"><button class="tab active" data-tab="summary">Summary</button><button class="tab" data-tab="validation">Validation <span id="finding-count"></span></button><button class="tab" data-tab="tree">Tree</button></div>',
+  '      <div class="tabs" role="tablist"><button class="tab active" role="tab" aria-selected="true" data-tab="summary">Summary</button><button class="tab" role="tab" aria-selected="false" data-tab="validation">Validation <span id="finding-count"></span></button><button class="tab" role="tab" aria-selected="false" data-tab="tree">Tree</button></div>',
   '      <div id="results" class="results" aria-live="polite"></div>',
   '    </div>',
   '  </section>',
@@ -77,10 +82,50 @@ function containerCard(container) {
 function messages(title, items, fallbackLevel) {
   return '<section class="messages"><h3>' + escapeHtml(title) + "</h3>" + items.map((item) => {
     const level = item.level || fallbackLevel;
+    const location = item.line ? '<button class="message-location" data-line="' + item.line + '" data-column="' +
+      (item.column || 1) + '">Line ' + item.line + (item.column ? ", column " + item.column : "") + "</button>" : "";
     return '<div class="message ' + level + '"><span>' + escapeHtml(level) + "</span><div><strong>" +
       escapeHtml(item.title || "Document " + item.document) + "</strong><p>" +
-      escapeHtml(item.detail || item.message) + "</p></div></div>";
+      escapeHtml(item.detail || item.message) + "</p>" + location + "</div></div>";
   }).join("") + "</section>";
+}
+
+function announce(message, tone = "neutral") {
+  const status = document.querySelector("#action-status");
+  status.className = "action-status " + tone;
+  status.textContent = message;
+}
+
+function setActiveTab(tabName) {
+  activeTab = tabName;
+  document.querySelectorAll(".tab").forEach((item) => {
+    const selected = item.dataset.tab === activeTab;
+    item.classList.toggle("active", selected);
+    item.setAttribute("aria-selected", String(selected));
+  });
+}
+
+function normalizedFilename(filename) {
+  const safeName = String(filename || "manifest.yaml").split(/[\\/]/).pop() || "manifest.yaml";
+  return /\.ya?ml$/i.test(safeName) ? safeName : safeName + ".yaml";
+}
+
+function focusEditorLocation(line, column = 1) {
+  const lines = editor.value.split("\n");
+  const lineIndex = Math.max(0, Math.min(Number(line) - 1, lines.length - 1));
+  const lineStart = lines.slice(0, lineIndex).reduce((total, value) => total + value.length + 1, 0);
+  const start = lineStart + Math.max(0, Math.min(Number(column) - 1, lines[lineIndex]?.length || 0));
+  const end = lineStart + (lines[lineIndex]?.length || 0);
+  editor.focus();
+  editor.setSelectionRange(start, Math.max(start, end));
+}
+
+function loadEditor(value, filename, message) {
+  editor.value = value;
+  currentFilename = normalizedFilename(filename);
+  cleanSnapshot = value;
+  render();
+  announce(message, "success");
 }
 
 function summaryView(analysis) {
@@ -165,38 +210,79 @@ function render() {
   document.querySelector("#results").innerHTML = views[activeTab](analysis);
 }
 
-editor.addEventListener("input", render);
+editor.addEventListener("input", () => {
+  announce("Editing YAML");
+  render();
+});
 document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click", () => {
-  activeTab = tab.dataset.tab;
-  document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab));
+  setActiveTab(tab.dataset.tab);
   render();
 }));
-document.querySelector("#sample").addEventListener("click", () => { editor.value = SAMPLE_YAML; render(); });
-document.querySelector("#clear").addEventListener("click", () => { editor.value = ""; render(); editor.focus(); });
+document.querySelector("#sample").addEventListener("click", () => loadEditor(SAMPLE_YAML, "signalforge-sample.yaml", "Sample loaded"));
+document.querySelector("#clear").addEventListener("click", () => {
+  if (editor.value !== cleanSnapshot && !window.confirm("Discard your unsaved YAML changes?")) {
+    announce("Clear cancelled");
+    return;
+  }
+  editor.value = "";
+  currentFilename = "manifest.yaml";
+  cleanSnapshot = "";
+  render();
+  editor.focus();
+  announce("Editor cleared", "success");
+});
 document.querySelector("#upload").addEventListener("click", () => document.querySelector("#file-input").click());
 document.querySelector("#file-input").addEventListener("change", async (event) => {
   const [file] = event.target.files;
-  if (file) editor.value = await file.text();
+  if (file) loadEditor(await file.text(), file.name, file.name + " opened");
   event.target.value = "";
-  render();
 });
 document.querySelector("#format").addEventListener("click", () => {
+  const before = editor.value;
+  if (!before.trim()) {
+    announce("Nothing to format");
+    return;
+  }
   try {
     editor.value = formatYaml(editor.value);
+    announce(editor.value === before ? "Already formatted — no changes needed" : "YAML formatted", "success");
   } catch {
-    activeTab = "validation";
-    document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item.dataset.tab === activeTab));
+    setActiveTab("validation");
+    announce("Formatting failed — see Validation", "error");
   }
   render();
 });
 document.querySelector("#download").addEventListener("click", () => {
+  if (!editor.value) {
+    announce("Nothing to download");
+    return;
+  }
   const blob = new Blob([editor.value], { type: "application/yaml" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "manifest.yaml";
+  link.download = currentFilename;
   link.click();
   URL.revokeObjectURL(url);
+  cleanSnapshot = editor.value;
+  announce(currentFilename + " downloaded", "success");
+});
+document.querySelector("#results").addEventListener("click", (event) => {
+  const location = event.target.closest(".message-location");
+  if (location) focusEditorLocation(location.dataset.line, location.dataset.column);
+});
+document.addEventListener("keydown", (event) => {
+  if (!(event.ctrlKey || event.metaKey)) return;
+  if (event.key.toLowerCase() === "o") {
+    event.preventDefault();
+    document.querySelector("#upload").click();
+  } else if (event.key.toLowerCase() === "s") {
+    event.preventDefault();
+    document.querySelector("#download").click();
+  } else if (event.shiftKey && event.key.toLowerCase() === "f") {
+    event.preventDefault();
+    document.querySelector("#format").click();
+  }
 });
 
 render();

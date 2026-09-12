@@ -222,3 +222,30 @@ Windows `kubectl diff` also required Git for Windows' bundled `diff.exe` to be a
 
 Complete final review and merge of PR #8 with explicit approval. Treat any positive format-status message or broader schema validation as a separate future increment.
 
+
+---
+
+## 2026-09-12 - Milestone 033 Workbench usability and 0.1.2 rollout
+
+### What I worked on
+
+Improved Forge YAML Workbench interaction clarity and diagnostic precision without changing its browser-local trust boundary. The release adds explicit action feedback, clickable parser locations, filename preservation, keyboard shortcuts, protected clearing, accessible tab state, and DOM interaction tests.
+
+### What I learned
+
+- Small browser acceptance tests expose usability defects that analyzer tests cannot see; the first diagnostic-navigation pass found stale red feedback after the YAML was corrected.
+- Idempotent actions still need explicit confirmation. Reporting that YAML is already formatted removes ambiguity without changing the document.
+- Release publication, immutable digest pinning, server-side dry-run, live diff review, deployment approval, rollout verification, and browser acceptance are distinct evidence gates.
+- A runtime ImageID matching the reviewed OCI index digest proves the cluster is running the approved multi-architecture release rather than merely trusting its tag.
+
+### What I finished
+
+- Expanded automated coverage to 12 analyzer and DOM interaction tests.
+- Published `0.1.2` for AMD64 and ARM64 without a floating tag.
+- Pinned OCI index digest `sha256:07f34be33c55bca5b7bf5321e5d149e4831ce520c9efbdd98233468a1a50e3c7`.
+- Rolled out only the approved Workbench Deployment and verified one Ready replica with zero restarts.
+- Verified the ready EndpointSlice, NodePort health, security headers, and all seven live browser smoke checks.
+
+### Next small step
+
+Complete final review and merge of PR #9, then begin Milestone 034 as a separate bounded change for deeper deterministic Kubernetes checks with precise YAML paths and suggested corrections.

@@ -58,7 +58,7 @@ The long-term goal is to evolve this service into **ForgeOps**, an AI-assisted K
 
 ## Forge YAML Workbench
 
-Forge YAML Workbench is a browser-based Kubernetes manifest inspector deployed in the restricted `forge-tools` namespace. Version `0.1.1` parses, formats, and explains multi-document YAML entirely in the browser, without Kubernetes API access or server-side storage. It is available inside the private lab through NodePort `30081`.
+Forge YAML Workbench is a browser-based Kubernetes manifest inspector deployed in the restricted `forge-tools` namespace. Version `0.1.2` parses, formats, and explains multi-document YAML entirely in the browser, with explicit action feedback, clickable parser locations, keyboard shortcuts, filename preservation, and protected clearing. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
 
 ## Repository map
 
@@ -119,7 +119,7 @@ Completed SignalForge milestones include:
 * secure Kubernetes Metrics Server deployed with all four nodes available through `kubectl top`
 * NVMe-backed Prometheus deployed with Pod-replacement persistence and isolated off-node backup/restore validation
 * Grafana dashboards and bounded Prometheus rule evaluation deployed and recovery-tested
-* Forge YAML Workbench `0.1.1` published for AMD64/ARM64 and deployed with browser acceptance
+* Forge YAML Workbench `0.1.2` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated
 
 ## Earlier utility: foundry-check
 
@@ -148,7 +148,8 @@ Planned next steps include:
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
 * evolve the rules-based `/analyze` logic toward an evidence-grounded ForgeOps workflow
-* consider a small Workbench status message when formatting produces no visible change
+* extend the Workbench with deeper deterministic Kubernetes checks in Milestone 034
+* add pinned, browser-local Kubernetes schema validation in Milestone 035
 
 ## Why this project exists
 

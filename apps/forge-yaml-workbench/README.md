@@ -2,7 +2,7 @@
 
 Forge YAML Workbench is a browser-based Kubernetes manifest inspector for the SignalForge lab. It parses YAML in the browser and presents important Kubernetes fields in a human-readable report.
 
-## Version 0.1.1 scope
+## Version 0.1.2 scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
@@ -11,6 +11,17 @@ Forge YAML Workbench is a browser-based Kubernetes manifest inspector for the Si
 - Detect YAML parser errors and duplicate keys.
 - Surface bounded operational findings such as mutable image tags, missing probes or resources, privileged containers, root execution, HostPath use, and automatic ServiceAccount-token mounting.
 - Perform analysis in the browser without sending YAML to another service.
+
+## Milestone 033 usability improvements
+
+The `0.1.2` release keeps the same browser-local trust boundary while improving interaction precision:
+
+- explicit feedback when formatting changes YAML or the input is already normalized
+- parser diagnostics with clickable line and column locations
+- preservation of an opened YAML filename when downloading
+- keyboard shortcuts for opening, formatting, and downloading
+- confirmation before clearing unsaved edits
+- DOM interaction coverage alongside the analyzer tests
 
 ## Validation boundary
 

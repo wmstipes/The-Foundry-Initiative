@@ -8,7 +8,7 @@ metadata:
     project: signalforge
     app.kubernetes.io/name: forge-yaml-workbench
     app.kubernetes.io/part-of: signalforge
-    app.kubernetes.io/version: "0.1.1"
+    app.kubernetes.io/version: "0.1.2"
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -27,7 +27,7 @@ spec:
         project: signalforge
         app.kubernetes.io/name: forge-yaml-workbench
         app.kubernetes.io/part-of: signalforge
-        app.kubernetes.io/version: "0.1.1"
+        app.kubernetes.io/version: "0.1.2"
     spec:
       automountServiceAccountToken: false
       enableServiceLinks: false
@@ -38,7 +38,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: forge-yaml-workbench
-        image: wmstipes/signalforge-yaml-workbench:0.1.1@sha256:50e3d115641941bc8f7eaa303463c08ccbafe5842cc07304d4b71dbd4aef8669
+        image: wmstipes/signalforge-yaml-workbench:0.1.2@sha256:07f34be33c55bca5b7bf5321e5d149e4831ce520c9efbdd98233468a1a50e3c7
         imagePullPolicy: IfNotPresent
         ports:
         - name: http

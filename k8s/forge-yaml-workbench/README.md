@@ -13,13 +13,13 @@ These manifests define the deployed SignalForge browser-local Forge YAML Workben
 Version:
 
 ```text
-0.1.1
+0.1.2
 ```
 
 Immutable image reference:
 
 ```text
-wmstipes/signalforge-yaml-workbench:0.1.1@sha256:50e3d115641941bc8f7eaa303463c08ccbafe5842cc07304d4b71dbd4aef8669
+wmstipes/signalforge-yaml-workbench:0.1.2@sha256:07f34be33c55bca5b7bf5321e5d149e4831ce520c9efbdd98233468a1a50e3c7
 ```
 
 The OCI image index contains both `linux/amd64` and `linux/arm64`. No floating image tag is used.
@@ -62,5 +62,4 @@ kubectl rollout status deployment/forge-yaml-workbench -n forge-tools --timeout=
 kubectl get deployment,pods,service -n forge-tools -o wide
 ```
 
-The accepted `0.1.1` deployment has one available Ready replica with zero restarts and a runtime ImageID matching the pinned OCI index digest. NodePort `30081`, `/healthz`, the application page, security headers, multi-document formatting, and flow-to-block formatting passed live acceptance.
-
+The accepted live `0.1.2` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:07f34be33c55bca5b7bf5321e5d149e4831ce520c9efbdd98233468a1a50e3c7`. NodePort `30081`, its ready EndpointSlice, `/healthz`, the application page, security headers, sample loading, format feedback, editing state, the format shortcut, and YAML download passed live acceptance on 2026-09-12.
