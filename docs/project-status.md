@@ -168,7 +168,7 @@ The Milestone 029 [limited-alerting design](observability/limited-alerting-speci
 
 `Milestone 033` is complete and merged through PR #9 at `7aadedd`. Forge YAML Workbench `0.1.2` runs as one Ready replica with zero restarts from the pinned OCI index digest. NodePort routing, `/healthz`, the application page, security headers, sample loading, format feedback, editing state, the format shortcut, and YAML download all passed live verification.
 
-Milestone 034 is in progress as a source-only Workbench increment. It adds deeper deterministic Kubernetes checks with precise YAML paths, explanations, and suggested corrections while preserving browser-local analysis. Release publication and live deployment remain separate future checkpoints. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
+Milestone 034 has an accepted `0.2.0` release candidate in draft PR #10. It adds deeper deterministic Kubernetes checks, clickable YAML paths, remediation examples, operational cautions, initial OWASP K01:2025 mapping, and seccomp guidance while preserving browser-local analysis. Release publication and live deployment remain separate future checkpoints. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
 
 ## Known temporary limitation
 

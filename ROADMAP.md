@@ -182,9 +182,9 @@ See [Milestone 033](docs/milestones/milestone-033-workbench-usability.md).
 
 #### Milestone 034 — Deeper deterministic checks
 
-**Status:** In progress
+**Status:** Accepted `0.2.0` release candidate in draft PR #10; publication, deployment, final review, and merge remain separate checkpoints.
 
-- Attach precise YAML paths, explanations, and suggested corrections to operational findings.
+- Attach clickable YAML paths, explanations, recommended changes, copyable examples, operational cautions, and initial OWASP K01:2025 references to operational findings.
 - Check workload selector consistency, duplicate resource identities, Service-to-workload selectors, named target ports, host namespaces, and container hardening settings.
 - Keep all evaluation deterministic and browser-local; do not claim API-server schema or admission validation.
 

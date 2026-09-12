@@ -2,7 +2,7 @@
 
 Started: 2026-09-12
 
-Status: Implementation, local verification, pull-request CI, non-publishing multi-architecture build, and browser acceptance complete in draft PR #10. Release publication, deployment, final review, and merge remain separate checkpoints.
+Status: Version `0.2.0` release candidate prepared after implementation, local verification, pull-request CI, non-publishing multi-architecture build, and browser acceptance completed in draft PR #10. Publication, deployment, final review, and merge remain separate checkpoints.
 
 ## Goal
 
@@ -44,6 +44,7 @@ Make each Workbench operational finding more actionable and add bounded cross-re
 - [x] Locked clean installation, 23-test suite, production build, dependency audit, repository manifest validation, and whitespace checks pass locally.
 - [x] Pull-request CI and non-publishing multi-architecture image build pass.
 - [x] Browser acceptance passes for clickable paths, expandable remediation guidance, copyable YAML, cautions, and OWASP references.
+- [x] Package metadata and lockfile identify the approved `0.2.0` release candidate.
 - [ ] Any versioned publication is separately approved and verified.
 - [ ] Any live Deployment update is separately dry-run, diff-reviewed, approved, and verified.
 - [ ] Final review and merge are separately approved.
