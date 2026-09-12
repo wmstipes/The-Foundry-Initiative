@@ -20,6 +20,12 @@ Path: `k8s/metrics-server`
 
 This directory contains the pinned Metrics Server v0.9.0 workload, upstream RBAC, internal Service, and aggregated API registration. The deployment validates every kubelet serving certificate with the Kubernetes service-account CA and does not use `--kubelet-insecure-tls`.
 
+## Forge YAML Workbench
+
+Path: `k8s/forge-yaml-workbench`
+
+This directory contains the restricted `forge-tools` namespace, hardened stateless Workbench Deployment, and NodePort Service on `30081`. The workload uses the immutable `0.1.1` multi-architecture image index, has no Kubernetes API identity or mounted ServiceAccount token, and processes pasted YAML only in the browser.
+
 ## Validation
 
 From the repository root:

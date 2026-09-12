@@ -6,7 +6,7 @@
 
 ## Summary
 
-The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, a lightweight Prometheus collection layer, Kubernetes Metrics Server, and a lightweight Grafana visualization layer.
+The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
 The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility.
 
@@ -20,6 +20,21 @@ The project has moved from basic workload deployment into repeatable engineering
 - Image: `wmstipes/signalforge-restaurant-api:0.7.0`
 - External lab access: NodePort `30080`
 - Metrics endpoint: `/metrics`
+
+## Current Forge YAML Workbench state
+
+- Application: Forge YAML Workbench
+- Namespace: `forge-tools`
+- Deployment: `forge-yaml-workbench`
+- Replicas: 1 available and Ready
+- Release: `0.1.1`
+- Image: `wmstipes/signalforge-yaml-workbench:0.1.1@sha256:50e3d115641941bc8f7eaa303463c08ccbafe5842cc07304d4b71dbd4aef8669`
+- Runtime ImageID: verified against the pinned OCI index digest
+- External lab access: NodePort `30081`
+- Data path: browser-local parsing and analysis; no server-side YAML persistence
+- Kubernetes identity: no mounted ServiceAccount token and no RBAC access
+- Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
+- Acceptance: health and page responses passed; multi-document and visible-format browser regressions passed
 
 ## Completed milestones
 
@@ -45,6 +60,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 028: Lightweight Grafana implementation, persistence and recovery validation
 - 029: Limited alerting design accepted and merged
 - 030: Limited alerting rules validated, activated and verified without notification delivery
+- 032: Forge YAML Workbench `0.1.1` built, published, hardened, deployed and browser-validated
 
 ## Current observability state
 
@@ -147,10 +163,15 @@ The Milestone 029 [limited-alerting design](observability/limited-alerting-speci
 
 [Milestone 030](milestones/milestone-030-limited-alerting-implementation.md) is complete. Its offline package merged through PR #5 at `604e38e` after real promtool 3.13.2 passed both rules and all 19 scenarios. The guarded activation candidate merged through PR #6 at `f54b961`. After explicit approval on 2026-09-11, only the Prometheus ConfigMap changed and only Prometheus restarted. Immediate and independent checks confirmed three healthy targets, an exact live/repository configuration match, and both accepted rules loaded, healthy and inactive. A checksum-recorded baseline recovery file is retained. No Alertmanager, receiver or notification delivery exists.
 
-The immediate next step is to observe naturally occurring rule behavior and periodically run `metrics-alerts-plan`. Do not inject a failure merely to produce firing evidence. Revisit the provisional delays and whether a notification path is justified only after useful operational evidence accumulates.
+`Milestone 032` is complete: Forge YAML Workbench `0.1.1` is version controlled, published for AMD64/ARM64, digest-pinned, deployed, healthy, and browser-validated. PR #8 remains draft until final review and explicit merge approval.
+
+After closeout, observe naturally occurring rule behavior and periodically run `metrics-alerts-plan`. Do not inject a failure merely to produce firing evidence. Select any further Workbench UX refinement, Ingress/TLS, or broader telemetry work as a separate bounded milestone.
 
 ## Known temporary limitation
 
 Prometheus and Grafana remain dependent on `forge-head` and its local NVMe during head-node or device failure. Weekly off-node backups remain manual. Grafana service recovery from an accepted backup was measured at 4.37 minutes on a functioning cluster, but full head-node or NVMe reconstruction remains outside that result. Prometheus full service-restoration timing remains a separate limitation.
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
+
+Forge YAML Workbench performs YAML parsing and bounded operational review, not complete Kubernetes OpenAPI validation or admission testing. NodePort `30081` uses plain HTTP and is intended only for the private lab. Formatting an already normalized document may produce no obvious visual change.
+

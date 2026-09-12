@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-10
+**Last updated:** 2026-09-11
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -8,20 +8,23 @@ This document describes the current architecture of the active Foundry Initiativ
 
 SignalForge is a four-node Raspberry Pi Kubernetes lab for practicing cloud-native application delivery, release engineering, observability, troubleshooting, and eventually AI-assisted operations.
 
-The first workload is the SignalForge Restaurant API, a small FastAPI service that makes infrastructure behavior visible through health endpoints, runtime metadata, application metrics, and intentionally simple operational workflows.
+The primary workload is the SignalForge Restaurant API, a small FastAPI service that makes infrastructure behavior visible through health endpoints, runtime metadata, application metrics, and intentionally simple operational workflows. Forge YAML Workbench is a separate stateless browser application for inspecting Kubernetes YAML without granting it cluster access.
 
 ## Current topology
 
 ```mermaid
 flowchart TD
     Client["Laptop or client"] --> NodePort["NodePort 30080"]
+    Client --> WorkbenchPort["NodePort 30081"]
     NodePort --> API["Restaurant API Pods (3)"]
+    WorkbenchPort --> Workbench["YAML Workbench (1)"]
     Prometheus["Prometheus (1)"] -->|scrape /metrics| API
     Operator["Operator kubectl"] -->|top request| APIServer["Kubernetes API server"]
     APIServer --> MetricsServer["Metrics Server (1)"]
     MetricsServer -->|verified TLS on 10250| Kubelets["Kubelets (4)"]
     Actions["GitHub Actions"] -->|publish ARM64 image| Registry["Docker Hub"]
     Registry -->|versioned image| API
+    Registry -->|digest-pinned image| Workbench
 ```
 
 ### Kubernetes platform
@@ -46,6 +49,19 @@ flowchart TD
 - Application metrics: `/metrics`
 - Deployment strategy: rolling update with readiness and liveness probes
 
+### Forge YAML Workbench
+
+- Source: `apps/forge-yaml-workbench`
+- Manifests: `k8s/forge-yaml-workbench`
+- Namespace: `forge-tools`
+- Deployment: one stateless replica using release `0.1.1`
+- Access: private-lab NodePort `30081`
+- Runtime: unprivileged NGINX on container port `8080`
+- Processing: YAML parsing, formatting, summaries and bounded findings run entirely in the browser
+- Identity: no RBAC, Kubernetes API access, or mounted ServiceAccount token
+- Security: restricted Pod Security labels, non-root execution, RuntimeDefault seccomp, read-only root filesystem, dropped capabilities, and bounded writable `/tmp`
+- Delivery: guarded version tags publish AMD64 and ARM64 images; the Deployment pins both version and OCI index digest
+
 ### Metrics collection
 
 - Manifests: `k8s/prometheus`
@@ -57,7 +73,7 @@ flowchart TD
 - Access: ClusterIP Service and temporary `kubectl port-forward`
 - Storage: retained 30 GiB local PV on the head NVMe, 30-day retention, and a 24 GB cap
 
-Prometheus is deliberately lightweight at this stage. Grafana, Alertmanager, node-exporter, kube-state-metrics, and the Prometheus Operator are not installed.
+Prometheus remains deliberately lightweight. Grafana is deployed as a separate visualization layer; Alertmanager, node-exporter, kube-state-metrics, and the Prometheus Operator are not installed.
 
 ### Approved persistent-storage target
 
@@ -104,17 +120,19 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 1. Application and infrastructure changes are developed in Git.
 2. Restaurant API tests run through GitHub Actions.
 3. Kubernetes manifests are checked by the repository validator and `promtool` where appropriate.
-4. GitHub Actions builds and publishes the ARM64 container image to Docker Hub.
-5. Version tags produce versioned release images.
+4. GitHub Actions builds the Restaurant API ARM64 image and Workbench AMD64/ARM64 image.
+5. Guarded version tags publish versioned release images to Docker Hub.
 6. PowerShell helpers apply the manifests and wait for Kubernetes rollouts.
 7. Smoke tests, Prometheus target checks, and Metrics API checks validate the live deployment.
 
 ## Repository organization
 
 - `apps/restaurant-api` contains the FastAPI source, container definition, dependencies, and tests.
+- `apps/forge-yaml-workbench` contains the browser application, analyzer, tests, and unprivileged web container.
 - `k8s/fastapi-restaurant` contains the Restaurant API Kubernetes resources.
 - `k8s/prometheus` contains the lightweight metrics-collection resources.
 - `k8s/metrics-server` contains the Kubernetes resource-metrics API resources.
+- `k8s/forge-yaml-workbench` contains the restricted namespace, hardened Deployment, NodePort Service, and operating notes.
 - `scripts` contains developer, deployment, smoke-test, and validation helpers.
 - `.github/workflows` contains application CI, manifest validation, and ARM64 image publishing.
 - `docs/milestones` preserves chronological implementation evidence.
@@ -140,17 +158,19 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 - Metrics Server provides current CPU and memory samples but no historical resource-metrics store.
 - The upstream APIService uses `insecureSkipTLSVerify` for the API server-to-Metrics Server connection because the serving certificate is generated dynamically. This is separate from the secured Metrics Server-to-kubelet path.
 - Kubelet serving-certificate rotation requests require deliberate operator review and approval.
+- Workbench analysis is not complete Kubernetes schema or admission validation; NodePort `30081` is private-lab HTTP exposure.
 
 ## Expected evolution
 
 Potential next architecture steps include:
 
-1. Preserve the Grafana implementation and recovery baseline completed in Milestone 028.
-2. Validate the accepted limited-alerting design offline, then review a separately approved activation step.
-3. Introduce Ingress for cleaner external access.
-4. Evaluate Loki and OpenTelemetry for logs and traces.
+1. Observe naturally occurring limited-alert behavior before designing notification delivery.
+2. Continue the demonstrated Prometheus and Grafana backup cadence.
+3. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
+4. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
 5. Evolve the rules-based `/analyze` endpoint into the ForgeOps AI-assisted incident copilot.
 
 ## Decision records
 
 Milestone documents currently serve as the chronological record of context, decisions, implementation, validation, and lessons. Larger cross-cutting decisions can later be promoted into dedicated records under `docs/decisions` when that additional structure provides value.
+

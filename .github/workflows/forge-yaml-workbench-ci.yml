@@ -1,0 +1,54 @@
+name: Forge YAML Workbench CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/forge-yaml-workbench/**"
+      - ".github/workflows/forge-yaml-workbench-ci.yml"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "apps/forge-yaml-workbench/**"
+      - ".github/workflows/forge-yaml-workbench-ci.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Forge YAML Workbench
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: apps/forge-yaml-workbench
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/forge-yaml-workbench/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build production assets
+        run: npm run build
+
+      - name: Audit dependencies
+        run: npm audit
