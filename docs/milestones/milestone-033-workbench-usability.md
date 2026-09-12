@@ -2,7 +2,7 @@
 
 Started: 2026-09-12
 
-Status: In progress. Browser interaction changes are implemented locally and awaiting pull-request validation and acceptance.
+Status: Implementation and browser acceptance complete in draft PR #9. Release publication, deployment, final documentation reconciliation, and merge remain pending separate checkpoints.
 
 ## Goal
 
@@ -28,6 +28,15 @@ Make common Workbench actions unambiguous and make parser failures easier to loc
 - Findings remain bounded guidance rather than API-server admission guarantees.
 - Image publication and cluster deployment require later, separate approval.
 
+## Browser acceptance evidence
+
+- Formatting the existing sample reported that it was already normalized without changing its two-document structure.
+- Formatting compact flow-style YAML through `Ctrl+Shift+F` visibly produced five-line block-style YAML and retained one valid Pod document.
+- A duplicate `kind` key opened Validation, reported line 3 column 1, and the location control selected exactly that editor line.
+- Replacing the selected duplicate restored one valid document.
+- The first diagnostic-navigation test exposed stale red action feedback after correction; commit `1f90eaf` replaced stale results with neutral `Editing YAML` feedback, and the repeated browser check passed.
+- `Ctrl+O` opened a YAML file, `Ctrl+S` downloaded it with its original filename, and Clear preserved edited YAML when cancellation was selected before clearing it after confirmation.
+
 ## Deferred follow-on milestones
 
 - Milestone 034: deeper deterministic operational checks with paths, explanations, and suggested corrections.
@@ -36,11 +45,11 @@ Make common Workbench actions unambiguous and make parser failures easier to loc
 
 ## Acceptance gates
 
-- [ ] Locked clean installation passes.
+- [x] Locked clean installation passes.
 - [x] Analyzer and DOM interaction tests pass locally.
 - [x] Production build passes locally.
 - [x] Dependency audit reports zero vulnerabilities locally.
-- [ ] Pull-request CI and multi-architecture non-publishing image build pass.
-- [ ] Browser acceptance confirms feedback, diagnostic navigation, filename preservation, shortcuts, and clear protection.
+- [x] Pull-request CI and multi-architecture non-publishing image build pass.
+- [x] Browser acceptance confirms feedback, diagnostic navigation, filename preservation, shortcuts, and clear protection.
 - [ ] Any release publication is separately approved.
 - [ ] Any live Deployment update is separately dry-run, diff-reviewed, approved, and verified.
