@@ -2,7 +2,7 @@
 
 Started: 2026-09-12
 
-Status: Version `0.2.0` published as an immutable AMD64/ARM64 OCI image and pinned in the deployment manifest after implementation, local verification, pull-request CI, non-publishing multi-architecture build, and browser acceptance completed in draft PR #10. Deployment, final review, and merge remain separate checkpoints.
+Status: Implementation, version `0.2.0` publication, immutable digest pinning, approved deployment, runtime verification, and live browser acceptance completed in draft PR #10. Final review and merge remain separate checkpoints.
 
 ## Goal
 
@@ -46,12 +46,13 @@ Make each Workbench operational finding more actionable and add bounded cross-re
 - [x] Browser acceptance passes for clickable paths, expandable remediation guidance, copyable YAML, cautions, and OWASP references.
 - [x] Package metadata and lockfile identify the approved `0.2.0` release candidate.
 - [x] Versioned `0.2.0` publication is separately approved and verified for AMD64 and ARM64 at OCI index digest `sha256:1be3942fc9acf62906b020872d31a61cc6e1dab4e879476b4ba233063fb57720`.
-- [ ] Any live Deployment update is separately dry-run, diff-reviewed, approved, and verified.
+- [x] The live Deployment update was separately server-side dry-run, diff-reviewed, approved, rolled out, and verified at the pinned runtime digest with one Ready replica and zero restarts.
 - [ ] Final review and merge are separately approved.
 
 ## Deferred
 
-- Kubernetes OpenAPI schema validation remains Milestone 035.
-- Broader OWASP Kubernetes Top 10:2025 coverage remains a separate milestone after schema validation.
+- General YAML inspection mode remains Milestone 035.
+- Kubernetes OpenAPI schema validation remains Milestone 036.
+- Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037 after schema validation.
 - Full set-based evaluation of `matchExpressions` is deferred unless a later bounded requirement justifies it.
 - Cluster lookups, admission requests, policy-engine integration, and automatic YAML mutation remain out of scope.

@@ -27,14 +27,14 @@ The project has moved from basic workload deployment into repeatable engineering
 - Namespace: `forge-tools`
 - Deployment: `forge-yaml-workbench`
 - Replicas: 1 available and Ready
-- Release: `0.1.2`
-- Image: `wmstipes/signalforge-yaml-workbench:0.1.2@sha256:07f34be33c55bca5b7bf5321e5d149e4831ce520c9efbdd98233468a1a50e3c7`
+- Release: `0.2.0`
+- Image: `wmstipes/signalforge-yaml-workbench:0.2.0@sha256:1be3942fc9acf62906b020872d31a61cc6e1dab4e879476b4ba233063fb57720`
 - Runtime ImageID: verified against the pinned OCI index digest
 - External lab access: NodePort `30081`
 - Data path: browser-local parsing and analysis; no server-side YAML persistence
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
-- Acceptance: health and page responses passed; multi-document and visible-format browser regressions passed
+- Acceptance: rollout, runtime digest, ready EndpointSlice, health, page, security headers, clickable finding paths, remediation guidance, clipboard examples, cautions, and OWASP references passed
 
 ## Completed milestones
 
@@ -168,7 +168,7 @@ The Milestone 029 [limited-alerting design](observability/limited-alerting-speci
 
 `Milestone 033` is complete and merged through PR #9 at `7aadedd`. Forge YAML Workbench `0.1.2` runs as one Ready replica with zero restarts from the pinned OCI index digest. NodePort routing, `/healthz`, the application page, security headers, sample loading, format feedback, editing state, the format shortcut, and YAML download all passed live verification.
 
-Milestone 034 has published and immutably pinned the approved `0.2.0` AMD64/ARM64 image in draft PR #10. It adds deeper deterministic Kubernetes checks, clickable YAML paths, remediation examples, operational cautions, initial OWASP K01:2025 mapping, and seccomp guidance while preserving browser-local analysis. Live deployment, final review, and merge remain separate future checkpoints. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
+Milestone 034 has published, immutably pinned, deployed, and live browser-validated the approved `0.2.0` AMD64/ARM64 image in draft PR #10. The running Pod is Ready with zero restarts and its runtime ImageID matches the reviewed OCI index digest. The release adds deeper deterministic Kubernetes checks, clickable YAML paths, remediation examples, operational cautions, initial OWASP K01:2025 mapping, and seccomp guidance while preserving browser-local analysis. Final review and merge remain separate checkpoints. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
 
 ## Known temporary limitation
 
