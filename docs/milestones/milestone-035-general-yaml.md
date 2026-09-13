@@ -2,7 +2,7 @@
 
 Started: 2026-09-13
 
-Status: Source implementation and local automated validation complete on `codex/milestone-035-general-yaml`. Publication, deployment, live acceptance, and merge remain separate approval checkpoints.
+Status: Source implementation, pull-request validation, and approved `0.3.0` publication are complete on `codex/milestone-035-general-yaml`. Deployment, live acceptance, and merge remain separate approval checkpoints.
 
 ## Goal
 
@@ -29,6 +29,18 @@ Add an explicit General YAML inspection mode alongside the existing Kubernetes m
 - No additional OWASP Kubernetes Top 10 rules are introduced.
 - No image publication, manifest update, cluster deployment, or merge occurs without its separate approval checkpoint.
 
+## Publication evidence
+
+- Approved tag: `forge-yaml-workbench-v0.3.0`
+- Reviewed source commit: `da09227c93c9e14b207fc1c4f19246e5ff2255a2`
+- Successful publication run: [GitHub Actions run 34772545833](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/34772545833)
+- Published image: `wmstipes/signalforge-yaml-workbench:0.3.0`
+- OCI index digest: `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`
+- Linux AMD64 manifest: `sha256:be6d400643509a7855c8c6a4980585dad91c748222a330a3b06db3c6c88097ba`
+- Linux ARM64 manifest: `sha256:016ef45789896fe9ea334c425c22885d77ee9f358552139fbed18a2dffcd4813`
+- Registry media type: `application/vnd.oci.image.index.v1+json`
+- Deployed Workbench remains `0.2.0`; publication did not alter Kubernetes.
+
 ## Acceptance gates
 
 - [x] Analyzer coverage proves Kubernetes remains the default and continues rejecting non-mapping roots.
@@ -39,9 +51,9 @@ Add an explicit General YAML inspection mode alongside the existing Kubernetes m
 - [x] Existing parser, formatter, file handling, location navigation, and remediation tests remain green.
 - [x] Production build and whitespace validation pass locally.
 - [x] Clean locked installation, dependency audit, and repository validation pass.
-- [ ] Pull-request CI and non-publishing multi-architecture image build pass.
+- [x] Pull-request CI and non-publishing multi-architecture image build pass.
 - [ ] Live browser acceptance passes for both modes after an approved deployment.
-- [ ] Versioned `0.3.0` publication is separately approved and its AMD64/ARM64 OCI index digest is recorded.
+- [x] Versioned `0.3.0` publication is separately approved and its AMD64/ARM64 OCI index digest is recorded.
 - [ ] Deployment is separately dry-run, diff-reviewed, approved, rolled out, and runtime-verified at the pinned digest.
 - [ ] Final review and merge are separately approved.
 

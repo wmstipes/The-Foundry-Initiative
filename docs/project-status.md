@@ -32,7 +32,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Runtime ImageID: verified against the pinned OCI index digest
 - External lab access: NodePort `30081`
 - Data path: browser-local parsing and analysis; no server-side YAML persistence
-- Development: Milestone 035 source adds explicit General YAML inspection as the `0.3.0` release candidate; deployed version remains `0.2.0`
+- Development: Milestone 035 published General YAML inspection as `0.3.0` at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`; deployed version remains `0.2.0`
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
 - Acceptance: rollout, runtime digest, ready EndpointSlice, health, page, security headers, clickable finding paths, remediation guidance, clipboard examples, cautions, and OWASP references passed
@@ -172,7 +172,7 @@ The Milestone 029 [limited-alerting design](observability/limited-alerting-speci
 
 Milestone 034 published, immutably pinned, deployed, and live browser-validated the approved `0.2.0` AMD64/ARM64 image, then merged through PR #10 at `9848618`. The running Pod is Ready with zero restarts and its runtime ImageID matches the reviewed OCI index digest.
 
-Milestone 035 is in source implementation. Its `0.3.0` release candidate adds an explicit General YAML mode alongside the default Kubernetes mode. Both modes share browser-local parsing, formatting, parser diagnostics, file handling, and tree navigation. General YAML accepts mappings, sequences, and scalars while omitting Kubernetes-only findings. Publication, deployment, and merge remain separately approved checkpoints. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
+Milestone 035 has published its separately approved `0.3.0` AMD64/ARM64 image at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`. It adds an explicit General YAML mode alongside the default Kubernetes mode. Both modes share browser-local parsing, formatting, parser diagnostics, file handling, and tree navigation. General YAML accepts mappings, sequences, and scalars while omitting Kubernetes-only findings. The deployed Workbench remains `0.2.0`; deployment, live acceptance, and merge remain separately approved checkpoints. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
 
 ## Known temporary limitation
 

@@ -297,8 +297,11 @@ Added an explicit General YAML inspection mode beside the existing Kubernetes mo
 - Suppressed Kubernetes-only findings, remediation guidance, and OWASP references outside Kubernetes mode.
 - Preserved Kubernetes behavior as the tested default.
 - Expanded analyzer and browser interaction coverage from 23 to 30 passing tests.
-- Prepared package metadata for the `0.3.0` release candidate without publishing or deploying it.
+- Prepared package metadata for the `0.3.0` release candidate.
+- Passed pull-request CI and the non-publishing AMD64/ARM64 image build.
+- Published approved image `wmstipes/signalforge-yaml-workbench:0.3.0` through GitHub Actions.
+- Verified the registry's AMD64 and ARM64 manifests and recorded OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`.
 
 ### Next small step
 
-Run pull-request CI and the non-publishing multi-architecture image build. Keep `0.3.0` publication, digest pinning, cluster deployment, live acceptance, and merge as separately approved checkpoints.
+Prepare the digest-pinned `0.3.0` deployment candidate for server-side dry-run and live diff review. Keep cluster deployment, live acceptance, and merge as separately approved checkpoints.
