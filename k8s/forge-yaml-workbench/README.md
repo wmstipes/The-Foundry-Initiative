@@ -22,7 +22,7 @@ Immutable image reference:
 wmstipes/signalforge-yaml-workbench:0.4.1@sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2
 ```
 
-The OCI image index contains active `linux/amd64` and `linux/arm64` manifests. No floating image tag is used. The tracked manifest stages the published immutable `0.4.1` correction for server-side dry-run and live diff review. The live cluster remains on defective `0.4.0` until deployment is separately approved.
+The OCI image index contains active `linux/amd64` and `linux/arm64` manifests. No floating image tag is used. The live cluster and tracked Deployment both use the accepted immutable `0.4.1` correction.
 
 ## Security and data boundaries
 
@@ -62,4 +62,4 @@ kubectl rollout status deployment/forge-yaml-workbench -n forge-tools --timeout=
 kubectl get deployment,pods,service -n forge-tools -o wide
 ```
 
-The live `0.4.0` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477`. NodePort `30081`, its ready EndpointSlice, `/healthz`, the application page response, Content Security Policy, and `X-Content-Type-Options` passed immediate runtime verification. Interactive browser acceptance did not pass: AJV runtime compilation was blocked by the strict CSP and the page rendered blank.
+The live `0.4.1` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2`. NodePort `30081`, its ready EndpointSlice, `/healthz`, the application page response, Content Security Policy, and `X-Content-Type-Options` passed runtime verification. Repeated interactive browser acceptance confirmed Kubernetes and General YAML behavior, schema result boundaries, and strict-CSP startup.
