@@ -185,6 +185,16 @@ function focusEditorLocation(line, column = 1) {
   const end = lineStart + (lines[lineIndex]?.length || 0);
   editor.focus();
   editor.setSelectionRange(start, Math.max(start, end));
+
+  const styles = window.getComputedStyle(editor);
+  const fontSize = Number.parseFloat(styles.fontSize) || 16;
+  const parsedLineHeight = Number.parseFloat(styles.lineHeight);
+  const lineHeight = Number.isFinite(parsedLineHeight)
+    ? (styles.lineHeight.endsWith("px") ? parsedLineHeight : parsedLineHeight * fontSize)
+    : fontSize * 1.62;
+  const centeredOffset = (editor.clientHeight - lineHeight) / 2;
+  const maximumScroll = Math.max(0, editor.scrollHeight - editor.clientHeight);
+  editor.scrollTop = Math.min(maximumScroll, Math.max(0, lineIndex * lineHeight - centeredOffset));
 }
 
 async function copyText(value) {
