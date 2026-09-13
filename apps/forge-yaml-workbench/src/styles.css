@@ -67,6 +67,11 @@ button.quiet { color: var(--muted); background: transparent; }
 .resource-card h3 { margin: 0; font-size: 1rem; }
 .resource-card header p { margin: 3px 0 0; color: var(--muted); font-size: .78rem; }
 .resource-card header small { color: var(--muted); }
+.resource-status { display: grid; justify-items: end; gap: 6px; }
+.schema-badge { padding: 3px 6px; border-radius: 4px; background: #202b37; color: var(--muted); font-size: .65rem; font-weight: 700; }
+.schema-badge.valid { background: rgba(67, 217, 189, .12); color: var(--teal); }
+.schema-badge.invalid { background: rgba(255, 112, 112, .12); color: var(--red); }
+.schema-badge.schema-unavailable { background: rgba(245, 165, 36, .12); color: var(--amber); }
 .kind { padding: 7px 9px; border-radius: 6px; background: rgba(104, 185, 245, .12); color: var(--blue); font-family: monospace; }
 .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; }
 .field { min-width: 0; padding: 12px 15px; border-bottom: 1px solid rgba(42, 55, 68, .72); }
@@ -86,6 +91,7 @@ code { color: #dbe7f2; font-family: "Cascadia Code", Consolas, monospace; font-s
 .message.error > span { background: rgba(255, 112, 112, .12); color: var(--red); }
 .message.warning > span { background: rgba(245, 165, 36, .12); color: var(--amber); }
 .message.note > span { background: rgba(104, 185, 245, .12); color: var(--blue); }
+.message.valid > span { background: rgba(67, 217, 189, .12); color: var(--teal); }
 .message strong { font-size: .86rem; }
 .message p { margin: 4px 0 0; color: var(--muted); font-size: .82rem; line-height: 1.5; }
 .message-path { display: flex; min-height: 0; flex-wrap: wrap; align-items: baseline; gap: 7px; width: fit-content; max-width: 100%; margin-top: 8px; padding: 0; border: 0; background: transparent; text-align: left; }
@@ -138,5 +144,6 @@ footer { display: flex; justify-content: space-between; padding: 12px 4px 0; col
   .field:nth-child(odd) { border-right: 0; }
   .resource-card > header { grid-template-columns: auto 1fr; }
   .resource-card header small { grid-column: 2; }
+  .resource-status { grid-column: 2; justify-items: start; }
   footer { flex-direction: column; gap: 4px; }
 }

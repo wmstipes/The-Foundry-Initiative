@@ -1,4 +1,5 @@
 import { isMap, isSeq, LineCounter, parseAllDocuments } from "yaml";
+import { validateKubernetesResource } from "./schema-validation.js";
 
 const WORKLOADS = new Set(["Pod", "Deployment", "StatefulSet", "DaemonSet", "ReplicaSet", "Job", "CronJob"]);
 const SELECTOR_WORKLOADS = new Set(["Deployment", "StatefulSet", "DaemonSet", "ReplicaSet"]);
@@ -199,7 +200,8 @@ function nearestNodeAtPath(parsedDocument, segments) {
 function attachFindingLocations(parsed, documents, lineCounter) {
   documents.forEach((document) => {
     const parsedDocument = parsed[document.index - 1];
-    document.findings.forEach((item) => {
+    const locatedItems = [...document.findings, ...(document.schema?.errors || [])];
+    locatedItems.forEach((item) => {
       const segments = pathSegments(item.path);
       const node = nearestNodeAtPath(parsedDocument, segments);
       const position = node?.range ? lineCounter.linePos(node.range[0]) : undefined;
@@ -309,12 +311,28 @@ export function summarizeGeneralDocument(value, index) {
 }
 
 export function analyzeYaml(source, mode = "kubernetes") {
-  if (!source.trim()) return { mode, documents: [], errors: [], warnings: [] };
+  if (!source.trim()) return {
+    mode,
+    documents: [],
+    errors: [],
+    warnings: [],
+    syntaxErrors: [],
+    syntaxWarnings: [],
+    documentErrors: []
+  };
   if (mode !== "kubernetes" && mode !== "general") throw new Error("Unsupported YAML inspection mode: " + mode);
 
   const lineCounter = new LineCounter();
   const parsed = parseAllDocuments(source, { lineCounter, prettyErrors: true, uniqueKeys: true });
-  const result = { mode, documents: [], errors: [], warnings: [] };
+  const result = {
+    mode,
+    documents: [],
+    errors: [],
+    warnings: [],
+    syntaxErrors: [],
+    syntaxWarnings: [],
+    documentErrors: []
+  };
 
   const diagnostic = (item, parsedDocument, documentNumber) => {
     const position = item.linePos?.[0] || lineCounter.linePos(item.pos?.[0] ?? parsedDocument.range?.[0] ?? 0);
@@ -328,23 +346,37 @@ export function analyzeYaml(source, mode = "kubernetes") {
 
   parsed.forEach((document, index) => {
     const documentNumber = index + 1;
-    document.errors.forEach((error) => result.errors.push(diagnostic(error, document, documentNumber)));
-    document.warnings.forEach((warning) => result.warnings.push(diagnostic(warning, document, documentNumber)));
+    document.errors.forEach((error) => {
+      const item = diagnostic(error, document, documentNumber);
+      result.syntaxErrors.push(item);
+      result.errors.push(item);
+    });
+    document.warnings.forEach((warning) => {
+      const item = diagnostic(warning, document, documentNumber);
+      result.syntaxWarnings.push(item);
+      result.warnings.push(item);
+    });
 
     if (document.errors.length === 0 && document.contents !== null) {
       const value = document.toJS({ maxAliasCount: 100 });
       if (mode === "kubernetes" && (!value || typeof value !== "object" || Array.isArray(value))) {
         const position = lineCounter.linePos(document.range?.[0] ?? 0);
-        result.errors.push({
+        const item = {
           document: documentNumber,
           message: "A Kubernetes manifest must be a YAML mapping/object at its root.",
           line: position.line,
           column: position.col
-        });
+        };
+        result.documentErrors.push(item);
+        result.errors.push(item);
       } else {
-        result.documents.push(mode === "kubernetes"
-          ? summarizeResource(value, documentNumber)
-          : summarizeGeneralDocument(value, documentNumber));
+        if (mode === "kubernetes") {
+          const resource = summarizeResource(value, documentNumber);
+          resource.schema = validateKubernetesResource(value);
+          result.documents.push(resource);
+        } else {
+          result.documents.push(summarizeGeneralDocument(value, documentNumber));
+        }
       }
     }
   });

@@ -47,8 +47,28 @@ describe("Forge YAML Workbench browser interactions", () => {
 
     replaceEditor("kind: Pod\nmetadata: {name: risky}\nspec: {}\n");
     document.querySelector('[data-tab="validation"]').click();
-    expect(document.querySelector("#results").textContent).toContain("Kubernetes operational checks are disabled");
+    expect(document.querySelector("#results").textContent).toContain("Kubernetes operational and schema checks are disabled");
     expect(document.querySelector("#results").textContent).not.toContain("No containers found");
+    expect(document.querySelector("#results").textContent).not.toContain("Kubernetes schema ·");
+  });
+
+  it("renders syntax, deterministic operational, and schema results as separate sections", () => {
+    replaceEditor("apiVersion: apps/v1\nkind: Deployment\nmetadata: {name: separated}\nspec:\n  replicas: three\n  mysteryField: true\n");
+    document.querySelector('[data-tab="validation"]').click();
+
+    const headings = [...document.querySelectorAll(".messages h3")].map((item) => item.textContent);
+    expect(headings).toContain("Deterministic operational review");
+    expect(headings).toContain("Kubernetes schema · v1.36.4");
+    expect(document.querySelector("#results").textContent).toContain(".spec.replicas");
+    expect(document.querySelector("#results").textContent).toContain(".spec.mysteryField");
+  });
+
+  it("labels unsupported resources and unavailable CRD schemas explicitly", () => {
+    replaceEditor("apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata: {name: unsupported}\n---\napiVersion: database.example.com/v1\nkind: Database\nmetadata: {name: custom}\n");
+    document.querySelector('[data-tab="validation"]').click();
+
+    expect(document.querySelector("#results").textContent).toContain("No bundled v1.36.4 schema supports networking.k8s.io/v1 Ingress");
+    expect(document.querySelector("#results").textContent).toContain("CRD schema unavailable for database.example.com/v1 Database");
   });
 
   it("renders an explicit null scalar in General YAML summary and tree views", () => {
