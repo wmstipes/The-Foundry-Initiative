@@ -2,7 +2,7 @@
 
 Date: 2026-09-13
 
-Status: Immutable `0.5.0` is deployed and runtime-verified. Browser acceptance found a finding-navigation scroll defect; local `0.5.1` fixes it. Patch publication, deployment, repeated browser acceptance, PR readiness, and merge remain separate approval gates.
+Status: Immutable `0.5.0` is deployed and runtime-verified. Browser acceptance found a finding-navigation scroll defect; immutable `0.5.1` is published and staged to fix it. Deployment, repeated browser acceptance, PR readiness, and merge remain separate approval gates.
 
 ## Goal
 
@@ -65,11 +65,13 @@ Expand Forge YAML Workbench from individual K01 references into an explicit OWAS
 - Active platform manifests are AMD64 `sha256:2a47101b9f176671e0954ca55e90b7ae4dfe42ba4b7ce5856ccd2f447822032e` and ARM64 `sha256:f1de89162f2de896d8907e2fcce17d511246881c919fa15e6ee3a1ea3f6077b3`.
 - The immutable `0.5.0` index is deployed. Its Pod is Ready with zero restarts, the runtime ImageID matches, the EndpointSlice has one ready address, health and page requests return HTTP 200, and strict security headers remain present.
 - Live browser acceptance confirmed the OWASP profile and General YAML isolation, then found that finding controls selected the correct line without scrolling it into view.
-- Local source `0.5.1` explicitly scrolls the editor to center the selected line and preserves the selected text.
+- Source `0.5.1` explicitly scrolls the editor to center the selected line and preserves the selected text.
+- Separately approved publication run `34789023192` produced OCI index `sha256:4011478de37f9316d65985f17d87d3652203e2bcffd75ee29646ddcd52a64ffa`.
+- Active patch platform manifests are AMD64 `sha256:ebad025531960fa9d18a67fd153aa4fd2c56556df87574f06db083564981d5d5` and ARM64 `sha256:bfabd7f46865db81a8d8b57954dc4c0c2ddcb01a7705390b3e633b6acb2e8238`.
+- The tracked Deployment stages the immutable `0.5.1` index without applying it.
 
 ## Remaining gates
 
-1. Publish the separately approved `0.5.1` patch image and stage its immutable digest.
-2. Review server-side dry-run and live diff before any separately approved Deployment update.
-3. Repeat live browser acceptance against the corrected immutable image.
-4. Keep PR readiness and merge separately approved.
+1. Review server-side dry-run and live diff before any separately approved Deployment update.
+2. Repeat live browser acceptance against the corrected immutable image.
+3. Keep PR readiness and merge separately approved.
