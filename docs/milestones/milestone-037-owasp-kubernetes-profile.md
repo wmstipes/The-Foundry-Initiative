@@ -2,7 +2,7 @@
 
 Date: 2026-09-13
 
-Status: Immutable `0.5.0` is deployed and runtime-verified. Browser acceptance found a finding-navigation scroll defect; immutable `0.5.1` is published and staged to fix it. Deployment, repeated browser acceptance, PR readiness, and merge remain separate approval gates.
+Status: Immutable `0.5.1` is published, deployed, runtime-verified, and browser-accepted. PR readiness and merge remain separate approval gates.
 
 ## Goal
 
@@ -68,10 +68,10 @@ Expand Forge YAML Workbench from individual K01 references into an explicit OWAS
 - Source `0.5.1` explicitly scrolls the editor to center the selected line and preserves the selected text.
 - Separately approved publication run `34789023192` produced OCI index `sha256:4011478de37f9316d65985f17d87d3652203e2bcffd75ee29646ddcd52a64ffa`.
 - Active patch platform manifests are AMD64 `sha256:ebad025531960fa9d18a67fd153aa4fd2c56556df87574f06db083564981d5d5` and ARM64 `sha256:bfabd7f46865db81a8d8b57954dc4c0c2ddcb01a7705390b3e633b6acb2e8238`.
-- The tracked Deployment stages the immutable `0.5.1` index without applying it.
+- The immutable `0.5.1` index is deployed. Its Pod is Ready with zero restarts, configured and runtime ImageIDs match, health and page requests return HTTP 200, and strict security headers remain present.
+- Repeated live browser acceptance confirmed that finding controls automatically scroll to and select the correct YAML location.
 
 ## Remaining gates
 
-1. Review server-side dry-run and live diff before any separately approved Deployment update.
-2. Repeat live browser acceptance against the corrected immutable image.
-3. Keep PR readiness and merge separately approved.
+1. Review the completed implementation, publication, deployment, and browser-acceptance evidence before marking PR #14 ready.
+2. Keep merge separately approved.
