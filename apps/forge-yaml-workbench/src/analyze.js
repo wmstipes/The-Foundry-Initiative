@@ -293,12 +293,28 @@ export function summarizeResource(resource, index) {
   };
 }
 
-export function analyzeYaml(source) {
-  if (!source.trim()) return { documents: [], errors: [], warnings: [] };
+export function summarizeGeneralDocument(value, index) {
+  const rootType = Array.isArray(value) ? "sequence" : (value !== null && typeof value === "object" ? "mapping" : "scalar");
+  const entryCount = rootType === "mapping" ? Object.keys(value).length : (rootType === "sequence" ? value.length : null);
+
+  return {
+    index,
+    rootType,
+    entryCount,
+    keys: rootType === "mapping" ? Object.keys(value) : [],
+    value: rootType === "scalar" ? value : undefined,
+    findings: [],
+    raw: value
+  };
+}
+
+export function analyzeYaml(source, mode = "kubernetes") {
+  if (!source.trim()) return { mode, documents: [], errors: [], warnings: [] };
+  if (mode !== "kubernetes" && mode !== "general") throw new Error("Unsupported YAML inspection mode: " + mode);
 
   const lineCounter = new LineCounter();
   const parsed = parseAllDocuments(source, { lineCounter, prettyErrors: true, uniqueKeys: true });
-  const result = { documents: [], errors: [], warnings: [] };
+  const result = { mode, documents: [], errors: [], warnings: [] };
 
   const diagnostic = (item, parsedDocument, documentNumber) => {
     const position = item.linePos?.[0] || lineCounter.linePos(item.pos?.[0] ?? parsedDocument.range?.[0] ?? 0);
@@ -317,7 +333,7 @@ export function analyzeYaml(source) {
 
     if (document.errors.length === 0 && document.contents !== null) {
       const value = document.toJS({ maxAliasCount: 100 });
-      if (!value || typeof value !== "object" || Array.isArray(value)) {
+      if (mode === "kubernetes" && (!value || typeof value !== "object" || Array.isArray(value))) {
         const position = lineCounter.linePos(document.range?.[0] ?? 0);
         result.errors.push({
           document: documentNumber,
@@ -326,13 +342,17 @@ export function analyzeYaml(source) {
           column: position.col
         });
       } else {
-        result.documents.push(summarizeResource(value, documentNumber));
+        result.documents.push(mode === "kubernetes"
+          ? summarizeResource(value, documentNumber)
+          : summarizeGeneralDocument(value, documentNumber));
       }
     }
   });
 
-  addBundleFindings(result.documents);
-  attachFindingLocations(parsed, result.documents, lineCounter);
+  if (mode === "kubernetes") {
+    addBundleFindings(result.documents);
+    attachFindingLocations(parsed, result.documents, lineCounter);
+  }
 
   return result;
 }

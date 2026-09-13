@@ -276,3 +276,33 @@ Expanded Forge YAML Workbench from parser-focused feedback into a bounded Kubern
 ### Next small step
 
 Complete final review and merge of PR #10. Begin General YAML inspection mode as Milestone 035 in a new chat, leaving Kubernetes schema validation and broader OWASP coverage for Milestones 036 and 037.
+
+---
+
+## 2026-09-13 - Milestone 035 General YAML inspection
+
+### What I worked on
+
+Added an explicit General YAML inspection mode beside the existing Kubernetes mode. Kubernetes remains the startup default, and switching modes preserves the editor contents while reusing the same browser-local parser, formatter, diagnostics, file handling, and document tree.
+
+### What I learned
+
+- Parsing and presentation boundaries can be separated cleanly: both modes share syntax handling, while only Kubernetes mode performs resource interpretation and operational checks.
+- General YAML needs to treat mappings, sequences, and scalars as valid document roots instead of assuming every document represents an object.
+- Explicit mode labels and report-boundary text prevent a successful General YAML parse from being mistaken for Kubernetes validation.
+
+### What I finished
+
+- Added mapping, sequence, and scalar summaries for General YAML.
+- Suppressed Kubernetes-only findings, remediation guidance, and OWASP references outside Kubernetes mode.
+- Preserved Kubernetes behavior as the tested default.
+- Expanded analyzer and browser interaction coverage from 23 to 30 passing tests.
+- Prepared package metadata for the `0.3.0` release candidate.
+- Passed pull-request CI and the non-publishing AMD64/ARM64 image build.
+- Published approved image `wmstipes/signalforge-yaml-workbench:0.3.0` through GitHub Actions.
+- Verified the registry's AMD64 and ARM64 manifests and recorded OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`.
+- Prepared the Kubernetes Deployment candidate with matching `0.3.0` version labels and immutable OCI index digest while leaving the cluster unchanged.
+
+### Next small step
+
+Run the digest-pinned `0.3.0` candidate through server-side dry-run and live diff review. Keep cluster deployment, live acceptance, and merge as separately approved checkpoints.

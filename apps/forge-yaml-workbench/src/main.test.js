@@ -11,6 +11,8 @@ beforeAll(async () => {
 });
 
 beforeEach(() => {
+  document.querySelector('[data-mode="kubernetes"]').click();
+  document.querySelector('[data-tab="summary"]').click();
   document.querySelector("#sample").click();
   vi.restoreAllMocks();
 });
@@ -21,6 +23,43 @@ function replaceEditor(value) {
 }
 
 describe("Forge YAML Workbench browser interactions", () => {
+  it("starts in Kubernetes mode and switches modes without changing YAML", () => {
+    const source = "settings:\n  theme: dark\n";
+    replaceEditor(source);
+
+    expect(document.querySelector('[data-mode="kubernetes"]').getAttribute("aria-pressed")).toBe("true");
+    document.querySelector('[data-mode="general"]').click();
+
+    expect(editor.value).toBe(source);
+    expect(document.querySelector('[data-mode="general"]').getAttribute("aria-pressed")).toBe("true");
+    expect(document.querySelector("#inspection-title").textContent).toBe("General YAML inspection");
+    expect(document.querySelector("#report-title").textContent).toBe("YAML report");
+    expect(document.querySelector("#results").textContent).toContain("mapping");
+    expect(document.querySelector("#results").textContent).toContain("settings");
+  });
+
+  it("accepts scalar input and hides Kubernetes findings in General YAML mode", () => {
+    document.querySelector('[data-mode="general"]').click();
+    replaceEditor("ready\n");
+
+    expect(document.querySelector("#status").textContent).toBe("1 parsed document · no findings");
+    expect(document.querySelector("#results").textContent).toContain("Scalar value");
+
+    replaceEditor("kind: Pod\nmetadata: {name: risky}\nspec: {}\n");
+    document.querySelector('[data-tab="validation"]').click();
+    expect(document.querySelector("#results").textContent).toContain("Kubernetes operational checks are disabled");
+    expect(document.querySelector("#results").textContent).not.toContain("No containers found");
+  });
+
+  it("renders an explicit null scalar in General YAML summary and tree views", () => {
+    document.querySelector('[data-mode="general"]').click();
+    replaceEditor("null\n");
+    expect(document.querySelector("#results").textContent).toContain("null");
+
+    document.querySelector('[data-tab="tree"]').click();
+    expect(document.querySelector("#results").textContent).toContain("null");
+  });
+
   it("reports whether formatting changed the YAML", () => {
     replaceEditor("apiVersion: v1\nkind:  Pod\nmetadata: {name: demo}\n");
 

@@ -4,6 +4,7 @@ import "./styles.css";
 
 const app = document.querySelector("#app");
 let activeTab = "summary";
+let inspectionMode = "kubernetes";
 let currentFilename = "signalforge-sample.yaml";
 let cleanSnapshot = SAMPLE_YAML;
 
@@ -14,8 +15,9 @@ app.innerHTML = [
   '</header>',
   '<main>',
   '  <section class="toolbar">',
-  '    <div><h1>Kubernetes manifest inspection</h1><p>Parse structure and review important fields before deployment.</p></div>',
+  '    <div><h1 id="inspection-title">Kubernetes manifest inspection</h1><p id="inspection-description">Parse structure and review important fields before deployment.</p></div>',
   '    <div class="toolbar-controls">',
+  '    <div class="mode-selector" role="group" aria-label="YAML inspection mode"><button class="mode active" data-mode="kubernetes" aria-pressed="true">Kubernetes</button><button class="mode" data-mode="general" aria-pressed="false">General YAML</button></div>',
   '    <div class="actions">',
   '      <input id="file-input" type="file" accept=".yaml,.yml,text/yaml,application/yaml" hidden />',
   '      <button id="upload" aria-keyshortcuts="Control+O Meta+O" title="Open file (Ctrl+O)">Open file</button><button id="sample">Load sample</button><button id="format" aria-keyshortcuts="Control+Shift+F Meta+Shift+F" title="Format (Ctrl+Shift+F)">Format</button><button id="download" aria-keyshortcuts="Control+S Meta+S" title="Download (Ctrl+S)">Download</button><button id="clear" class="quiet">Clear</button>',
@@ -29,12 +31,12 @@ app.innerHTML = [
   '      <textarea id="editor" spellcheck="false" aria-label="YAML editor"></textarea>',
   '    </div>',
   '    <div class="pane results-pane">',
-  '      <div class="pane-heading"><div><span class="eyebrow">ANALYSIS</span><h2>Manifest report</h2></div><div id="status" class="status neutral"></div></div>',
+  '      <div class="pane-heading"><div><span class="eyebrow">ANALYSIS</span><h2 id="report-title">Manifest report</h2></div><div id="status" class="status neutral"></div></div>',
   '      <div class="tabs" role="tablist"><button class="tab active" role="tab" aria-selected="true" data-tab="summary">Summary</button><button class="tab" role="tab" aria-selected="false" data-tab="validation">Validation <span id="finding-count"></span></button><button class="tab" role="tab" aria-selected="false" data-tab="tree">Tree</button></div>',
   '      <div id="results" class="results" aria-live="polite"></div>',
   '    </div>',
   '  </section>',
-  '  <footer><span>Syntax and bounded operational guidance</span><span>Use server-side dry-run before applying.</span></footer>',
+  '  <footer><span id="review-boundary">Syntax and bounded operational guidance</span><span id="next-step">Use server-side dry-run before applying.</span></footer>',
   '</main>'
 ].join("");
 
@@ -45,6 +47,10 @@ function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>'"]/g, (character) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
   })[character]);
+}
+
+function scalarText(value) {
+  return value === null ? "null" : String(value);
 }
 
 function pills(items, emptyText = "None") {
@@ -167,7 +173,26 @@ function loadEditor(value, filename, message) {
 
 function summaryView(analysis) {
   if (analysis.errors.length) return messages("YAML could not be parsed", analysis.errors, "error");
-  if (!analysis.documents.length) return '<div class="empty"><div>{ }</div><h3>Paste or open a YAML manifest</h3><p>The report updates as you type and supports multi-document files.</p></div>';
+  if (!analysis.documents.length) return '<div class="empty"><div>{ }</div><h3>Paste or open YAML</h3><p>The report updates as you type and supports multi-document files.</p></div>';
+
+  if (analysis.mode === "general") {
+    return analysis.documents.map((document) => {
+      const shape = document.rootType === "mapping"
+        ? document.entryCount + " top-level " + (document.entryCount === 1 ? "entry" : "entries")
+        : (document.rootType === "sequence"
+          ? document.entryCount + " top-level " + (document.entryCount === 1 ? "item" : "items")
+          : "Scalar value");
+      return [
+        '<article class="resource-card general-card">',
+        '  <header><span class="kind">' + escapeHtml(document.rootType) + '</span><div><h3>Document ' + document.index + '</h3><p>' + escapeHtml(shape) + '</p></div></header>',
+        '  <dl class="field-grid">',
+        document.rootType === "mapping" ? field("Top-level keys", pills(document.keys)) : "",
+        document.rootType === "scalar" ? field("Value", "<code>" + escapeHtml(scalarText(document.value)) + "</code>") : "",
+        '  </dl>',
+        '</article>'
+      ].join("");
+    }).join("");
+  }
 
   return analysis.documents.map((resource) => [
     '<article class="resource-card">',
@@ -197,7 +222,10 @@ function validationView(analysis) {
   })));
 
   if (!parserItems.length && !operational.length) {
-    return '<div class="empty success"><div>✓</div><h3>No findings in the current checks</h3><p>The YAML parsed and passed the Workbench\'s bounded review.</p></div>';
+    const detail = analysis.mode === "general"
+      ? "The YAML parsed successfully. Kubernetes operational checks are disabled in General YAML mode."
+      : "The YAML parsed and passed the Workbench's bounded review.";
+    return '<div class="empty success"><div>✓</div><h3>No findings in the current checks</h3><p>' + escapeHtml(detail) + '</p></div>';
   }
 
   return (parserItems.length ? messages("Parser findings", parserItems, "error") : "") +
@@ -206,7 +234,7 @@ function validationView(analysis) {
 
 function treeNode(value, name = "root", depth = 0) {
   if (value === null || typeof value !== "object") {
-    return '<div class="tree-leaf"><span>' + escapeHtml(name) + "</span><code>" + escapeHtml(value) + "</code></div>";
+    return '<div class="tree-leaf"><span>' + escapeHtml(name) + "</span><code>" + escapeHtml(scalarText(value)) + "</code></div>";
   }
 
   const entries = Object.entries(value);
@@ -218,18 +246,30 @@ function treeNode(value, name = "root", depth = 0) {
 function treeView(analysis) {
   if (analysis.errors.length) return messages("YAML could not be parsed", analysis.errors, "error");
   if (!analysis.documents.length) return '<div class="empty"><div>⌘</div><h3>No document tree yet</h3></div>';
-  return analysis.documents.map((resource) => '<article class="tree-card"><h3>Document ' + resource.index + " · " +
-    escapeHtml(resource.kind) + "/" + escapeHtml(resource.name) + "</h3>" + treeNode(resource.raw) + "</article>").join("");
+  return analysis.documents.map((document) => {
+    const identity = analysis.mode === "kubernetes" ? document.kind + "/" + document.name : document.rootType;
+    return '<article class="tree-card"><h3>Document ' + document.index + " · " + escapeHtml(identity) + "</h3>" +
+      treeNode(document.raw) + "</article>";
+  }).join("");
 }
 
 function render() {
   const source = editor.value;
-  const analysis = analyzeYaml(source);
+  const analysis = analyzeYaml(source, inspectionMode);
   const findingCount = analysis.errors.length + analysis.warnings.length +
     analysis.documents.reduce((total, document) => total + document.findings.length, 0);
 
   document.querySelector("#line-count").textContent = source ? source.split("\n").length + " lines" : "0 lines";
   document.querySelector("#finding-count").textContent = findingCount || "";
+
+  const general = inspectionMode === "general";
+  document.querySelector("#inspection-title").textContent = general ? "General YAML inspection" : "Kubernetes manifest inspection";
+  document.querySelector("#inspection-description").textContent = general
+    ? "Inspect mappings, sequences, and scalar YAML without Kubernetes-specific findings."
+    : "Parse structure and review important fields before deployment.";
+  document.querySelector("#report-title").textContent = general ? "YAML report" : "Manifest report";
+  document.querySelector("#review-boundary").textContent = general ? "Syntax and document structure" : "Syntax and bounded operational guidance";
+  document.querySelector("#next-step").textContent = general ? "No Kubernetes checks in this mode." : "Use server-side dry-run before applying.";
 
   const status = document.querySelector("#status");
   if (!source.trim()) {
@@ -255,6 +295,16 @@ editor.addEventListener("input", () => {
 document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click", () => {
   setActiveTab(tab.dataset.tab);
   render();
+}));
+document.querySelectorAll(".mode").forEach((button) => button.addEventListener("click", () => {
+  inspectionMode = button.dataset.mode;
+  document.querySelectorAll(".mode").forEach((item) => {
+    const selected = item.dataset.mode === inspectionMode;
+    item.classList.toggle("active", selected);
+    item.setAttribute("aria-pressed", String(selected));
+  });
+  render();
+  announce((inspectionMode === "general" ? "General YAML" : "Kubernetes") + " mode selected", "success");
 }));
 document.querySelector("#sample").addEventListener("click", () => loadEditor(SAMPLE_YAML, "signalforge-sample.yaml", "Sample loaded"));
 document.querySelector("#clear").addEventListener("click", () => {

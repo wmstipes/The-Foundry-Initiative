@@ -13,16 +13,16 @@ These manifests define the deployed SignalForge browser-local Forge YAML Workben
 Version:
 
 ```text
-0.2.0
+0.3.0
 ```
 
 Immutable image reference:
 
 ```text
-wmstipes/signalforge-yaml-workbench:0.2.0@sha256:1be3942fc9acf62906b020872d31a61cc6e1dab4e879476b4ba233063fb57720
+wmstipes/signalforge-yaml-workbench:0.3.0@sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f
 ```
 
-The OCI image index contains both `linux/amd64` and `linux/arm64`. No floating image tag is used.
+The OCI image index contains both `linux/amd64` and `linux/arm64`. No floating image tag is used. The reviewed Deployment-only rollout now runs this immutable `0.3.0` image in the live cluster.
 
 ## Security and data boundaries
 
@@ -62,4 +62,4 @@ kubectl rollout status deployment/forge-yaml-workbench -n forge-tools --timeout=
 kubectl get deployment,pods,service -n forge-tools -o wide
 ```
 
-The accepted live `0.2.0` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:1be3942fc9acf62906b020872d31a61cc6e1dab4e879476b4ba233063fb57720`. NodePort `30081`, its ready EndpointSlice, `/healthz`, the application page, security headers, clickable finding paths, expandable remediation guidance, copyable YAML, operational cautions, and OWASP K01:2025 references passed live acceptance on 2026-09-13.
+The accepted live `0.3.0` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`. NodePort `30081`, its ready EndpointSlice, `/healthz`, the application page, mode markers, Content Security Policy, and `X-Content-Type-Options` passed immediate runtime verification. Live browser acceptance confirmed Kubernetes as the default, content-preserving mode switches, suppression of Kubernetes-only findings in General YAML, and mapping, sequence, scalar and explicit null roots.

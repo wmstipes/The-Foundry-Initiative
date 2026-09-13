@@ -32,6 +32,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Runtime ImageID: verified against the pinned OCI index digest
 - External lab access: NodePort `30081`
 - Data path: browser-local parsing and analysis; no server-side YAML persistence
+- Deployed version: Milestone 035 General YAML inspection `0.3.0` at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`; immediate runtime verification passed and live browser acceptance remains pending
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
 - Acceptance: rollout, runtime digest, ready EndpointSlice, health, page, security headers, clickable finding paths, remediation guidance, clipboard examples, cautions, and OWASP references passed
@@ -62,6 +63,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 030: Limited alerting rules validated, activated and verified without notification delivery
 - 032: Forge YAML Workbench `0.1.1` built, published, hardened, deployed and browser-validated
 - 033: Workbench usability improved; `0.1.2` published, digest-pinned, deployed and live browser-validated
+- 034: Workbench deterministic Kubernetes checks and actionable remediation released as `0.2.0`, deployed, accepted, and merged
 
 ## Current observability state
 
@@ -168,7 +170,9 @@ The Milestone 029 [limited-alerting design](observability/limited-alerting-speci
 
 `Milestone 033` is complete and merged through PR #9 at `7aadedd`. Forge YAML Workbench `0.1.2` runs as one Ready replica with zero restarts from the pinned OCI index digest. NodePort routing, `/healthz`, the application page, security headers, sample loading, format feedback, editing state, the format shortcut, and YAML download all passed live verification.
 
-Milestone 034 has published, immutably pinned, deployed, and live browser-validated the approved `0.2.0` AMD64/ARM64 image in draft PR #10. The running Pod is Ready with zero restarts and its runtime ImageID matches the reviewed OCI index digest. The release adds deeper deterministic Kubernetes checks, clickable YAML paths, remediation examples, operational cautions, initial OWASP K01:2025 mapping, and seccomp guidance while preserving browser-local analysis. Final review and merge remain separate checkpoints. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
+Milestone 034 published, immutably pinned, deployed, and live browser-validated the approved `0.2.0` AMD64/ARM64 image, then merged through PR #10 at `9848618`. The running Pod is Ready with zero restarts and its runtime ImageID matches the reviewed OCI index digest.
+
+Milestone 035 has published and deployed its separately approved `0.3.0` AMD64/ARM64 image at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`. It adds an explicit General YAML mode alongside the default Kubernetes mode. Both modes share browser-local parsing, formatting, parser diagnostics, file handling, and tree navigation. General YAML accepts mappings, sequences, and scalars while omitting Kubernetes-only findings. The Deployment-only rollout completed with one Ready replica, zero restarts, a matching runtime ImageID, ready routing, HTTP 200 responses, both mode markers, and the expected security headers. Live browser interaction acceptance and merge remain separate checkpoints. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
 
 ## Known temporary limitation
 
@@ -176,4 +180,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench performs YAML parsing and bounded operational review, not complete Kubernetes OpenAPI validation or admission testing. NodePort `30081` uses plain HTTP and is intended only for the private lab. Complete browser-local schema validation remains deferred to Milestone 035.
+Forge YAML Workbench performs YAML parsing and bounded operational review, not complete Kubernetes OpenAPI validation or admission testing. NodePort `30081` uses plain HTTP and is intended only for the private lab. Complete browser-local schema validation remains deferred to Milestone 036; broader OWASP Kubernetes Top 10 coverage remains deferred to Milestone 037.
