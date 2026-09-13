@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-036 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Accepted Workbench `0.4.1` precompiles the pinned Kubernetes `v1.36.4` validators under the strict CSP. Milestone 037 is in local implementation.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-036 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Accepted Workbench `0.4.1` remains live. Milestone 037's verified `0.5.0` image is published and staged immutably for deployment review.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -215,7 +215,7 @@ See [Milestone 036](docs/milestones/milestone-036-browser-local-schema-validatio
 
 #### Milestone 037 — Pinned OWASP Kubernetes Top 10 review profile
 
-**Status:** In progress locally. Publication, image publication, deployment, browser acceptance, and merge remain separate approval gates.
+**Status:** Source branch, draft PR, and immutable AMD64/ARM64 `0.5.0` image published. Deployment, browser acceptance, PR readiness, and merge remain separate approval gates.
 
 - Pin the OWASP Kubernetes Top 10:2025 source to an exact upstream commit.
 - Label each category as direct, partial, or cluster-context-required coverage.
