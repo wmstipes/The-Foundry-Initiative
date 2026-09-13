@@ -342,8 +342,41 @@ Added an offline Kubernetes schema layer to Forge YAML Workbench while retaining
 - Kept the strict CSP unchanged and prepared a local `0.4.1` correction that checks in reproducible standalone validators generated at build time.
 - Added a production-bundle guard that fails if `eval` or `new Function` is present; all 42 tests, the production build, validator reproducibility, and the dependency audit pass locally.
 - Published the separately approved `0.4.1` correction in run `34780773917`; its active AMD64/ARM64 OCI index is `sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2`.
-- Staged the Deployment-only update to the immutable `0.4.1` index; the live cluster remains on `0.4.0` pending server-side dry-run, diff review, and separate deployment approval.
+- Reviewed the server-side dry-run and live diff, then deployed the separately approved immutable `0.4.1` index.
+- Verified one Ready Pod with zero restarts, the exact runtime ImageID, one ready EndpointSlice, HTTP 200 health and page responses, and the unchanged CSP and `nosniff` headers.
+- Repeated browser acceptance successfully across Kubernetes and General YAML modes, including schema-valid, schema-invalid, unsupported, unavailable-CRD, and YAML-syntax states.
+- Marked PR #13 ready only after browser acceptance; it merged at `fc16ad1`.
 
 ### Next small step
 
-Review the server-side dry-run and live diff for the staged immutable `0.4.1` Deployment-only update, then request separate approval before applying it. Repeated live browser acceptance, PR readiness, and merge remain later approval gates. Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.
+Begin Milestone 037 as a bounded, pinned OWASP Kubernetes Top 10:2025 review profile. Preserve browser-local processing and label direct, partial, and cluster-context-required coverage explicitly.
+
+---
+
+## 2026-09-13 - Milestone 037 pinned OWASP Kubernetes review profile
+
+### What I worked on
+
+Expanded Forge YAML Workbench from individual K01 references into a ten-category OWASP Kubernetes Top 10:2025 review profile pinned to an exact upstream commit.
+
+### What I learned
+
+- Coverage and outcome are different concepts: a category can have direct or partial manifest visibility without passing a security assessment.
+- Effective RBAC, admission, networking, component, authentication, cloud, audit, logging, and monitoring state cannot be inferred safely from a pasted file.
+- One manifest condition can inform multiple risks, so the UI needs shared mappings without duplicating the underlying finding.
+- Zero matching signals must be labeled explicitly as “not a pass result.”
+
+### What I finished locally
+
+- Pinned all ten OWASP category links to upstream commit `828cfa2e2d7af63cdf7025c09ca871265d71f59c`.
+- Labeled K01 direct; K02-K06, K08, and K09 partial; and K07 plus K10 cluster-context-required.
+- Added bounded RBAC, Secret-environment, Namespace policy-label, external-exposure, and literal cloud-credential findings.
+- Added shared K01/K09 and K03/K08 mappings.
+- Rendered the ten-category profile after the existing syntax, operational, and schema sections.
+- Preserved General YAML suppression and the no-backend, no-cluster-access boundary.
+- Expanded automated coverage from 42 to 49 passing tests.
+- Passed validator reproducibility, the 706.33 kB / 110.42 kB gzip production build, the CSP scan, zero-vulnerability dependency audit, repository manifest validation, and whitespace validation.
+
+### Next small step
+
+Review the local checkpoint, then request approval before branch publication. Keep image publication, deployment, browser acceptance, PR readiness, and merge separately approved.
