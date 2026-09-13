@@ -379,8 +379,11 @@ Expanded Forge YAML Workbench from individual K01 references into a ten-category
 - Published draft PR #14 after explicit approval; all 19 remote files matched the verified local contents and all three non-publishing workflows passed.
 - Published the separately approved `0.5.0` AMD64/ARM64 image in run `34787257312`.
 - Verified OCI index `sha256:11e8fcc4989fe7dcdc1c5312786b80189a98b6a9acb82e979aa8235d756fcb8e`, AMD64 manifest `sha256:2a47101b9f176671e0954ca55e90b7ae4dfe42ba4b7ce5856ccd2f447822032e`, and ARM64 manifest `sha256:f1de89162f2de896d8907e2fcce17d511246881c919fa15e6ee3a1ea3f6077b3`.
-- Staged the immutable `0.5.0` Deployment-only candidate without applying it.
+- Staged and separately deployed the immutable `0.5.0` candidate.
+- Verified the live Pod is Ready with zero restarts, its configured and runtime ImageID match the reviewed OCI index, the EndpointSlice has one ready address, `/healthz` and the page return HTTP 200, and the strict security headers remain present.
+- Browser acceptance confirmed the OWASP profile and General YAML isolation, then found that a YAML path or line/column control selected the correct text without scrolling the editor to it.
+- Added centered editor scrolling and a long-manifest browser regression test as local patch candidate `0.5.1`; 50 tests, production build, and CSP scan pass.
 
 ### Next small step
 
-Review the server-side dry-run and live diff for the staged immutable `0.5.0` Deployment-only update. Keep deployment, browser acceptance, PR readiness, and merge separately approved.
+Review the local `0.5.1` navigation correction. Keep patch publication, deployment, repeated browser acceptance, PR readiness, and merge separately approved.
