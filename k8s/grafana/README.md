@@ -1,6 +1,6 @@
 # Lightweight Grafana
 
-Milestone 027's accepted design is implemented here for review. **Live deployment and storage preparation are pending.** Do not apply the directory wholesale: the deployment helper orders resources and checks the mounted filesystem first.
+Milestone 027's accepted design was implemented and live-validated in Milestone 028. Storage preparation, deployment, persistence, browser and ARM64 startup acceptance, backup, isolated restore, and rollback/return testing passed. Do not apply the directory wholesale: the deployment helper orders resources and checks the mounted filesystem first.
 
 ## Runtime contract
 
@@ -13,7 +13,7 @@ Milestone 027's accepted design is implemented here for review. **Live deploymen
 - ClusterIP on port 3000 with localhost-only operator forwarding.
 - No additional plugin installation, anonymous access, sign-up, snapshots, or alert evaluation.
 
-The [13.2.1 release](https://github.com/grafana/grafana/releases/tag/v13.2.1), [security advisories](https://grafana.com/security/security-advisories/), [tagged Dockerfile](https://github.com/grafana/grafana/blob/v13.2.1/Dockerfile), and [registry tag metadata](https://hub.docker.com/v2/repositories/grafana/grafana/tags/13.2.1) were reviewed on 2026-09-10. ARM64 configuration was retrieved from the registry by digest. This verifies published image metadata, not a running container or a complete vulnerability scan. Browser and ARM64 startup acceptance remain pending.
+The [13.2.1 release](https://github.com/grafana/grafana/releases/tag/v13.2.1), [security advisories](https://grafana.com/security/security-advisories/), [tagged Dockerfile](https://github.com/grafana/grafana/blob/v13.2.1/Dockerfile), and [registry tag metadata](https://hub.docker.com/v2/repositories/grafana/grafana/tags/13.2.1) were reviewed on 2026-09-10. ARM64 configuration was retrieved from the registry by digest. This verifies published image metadata, not a complete vulnerability scan; the running ARM64 workload and browser behavior were subsequently accepted in Milestone 028.
 
 ## First step on the NUC
 
@@ -35,7 +35,7 @@ The operator's 2026-09-10 inventory confirmed the unused extent begins at sector
 
 Run `scripts/prepare-grafana-storage.ps1` without switches to verify the accepted off-node Prometheus archive and save the current partition table to the NUC. Supply `-Prepare` to continue through new partition creation, ext4 formatting, UUID mounting, ownership/write checks, and missing-mount verification. The default archive is the exact six-block Milestone 026 acceptance archive with its recorded SHA-256. A missing or mismatching archive stops the helper before disk writes. The helper captures a fresh partition table off-node before each attempt and refuses an existing partition 2. If preparation stops after a partial write, retain its output for review; do not rerun, erase, or format again.
 
-The helper uses `sfdisk --append` with exact sectors and explicit no-reread/no-tell-kernel flags, then adds only partition 2 to the kernel with `partx`. It checks the new kernel geometry before formatting. See the upstream [sfdisk](https://man7.org/linux/man-pages/man8/sfdisk.8.html) and [partx](https://man7.org/linux/man-pages/man8/partx.8.html) manuals. This procedure's live result remains pending.
+The helper uses `sfdisk --append` with exact sectors and explicit no-reread/no-tell-kernel flags, then adds only partition 2 to the kernel with `partx`. It checks the new kernel geometry before formatting. See the upstream [sfdisk](https://man7.org/linux/man-pages/man8/sfdisk.8.html) and [partx](https://man7.org/linux/man-pages/man8/partx.8.html) manuals. This procedure passed during Milestone 028 and must not be rerun against the prepared filesystem.
 
 Current operator progress: filesystem preparation is complete. Partition 2 has PARTUUID `a8e50bc1-1b9c-419b-a13d-3ee72c29ff56` and ext4 filesystem UUID `a506c674-127a-46da-9c7d-d158b6d1bb75`. It is mounted at `/mnt/signalforge-grafana`; data ownership, writes, UUID mounting and missing-mount verification passed. Do not rerun either storage preparation helper. The earlier partial-formatting gate failure and its correction remain recorded in Milestone 028.
 

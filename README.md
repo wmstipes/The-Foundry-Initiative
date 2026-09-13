@@ -32,7 +32,7 @@ SignalForge uses a restaurant analogy to make Kubernetes concepts easier to unde
 * NodePort is the public front door
 * the future AI agent is the operations manager
 
-The cluster currently hosts the **SignalForge Restaurant API**, a FastAPI service, and **Forge YAML Workbench**, a browser-local Kubernetes manifest inspector.
+The cluster currently hosts the **SignalForge Restaurant API**, a FastAPI service, and **Forge YAML Workbench**, a browser-local YAML inspector with Kubernetes and General YAML modes.
 
 ## SignalForge Restaurant API
 
@@ -58,7 +58,7 @@ The long-term goal is to evolve this service into **ForgeOps**, an AI-assisted K
 
 ## Forge YAML Workbench
 
-Forge YAML Workbench is a browser-based Kubernetes manifest inspector deployed in the restricted `forge-tools` namespace. Version `0.2.0` parses, formats, and explains multi-document YAML entirely in the browser, with clickable parser and finding locations, deterministic cross-resource checks, copyable remediation examples, operational cautions, and initial OWASP K01:2025 guidance. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
+Forge YAML Workbench is a browser-based YAML inspector deployed in the restricted `forge-tools` namespace. Version `0.3.0` keeps Kubernetes inspection as the default and adds an explicit General YAML mode for mappings, sequences, and scalars. Both modes share browser-local parsing, formatting, diagnostics, file handling, and tree navigation; Kubernetes-only findings, remediation, and OWASP guidance are suppressed in General YAML mode. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
 
 ## Repository map
 
@@ -119,7 +119,7 @@ Completed SignalForge milestones include:
 * secure Kubernetes Metrics Server deployed with all four nodes available through `kubectl top`
 * NVMe-backed Prometheus deployed with Pod-replacement persistence and isolated off-node backup/restore validation
 * Grafana dashboards and bounded Prometheus rule evaluation deployed and recovery-tested
-* Forge YAML Workbench `0.2.0` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated
+* Forge YAML Workbench `0.3.0` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes and General YAML modes
 
 ## Earlier utility: foundry-check
 
@@ -148,7 +148,6 @@ Planned next steps include:
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
 * evolve the rules-based `/analyze` logic toward an evidence-grounded ForgeOps workflow
-* add an explicit General YAML inspection mode alongside Kubernetes inspection in Milestone 035
 * add pinned, browser-local Kubernetes schema validation in Milestone 036
 * expand OWASP Kubernetes Top 10:2025 coverage in Milestone 037
 
