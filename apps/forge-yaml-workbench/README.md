@@ -2,7 +2,7 @@
 
 Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. It parses YAML locally in the browser and offers Kubernetes-specific and General YAML inspection modes.
 
-## Version 0.3.0 scope
+## Version 0.4.0 source scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
@@ -12,6 +12,9 @@ Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. 
 - Display resource identity, namespace, labels, selectors, replicas, Services, containers, images, tags or digests, ports, probes, resources, volumes, and ServiceAccount use.
 - Show an expandable object tree.
 - Detect YAML parser errors and duplicate keys.
+- Validate an explicit set of Kubernetes resources against a browser-local schema bundle pinned to Kubernetes `v1.36.4`.
+- Present YAML syntax, deterministic operational findings, and schema-validation results as separate report sections.
+- Report unsupported built-in resources, unavailable CRD schemas, and incomplete resource identities without calling them valid or invalid.
 - Surface bounded operational findings such as mutable image tags, missing probes or resources, privileged containers, root execution, HostPath use, and automatic ServiceAccount-token mounting.
 - Perform analysis in the browser without sending YAML to another service.
 
@@ -28,7 +31,7 @@ The `0.1.2` release keeps the same browser-local trust boundary while improving 
 
 ## Milestone 034 deterministic checks
 
-The current source branch deepens the bounded operational review with:
+The `0.2.0` release deepened the bounded operational review with:
 
 - clickable YAML paths, plain-language explanations, and suggested corrections for every operational finding
 - workload selector and Pod-template label consistency checks
@@ -44,26 +47,46 @@ These checks are deterministic and browser-local. They do not replace Kubernetes
 
 The OWASP references identify which security guidance informed a finding; they are not a claim that the Workbench performs a complete OWASP compliance assessment. Broader OWASP Kubernetes Top 10:2025 coverage is planned as a separate milestone.
 
+## Milestone 036 schema validation
+
+The checked-in schema bundle is derived from Kubernetes `v1.36.4` [`api/openapi-spec/swagger.json`](https://github.com/kubernetes/kubernetes/blob/v1.36.4/api/openapi-spec/swagger.json). The generator accepts only the pinned upstream file with SHA-256 `dcede2063da1d7ad62ecb5af8adb6d7fabd0b52385a7fa0048afb491dac90450` and retains the transitive definitions needed by this explicit support set:
+
+| API version | Supported kinds |
+| --- | --- |
+| `v1` | `ConfigMap`, `Namespace`, `Pod`, `Secret`, `Service`, `ServiceAccount` |
+| `apps/v1` | `DaemonSet`, `Deployment`, `ReplicaSet`, `StatefulSet` |
+| `batch/v1` | `CronJob`, `Job` |
+
+An exact GVK outside this table is reported as unsupported when it belongs to a Kubernetes API group. A resource in an external API group is reported as having an unavailable CRD schema. The Workbench does not infer or retrieve CRD schemas, including CRDs present in the same YAML file.
+
+To reproduce the generated bundle from an independently downloaded pinned source file:
+
+~~~powershell
+npm.cmd run schema:build -- C:\path\to\kubernetes-v1.36.4-swagger.json
+~~~
+
+The generator rejects a file whose SHA-256 does not match the pinned source.
+
 ## Validation boundary
 
-The Workbench performs YAML parsing in both modes and deterministic operational checks only in Kubernetes mode. General YAML mode does not infer Kubernetes semantics. The Workbench does not currently perform complete Kubernetes OpenAPI schema validation or contact the Kubernetes API server. A successful report does not prove that a Kubernetes manifest will be admitted or run successfully.
+The Workbench performs YAML parsing in both modes. Kubernetes mode adds deterministic operational checks and bounded schema validation for the supported table above; General YAML mode does not infer Kubernetes semantics or produce schema results. All parsing, operational checks, bundled schema lookup, and validation run in browser memory.
 
-Browser-local Kubernetes schema validation is deferred to Milestone 036. Broader OWASP Kubernetes Top 10 coverage is deferred to Milestone 037.
+The schema result is not API-server admission validation. The Workbench does not contact a cluster, evaluate admission webhooks or policies, apply API defaulting or conversion, discover installed API resources, or retrieve CRD schemas. A schema-valid result therefore does not prove that a manifest will be admitted or run successfully.
+
+Broader OWASP Kubernetes Top 10 coverage remains deferred to Milestone 037.
 
 Before deployment, continue to use repository validation and Kubernetes server-side dry-run.
 
 ## Local development
 
-The first installation creates the repository lockfile:
+Use the committed lockfile for reproducible installation:
 
 ~~~powershell
-npm.cmd install
+npm.cmd ci
 npm.cmd test
 npm.cmd run build
 ~~~
 
-Subsequent clean installations use `npm.cmd ci`.
-
 ## Container
 
-The production container compiles the static application and serves it on port `8080` with an unprivileged NGINX runtime. The Dockerfile requires the generated `package-lock.json`, which must be committed before container CI is enabled.
+The production container uses the committed lockfile to compile the static application and serves it on port `8080` with an unprivileged NGINX runtime.

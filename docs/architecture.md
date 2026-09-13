@@ -57,7 +57,8 @@ flowchart TD
 - Deployment: one stateless replica using release `0.3.0`
 - Access: private-lab NodePort `30081`
 - Runtime: unprivileged NGINX on container port `8080`
-- Processing: shared YAML parsing, formatting, diagnostics, file handling, and tree navigation run entirely in the browser; Kubernetes-specific findings run only in Kubernetes mode
+- Processing: shared YAML parsing, formatting, diagnostics, file handling, and tree navigation run entirely in the browser; Kubernetes-specific operational findings and the bundled `v1.36.4` schema validator run only in Kubernetes mode
+- Schema boundary: the local `0.4.0` candidate supports 12 explicit core, apps, and batch GVKs; unsupported built-ins and unavailable CRD schemas receive non-validity result states
 - Identity: no RBAC, Kubernetes API access, or mounted ServiceAccount token
 - Security: restricted Pod Security labels, non-root execution, RuntimeDefault seccomp, read-only root filesystem, dropped capabilities, and bounded writable `/tmp`
 - Delivery: guarded version tags publish AMD64 and ARM64 images; the Deployment pins both version and OCI index digest
@@ -158,13 +159,13 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 - Metrics Server provides current CPU and memory samples but no historical resource-metrics store.
 - The upstream APIService uses `insecureSkipTLSVerify` for the API server-to-Metrics Server connection because the serving certificate is generated dynamically. This is separate from the secured Metrics Server-to-kubelet path.
 - Kubelet serving-certificate rotation requests require deliberate operator review and approval.
-- Workbench analysis is not complete Kubernetes schema or admission validation; NodePort `30081` is private-lab HTTP exposure.
+- Workbench schema checks are bounded to the bundled `v1.36.4` support set and are not Kubernetes API discovery, defaulting, conversion, admission, policy, or webhook validation; NodePort `30081` is private-lab HTTP exposure.
 
 ## Expected evolution
 
 Potential next architecture steps include:
 
-1. Add browser-local Kubernetes schema validation against one pinned Kubernetes version, with explicit unsupported-resource and unavailable-CRD-schema results.
+1. Complete the separately gated publication, deployment, browser acceptance, and merge of Milestone 036.
 2. Observe naturally occurring limited-alert behavior before designing notification delivery.
 3. Continue the demonstrated Prometheus and Grafana backup cadence.
 4. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.

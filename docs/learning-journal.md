@@ -310,3 +310,33 @@ Added an explicit General YAML inspection mode beside the existing Kubernetes mo
 ### Next small step
 
 Begin Milestone 036 as a separate bounded increment for browser-local Kubernetes schema validation against one pinned Kubernetes version. Report unsupported resources and unavailable CRD schemas explicitly, preserve General YAML behavior, and keep publication, deployment, and merge as separately approved checkpoints.
+
+---
+
+## 2026-09-13 - Milestone 036 browser-local Kubernetes schema validation
+
+### What I worked on
+
+Added an offline Kubernetes schema layer to Forge YAML Workbench while retaining the browser-only trust boundary. Kubernetes remains the default mode. The Validation report now separates YAML syntax, Kubernetes document shape, deterministic operational review, and schema results. General YAML continues to provide syntax and structure inspection without Kubernetes findings.
+
+### What I learned
+
+- A schema-valid result needs an exact version and support-set label; without both, it can imply broader compatibility than was actually tested.
+- Unsupported built-in resources and custom resources with unavailable CRD schemas are knowledge-boundary states, not successes or failures.
+- Kubernetes `IntOrString` fields need explicit normalization when consuming the pinned OpenAPI v2 document through a JSON Schema validator.
+- Bundling only the transitive definitions for an explicit GVK set keeps the static application bounded while preserving offline operation.
+
+### What I finished locally
+
+- Pinned the source schema to Kubernetes `v1.36.4` and recorded the upstream SHA-256.
+- Added reproducible generation of a 12-GVK, 196-definition browser bundle.
+- Added explicit `valid`, `invalid`, `unsupported`, `schema-unavailable`, and `not-evaluated` states.
+- Added clickable schema-error paths and clear UI category separation.
+- Preserved General YAML behavior and the absence of Kubernetes schema findings in that mode.
+- Expanded automated coverage from 30 to 41 passing tests.
+- Passed the production build, dependency audit, and whitespace validation.
+- Preserved the implementation as local commit `05cc547`; no branch, image, or cluster changes were published.
+
+### Next small step
+
+Complete documentation review, then request separate approval to publish the Milestone 036 branch. Image publication, deployment, live browser acceptance, and merge remain later approval gates. Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.

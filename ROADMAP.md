@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-035 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench `0.3.0`. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 036 is the next bounded Workbench increment: pinned, browser-local Kubernetes schema validation with explicit handling for resources whose schemas are unavailable.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-035 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench `0.3.0`. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 036 has a locally verified `0.4.0` candidate with pinned, browser-local Kubernetes `v1.36.4` schema validation; publication and runtime gates remain separately approved.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -203,13 +203,15 @@ See [Milestone 035](docs/milestones/milestone-035-general-yaml.md).
 
 #### Milestone 036 — Browser-local Kubernetes schema validation
 
-**Status:** Next.
+**Status:** In progress. Local `0.4.0` implementation and verification are complete; publication and runtime gates remain unapproved.
 
 - Validate supported Kubernetes resources against schemas for one explicitly pinned Kubernetes version.
 - Keep schema data and validation in the browser without adding cluster access or server-side YAML processing.
 - Distinguish YAML syntax, deterministic operational findings, and schema-validation results in the report.
 - Report unsupported resources and unavailable CRD schemas explicitly instead of treating them as valid or invalid.
 - Preserve General YAML mode as syntax and structure inspection without Kubernetes schema findings.
+
+See [Milestone 036](docs/milestones/milestone-036-browser-local-schema-validation.md).
 
 - Milestone 037: a pinned OWASP Kubernetes Top 10:2025 review profile with direct, partial, and cluster-context-required coverage labels.
 - Later increments: before/after formatting diff, copy and report export, finding filters, tree search, drag-and-drop, display preferences, and bounded large-file processing.
