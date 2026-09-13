@@ -60,7 +60,7 @@ The long-term goal is to evolve this service into **ForgeOps**, an AI-assisted K
 
 Forge YAML Workbench is a browser-based YAML inspector deployed in the restricted `forge-tools` namespace. Kubernetes inspection is the default, with an explicit General YAML mode for mappings, sequences, and scalars. Both modes share browser-local parsing, formatting, diagnostics, file handling, and tree navigation; Kubernetes-only findings, remediation, and OWASP guidance are suppressed in General YAML mode. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
 
-Milestone 036 deployed the published `0.4.0` candidate with schemas pinned to Kubernetes `v1.36.4`. Workload and HTTP checks passed, but live browser acceptance found that runtime AJV compilation was blocked by the strict CSP and left the page blank. The published `0.4.1` correction precompiles the same 12 supported GVK validators and adds a production-bundle CSP guard; its immutable Deployment update is staged for review, while deployment, repeated browser acceptance, and merge remain separately approved.
+Milestone 036 recovered from the rejected `0.4.0` browser startup defect without weakening the strict CSP. Milestone 037's pinned OWASP Kubernetes Top 10:2025 profile is deployed as immutable `0.5.1`. Browser acceptance found and then verified the correction for finding links that selected the right YAML without scrolling it into view; the browser-only trust boundary remains unchanged.
 
 ## Repository map
 
@@ -121,7 +121,7 @@ Completed SignalForge milestones include:
 * secure Kubernetes Metrics Server deployed with all four nodes available through `kubectl top`
 * NVMe-backed Prometheus deployed with Pod-replacement persistence and isolated off-node backup/restore validation
 * Grafana dashboards and bounded Prometheus rule evaluation deployed and recovery-tested
-* Forge YAML Workbench `0.3.0` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes and General YAML modes
+* Forge YAML Workbench `0.4.1` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks and General YAML mode
 
 ## Earlier utility: foundry-check
 
@@ -150,8 +150,7 @@ Planned next steps include:
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
 * evolve the rules-based `/analyze` logic toward an evidence-grounded ForgeOps workflow
-* complete the separately approved publication, deployment, browser-acceptance, and merge gates for Milestone 036
-* expand OWASP Kubernetes Top 10:2025 coverage in Milestone 037
+* complete Milestone 037's pinned OWASP Kubernetes Top 10:2025 review profile without implying compliance
 
 ## Why this project exists
 

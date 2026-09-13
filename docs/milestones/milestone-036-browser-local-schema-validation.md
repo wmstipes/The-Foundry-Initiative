@@ -2,7 +2,7 @@
 
 Started: 2026-09-13
 
-Status: The separately approved `0.4.0` image was deployed and passed workload, digest, endpoint, health, page, and security-header checks. Live browser acceptance found a blank-page defect because runtime AJV compilation was blocked by the strict Content Security Policy. The `0.4.1` source and AMD64/ARM64 image are published, and its immutable Deployment update is staged for review; deployment, repeated live browser acceptance, PR readiness, and merge remain separate approval gates.
+Status: Complete. The corrected `0.4.1` image was published, digest-pinned, deployed, live browser-accepted, and merged through PR #13 at `fc16ad1` without weakening the strict Content Security Policy.
 
 ## Goal
 
@@ -63,8 +63,8 @@ Schema mismatches include a YAML path and navigate to the nearest source locatio
 - The Workbench has no ServiceAccount token, RBAC, Kubernetes API access, or cluster credentials.
 - Schema validation is not API-server admission, defaulting, conversion, policy evaluation, webhook evaluation, discovery, or server-side dry-run.
 - CRD schemas are not inferred from or applied from YAML in the editor.
-- No new OWASP rules are included; broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.
-- No image publication, manifest update, deployment, live browser acceptance, or merge occurs without its separate approval checkpoint.
+- No new OWASP rules were included; broader OWASP Kubernetes Top 10:2025 coverage remained Milestone 037.
+- Image publication, manifest update, deployment, live browser acceptance, PR readiness, and merge each followed a separate approval checkpoint.
 
 ## Local verification evidence
 
@@ -88,13 +88,15 @@ Schema mismatches include a YAML path and navigate to the nearest source locatio
 - [x] The reviewed `0.4.1` source correction is published on draft PR #13.
 - [x] The separately approved `0.4.1` image publication passed in run `34780773917`; the active AMD64/ARM64 OCI index digest is `sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2`.
 - [x] The Deployment manifest and validator stage the immutable `0.4.1` index without changing namespace, Service, replicas, probes, resources, security context, or volumes.
-- [ ] Review server-side dry-run and live diff, then separately approve the replacement deployment.
-- [ ] Repeat live browser acceptance after the corrected deployment.
-- [ ] Final merge is separately approved and complete.
+- [x] Server-side dry-run and live diff passed before the separately approved replacement deployment.
+- [x] Corrected `0.4.1` rollout passed with one Ready Pod, zero restarts, the expected runtime ImageID, and one ready EndpointSlice.
+- [x] NodePort health, page response, strict CSP, and `nosniff` headers passed.
+- [x] Repeated live browser acceptance passed for Kubernetes and General YAML modes, separated finding categories, schema states, and syntax diagnostics.
+- [x] PR #13 was separately marked ready and merged at `fc16ad1`.
 
 ## Deferred
 
 - Additional built-in GVK schemas remain later, explicit support-set increments.
 - Runtime CRD discovery, user-supplied CRD schema registration, and applying CRDs from the editor remain out of scope.
 - API-server discovery, admission requests, policy-engine integration, automatic YAML mutation, and server-side persistence remain out of scope.
-- Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.
+- Broader OWASP Kubernetes Top 10:2025 coverage is tracked separately in Milestone 037.

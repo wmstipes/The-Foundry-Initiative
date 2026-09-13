@@ -2,7 +2,7 @@
 
 Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. It parses YAML locally in the browser and offers Kubernetes-specific and General YAML inspection modes.
 
-## Version 0.4.1 source scope
+## Version 0.5.1 source scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
@@ -16,6 +16,8 @@ Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. 
 - Present YAML syntax, deterministic operational findings, and schema-validation results as separate report sections.
 - Report unsupported built-in resources, unavailable CRD schemas, and incomplete resource identities without calling them valid or invalid.
 - Surface bounded operational findings such as mutable image tags, missing probes or resources, privileged containers, root execution, HostPath use, and automatic ServiceAccount-token mounting.
+- Present a pinned OWASP Kubernetes Top 10:2025 review profile with direct, partial, and cluster-context-required labels.
+- Center the editor on a finding's selected line when its YAML path or line/column control is activated.
 - Perform analysis in the browser without sending YAML to another service.
 
 ## Milestone 033 usability improvements
@@ -75,7 +77,24 @@ The Workbench performs YAML parsing in both modes. Kubernetes mode adds determin
 
 The schema result is not API-server admission validation. The Workbench does not contact a cluster, evaluate admission webhooks or policies, apply API defaulting or conversion, discover installed API resources, or retrieve CRD schemas. A schema-valid result therefore does not prove that a manifest will be admitted or run successfully.
 
-Broader OWASP Kubernetes Top 10 coverage remains deferred to Milestone 037.
+## Milestone 037 OWASP review profile
+
+The profile is pinned to OWASP source commit `828cfa2e2d7af63cdf7025c09ca871265d71f59c`. Coverage labels describe the Workbench's observation boundary, not a compliance score or pass/fail result.
+
+| Category | Coverage | Browser-local scope |
+| --- | --- | --- |
+| K01 Insecure Workload Configurations | Direct | Workload security contexts, host namespaces, HostPath, resources, and ServiceAccount-token settings |
+| K02 Overly Permissive Authorization Configurations | Partial | Supplied RBAC rules, wildcards, escalation verbs, nodes/proxy, Secret reads, and cluster-admin bindings |
+| K03 Secrets Management Failures | Partial | Supplied Secret environment injection and literal cloud credential environment variables |
+| K04 Lack of Cluster-Level Policy Enforcement | Partial | Supplied Namespace Pod Security Admission labels and policy resources |
+| K05 Missing Network Segmentation Controls | Partial | Presence of supplied NetworkPolicy resources |
+| K06 Overly Exposed Kubernetes Components | Partial | Supplied NodePort, LoadBalancer, and Ingress declarations |
+| K07 Misconfigured and Vulnerable Cluster Components | Cluster context required | Component configuration, versions, patches, and runtime vulnerabilities |
+| K08 Cluster-to-Cloud Lateral Movement | Partial | Literal cloud credential environment variables in supplied workloads |
+| K09 Broken Authentication Mechanisms | Partial | Automatic ServiceAccount-token mounting in supplied workloads |
+| K10 Inadequate Logging and Monitoring | Cluster context required | Audit, log, alert, retention, and monitoring state |
+
+Partial coverage never establishes that the category passed. Effective RBAC, admission, segmentation, exposure, identity, component, cloud, audit, logging, and monitoring state require context the Workbench deliberately does not access.
 
 Before deployment, continue to use repository validation and Kubernetes server-side dry-run.
 

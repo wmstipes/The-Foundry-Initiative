@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-035 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 036 deployed the published `0.4.0` candidate, but browser acceptance found a strict-CSP startup defect; the published `0.4.1` correction precompiles the pinned Kubernetes `v1.36.4` validators and is staged for Deployment review.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-036 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 037's immutable `0.5.1` image is live and browser-accepted, including the corrected finding-navigation scroll behavior.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -203,7 +203,7 @@ See [Milestone 035](docs/milestones/milestone-035-general-yaml.md).
 
 #### Milestone 036 — Browser-local Kubernetes schema validation
 
-**Status:** In progress. `0.4.0` implementation, publication, and approved deployment are complete. Workload and HTTP checks passed, but browser acceptance found a strict-CSP startup defect. The `0.4.1` source and AMD64/ARM64 image are published, and its immutable Deployment update is staged for review; deployment, repeated browser acceptance, and merge remain separately approved.
+**Status:** Complete. Corrected `0.4.1` was published, digest-pinned, deployed, live browser-accepted, and merged through PR #13 at `fc16ad1`.
 
 - Validate supported Kubernetes resources against schemas for one explicitly pinned Kubernetes version.
 - Keep schema data and validation in the browser without adding cluster access or server-side YAML processing.
@@ -213,7 +213,18 @@ See [Milestone 035](docs/milestones/milestone-035-general-yaml.md).
 
 See [Milestone 036](docs/milestones/milestone-036-browser-local-schema-validation.md).
 
-- Milestone 037: a pinned OWASP Kubernetes Top 10:2025 review profile with direct, partial, and cluster-context-required coverage labels.
+#### Milestone 037 — Pinned OWASP Kubernetes Top 10 review profile
+
+**Status:** Immutable AMD64/ARM64 `0.5.1` is published, deployed, runtime-verified, and browser-accepted. PR readiness and merge remain separate approval gates.
+
+- Pin the OWASP Kubernetes Top 10:2025 source to an exact upstream commit.
+- Label each category as direct, partial, or cluster-context-required coverage.
+- Add bounded manifest-local signals for authorization, secrets, admission policy, segmentation, exposure, cloud credentials, and ServiceAccount authentication.
+- Keep category coverage distinct from finding severity and explicitly avoid compliance, score, pass, or cluster-state claims.
+- Preserve General YAML mode without Kubernetes or OWASP findings and retain the no-backend, no-cluster-access boundary.
+
+See [Milestone 037](docs/milestones/milestone-037-owasp-kubernetes-profile.md).
+
 - Later increments: before/after formatting diff, copy and report export, finding filters, tree search, drag-and-drop, display preferences, and bounded large-file processing.
 
 ### Later outcomes in this phase

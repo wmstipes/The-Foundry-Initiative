@@ -111,6 +111,22 @@ code { color: #dbe7f2; font-family: "Cascadia Code", Consolas, monospace; font-s
 .message .guidance-caution, .message .guidance-standard { margin-top: 9px; color: #aebdca; }
 .guidance-caution b, .guidance-standard b { color: var(--text); }
 .guidance-standard a { color: var(--blue); }
+.owasp-profile { margin-bottom: 14px; border: 1px solid var(--line); border-radius: 9px; background: #131b24; overflow: hidden; }
+.owasp-profile > header { display: flex; justify-content: space-between; gap: 16px; padding: 14px; border-bottom: 1px solid var(--line); }
+.owasp-profile h3 { margin: 0; font-size: .92rem; }
+.owasp-profile header p { margin: 5px 0 0; color: var(--muted); font-size: .78rem; line-height: 1.45; }
+.owasp-profile header code { align-self: start; padding: 3px 6px; border: 1px solid #344455; border-radius: 4px; color: var(--muted); }
+.owasp-profile-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px 12px; padding: 12px 14px; border-top: 1px solid rgba(42, 55, 68, .72); }
+.owasp-profile-item:first-child { border-top: 0; }
+.owasp-profile-item > div { display: flex; align-items: baseline; gap: 9px; }
+.owasp-profile-item a { color: var(--blue); font-family: monospace; font-size: .78rem; }
+.owasp-profile-item strong { font-size: .82rem; }
+.owasp-profile-item p, .owasp-profile-item small { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: .76rem; line-height: 1.45; }
+.owasp-profile-item small { color: #7f91a3; }
+.coverage { align-self: start; padding: 3px 6px; border-radius: 4px; font-size: .62rem; font-weight: 800; text-transform: uppercase; }
+.coverage.direct { background: rgba(67, 217, 189, .12); color: var(--teal); }
+.coverage.partial { background: rgba(245, 165, 36, .12); color: var(--amber); }
+.coverage.cluster-context-required { background: rgba(104, 185, 245, .12); color: var(--blue); }
 .message-location { min-height: 0; margin-top: 8px; padding: 3px 7px; border-color: #3c5064; color: var(--blue); background: transparent; font-family: monospace; font-size: .72rem; }
 .empty { min-height: 350px; display: grid; place-content: center; justify-items: center; padding: 30px; text-align: center; }
 .empty > div { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--amber); font-family: monospace; font-weight: 800; }

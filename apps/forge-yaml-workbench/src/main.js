@@ -1,6 +1,7 @@
 import { analyzeYaml, formatYaml } from "./analyze.js";
 import { SAMPLE_YAML } from "./sample.js";
 import { KUBERNETES_SCHEMA_VERSION } from "./schema-validation.js";
+import { OWASP_PROFILE_VERSION, OWASP_SOURCE_COMMIT } from "./owasp-profile.js";
 import "./styles.css";
 
 const app = document.querySelector("#app");
@@ -106,10 +107,37 @@ function fixGuidance(item) {
     '<pre><code>' + escapeHtml(item.example) + "</code></pre>"
   ].join("") : "";
   const caution = item.caution ? '<p class="guidance-caution"><b>Before applying:</b> ' + escapeHtml(item.caution) + "</p>" : "";
-  const standard = item.standard ? '<p class="guidance-standard"><b>Security reference:</b> <a href="' +
-    escapeHtml(item.standard.url) + '" target="_blank" rel="noopener noreferrer">OWASP ' +
-    escapeHtml(item.standard.id) + " · " + escapeHtml(item.standard.title) + "</a></p>" : "";
+  const standards = item.standards?.length ? item.standards : (item.standard ? [item.standard] : []);
+  const standard = standards.length ? '<p class="guidance-standard"><b>Security reference' +
+    (standards.length === 1 ? ":</b> " : "s:</b> ") + standards.map((entry) => '<a href="' +
+      escapeHtml(entry.url) + '" target="_blank" rel="noopener noreferrer">OWASP ' +
+      escapeHtml(entry.id) + " · " + escapeHtml(entry.title) + "</a>").join(" · ") + "</p>" : "";
   return '<details class="fix-guidance"><summary>Fix guidance</summary><div>' + example + caution + standard + "</div></details>";
+}
+
+function owaspProfileView(items) {
+  const labels = {
+    direct: "Direct",
+    partial: "Partial",
+    "cluster-context-required": "Cluster context required"
+  };
+  return [
+    '<section class="owasp-profile">',
+    '<header><div><h3>OWASP Kubernetes Top 10:' + escapeHtml(OWASP_PROFILE_VERSION) + ' review profile</h3>',
+    '<p>Coverage describes what this browser-local file review can observe. It is not a compliance score or pass/fail result.</p></div>',
+    '<code title="Pinned OWASP source commit">' + escapeHtml(OWASP_SOURCE_COMMIT.slice(0, 7)) + '</code></header>',
+    '<div class="owasp-profile-list">',
+    items.map((item) => [
+      '<article class="owasp-profile-item">',
+      '<div><a href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(item.id) + '</a>',
+      '<strong>' + escapeHtml(item.title) + '</strong></div>',
+      '<span class="coverage ' + escapeHtml(item.coverage) + '">' + escapeHtml(labels[item.coverage]) + '</span>',
+      '<p>' + escapeHtml(item.evidence) + '</p>',
+      '<small>' + escapeHtml(item.boundary) + '</small>',
+      '</article>'
+    ].join("")).join(""),
+    '</div></section>'
+  ].join("");
 }
 
 function messages(title, items, fallbackLevel) {
@@ -157,6 +185,16 @@ function focusEditorLocation(line, column = 1) {
   const end = lineStart + (lines[lineIndex]?.length || 0);
   editor.focus();
   editor.setSelectionRange(start, Math.max(start, end));
+
+  const styles = window.getComputedStyle(editor);
+  const fontSize = Number.parseFloat(styles.fontSize) || 16;
+  const parsedLineHeight = Number.parseFloat(styles.lineHeight);
+  const lineHeight = Number.isFinite(parsedLineHeight)
+    ? (styles.lineHeight.endsWith("px") ? parsedLineHeight : parsedLineHeight * fontSize)
+    : fontSize * 1.62;
+  const centeredOffset = (editor.clientHeight - lineHeight) / 2;
+  const maximumScroll = Math.max(0, editor.scrollHeight - editor.clientHeight);
+  editor.scrollTop = Math.min(maximumScroll, Math.max(0, lineIndex * lineHeight - centeredOffset));
 }
 
 async function copyText(value) {
@@ -263,7 +301,8 @@ function validationView(analysis) {
   return (syntaxItems.length ? messages("YAML syntax", syntaxItems, "error") : "") +
     (documentItems.length ? messages("Kubernetes document structure", documentItems, "error") : "") +
     (operational.length ? messages("Deterministic operational review", operational, "warning") : "") +
-    (schemaItems.length ? messages("Kubernetes schema · " + KUBERNETES_SCHEMA_VERSION, schemaItems, "note") : "");
+    (schemaItems.length ? messages("Kubernetes schema · " + KUBERNETES_SCHEMA_VERSION, schemaItems, "note") : "") +
+    (analysis.mode === "kubernetes" && analysis.owaspProfile.length ? owaspProfileView(analysis.owaspProfile) : "");
 }
 
 function treeNode(value, name = "root", depth = 0) {
@@ -304,9 +343,9 @@ function render() {
   document.querySelector("#inspection-title").textContent = general ? "General YAML inspection" : "Kubernetes manifest inspection";
   document.querySelector("#inspection-description").textContent = general
     ? "Inspect mappings, sequences, and scalar YAML without Kubernetes-specific findings."
-    : "Review syntax, deterministic operations, and the pinned Kubernetes " + KUBERNETES_SCHEMA_VERSION + " schema.";
+    : "Review syntax, deterministic operations, the pinned Kubernetes " + KUBERNETES_SCHEMA_VERSION + " schema, and OWASP Top 10:" + OWASP_PROFILE_VERSION + " coverage.";
   document.querySelector("#report-title").textContent = general ? "YAML report" : "Manifest report";
-  document.querySelector("#review-boundary").textContent = general ? "Syntax and document structure" : "Syntax · deterministic operations · schema " + KUBERNETES_SCHEMA_VERSION;
+  document.querySelector("#review-boundary").textContent = general ? "Syntax and document structure" : "Syntax · operations · schema " + KUBERNETES_SCHEMA_VERSION + " · OWASP profile " + OWASP_PROFILE_VERSION;
   document.querySelector("#next-step").textContent = general ? "No Kubernetes checks in this mode." : "No admission or live-cluster checks. Use server-side dry-run before applying.";
 
   const status = document.querySelector("#status");
