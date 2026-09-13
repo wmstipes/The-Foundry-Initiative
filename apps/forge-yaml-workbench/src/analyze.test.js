@@ -358,6 +358,74 @@ describe("Forge YAML Workbench analysis", () => {
     expect(titles).not.toContain("app: RuntimeDefault seccomp profile not required");
   });
 
+  it("flags bounded RBAC authorization risks with pinned K02 guidance", () => {
+    const source = [
+      "apiVersion: rbac.authorization.k8s.io/v1",
+      "kind: ClusterRole",
+      "metadata: {name: risky-role}",
+      "rules:",
+      "  - apiGroups: ['*']",
+      "    resources: ['*', nodes/proxy, secrets]",
+      "    verbs: ['*', escalate]",
+      "---",
+      "apiVersion: rbac.authorization.k8s.io/v1",
+      "kind: ClusterRoleBinding",
+      "metadata: {name: administrators}",
+      "roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: cluster-admin}",
+      "subjects: [{kind: ServiceAccount, name: app, namespace: default}]",
+      ""
+    ].join("\n");
+    const result = analyzeYaml(source);
+    const findings = result.documents.flatMap((document) => document.findings);
+
+    expect(findings).toEqual(expect.arrayContaining([
+      expect.objectContaining({ title: "RBAC rule contains wildcard permissions", path: ".rules[0]" }),
+      expect.objectContaining({ title: "RBAC rule grants privilege-escalation verbs", path: ".rules[0].verbs" }),
+      expect.objectContaining({ title: "RBAC rule grants nodes/proxy access", path: ".rules[0].resources" }),
+      expect.objectContaining({ title: "RBAC rule can read Secret values", path: ".rules[0]" }),
+      expect.objectContaining({ title: "Binding grants cluster-admin", path: ".roleRef.name" })
+    ]));
+    expect(findings.find((item) => item.title === "Binding grants cluster-admin").standard.id).toBe("K02:2025");
+  });
+
+  it("reviews secret delivery, literal cloud credentials, policy labels, and external exposure", () => {
+    const source = [
+      "apiVersion: v1",
+      "kind: Pod",
+      "metadata: {name: cloud-app}",
+      "spec:",
+      "  containers:",
+      "    - name: app",
+      "      image: example/app:1.0.0",
+      "      env:",
+      "        - name: PASSWORD",
+      "          valueFrom: {secretKeyRef: {name: app, key: password}}",
+      "        - name: AWS_SECRET_ACCESS_KEY",
+      "          value: exposed",
+      "---",
+      "apiVersion: v1",
+      "kind: Namespace",
+      "metadata: {name: ungoverned}",
+      "---",
+      "apiVersion: v1",
+      "kind: Service",
+      "metadata: {name: public}",
+      "spec: {type: LoadBalancer, selector: {app: demo}, ports: [{port: 443}]}",
+      ""
+    ].join("\n");
+    const result = analyzeYaml(source);
+    const findings = result.documents.flatMap((document) => document.findings);
+
+    expect(findings).toEqual(expect.arrayContaining([
+      expect.objectContaining({ title: "app: Secret injected through environment", standard: expect.objectContaining({ id: "K03:2025" }) }),
+      expect.objectContaining({ title: "app: literal cloud credential environment variable" }),
+      expect.objectContaining({ title: "Pod Security Admission enforcement label not declared", standard: expect.objectContaining({ id: "K04:2025" }) }),
+      expect.objectContaining({ title: "Service declares external exposure", standard: expect.objectContaining({ id: "K06:2025" }) })
+    ]));
+    expect(findings.find((item) => item.title.includes("literal cloud credential")).standards.map((item) => item.id)).toEqual(["K03:2025", "K08:2025"]);
+    expect(findings.find((item) => item.title === "ServiceAccount token may be mounted").standards.map((item) => item.id)).toEqual(["K01:2025", "K09:2025"]);
+  });
+
   it("separates registry ports from image tags", () => {
     expect(splitImage("registry.example:5000/team/app:2.4.0")).toEqual({
       repository: "registry.example:5000/team/app",
