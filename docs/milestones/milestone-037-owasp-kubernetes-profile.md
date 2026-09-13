@@ -2,7 +2,7 @@
 
 Date: 2026-09-13
 
-Status: Implemented, verified, and published as an immutable `0.5.0` AMD64/ARM64 image. Deployment, live browser acceptance, PR readiness, and merge remain separate approval gates.
+Status: Immutable `0.5.0` is deployed and runtime-verified. Browser acceptance found a finding-navigation scroll defect; local `0.5.1` fixes it. Patch publication, deployment, repeated browser acceptance, PR readiness, and merge remain separate approval gates.
 
 ## Goal
 
@@ -53,7 +53,7 @@ Expand Forge YAML Workbench from individual K01 references into an explicit OWAS
 
 ## Local verification
 
-- 49 tests pass across analyzer, schema, OWASP profile, and browser-rendered behavior.
+- 50 tests pass across analyzer, schema, OWASP profile, and browser-rendered behavior, including finding-link scrolling in a long manifest.
 - All ten category IDs, labels, immutable source links, non-score language, multi-category mappings, and General YAML suppression are covered.
 - Production build passed at 706.33 kB JavaScript / 110.42 kB gzip.
 - Validator reproducibility passed for all 12 bundled Kubernetes schemas.
@@ -63,10 +63,13 @@ Expand Forge YAML Workbench from individual K01 references into an explicit OWAS
 - Draft PR #14 is published; Workbench CI, Kubernetes manifest validation, and the non-publishing multi-architecture build pass.
 - Separately approved publication run `34787257312` produced OCI index `sha256:11e8fcc4989fe7dcdc1c5312786b80189a98b6a9acb82e979aa8235d756fcb8e`.
 - Active platform manifests are AMD64 `sha256:2a47101b9f176671e0954ca55e90b7ae4dfe42ba4b7ce5856ccd2f447822032e` and ARM64 `sha256:f1de89162f2de896d8907e2fcce17d511246881c919fa15e6ee3a1ea3f6077b3`.
-- The tracked Deployment stages the immutable `0.5.0` index without applying it.
+- The immutable `0.5.0` index is deployed. Its Pod is Ready with zero restarts, the runtime ImageID matches, the EndpointSlice has one ready address, health and page requests return HTTP 200, and strict security headers remain present.
+- Live browser acceptance confirmed the OWASP profile and General YAML isolation, then found that finding controls selected the correct line without scrolling it into view.
+- Local source `0.5.1` explicitly scrolls the editor to center the selected line and preserves the selected text.
 
 ## Remaining gates
 
-1. Review server-side dry-run and live diff before any separately approved Deployment update.
-2. Repeat live browser acceptance against the deployed immutable image.
-3. Keep PR readiness and merge separately approved.
+1. Publish the separately approved `0.5.1` patch image and stage its immutable digest.
+2. Review server-side dry-run and live diff before any separately approved Deployment update.
+3. Repeat live browser acceptance against the corrected immutable image.
+4. Keep PR readiness and merge separately approved.
