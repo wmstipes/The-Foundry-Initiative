@@ -121,7 +121,7 @@ Completed SignalForge milestones include:
 * secure Kubernetes Metrics Server deployed with all four nodes available through `kubectl top`
 * NVMe-backed Prometheus deployed with Pod-replacement persistence and isolated off-node backup/restore validation
 * Grafana dashboards and bounded Prometheus rule evaluation deployed and recovery-tested
-* Forge YAML Workbench `0.4.1` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks and General YAML mode
+* Forge YAML Workbench `0.5.1` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks, General YAML mode, the pinned OWASP Kubernetes Top 10:2025 review profile, and corrected finding navigation
 
 ## Earlier utility: foundry-check
 
@@ -150,7 +150,6 @@ Planned next steps include:
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
 * evolve the rules-based `/analyze` logic toward an evidence-grounded ForgeOps workflow
-* complete Milestone 037's pinned OWASP Kubernetes Top 10:2025 review profile without implying compliance
 
 ## Why this project exists
 

@@ -27,8 +27,8 @@ The project has moved from basic workload deployment into repeatable engineering
 - Namespace: `forge-tools`
 - Deployment: `forge-yaml-workbench`
 - Replicas: 1 available and Ready
-- Release: accepted `0.4.1` deployed
-- Image: `wmstipes/signalforge-yaml-workbench:0.4.1@sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2`
+- Release: accepted `0.5.1` deployed
+- Image: `wmstipes/signalforge-yaml-workbench:0.5.1@sha256:4011478de37f9316d65985f17d87d3652203e2bcffd75ee29646ddcd52a64ffa`
 - Runtime ImageID: verified against the pinned OCI index digest
 - External lab access: NodePort `30081`
 - Data path: browser-local parsing and analysis; no server-side YAML persistence
@@ -66,15 +66,16 @@ The project has moved from basic workload deployment into repeatable engineering
 - 034: Workbench deterministic Kubernetes checks and actionable remediation released as `0.2.0`, deployed, accepted, and merged
 - 035: General YAML inspection released as `0.3.0`, deployed, live browser-accepted, and merged
 - 036: corrected `0.4.1` published, digest-pinned, deployed, live browser-accepted, and merged through PR #13 at `fc16ad1`
+- 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation released as `0.5.1`, deployed, browser-accepted, and squash-merged through PR #14 at `dd46a08`
 
-## Current milestone
+## Latest completed milestone
 
 - 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation deployed and browser-accepted as immutable `0.5.1`
 - Coverage labels: K01 direct; K02-K06, K08, and K09 partial; K07 and K10 cluster-context-required
 - Trust boundary: browser-local only, with no backend, cluster access, cloud access, credentials, or automatic remediation
 - Local verification: 50 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository manifest validation, and whitespace checks pass
-- Publication and deployment: draft PR #14 and immutable AMD64/ARM64 `0.5.0` and `0.5.1` images are published; `0.5.1` is live and passed runtime and browser checks
-- Remaining gates: PR readiness and merge
+- Publication and deployment: immutable AMD64/ARM64 `0.5.0` and `0.5.1` images are published; `0.5.1` is live and passed runtime and browser checks
+- Completion: PR #14 was marked ready after acceptance and squash-merged at `dd46a08`; all three post-merge workflows passed on `main`
 
 ## Current observability state
 
@@ -171,7 +172,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the completed Milestone 037 evidence. PR readiness and merge remain separately approved.
+Select the next bounded milestone from the roadmap; no Milestone 037 release or merge gates remain open.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
