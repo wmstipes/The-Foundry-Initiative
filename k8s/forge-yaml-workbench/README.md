@@ -13,16 +13,16 @@ These manifests define the deployed SignalForge browser-local Forge YAML Workben
 Version:
 
 ```text
-0.5.0
+0.5.1
 ```
 
 Immutable image reference:
 
 ```text
-wmstipes/signalforge-yaml-workbench:0.5.0@sha256:11e8fcc4989fe7dcdc1c5312786b80189a98b6a9acb82e979aa8235d756fcb8e
+wmstipes/signalforge-yaml-workbench:0.5.1@sha256:4011478de37f9316d65985f17d87d3652203e2bcffd75ee29646ddcd52a64ffa
 ```
 
-The published OCI image index contains active `linux/amd64` and `linux/arm64` manifests. No floating image tag is used. The tracked Deployment and live cluster use immutable `0.5.0`. Local `0.5.1` source corrects finding-navigation scrolling but is not staged here until an immutable patch image is separately approved and published.
+The published OCI image index contains active `linux/amd64` and `linux/arm64` manifests. No floating image tag is used. The tracked Deployment stages immutable `0.5.1`; the live cluster remains on immutable `0.5.0` until the patch deployment is separately approved.
 
 ## Security and data boundaries
 
@@ -62,4 +62,4 @@ kubectl rollout status deployment/forge-yaml-workbench -n forge-tools --timeout=
 kubectl get deployment,pods,service -n forge-tools -o wide
 ```
 
-The live `0.5.0` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:11e8fcc4989fe7dcdc1c5312786b80189a98b6a9acb82e979aa8235d756fcb8e`. NodePort `30081`, its ready EndpointSlice, `/healthz`, the application page response, Content Security Policy, and `X-Content-Type-Options` passed runtime verification. Interactive browser acceptance confirmed the OWASP profile and General YAML isolation, then found a finding-navigation scroll defect corrected in local `0.5.1` source.
+The live `0.5.0` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:11e8fcc4989fe7dcdc1c5312786b80189a98b6a9acb82e979aa8235d756fcb8e`. NodePort `30081`, its ready EndpointSlice, `/healthz`, the application page response, Content Security Policy, and `X-Content-Type-Options` passed runtime verification. Interactive browser acceptance confirmed the OWASP profile and General YAML isolation, then found a finding-navigation scroll defect corrected in the published `0.5.1` candidate.
