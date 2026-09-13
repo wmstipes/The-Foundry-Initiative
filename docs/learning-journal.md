@@ -326,7 +326,7 @@ Added an offline Kubernetes schema layer to Forge YAML Workbench while retaining
 - Kubernetes `IntOrString` fields need explicit normalization when consuming the pinned OpenAPI v2 document through a JSON Schema validator.
 - Bundling only the transitive definitions for an explicit GVK set keeps the static application bounded while preserving offline operation.
 
-### What I finished locally
+### What I finished
 
 - Pinned the source schema to Kubernetes `v1.36.4` and recorded the upstream SHA-256.
 - Added reproducible generation of a 12-GVK, 196-definition browser bundle.
@@ -335,8 +335,10 @@ Added an offline Kubernetes schema layer to Forge YAML Workbench while retaining
 - Preserved General YAML behavior and the absence of Kubernetes schema findings in that mode.
 - Expanded automated coverage from 30 to 42 passing tests, including compilation of every supported schema.
 - Passed the production build, dependency audit, and whitespace validation.
-- Preserved the implementation as local commit `05cc547`; no branch, image, or cluster changes were published.
+- Published draft PR #13 and passed Workbench CI plus the non-publishing AMD64/ARM64 container build.
+- Published the separately approved `0.4.0` OCI index at `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477` and verified active Linux AMD64 and ARM64 manifests.
+- Staged the Deployment-only update with the immutable `0.4.0` image reference; the cluster remains unchanged pending dry-run, diff review, and separate deployment approval.
 
 ### Next small step
 
-Complete documentation review, then request separate approval to publish the Milestone 036 branch. Image publication, deployment, live browser acceptance, and merge remain later approval gates. Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.
+Review the server-side dry-run and live diff for the staged Deployment-only update, then request separate approval before applying it. Live browser acceptance, PR readiness, and merge remain later approval gates. Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.

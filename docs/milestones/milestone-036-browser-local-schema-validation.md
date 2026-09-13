@@ -2,7 +2,7 @@
 
 Started: 2026-09-13
 
-Status: Local implementation and verification complete on an unpublished branch. Branch publication, pull-request CI, image publication, deployment, live browser acceptance, and merge remain separate approval gates.
+Status: Source implementation, branch publication, pull-request validation, and separately approved `0.4.0` image publication are complete. The immutable Deployment update is staged for review; deployment, live browser acceptance, PR readiness, and merge remain separate approval gates.
 
 ## Goal
 
@@ -75,9 +75,10 @@ Schema mismatches include a YAML path and navigate to the nearest source locatio
 - [x] Production build passes; output JavaScript is 599.43 kB uncompressed and 152.54 kB gzip.
 - [x] Dependency audit reports zero vulnerabilities.
 - [x] Whitespace validation passes.
-- [ ] Branch publication is approved and complete.
-- [ ] Pull-request CI and non-publishing multi-architecture image build pass.
-- [ ] Versioned `0.4.0` image publication is separately approved and its OCI digest recorded.
+- [x] Branch publication is approved and complete through draft PR #13.
+- [x] Pull-request CI and non-publishing multi-architecture image build pass in runs `34778172043` and `34778172060`.
+- [x] Versioned `0.4.0` image publication is separately approved and passed in run `34778468753`; the AMD64/ARM64 OCI index digest is `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477`.
+- [x] The Deployment manifest and validator pin the reviewed `0.4.0` OCI index without changing namespace, Service, replicas, probes, resources, security context, or volumes.
 - [ ] Deployment diff is separately reviewed and approved before cluster mutation.
 - [ ] Runtime verification and live browser acceptance pass after deployment.
 - [ ] Final merge is separately approved and complete.

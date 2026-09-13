@@ -36,7 +36,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
 - Acceptance: rollout, runtime digest, ready EndpointSlice, health, page, security headers, both inspection modes, content-preserving mode switches, General YAML root handling, Kubernetes-finding suppression, clickable finding paths, remediation guidance, clipboard examples, cautions, and OWASP references passed
-- Next candidate: local `0.4.0` source validates 12 explicit GVKs against bundled Kubernetes `v1.36.4` schemas; publication and deployment remain unapproved
+- Next candidate: published `0.4.0` validates 12 explicit GVKs against bundled Kubernetes `v1.36.4` schemas; its immutable manifest update is staged, but deployment remains unapproved
 
 ## Completed milestones
 
@@ -187,4 +187,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench `0.4.0` source performs bounded browser-local validation for 12 explicit GVKs using Kubernetes `v1.36.4` schemas. It does not discover APIs or CRDs, perform defaulting or conversion, contact admission or policy components, or prove server acceptance. The deployed `0.3.0` release still lacks schema validation. NodePort `30081` uses plain HTTP and is intended only for the private lab. Broader OWASP Kubernetes Top 10 coverage remains deferred to Milestone 037.
+Forge YAML Workbench `0.4.0` is published for AMD64 and ARM64 at OCI index digest `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477`. It performs bounded browser-local validation for 12 explicit GVKs using Kubernetes `v1.36.4` schemas and does not discover APIs or CRDs, perform defaulting or conversion, contact admission or policy components, or prove server acceptance. The tracked Deployment manifest stages this immutable image, but the live `0.3.0` release remains unchanged until deployment is separately approved. NodePort `30081` uses plain HTTP and is intended only for the private lab. Broader OWASP Kubernetes Top 10 coverage remains deferred to Milestone 037.

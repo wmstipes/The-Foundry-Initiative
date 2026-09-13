@@ -13,16 +13,16 @@ These manifests define the deployed SignalForge browser-local Forge YAML Workben
 Version:
 
 ```text
-0.3.0
+0.4.0
 ```
 
 Immutable image reference:
 
 ```text
-wmstipes/signalforge-yaml-workbench:0.3.0@sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f
+wmstipes/signalforge-yaml-workbench:0.4.0@sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477
 ```
 
-The OCI image index contains both `linux/amd64` and `linux/arm64`. No floating image tag is used. The reviewed Deployment-only rollout now runs this immutable `0.3.0` image in the live cluster.
+The OCI image index contains both `linux/amd64` and `linux/arm64`. No floating image tag is used. The manifest stages the published immutable `0.4.0` image for server-side dry-run and live diff review; the live cluster remains on `0.3.0` until deployment is separately approved.
 
 ## Security and data boundaries
 

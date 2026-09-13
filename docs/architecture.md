@@ -58,7 +58,7 @@ flowchart TD
 - Access: private-lab NodePort `30081`
 - Runtime: unprivileged NGINX on container port `8080`
 - Processing: shared YAML parsing, formatting, diagnostics, file handling, and tree navigation run entirely in the browser; Kubernetes-specific operational findings and the bundled `v1.36.4` schema validator run only in Kubernetes mode
-- Schema boundary: the local `0.4.0` candidate supports 12 explicit core, apps, and batch GVKs; unsupported built-ins and unavailable CRD schemas receive non-validity result states
+- Schema boundary: the published `0.4.0` candidate supports 12 explicit core, apps, and batch GVKs; unsupported built-ins and unavailable CRD schemas receive non-validity result states
 - Identity: no RBAC, Kubernetes API access, or mounted ServiceAccount token
 - Security: restricted Pod Security labels, non-root execution, RuntimeDefault seccomp, read-only root filesystem, dropped capabilities, and bounded writable `/tmp`
 - Delivery: guarded version tags publish AMD64 and ARM64 images; the Deployment pins both version and OCI index digest
