@@ -1,13 +1,14 @@
 import { isMap, isSeq, LineCounter, parseAllDocuments } from "yaml";
 import { validateKubernetesResource } from "./schema-validation.js";
+import { buildOwaspProfile, OWASP_STANDARDS } from "./owasp-profile.js";
 
 const WORKLOADS = new Set(["Pod", "Deployment", "StatefulSet", "DaemonSet", "ReplicaSet", "Job", "CronJob"]);
 const SELECTOR_WORKLOADS = new Set(["Deployment", "StatefulSet", "DaemonSet", "ReplicaSet"]);
-const OWASP_K01 = {
-  id: "K01:2025",
-  title: "Insecure Workload Configurations",
-  url: "https://github.com/OWASP/www-project-kubernetes-top-ten/blob/main/2025/en/src/K01-Insecure-Workload-Configurations.md"
-};
+const CLOUD_CREDENTIAL_ENV_NAMES = new Set([
+  "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN",
+  "AZURE_CLIENT_SECRET", "AZURE_CLIENT_CERTIFICATE_PASSWORD",
+  "GOOGLE_CREDENTIALS", "GOOGLE_PRIVATE_KEY"
+]);
 
 function object(value) {
   return value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -61,8 +62,13 @@ function finding(level, title, path, explanation, suggestion, guidance = {}) {
   return { level, title, path, detail: explanation, explanation, suggestion, ...guidance };
 }
 
+function owasp(keys, example, caution) {
+  const standards = (Array.isArray(keys) ? keys : [keys]).map((key) => OWASP_STANDARDS[key]);
+  return { example, caution, standard: standards[0], standards };
+}
+
 function k01(example, caution) {
-  return { example, caution, standard: OWASP_K01 };
+  return owasp("K01", example, caution);
 }
 
 function hasSeccompProfile(type) {
@@ -93,6 +99,7 @@ function summarizeContainer(container, type, path) {
       liveness: Boolean(container.livenessProbe)
     },
     securityContext: object(container.securityContext),
+    raw: container,
     path
   };
 }
@@ -133,6 +140,19 @@ function findings(resource, containers, pod) {
       const unconfined = podSeccompType === "Unconfined" || containerSeccompType === "Unconfined";
       add(unconfined ? "warning" : "note", container.name + ": RuntimeDefault seccomp profile not required", container.path + ".securityContext.seccompProfile.type", "Neither the Pod nor this container explicitly requires a default or locally managed syscall filter.", "Set the Pod or container seccomp profile type to RuntimeDefault unless a reviewed Localhost profile is required.", k01("securityContext:\n  seccompProfile:\n    type: RuntimeDefault", "Test application startup and normal operations after enabling seccomp. A Localhost profile is also valid when it is deliberately managed on every eligible node."));
     }
+    array(container.raw.env).forEach((environment, index) => {
+      if (environment?.valueFrom?.secretKeyRef) {
+        add("note", container.name + ": Secret injected through environment", container.path + ".env[" + index + "].valueFrom.secretKeyRef", "Secret values exposed as environment variables may appear in diagnostics or process environments.", "Prefer a read-only Secret volume when the application supports file-based credentials.", owasp("K03", "volumes:\n  - name: credentials\n    secret:\n      secretName: app-credentials", "Changing how the application receives credentials requires application support and a coordinated rollout."));
+      }
+      if (environment?.value != null && CLOUD_CREDENTIAL_ENV_NAMES.has(environment.name)) {
+        add("warning", container.name + ": literal cloud credential environment variable", container.path + ".env[" + index + "].value", "A cloud credential-shaped environment variable contains a literal value in this manifest.", "Remove the literal credential and use a workload identity or a reviewed Secret delivery mechanism.", owasp(["K03", "K08"], "env:\n  - name: " + environment.name + "\n    valueFrom:\n      secretKeyRef:\n        name: cloud-credentials\n        key: credential", "Treat the current value as potentially exposed and rotate it outside the Workbench. Prefer workload identity over a long-lived replacement secret."));
+      }
+    });
+    array(container.raw.envFrom).forEach((source, index) => {
+      if (source?.secretRef) {
+        add("note", container.name + ": Secret imported through environment", container.path + ".envFrom[" + index + "].secretRef", "Every key in the referenced Secret is projected into the process environment.", "Import only required keys, and prefer read-only Secret volumes when the application supports file-based credentials.", owasp("K03", "env:\n  - name: REQUIRED_VALUE\n    valueFrom:\n      secretKeyRef:\n        name: app-credentials\n        key: required-value", "Changing envFrom can remove variables the application expects. Inventory required keys before narrowing the reference."));
+      }
+    });
   }
 
   if (pod.spec.hostNetwork === true) add("warning", "Host networking enabled", pod.path + ".hostNetwork", "The Pod shares the node network namespace.", "Remove hostNetwork: true unless direct node networking is required and reviewed.", k01("hostNetwork: false", "Removing host networking changes the Pod's network identity and may require Service, DNS, or port configuration changes."));
@@ -143,9 +163,42 @@ function findings(resource, containers, pod) {
   });
   if (WORKLOADS.has(resource.kind) && pod.spec.automountServiceAccountToken !== false) {
     add("note", "ServiceAccount token may be mounted", pod.path + ".automountServiceAccountToken", "The default token mount may provide Kubernetes API credentials the workload does not need.", "Set automountServiceAccountToken: false when the workload does not call the Kubernetes API.", k01("automountServiceAccountToken: false", "Do not disable the token if this workload legitimately calls the Kubernetes API. In that case, use a dedicated least-privilege ServiceAccount."));
+    items[items.length - 1].standards = [OWASP_STANDARDS.K01, OWASP_STANDARDS.K09];
   }
   if (resource.kind === "Service" && Object.keys(object(resource.spec?.selector)).length === 0 && resource.spec?.type !== "ExternalName") {
     add("warning", "Service has no selector", ".spec.selector", "Kubernetes will not automatically select Pods for this Service.", "Add a selector or document how EndpointSlices are managed separately.");
+  }
+  if (resource.kind === "Service" && ["NodePort", "LoadBalancer"].includes(resource.spec?.type)) {
+    add("note", "Service declares external exposure", ".spec.type", "This Service type can expose traffic beyond the cluster network, depending on the environment.", "Confirm the intended audience and restrict network and firewall paths outside the manifest.", owasp("K06", "spec:\n  type: ClusterIP", "Changing the Service type removes its current external access path. Confirm an approved replacement before applying."));
+  }
+  if (resource.kind === "Ingress") {
+    add("note", "Ingress declares an external routing surface", ".spec", "Ingress reachability and TLS depend on the installed controller, addresses, DNS, and surrounding network controls.", "Review host, path, TLS, controller, and firewall configuration with live cluster context.", owasp("K06", "spec:\n  tls:\n    - secretName: example-tls", "This fragment is not a complete Ingress. TLS configuration must match the intended hosts and controller behavior."));
+  }
+  if (resource.kind === "Namespace" && !resource.metadata?.labels?.["pod-security.kubernetes.io/enforce"]) {
+    add("note", "Pod Security Admission enforcement label not declared", ".metadata.labels", "This Namespace manifest does not declare an enforce-level Pod Security Admission label.", "Declare the intended enforce level, or document the different admission policy that governs this namespace.", owasp("K04", "metadata:\n  labels:\n    pod-security.kubernetes.io/enforce: restricted\n    pod-security.kubernetes.io/enforce-version: latest", "A stricter policy can reject existing workloads. Audit compatibility and stage enforcement deliberately."));
+  }
+
+  if (["Role", "ClusterRole"].includes(resource.kind)) {
+    array(resource.rules).forEach((rule, index) => {
+      const verbs = array(rule.verbs);
+      const resources = array(rule.resources);
+      const path = ".rules[" + index + "]";
+      if (verbs.includes("*") || resources.includes("*") || array(rule.apiGroups).includes("*")) {
+        add("warning", "RBAC rule contains wildcard permissions", path, "Wildcard verbs, resources, or API groups can grant more authority than the subject needs.", "Replace wildcards with the smallest reviewed verb, resource, and API-group set.", owasp("K02", "rules:\n  - apiGroups: [\"\"]\n    resources: [pods]\n    verbs: [get, list]", "The example is illustrative. Derive required permissions from observed application behavior before narrowing a live role."));
+      }
+      if (verbs.some((verb) => ["escalate", "bind", "impersonate"].includes(verb))) {
+        add("warning", "RBAC rule grants privilege-escalation verbs", path + ".verbs", "The escalate, bind, and impersonate verbs can bypass ordinary authorization boundaries.", "Remove these verbs unless the subject has a narrowly documented control-plane responsibility.", owasp("K02", undefined, "Removing these verbs can disrupt controllers that legitimately manage RBAC. Confirm the caller and exact operation first."));
+      }
+      if (resources.includes("nodes/proxy")) {
+        add("warning", "RBAC rule grants nodes/proxy access", path + ".resources", "Node proxy access can reach kubelet APIs and bypass normal API-server audit and admission paths.", "Remove nodes/proxy unless a reviewed component explicitly requires kubelet proxy access.", owasp("K02", undefined, "Verify monitoring and node-management dependencies before changing this permission."));
+      }
+      if (resources.includes("secrets") && verbs.some((verb) => ["get", "list", "watch", "*"].includes(verb))) {
+        add("note", "RBAC rule can read Secret values", path, "Get, list, or watch access to Secret resources can disclose their data.", "Restrict Secret access to named resources and only the verbs the workload requires.", owasp(["K02", "K03"], undefined, "Controllers may need list or watch for reconciliation. Validate their documented permission requirements before narrowing access."));
+      }
+    });
+  }
+  if (["RoleBinding", "ClusterRoleBinding"].includes(resource.kind) && resource.roleRef?.kind === "ClusterRole" && resource.roleRef?.name === "cluster-admin") {
+    add("warning", "Binding grants cluster-admin", ".roleRef.name", "The cluster-admin ClusterRole provides unrestricted authority across the cluster.", "Bind subjects to a purpose-built least-privilege role instead.", owasp("K02", undefined, "Replacing cluster-admin can interrupt administration or automation. Inventory the subject's required operations first."));
   }
 
   if (SELECTOR_WORKLOADS.has(resource.kind)) {
@@ -318,7 +371,8 @@ export function analyzeYaml(source, mode = "kubernetes") {
     warnings: [],
     syntaxErrors: [],
     syntaxWarnings: [],
-    documentErrors: []
+    documentErrors: [],
+    owaspProfile: []
   };
   if (mode !== "kubernetes" && mode !== "general") throw new Error("Unsupported YAML inspection mode: " + mode);
 
@@ -331,7 +385,8 @@ export function analyzeYaml(source, mode = "kubernetes") {
     warnings: [],
     syntaxErrors: [],
     syntaxWarnings: [],
-    documentErrors: []
+    documentErrors: [],
+    owaspProfile: []
   };
 
   const diagnostic = (item, parsedDocument, documentNumber) => {
@@ -384,6 +439,7 @@ export function analyzeYaml(source, mode = "kubernetes") {
   if (mode === "kubernetes") {
     addBundleFindings(result.documents);
     attachFindingLocations(parsed, result.documents, lineCounter);
+    result.owaspProfile = buildOwaspProfile(result.documents);
   }
 
   return result;
