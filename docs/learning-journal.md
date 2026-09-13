@@ -385,8 +385,10 @@ Expanded Forge YAML Workbench from individual K01 references into a ten-category
 - Added centered editor scrolling and a long-manifest browser regression test as local patch candidate `0.5.1`; 50 tests, production build, and CSP scan pass.
 - Published the separately approved `0.5.1` AMD64/ARM64 patch image in run `34789023192`.
 - Verified OCI index `sha256:4011478de37f9316d65985f17d87d3652203e2bcffd75ee29646ddcd52a64ffa`, AMD64 manifest `sha256:ebad025531960fa9d18a67fd153aa4fd2c56556df87574f06db083564981d5d5`, and ARM64 manifest `sha256:bfabd7f46865db81a8d8b57954dc4c0c2ddcb01a7705390b3e633b6acb2e8238`.
-- Staged the immutable `0.5.1` Deployment candidate without applying it.
+- Staged and separately deployed the immutable `0.5.1` patch.
+- Verified the corrected Pod is Ready with zero restarts, its configured and runtime ImageID match the reviewed OCI index, health and page requests return HTTP 200, and the strict security headers remain present.
+- Repeated live browser acceptance and confirmed finding links now automatically scroll to and select the correct YAML location.
 
 ### Next small step
 
-Review the server-side dry-run and live diff for the staged immutable `0.5.1` correction. Keep deployment, repeated browser acceptance, PR readiness, and merge separately approved.
+Review the completed Milestone 037 evidence. Keep PR readiness and merge separately approved.
