@@ -36,7 +36,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
 - Acceptance: the corrected `0.4.1` rollout, runtime digest, ready EndpointSlice, health, page response, security headers, strict-CSP startup, Kubernetes findings, schema states, and General YAML behavior passed
-- Next candidate: local `0.5.0` adds the pinned OWASP Kubernetes Top 10:2025 review profile; nothing has been published or deployed
+- Next candidate: published `0.5.0` adds the pinned OWASP Kubernetes Top 10:2025 review profile and is staged immutably in the tracked Deployment; it is not deployed
 
 ## Completed milestones
 
@@ -74,7 +74,8 @@ The project has moved from basic workload deployment into repeatable engineering
 - Coverage labels: K01 direct; K02-K06, K08, and K09 partial; K07 and K10 cluster-context-required
 - Trust boundary: browser-local only, with no backend, cluster access, cloud access, credentials, or automatic remediation
 - Local verification: 49 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository manifest validation, and whitespace checks pass
-- Remaining gates: branch publication, image publication, deployment, browser acceptance, PR readiness, and merge
+- Publication: draft PR #14 and the immutable AMD64/ARM64 `0.5.0` image are published
+- Remaining gates: Deployment dry-run and diff review, deployment approval, browser acceptance, PR readiness, and merge
 
 ## Current observability state
 
@@ -171,7 +172,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the completed Milestone 037 local checkpoint. Branch publication, image publication, deployment, browser acceptance, PR readiness, and merge remain separately approved.
+Review the server-side dry-run and live diff for the staged immutable `0.5.0` Deployment-only update. Deployment, browser acceptance, PR readiness, and merge remain separately approved.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
@@ -195,4 +196,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench `0.4.1` is deployed from the published AMD64/ARM64 OCI index at `sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2`. It precompiles the bounded Kubernetes `v1.36.4` validators, preserves the strict CSP, and passed repeated interactive browser acceptance. NodePort `30081` remains private-lab HTTP exposure. Milestone 037's OWASP profile is source-only until the later approval gates complete.
+Forge YAML Workbench `0.4.1` is deployed from the published AMD64/ARM64 OCI index at `sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2`. It precompiles the bounded Kubernetes `v1.36.4` validators, preserves the strict CSP, and passed repeated interactive browser acceptance. NodePort `30081` remains private-lab HTTP exposure. Published Milestone 037 candidate `0.5.0` is staged in Git but is not deployed.
