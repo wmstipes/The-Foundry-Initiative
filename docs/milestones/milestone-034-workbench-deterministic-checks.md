@@ -2,7 +2,7 @@
 
 Started: 2026-09-12
 
-Status: Implementation, version `0.2.0` publication, immutable digest pinning, approved deployment, runtime verification, and live browser acceptance completed in draft PR #10. Final review and merge remain separate checkpoints.
+Status: Complete. Version `0.2.0` publication, immutable digest pinning, approved deployment, runtime verification, and live browser acceptance passed before PR #10 merged at `9848618`.
 
 ## Goal
 
@@ -47,7 +47,7 @@ Make each Workbench operational finding more actionable and add bounded cross-re
 - [x] Package metadata and lockfile identify the approved `0.2.0` release candidate.
 - [x] Versioned `0.2.0` publication is separately approved and verified for AMD64 and ARM64 at OCI index digest `sha256:1be3942fc9acf62906b020872d31a61cc6e1dab4e879476b4ba233063fb57720`.
 - [x] The live Deployment update was separately server-side dry-run, diff-reviewed, approved, rolled out, and verified at the pinned runtime digest with one Ready replica and zero restarts.
-- [ ] Final review and merge are separately approved.
+- [x] Final review was approved and PR #10 merged at `9848618`.
 
 ## Deferred
 

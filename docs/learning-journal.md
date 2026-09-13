@@ -388,7 +388,9 @@ Expanded Forge YAML Workbench from individual K01 references into a ten-category
 - Staged and separately deployed the immutable `0.5.1` patch.
 - Verified the corrected Pod is Ready with zero restarts, its configured and runtime ImageID match the reviewed OCI index, health and page requests return HTTP 200, and the strict security headers remain present.
 - Repeated live browser acceptance and confirmed finding links now automatically scroll to and select the correct YAML location.
+- Marked PR #14 ready only after corrected browser acceptance, then squash-merged it at `dd46a08`.
+- Post-merge Workbench CI run `34789967588`, Kubernetes manifest validation run `34789967652`, and Restaurant API Docker build run `34789967657` passed on `main`.
 
 ### Next small step
 
-Review the completed Milestone 037 evidence. Keep PR readiness and merge separately approved.
+Select the next bounded milestone from the roadmap while preserving the Workbench trust boundary and gated release workflow.

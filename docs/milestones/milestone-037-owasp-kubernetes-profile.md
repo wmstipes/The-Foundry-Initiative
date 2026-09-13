@@ -2,7 +2,7 @@
 
 Date: 2026-09-13
 
-Status: Immutable `0.5.1` is published, deployed, runtime-verified, and browser-accepted. PR readiness and merge remain separate approval gates.
+Status: Complete. Immutable `0.5.1` was published, deployed, runtime-verified, browser-accepted, and squash-merged through PR #14 at `dd46a08` on 2026-09-13.
 
 ## Goal
 
@@ -60,7 +60,8 @@ Expand Forge YAML Workbench from individual K01 references into an explicit OWAS
 - The production CSP scan found no `eval` or Function-constructor usage.
 - Dependency audit reports zero vulnerabilities.
 - Repository Kubernetes-manifest validation and whitespace checks pass.
-- Draft PR #14 is published; Workbench CI, Kubernetes manifest validation, and the non-publishing multi-architecture build pass.
+- PR #14 was marked ready after live acceptance and squash-merged at `dd46a08`.
+- Post-merge Workbench CI run `34789967588`, Kubernetes manifest validation run `34789967652`, and Restaurant API Docker build run `34789967657` passed on `main`.
 - Separately approved publication run `34787257312` produced OCI index `sha256:11e8fcc4989fe7dcdc1c5312786b80189a98b6a9acb82e979aa8235d756fcb8e`.
 - Active platform manifests are AMD64 `sha256:2a47101b9f176671e0954ca55e90b7ae4dfe42ba4b7ce5856ccd2f447822032e` and ARM64 `sha256:f1de89162f2de896d8907e2fcce17d511246881c919fa15e6ee3a1ea3f6077b3`.
 - The immutable `0.5.0` index is deployed. Its Pod is Ready with zero restarts, the runtime ImageID matches, the EndpointSlice has one ready address, health and page requests return HTTP 200, and strict security headers remain present.
@@ -71,7 +72,6 @@ Expand Forge YAML Workbench from individual K01 references into an explicit OWAS
 - The immutable `0.5.1` index is deployed. Its Pod is Ready with zero restarts, configured and runtime ImageIDs match, health and page requests return HTTP 200, and strict security headers remain present.
 - Repeated live browser acceptance confirmed that finding controls automatically scroll to and select the correct YAML location.
 
-## Remaining gates
+## Completion
 
-1. Review the completed implementation, publication, deployment, and browser-acceptance evidence before marking PR #14 ready.
-2. Keep merge separately approved.
+PR #14 was marked ready only after implementation, publication, deployment, runtime verification, and corrected browser acceptance passed. The separately approved squash merge completed at `dd46a08`; no Milestone 037 release or merge gates remain open.
