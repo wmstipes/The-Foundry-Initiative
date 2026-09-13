@@ -2,7 +2,7 @@
 
 Started: 2026-09-13
 
-Status: Source implementation, pull-request validation, and approved `0.3.0` publication are complete on `codex/milestone-035-general-yaml`. Deployment, live acceptance, and merge remain separate approval checkpoints.
+Status: Source implementation, pull-request validation, approved `0.3.0` publication, and digest-pinned deployment-candidate preparation are complete on `codex/milestone-035-general-yaml`. Server-side dry-run and live diff review precede separate deployment, live acceptance, and merge approvals.
 
 ## Goal
 
@@ -40,6 +40,7 @@ Add an explicit General YAML inspection mode alongside the existing Kubernetes m
 - Linux ARM64 manifest: `sha256:016ef45789896fe9ea334c425c22885d77ee9f358552139fbed18a2dffcd4813`
 - Registry media type: `application/vnd.oci.image.index.v1+json`
 - Deployed Workbench remains `0.2.0`; publication did not alter Kubernetes.
+- Deployment candidate: `k8s/forge-yaml-workbench/forge-yaml-workbench-deployment.yaml` pins the same `0.3.0` OCI index digest; it is not applied.
 
 ## Acceptance gates
 

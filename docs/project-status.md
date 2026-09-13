@@ -32,7 +32,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Runtime ImageID: verified against the pinned OCI index digest
 - External lab access: NodePort `30081`
 - Data path: browser-local parsing and analysis; no server-side YAML persistence
-- Development: Milestone 035 published General YAML inspection as `0.3.0` at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`; deployed version remains `0.2.0`
+- Development: Milestone 035 published General YAML inspection as `0.3.0` at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f` and prepared a matching deployment candidate; deployed version remains `0.2.0`
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
 - Acceptance: rollout, runtime digest, ready EndpointSlice, health, page, security headers, clickable finding paths, remediation guidance, clipboard examples, cautions, and OWASP references passed

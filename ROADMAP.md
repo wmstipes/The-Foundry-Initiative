@@ -192,7 +192,7 @@ See [Milestone 034](docs/milestones/milestone-034-workbench-deterministic-checks
 
 #### Milestone 035 — General YAML inspection mode
 
-**Status:** Implementation, pull-request validation, and approved `0.3.0` AMD64/ARM64 publication are complete on `codex/milestone-035-general-yaml` at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`; deployment, live acceptance, and merge remain separate approval gates.
+**Status:** Implementation, pull-request validation, approved `0.3.0` AMD64/ARM64 publication, and digest-pinned deployment-candidate preparation are complete on `codex/milestone-035-general-yaml` at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`; server-side dry-run and live diff review precede separate deployment, live acceptance, and merge approvals.
 
 - Keep Kubernetes as the default and add an explicit General YAML mode.
 - Share browser-local parsing, formatting, diagnostics, file handling, and tree navigation across modes.
