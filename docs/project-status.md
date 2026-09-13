@@ -36,7 +36,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
 - Acceptance: the `0.4.0` rollout, runtime digest, ready EndpointSlice, health, page response, and security headers passed; interactive browser acceptance failed on a blank page and is not complete
-- Next candidate: local `0.4.1` precompiles the 12 Kubernetes `v1.36.4` validators and rejects CSP-incompatible production bundles; publication and replacement release gates remain unapproved
+- Next candidate: published `0.4.1` precompiles the 12 Kubernetes `v1.36.4` validators and rejects CSP-incompatible production bundles; its immutable Deployment update is staged for review, but cluster deployment remains unapproved
 
 ## Completed milestones
 
@@ -66,7 +66,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 033: Workbench usability improved; `0.1.2` published, digest-pinned, deployed and live browser-validated
 - 034: Workbench deterministic Kubernetes checks and actionable remediation released as `0.2.0`, deployed, accepted, and merged
 - 035: General YAML inspection released as `0.3.0`, deployed, live browser-accepted, and merged
-- 036: `0.4.0` published and deployed; browser acceptance exposed a strict-CSP startup defect; local `0.4.1` correction verified, with publication, replacement deployment, repeated acceptance, and merge pending separate approvals
+- 036: `0.4.0` published and deployed; browser acceptance exposed a strict-CSP startup defect; `0.4.1` source and image published, with replacement deployment, repeated acceptance, and merge pending separate approvals
 
 ## Current observability state
 
@@ -163,7 +163,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the local Milestone 036 `0.4.1` strict-CSP correction, then request approval to publish the branch update. Keep replacement image publication, Deployment update, repeated live browser acceptance, PR readiness, and merge as later separate approvals.
+Review the server-side dry-run and live diff for the staged immutable `0.4.1` Deployment-only update, then request separate approval before applying it. Repeated live browser acceptance, PR readiness, and merge remain later approval gates.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
@@ -187,4 +187,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench `0.4.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477`. Kubernetes rollout, digest, routing, HTTP, and header checks passed, but live browser acceptance found a blank page because AJV runtime compilation was blocked by the strict CSP. The local `0.4.1` correction precompiles the same bounded Kubernetes `v1.36.4` validators and keeps the no-backend, no-cluster-access boundary unchanged. NodePort `30081` uses plain HTTP and is intended only for the private lab. Broader OWASP Kubernetes Top 10 coverage remains deferred to Milestone 037.
+Forge YAML Workbench `0.4.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477`. Kubernetes rollout, digest, routing, HTTP, and header checks passed, but live browser acceptance found a blank page because AJV runtime compilation was blocked by the strict CSP. The published `0.4.1` correction at OCI index `sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2` precompiles the same bounded Kubernetes `v1.36.4` validators; its immutable Deployment update is staged but not applied. The no-backend, no-cluster-access boundary is unchanged. NodePort `30081` uses plain HTTP and is intended only for the private lab. Broader OWASP Kubernetes Top 10 coverage remains deferred to Milestone 037.

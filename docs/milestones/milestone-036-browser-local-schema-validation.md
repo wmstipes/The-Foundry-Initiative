@@ -2,7 +2,7 @@
 
 Started: 2026-09-13
 
-Status: The separately approved `0.4.0` image was deployed and passed workload, digest, endpoint, health, page, and security-header checks. Live browser acceptance found a blank-page defect because runtime AJV compilation was blocked by the strict Content Security Policy. A local `0.4.1` correction precompiles validators at build time; publication, replacement image publication, redeployment, live browser acceptance, PR readiness, and merge remain separate approval gates.
+Status: The separately approved `0.4.0` image was deployed and passed workload, digest, endpoint, health, page, and security-header checks. Live browser acceptance found a blank-page defect because runtime AJV compilation was blocked by the strict Content Security Policy. The `0.4.1` source and AMD64/ARM64 image are published, and its immutable Deployment update is staged for review; deployment, repeated live browser acceptance, PR readiness, and merge remain separate approval gates.
 
 ## Goal
 
@@ -85,8 +85,10 @@ Schema mismatches include a YAML path and navigate to the nearest source locatio
 - [x] The `0.4.0` Deployment diff was separately reviewed and approved before cluster mutation.
 - [x] The `0.4.0` rollout, runtime digest, ready EndpointSlice, health endpoint, page response, CSP, and `nosniff` checks passed.
 - [x] Live browser acceptance found and documented the strict-CSP startup defect; it did not accept `0.4.0`.
-- [ ] Publish the reviewed `0.4.1` source correction after separate approval.
-- [ ] Publish and deploy a replacement immutable image after their separate approvals.
+- [x] The reviewed `0.4.1` source correction is published on draft PR #13.
+- [x] The separately approved `0.4.1` image publication passed in run `34780773917`; the active AMD64/ARM64 OCI index digest is `sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2`.
+- [x] The Deployment manifest and validator stage the immutable `0.4.1` index without changing namespace, Service, replicas, probes, resources, security context, or volumes.
+- [ ] Review server-side dry-run and live diff, then separately approve the replacement deployment.
 - [ ] Repeat live browser acceptance after the corrected deployment.
 - [ ] Final merge is separately approved and complete.
 

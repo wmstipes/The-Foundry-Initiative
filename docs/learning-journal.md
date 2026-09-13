@@ -341,7 +341,9 @@ Added an offline Kubernetes schema layer to Forge YAML Workbench while retaining
 - Found a blank-page defect during live browser acceptance: AJV's runtime schema compiler uses dynamic code generation, which the production `script-src 'self'` policy correctly blocks.
 - Kept the strict CSP unchanged and prepared a local `0.4.1` correction that checks in reproducible standalone validators generated at build time.
 - Added a production-bundle guard that fails if `eval` or `new Function` is present; all 42 tests, the production build, validator reproducibility, and the dependency audit pass locally.
+- Published the separately approved `0.4.1` correction in run `34780773917`; its active AMD64/ARM64 OCI index is `sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2`.
+- Staged the Deployment-only update to the immutable `0.4.1` index; the live cluster remains on `0.4.0` pending server-side dry-run, diff review, and separate deployment approval.
 
 ### Next small step
 
-Review and separately approve publication of the local `0.4.1` correction. Replacement image publication, redeployment, repeated live browser acceptance, PR readiness, and merge remain later approval gates. Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.
+Review the server-side dry-run and live diff for the staged immutable `0.4.1` Deployment-only update, then request separate approval before applying it. Repeated live browser acceptance, PR readiness, and merge remain later approval gates. Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.
