@@ -63,6 +63,36 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(document.querySelector("#results").textContent).toContain(".spec.mysteryField");
   });
 
+  it("scrolls the editor to a selected finding location", () => {
+    const source = [
+      "apiVersion: v1",
+      "kind: Pod",
+      "metadata: {name: navigation}",
+      "spec:",
+      ...Array.from({ length: 60 }, (_, index) => `  placeholder${index}: true`),
+      "  containers: []",
+      ""
+    ].join("\n");
+    Object.defineProperties(editor, {
+      clientHeight: { configurable: true, value: 200 },
+      scrollHeight: { configurable: true, value: 2000 }
+    });
+    editor.style.fontSize = "10px";
+    editor.style.lineHeight = "20px";
+    editor.scrollTop = 0;
+
+    replaceEditor(source);
+    document.querySelector('[data-tab="validation"]').click();
+    const location = [...document.querySelectorAll(".message-location")].find((item) =>
+      item.textContent.includes("Line 65"));
+    expect(location).not.toBeUndefined();
+
+    location.click();
+
+    expect(editor.selectionStart).toBe(source.indexOf("  containers: []"));
+    expect(editor.scrollTop).toBeGreaterThan(0);
+  });
+
   it("labels unsupported resources and unavailable CRD schemas explicitly", () => {
     replaceEditor("apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata: {name: unsupported}\n---\napiVersion: database.example.com/v1\nkind: Database\nmetadata: {name: custom}\n");
     document.querySelector('[data-tab="validation"]').click();
