@@ -337,8 +337,11 @@ Added an offline Kubernetes schema layer to Forge YAML Workbench while retaining
 - Passed the production build, dependency audit, and whitespace validation.
 - Published draft PR #13 and passed Workbench CI plus the non-publishing AMD64/ARM64 container build.
 - Published the separately approved `0.4.0` OCI index at `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477` and verified active Linux AMD64 and ARM64 manifests.
-- Staged the Deployment-only update with the immutable `0.4.0` image reference; the cluster remains unchanged pending dry-run, diff review, and separate deployment approval.
+- Applied the separately reviewed Deployment-only update and verified one Ready Pod with zero restarts, the expected runtime image digest, one ready endpoint, HTTP 200 health and page responses, and the expected CSP and `nosniff` headers.
+- Found a blank-page defect during live browser acceptance: AJV's runtime schema compiler uses dynamic code generation, which the production `script-src 'self'` policy correctly blocks.
+- Kept the strict CSP unchanged and prepared a local `0.4.1` correction that checks in reproducible standalone validators generated at build time.
+- Added a production-bundle guard that fails if `eval` or `new Function` is present; all 42 tests, the production build, validator reproducibility, and the dependency audit pass locally.
 
 ### Next small step
 
-Review the server-side dry-run and live diff for the staged Deployment-only update, then request separate approval before applying it. Live browser acceptance, PR readiness, and merge remain later approval gates. Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.
+Review and separately approve publication of the local `0.4.1` correction. Replacement image publication, redeployment, repeated live browser acceptance, PR readiness, and merge remain later approval gates. Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.

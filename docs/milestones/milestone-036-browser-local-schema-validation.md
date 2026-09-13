@@ -2,7 +2,7 @@
 
 Started: 2026-09-13
 
-Status: Source implementation, branch publication, pull-request validation, and separately approved `0.4.0` image publication are complete. The immutable Deployment update is staged for review; deployment, live browser acceptance, PR readiness, and merge remain separate approval gates.
+Status: The separately approved `0.4.0` image was deployed and passed workload, digest, endpoint, health, page, and security-header checks. Live browser acceptance found a blank-page defect because runtime AJV compilation was blocked by the strict Content Security Policy. A local `0.4.1` correction precompiles validators at build time; publication, replacement image publication, redeployment, live browser acceptance, PR readiness, and merge remain separate approval gates.
 
 ## Goal
 
@@ -36,9 +36,11 @@ Support is an exact `apiVersion` and `kind` match. A built-in GVK outside this t
 - Upstream SHA-256: `dcede2063da1d7ad62ecb5af8adb6d7fabd0b52385a7fa0048afb491dac90450`
 - Generated browser bundle: `apps/forge-yaml-workbench/src/schema/kubernetes-v1.36.4.json`
 - Bundle contents: 12 resource mappings and 196 transitive definitions
-- Validator: exactly pinned `ajv@8.20.0`
+- Validator generator: exactly pinned `ajv@8.20.0`
 
 The checked-in generator rejects any input file whose checksum differs from the pinned upstream source. It also normalizes Kubernetes `IntOrString` fields and closes documented object-property sets so wrong types and unknown fields are reported locally.
+
+AJV emits the 12 standalone validator functions during development. The generated module is checked in and reproducibility-checked before each production build, so the browser does not use dynamic JavaScript evaluation. CI scans the final JavaScript assets and rejects `eval` or `new Function`, preserving the strict production Content Security Policy.
 
 ## Result contract
 
@@ -71,16 +73,21 @@ Schema mismatches include a YAML path and navigate to the nearest source locatio
 - [x] Analyzer and schema tests cover valid, invalid, unsupported, unavailable-CRD, not-evaluated, unknown-field, wrong-type, `IntOrString`, and source-location behavior.
 - [x] DOM tests cover separate report sections and explicit unsupported/unavailable labels.
 - [x] General YAML tests prove Kubernetes operational and schema results remain absent.
-- [x] All 42 tests pass, including compilation of every schema in the explicit support set.
-- [x] Production build passes; output JavaScript is 599.43 kB uncompressed and 152.54 kB gzip.
+- [x] All 42 tests pass, including loading and exercising every precompiled schema in the explicit support set.
+- [x] The local `0.4.1` production build passes; output JavaScript is 695.62 kB uncompressed and 106.88 kB gzip.
+- [x] Validator generation is reproducible and the production bundle contains no `eval` or `new Function` usage.
 - [x] Dependency audit reports zero vulnerabilities.
 - [x] Whitespace validation passes.
 - [x] Branch publication is approved and complete through draft PR #13.
 - [x] Pull-request CI and non-publishing multi-architecture image build pass in runs `34778172043` and `34778172060`.
 - [x] Versioned `0.4.0` image publication is separately approved and passed in run `34778468753`; the AMD64/ARM64 OCI index digest is `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477`.
 - [x] The Deployment manifest and validator pin the reviewed `0.4.0` OCI index without changing namespace, Service, replicas, probes, resources, security context, or volumes.
-- [ ] Deployment diff is separately reviewed and approved before cluster mutation.
-- [ ] Runtime verification and live browser acceptance pass after deployment.
+- [x] The `0.4.0` Deployment diff was separately reviewed and approved before cluster mutation.
+- [x] The `0.4.0` rollout, runtime digest, ready EndpointSlice, health endpoint, page response, CSP, and `nosniff` checks passed.
+- [x] Live browser acceptance found and documented the strict-CSP startup defect; it did not accept `0.4.0`.
+- [ ] Publish the reviewed `0.4.1` source correction after separate approval.
+- [ ] Publish and deploy a replacement immutable image after their separate approvals.
+- [ ] Repeat live browser acceptance after the corrected deployment.
 - [ ] Final merge is separately approved and complete.
 
 ## Deferred

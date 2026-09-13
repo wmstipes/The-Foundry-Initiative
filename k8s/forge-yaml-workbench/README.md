@@ -22,7 +22,7 @@ Immutable image reference:
 wmstipes/signalforge-yaml-workbench:0.4.0@sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477
 ```
 
-The OCI image index contains both `linux/amd64` and `linux/arm64`. No floating image tag is used. The manifest stages the published immutable `0.4.0` image for server-side dry-run and live diff review; the live cluster remains on `0.3.0` until deployment is separately approved.
+The OCI image index contains both `linux/amd64` and `linux/arm64`. No floating image tag is used. The manifest deploys the published immutable `0.4.0` image. Its rollout and HTTP checks passed, but live browser acceptance found a strict-CSP startup defect; a replacement image is not pinned here until the local `0.4.1` correction is separately published.
 
 ## Security and data boundaries
 
@@ -62,4 +62,4 @@ kubectl rollout status deployment/forge-yaml-workbench -n forge-tools --timeout=
 kubectl get deployment,pods,service -n forge-tools -o wide
 ```
 
-The accepted live `0.3.0` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`. NodePort `30081`, its ready EndpointSlice, `/healthz`, the application page, mode markers, Content Security Policy, and `X-Content-Type-Options` passed immediate runtime verification. Live browser acceptance confirmed Kubernetes as the default, content-preserving mode switches, suppression of Kubernetes-only findings in General YAML, and mapping, sequence, scalar and explicit null roots.
+The live `0.4.0` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477`. NodePort `30081`, its ready EndpointSlice, `/healthz`, the application page response, Content Security Policy, and `X-Content-Type-Options` passed immediate runtime verification. Interactive browser acceptance did not pass: AJV runtime compilation was blocked by the strict CSP and the page rendered blank.

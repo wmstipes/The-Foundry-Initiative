@@ -50,5 +50,8 @@ jobs:
       - name: Build production assets
         run: npm run build
 
+      - name: Verify strict-CSP compatibility
+        run: npm run csp:check
+
       - name: Audit dependencies
         run: npm audit

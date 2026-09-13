@@ -1,14 +1,8 @@
-import Ajv from "ajv";
 import schemaBundle from "./schema/kubernetes-v1.36.4.json" with { type: "json" };
+import { KUBERNETES_VALIDATORS } from "./schema/kubernetes-v1.36.4-validators.js";
 
 export const KUBERNETES_SCHEMA_VERSION = schemaBundle.kubernetesVersion;
 export const SUPPORTED_SCHEMA_RESOURCES = Object.freeze(Object.keys(schemaBundle.supportedResources));
-
-const SCHEMA_ID = `https://signalforge.local/schemas/kubernetes/${KUBERNETES_SCHEMA_VERSION}`;
-const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
-ajv.addSchema({ $id: SCHEMA_ID, definitions: schemaBundle.definitions }, SCHEMA_ID);
-
-const validators = new Map();
 
 function resourceKey(apiVersion, kind) {
   return `${apiVersion}|${kind}`;
@@ -45,13 +39,6 @@ function describeError(error) {
   return error.message ? error.message.charAt(0).toUpperCase() + error.message.slice(1) + "." : "The value does not match the schema.";
 }
 
-function validatorFor(definitionName) {
-  if (!validators.has(definitionName)) {
-    validators.set(definitionName, ajv.compile({ $ref: `${SCHEMA_ID}#/definitions/${definitionName}` }));
-  }
-  return validators.get(definitionName);
-}
-
 export function validateKubernetesResource(resource) {
   const apiVersion = resource?.apiVersion;
   const kind = resource?.kind;
@@ -66,8 +53,8 @@ export function validateKubernetesResource(resource) {
   }
 
   const key = resourceKey(apiVersion, kind);
-  const definitionName = schemaBundle.supportedResources[key];
-  if (!definitionName) {
+  const validate = KUBERNETES_VALIDATORS[key];
+  if (!validate) {
     const group = apiGroup(apiVersion);
     if (group && !schemaBundle.builtInGroups.includes(group)) {
       return {
@@ -83,7 +70,6 @@ export function validateKubernetesResource(resource) {
     };
   }
 
-  const validate = validatorFor(definitionName);
   if (validate(resource)) {
     return {
       ...base,

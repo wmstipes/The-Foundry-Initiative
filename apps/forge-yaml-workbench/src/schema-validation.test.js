@@ -13,7 +13,7 @@ describe("pinned Kubernetes schema validation", () => {
     expect(SUPPORTED_SCHEMA_RESOURCES).toHaveLength(12);
   });
 
-  it("compiles every schema in the explicit support set", () => {
+  it("loads every precompiled schema in the explicit support set", () => {
     for (const key of SUPPORTED_SCHEMA_RESOURCES) {
       const [apiVersion, kind] = key.split("|");
       expect(() => validateKubernetesResource({ apiVersion, kind })).not.toThrow();

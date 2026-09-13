@@ -2,7 +2,7 @@
 
 Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. It parses YAML locally in the browser and offers Kubernetes-specific and General YAML inspection modes.
 
-## Version 0.4.0 source scope
+## Version 0.4.1 source scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
@@ -67,6 +67,8 @@ npm.cmd run schema:build -- C:\path\to\kubernetes-v1.36.4-swagger.json
 
 The generator rejects a file whose SHA-256 does not match the pinned source.
 
+The checked-in validators are precompiled during development and verified again by the production build. The browser does not compile schemas dynamically, so validation remains compatible with the production Content Security Policy without allowing `unsafe-eval`.
+
 ## Validation boundary
 
 The Workbench performs YAML parsing in both modes. Kubernetes mode adds deterministic operational checks and bounded schema validation for the supported table above; General YAML mode does not infer Kubernetes semantics or produce schema results. All parsing, operational checks, bundled schema lookup, and validation run in browser memory.
@@ -83,8 +85,10 @@ Use the committed lockfile for reproducible installation:
 
 ~~~powershell
 npm.cmd ci
+npm.cmd run validators:check
 npm.cmd test
 npm.cmd run build
+npm.cmd run csp:check
 ~~~
 
 ## Container

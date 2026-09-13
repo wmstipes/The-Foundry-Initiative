@@ -27,16 +27,16 @@ The project has moved from basic workload deployment into repeatable engineering
 - Namespace: `forge-tools`
 - Deployment: `forge-yaml-workbench`
 - Replicas: 1 available and Ready
-- Release: `0.3.0`
-- Image: `wmstipes/signalforge-yaml-workbench:0.3.0@sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`
+- Release: `0.4.0` deployed; browser acceptance failed because runtime AJV compilation is blocked by the strict CSP
+- Image: `wmstipes/signalforge-yaml-workbench:0.4.0@sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477`
 - Runtime ImageID: verified against the pinned OCI index digest
 - External lab access: NodePort `30081`
 - Data path: browser-local parsing and analysis; no server-side YAML persistence
 - Modes: Kubernetes inspection by default and explicit General YAML inspection for mapping, sequence, and scalar roots
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
-- Acceptance: rollout, runtime digest, ready EndpointSlice, health, page, security headers, both inspection modes, content-preserving mode switches, General YAML root handling, Kubernetes-finding suppression, clickable finding paths, remediation guidance, clipboard examples, cautions, and OWASP references passed
-- Next candidate: published `0.4.0` validates 12 explicit GVKs against bundled Kubernetes `v1.36.4` schemas; its immutable manifest update is staged, but deployment remains unapproved
+- Acceptance: the `0.4.0` rollout, runtime digest, ready EndpointSlice, health, page response, and security headers passed; interactive browser acceptance failed on a blank page and is not complete
+- Next candidate: local `0.4.1` precompiles the 12 Kubernetes `v1.36.4` validators and rejects CSP-incompatible production bundles; publication and replacement release gates remain unapproved
 
 ## Completed milestones
 
@@ -66,7 +66,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 033: Workbench usability improved; `0.1.2` published, digest-pinned, deployed and live browser-validated
 - 034: Workbench deterministic Kubernetes checks and actionable remediation released as `0.2.0`, deployed, accepted, and merged
 - 035: General YAML inspection released as `0.3.0`, deployed, live browser-accepted, and merged
-- 036: local browser-schema implementation verified; publication, deployment, browser acceptance, and merge pending separate approvals
+- 036: `0.4.0` published and deployed; browser acceptance exposed a strict-CSP startup defect; local `0.4.1` correction verified, with publication, replacement deployment, repeated acceptance, and merge pending separate approvals
 
 ## Current observability state
 
@@ -163,7 +163,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the local Milestone 036 implementation and documentation, then request approval to publish `codex/milestone-036-schema-validation`. Keep image publication, Deployment changes, live browser acceptance, and merge as later separate approvals.
+Review the local Milestone 036 `0.4.1` strict-CSP correction, then request approval to publish the branch update. Keep replacement image publication, Deployment update, repeated live browser acceptance, PR readiness, and merge as later separate approvals.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
@@ -187,4 +187,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench `0.4.0` is published for AMD64 and ARM64 at OCI index digest `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477`. It performs bounded browser-local validation for 12 explicit GVKs using Kubernetes `v1.36.4` schemas and does not discover APIs or CRDs, perform defaulting or conversion, contact admission or policy components, or prove server acceptance. The tracked Deployment manifest stages this immutable image, but the live `0.3.0` release remains unchanged until deployment is separately approved. NodePort `30081` uses plain HTTP and is intended only for the private lab. Broader OWASP Kubernetes Top 10 coverage remains deferred to Milestone 037.
+Forge YAML Workbench `0.4.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477`. Kubernetes rollout, digest, routing, HTTP, and header checks passed, but live browser acceptance found a blank page because AJV runtime compilation was blocked by the strict CSP. The local `0.4.1` correction precompiles the same bounded Kubernetes `v1.36.4` validators and keeps the no-backend, no-cluster-access boundary unchanged. NodePort `30081` uses plain HTTP and is intended only for the private lab. Broader OWASP Kubernetes Top 10 coverage remains deferred to Milestone 037.

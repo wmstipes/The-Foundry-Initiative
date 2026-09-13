@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-035 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench `0.3.0`. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 036 has a verified and published `0.4.0` candidate with pinned, browser-local Kubernetes `v1.36.4` schema validation; its immutable Deployment update is staged for review, while deployment and runtime acceptance remain separately approved.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-035 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 036 deployed the published `0.4.0` candidate, but browser acceptance found a strict-CSP startup defect; a local `0.4.1` correction precompiles the pinned Kubernetes `v1.36.4` validators.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -203,7 +203,7 @@ See [Milestone 035](docs/milestones/milestone-035-general-yaml.md).
 
 #### Milestone 036 — Browser-local Kubernetes schema validation
 
-**Status:** In progress. `0.4.0` implementation, pull-request validation, and separately approved AMD64/ARM64 image publication are complete. The immutable Deployment update is staged for review; deployment and runtime acceptance remain unapproved.
+**Status:** In progress. `0.4.0` implementation, publication, and approved deployment are complete. Workload and HTTP checks passed, but browser acceptance found a strict-CSP startup defect. A local `0.4.1` correction precompiles validators; publication, replacement image publication, redeployment, repeated browser acceptance, and merge remain separately approved.
 
 - Validate supported Kubernetes resources against schemas for one explicitly pinned Kubernetes version.
 - Keep schema data and validation in the browser without adding cluster access or server-side YAML processing.
