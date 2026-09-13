@@ -4,7 +4,7 @@ Started: 2026-09-12
 
 Completed: 2026-09-12
 
-Status: Complete in draft PR #9. Implementation, versioned publication, approved deployment, and live browser acceptance passed. Final review and merge remain separate checkpoints.
+Status: Complete. Merged through PR #9 at `7aadedd` on 2026-09-12 after implementation, versioned publication, approved deployment, and live browser acceptance passed.
 
 ## Goal
 

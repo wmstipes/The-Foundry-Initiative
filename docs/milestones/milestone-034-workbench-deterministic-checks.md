@@ -1,0 +1,58 @@
+# Milestone 034 — Forge YAML Workbench deeper deterministic checks
+
+Started: 2026-09-12
+
+Status: Implementation, version `0.2.0` publication, immutable digest pinning, approved deployment, runtime verification, and live browser acceptance completed in draft PR #10. Final review and merge remain separate checkpoints.
+
+## Goal
+
+Make each Workbench operational finding more actionable and add bounded cross-resource checks that can be evaluated deterministically in the browser.
+
+## Bounded scope
+
+- Give every operational finding a precise YAML path.
+- Make each YAML path navigate to the nearest existing editor location, including a useful parent location for a missing field.
+- Separate the explanation of the risk from a suggested correction.
+- Provide expandable, copyable YAML examples and workload-specific cautions for OWASP K01 hardening findings.
+- Identify OWASP K01:2025 findings with a direct source link.
+- Detect missing or mismatched workload selectors.
+- Detect duplicate resource identities in multi-document input.
+- Compare Service selectors with workload Pod labels included in the same file.
+- Validate named Service target ports against selected workload container-port names.
+- Detect host PID and IPC namespace sharing in addition to existing host-network and HostPath checks.
+- Check whether containers explicitly disable privilege escalation, use a read-only root filesystem, drop Linux capabilities, require non-root execution, and use a RuntimeDefault or Localhost seccomp profile.
+- Preserve existing parser diagnostics, summaries, formatting, object tree, file handling, and keyboard behavior.
+- Report parsed-document and finding counts without implying API-server validity.
+
+## Guardrails
+
+- YAML remains in browser memory and is not sent to a backend.
+- The Workbench receives no Kubernetes credentials or API access.
+- No server-side persistence is introduced.
+- Cross-document checks use only resources included in the current editor input.
+- A standalone Service does not produce a false missing-workload warning when no comparable workload is included.
+- `matchExpressions` selectors are accepted but are not fully evaluated in this milestone.
+- Findings remain bounded operational guidance, not Kubernetes schema or admission guarantees.
+- OWASP references identify relevant guidance and do not imply full OWASP coverage or compliance certification.
+- Suggested YAML is copied for operator review; the Workbench does not automatically mutate the manifest.
+- No live cluster change is included without a later explicit dry-run, diff review, and approval checkpoint.
+
+## Acceptance gates
+
+- [x] Analyzer tests cover paths, corrections, selector mismatch, selector expressions, duplicate identities, Service selection, named target ports, host namespaces, container hardening, seccomp, and OWASP K01 remediation metadata.
+- [x] DOM coverage confirms paths, expandable guidance, cautions, OWASP references, and copyable YAML are rendered in Validation.
+- [x] Locked clean installation, 23-test suite, production build, dependency audit, repository manifest validation, and whitespace checks pass locally.
+- [x] Pull-request CI and non-publishing multi-architecture image build pass.
+- [x] Browser acceptance passes for clickable paths, expandable remediation guidance, copyable YAML, cautions, and OWASP references.
+- [x] Package metadata and lockfile identify the approved `0.2.0` release candidate.
+- [x] Versioned `0.2.0` publication is separately approved and verified for AMD64 and ARM64 at OCI index digest `sha256:1be3942fc9acf62906b020872d31a61cc6e1dab4e879476b4ba233063fb57720`.
+- [x] The live Deployment update was separately server-side dry-run, diff-reviewed, approved, rolled out, and verified at the pinned runtime digest with one Ready replica and zero restarts.
+- [ ] Final review and merge are separately approved.
+
+## Deferred
+
+- General YAML inspection mode remains Milestone 035.
+- Kubernetes OpenAPI schema validation remains Milestone 036.
+- Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037 after schema validation.
+- Full set-based evaluation of `matchExpressions` is deferred unless a later bounded requirement justifies it.
+- Cluster lookups, admission requests, policy-engine integration, and automatic YAML mutation remain out of scope.

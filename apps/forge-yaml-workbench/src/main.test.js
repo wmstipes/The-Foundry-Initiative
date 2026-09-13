@@ -52,7 +52,7 @@ describe("Forge YAML Workbench browser interactions", () => {
 
     replaceEditor("apiVersion: v1\nkind: Pod\nmetadata:\n  name: corrected\n");
     expect(document.querySelector("#action-status").textContent).toBe("Editing YAML");
-    expect(document.querySelector("#status").textContent).toBe("1 valid document");
+    expect(document.querySelector("#status").textContent).toContain("1 parsed document");
   });
 
   it("protects unsaved YAML from accidental clearing", () => {
@@ -104,5 +104,41 @@ describe("Forge YAML Workbench browser interactions", () => {
     document.querySelector("#download").click();
     expect(downloadedAs).toBe("opened.yml");
     expect(document.querySelector("#action-status").textContent).toBe("opened.yml downloaded");
+  });
+
+  it("renders operational YAML paths and suggested corrections", () => {
+    replaceEditor("apiVersion: v1\nkind: Pod\nmetadata:\n  name: empty\nspec: {}\n");
+    document.querySelector('[data-tab="validation"]').click();
+
+    const message = [...document.querySelectorAll(".message")].find((item) =>
+      item.textContent.includes("No containers found"));
+    expect(message.querySelector(".message-path code").textContent).toBe(".spec.containers");
+    expect(message.querySelector(".message-suggestion").textContent).toContain("Add at least one container");
+
+    message.querySelector(".message-path").click();
+    expect(editor.value.slice(editor.selectionStart, editor.selectionEnd)).toBe("spec: {}");
+  });
+
+  it("expands and copies OWASP remediation guidance", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText }
+    });
+    replaceEditor("apiVersion: v1\nkind: Pod\nmetadata: {name: guidance}\nspec:\n  containers: [{name: app, image: example/app:1.0.0}]\n");
+    document.querySelector('[data-tab="validation"]').click();
+
+    const message = [...document.querySelectorAll(".message")].find((item) =>
+      item.textContent.includes("privilege escalation not disabled"));
+    expect(message.querySelector(".fix-guidance")).not.toBeNull();
+    expect(message.querySelector(".fix-guidance pre").textContent).toContain("allowPrivilegeEscalation: false");
+    expect(message.querySelector(".guidance-caution").textContent).toContain("Before applying:");
+    expect(message.querySelector(".guidance-standard a").textContent).toContain("OWASP K01:2025");
+
+    message.querySelector(".copy-guidance").click();
+    await vi.waitFor(() => {
+      expect(writeText).toHaveBeenCalledWith("securityContext:\n  allowPrivilegeEscalation: false");
+      expect(document.querySelector("#action-status").textContent).toBe("Suggested YAML copied");
+    });
   });
 });

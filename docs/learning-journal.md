@@ -248,4 +248,31 @@ Improved Forge YAML Workbench interaction clarity and diagnostic precision witho
 
 ### Next small step
 
-Complete final review and merge of PR #9, then begin Milestone 034 as a separate bounded change for deeper deterministic Kubernetes checks with precise YAML paths and suggested corrections.
+PR #9 merged at `7aadedd`. Begin Milestone 034 as a separate bounded change for deeper deterministic Kubernetes checks with precise YAML paths and suggested corrections.
+
+---
+
+## 2026-09-13 - Milestone 034 deterministic checks and actionable remediation
+
+### What I worked on
+
+Expanded Forge YAML Workbench from parser-focused feedback into a bounded Kubernetes manifest inspection tool. Findings now include clickable YAML paths, plain-language risk explanations, recommended changes, copyable YAML examples, operational cautions, and initial OWASP Kubernetes Top 10:2025 K01 references. Deterministic cross-document checks cover workload selectors, duplicate identities, Service selection, named target ports, host namespaces, container hardening, and seccomp configuration.
+
+### What I learned
+
+- A finding becomes substantially more useful when it identifies the exact field, explains why it matters, and shows a reviewable correction.
+- Missing-field diagnostics need to navigate to the nearest existing parent because the desired line does not yet exist.
+- Browser-local analysis can provide meaningful operational guidance while maintaining an explicit boundary around Kubernetes schema, admission, and cluster-context claims.
+- Publishing, digest pinning, server-side dry-run, diff review, deployment approval, runtime verification, and browser acceptance remain separate evidence gates.
+
+### What I finished
+
+- Expanded automated coverage to 23 analyzer and DOM interaction tests.
+- Published `0.2.0` for AMD64 and ARM64 without a floating tag.
+- Pinned and verified OCI index digest `sha256:1be3942fc9acf62906b020872d31a61cc6e1dab4e879476b4ba233063fb57720`.
+- Rolled out only the approved Workbench Deployment and verified one Ready replica with zero restarts.
+- Verified EndpointSlice routing, NodePort health, security headers, clickable paths, expandable fix guidance, clipboard examples, cautions, and OWASP references in the live application.
+
+### Next small step
+
+Complete final review and merge of PR #10. Begin General YAML inspection mode as Milestone 035 in a new chat, leaving Kubernetes schema validation and broader OWASP coverage for Milestones 036 and 037.
