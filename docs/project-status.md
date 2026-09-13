@@ -35,8 +35,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Modes: Kubernetes inspection by default and explicit General YAML inspection for mapping, sequence, and scalar roots
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
-- Acceptance: immutable `0.5.0` is deployed; runtime digest, ready EndpointSlice, health, page response, security headers, OWASP profile, schema states, and General YAML isolation passed
-- Next candidate: published immutable `0.5.1` centers the editor on clicked finding locations and is staged for deployment review
+- Acceptance: immutable `0.5.1` is deployed; runtime digest, ready EndpointSlice, health, page response, security headers, OWASP profile, schema states, General YAML isolation, and corrected finding navigation passed
 
 ## Completed milestones
 
@@ -70,12 +69,12 @@ The project has moved from basic workload deployment into repeatable engineering
 
 ## Current milestone
 
-- 037: pinned OWASP Kubernetes Top 10:2025 review profile deployed as `0.5.0`; immutable navigation correction published and staged as `0.5.1`
+- 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation deployed and browser-accepted as immutable `0.5.1`
 - Coverage labels: K01 direct; K02-K06, K08, and K09 partial; K07 and K10 cluster-context-required
 - Trust boundary: browser-local only, with no backend, cluster access, cloud access, credentials, or automatic remediation
 - Local verification: 50 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository manifest validation, and whitespace checks pass
-- Publication and deployment: draft PR #14 and immutable AMD64/ARM64 `0.5.0` and `0.5.1` images are published; `0.5.0` remains live and passed runtime checks
-- Remaining gates: `0.5.1` deployment review and approval, repeated browser acceptance, PR readiness, and merge
+- Publication and deployment: draft PR #14 and immutable AMD64/ARM64 `0.5.0` and `0.5.1` images are published; `0.5.1` is live and passed runtime and browser checks
+- Remaining gates: PR readiness and merge
 
 ## Current observability state
 
@@ -172,7 +171,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the server-side dry-run and live diff for the staged immutable `0.5.1` finding-navigation correction. Deployment, repeated browser acceptance, PR readiness, and merge remain separately approved.
+Review the completed Milestone 037 evidence. PR readiness and merge remain separately approved.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
@@ -196,4 +195,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench `0.5.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:11e8fcc4989fe7dcdc1c5312786b80189a98b6a9acb82e979aa8235d756fcb8e`. Its runtime, OWASP profile, schema boundaries, General YAML isolation, and strict headers passed. Browser acceptance found a navigation defect: finding controls selected the correct YAML but did not scroll it into view. Published `0.5.1` corrects that behavior and is staged immutably for deployment review. NodePort `30081` remains private-lab HTTP exposure.
+Forge YAML Workbench `0.5.1` is deployed from the published AMD64/ARM64 OCI index at `sha256:4011478de37f9316d65985f17d87d3652203e2bcffd75ee29646ddcd52a64ffa`. Its runtime, OWASP profile, schema boundaries, General YAML isolation, strict headers, and corrected finding-link scrolling passed live acceptance. NodePort `30081` remains private-lab HTTP exposure.
