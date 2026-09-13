@@ -35,8 +35,8 @@ The project has moved from basic workload deployment into repeatable engineering
 - Modes: Kubernetes inspection by default and explicit General YAML inspection for mapping, sequence, and scalar roots
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
-- Acceptance: the corrected `0.4.1` rollout, runtime digest, ready EndpointSlice, health, page response, security headers, strict-CSP startup, Kubernetes findings, schema states, and General YAML behavior passed
-- Next candidate: published `0.5.0` adds the pinned OWASP Kubernetes Top 10:2025 review profile and is staged immutably in the tracked Deployment; it is not deployed
+- Acceptance: immutable `0.5.0` is deployed; runtime digest, ready EndpointSlice, health, page response, security headers, OWASP profile, schema states, and General YAML isolation passed
+- Next candidate: local `0.5.1` centers the editor on clicked finding locations, correcting the navigation defect found during `0.5.0` browser acceptance
 
 ## Completed milestones
 
@@ -70,12 +70,12 @@ The project has moved from basic workload deployment into repeatable engineering
 
 ## Current milestone
 
-- 037: pinned OWASP Kubernetes Top 10:2025 review profile implemented locally as source version `0.5.0`
+- 037: pinned OWASP Kubernetes Top 10:2025 review profile deployed as `0.5.0`; local navigation correction prepared as `0.5.1`
 - Coverage labels: K01 direct; K02-K06, K08, and K09 partial; K07 and K10 cluster-context-required
 - Trust boundary: browser-local only, with no backend, cluster access, cloud access, credentials, or automatic remediation
-- Local verification: 49 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository manifest validation, and whitespace checks pass
-- Publication: draft PR #14 and the immutable AMD64/ARM64 `0.5.0` image are published
-- Remaining gates: Deployment dry-run and diff review, deployment approval, browser acceptance, PR readiness, and merge
+- Local verification: 50 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository manifest validation, and whitespace checks pass
+- Publication and deployment: draft PR #14 and immutable AMD64/ARM64 `0.5.0` are published; `0.5.0` is live and passed runtime checks
+- Remaining gates: `0.5.1` patch publication, deployment, repeated browser acceptance, PR readiness, and merge
 
 ## Current observability state
 
@@ -172,7 +172,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the server-side dry-run and live diff for the staged immutable `0.5.0` Deployment-only update. Deployment, browser acceptance, PR readiness, and merge remain separately approved.
+Review the local `0.5.1` finding-navigation correction. Patch publication, deployment, repeated browser acceptance, PR readiness, and merge remain separately approved.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
@@ -196,4 +196,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench `0.4.1` is deployed from the published AMD64/ARM64 OCI index at `sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2`. It precompiles the bounded Kubernetes `v1.36.4` validators, preserves the strict CSP, and passed repeated interactive browser acceptance. NodePort `30081` remains private-lab HTTP exposure. Published Milestone 037 candidate `0.5.0` is staged in Git but is not deployed.
+Forge YAML Workbench `0.5.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:11e8fcc4989fe7dcdc1c5312786b80189a98b6a9acb82e979aa8235d756fcb8e`. Its runtime, OWASP profile, schema boundaries, General YAML isolation, and strict headers passed. Browser acceptance found a navigation defect: finding controls selected the correct YAML but did not scroll it into view. Local `0.5.1` corrects that behavior. NodePort `30081` remains private-lab HTTP exposure.
