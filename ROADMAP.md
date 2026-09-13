@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-033 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench `0.2.0`. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 034 implementation and live acceptance are complete without introducing cluster access or schema-validation claims; final review and merge remain.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-034 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench `0.2.0`. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 035 is adding a General YAML inspection mode while the deployed Workbench remains unchanged until separate publication and deployment approvals.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -178,11 +178,11 @@ Delivered outcomes:
 
 See [Milestone 033](docs/milestones/milestone-033-workbench-usability.md).
 
-### Planned Workbench follow-ons
+### Workbench follow-ons
 
 #### Milestone 034 — Deeper deterministic checks
 
-**Status:** Implementation, `0.2.0` publication, immutable pinning, approved deployment, runtime verification, and live browser acceptance complete in draft PR #10; final review and merge remain separate checkpoints.
+**Status:** Complete and merged through PR #10 at `9848618`.
 
 - Attach clickable YAML paths, explanations, recommended changes, copyable examples, operational cautions, and initial OWASP K01:2025 references to operational findings.
 - Check workload selector consistency, duplicate resource identities, Service-to-workload selectors, named target ports, host namespaces, and container hardening settings.
@@ -190,7 +190,17 @@ See [Milestone 033](docs/milestones/milestone-033-workbench-usability.md).
 
 See [Milestone 034](docs/milestones/milestone-034-workbench-deterministic-checks.md).
 
-- Milestone 035: an explicit General YAML inspection mode alongside the existing Kubernetes mode, sharing browser-local parsing, formatting, diagnostics, file handling, and tree navigation while suppressing Kubernetes-only findings.
+#### Milestone 035 — General YAML inspection mode
+
+**Status:** Implementation in progress on `codex/milestone-035-general-yaml`; publication, deployment, and merge are separate approval gates.
+
+- Keep Kubernetes as the default and add an explicit General YAML mode.
+- Share browser-local parsing, formatting, diagnostics, file handling, and tree navigation across modes.
+- Accept mapping, sequence, and scalar roots in General YAML mode and summarize their shape.
+- Suppress Kubernetes-only operational findings in General YAML mode.
+
+See [Milestone 035](docs/milestones/milestone-035-general-yaml.md).
+
 - Milestone 036: browser-local schema validation against a pinned Kubernetes version, with explicit handling for schemas unavailable for CRDs.
 - Milestone 037: a pinned OWASP Kubernetes Top 10:2025 review profile with direct, partial, and cluster-context-required coverage labels.
 - Later increments: before/after formatting diff, copy and report export, finding filters, tree search, drag-and-drop, display preferences, and bounded large-file processing.
