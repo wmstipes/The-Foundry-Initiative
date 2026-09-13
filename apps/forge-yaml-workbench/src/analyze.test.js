@@ -20,6 +20,52 @@ describe("Forge YAML Workbench analysis", () => {
     expect(result.documents[1]).toMatchObject({ kind: "Service", serviceType: "ClusterIP" });
   });
 
+  it("keeps Kubernetes as the default mode and rejects non-mapping roots", () => {
+    const result = analyzeYaml("- one\n- two\n");
+
+    expect(result.mode).toBe("kubernetes");
+    expect(result.documents).toHaveLength(0);
+    expect(result.errors[0].message).toContain("Kubernetes manifest must be a YAML mapping");
+  });
+
+  it("accepts mappings, sequences, and scalars in General YAML mode", () => {
+    const source = [
+      "environment: lab",
+      "enabled: true",
+      "---",
+      "- forge-head",
+      "- forge-node-01",
+      "---",
+      "ready",
+      ""
+    ].join("\n");
+    const result = analyzeYaml(source, "general");
+
+    expect(result).toMatchObject({ mode: "general", errors: [], warnings: [] });
+    expect(result.documents).toEqual([
+      expect.objectContaining({ index: 1, rootType: "mapping", entryCount: 2, keys: ["environment", "enabled"], findings: [] }),
+      expect.objectContaining({ index: 2, rootType: "sequence", entryCount: 2, findings: [] }),
+      expect.objectContaining({ index: 3, rootType: "scalar", value: "ready", findings: [] })
+    ]);
+  });
+
+  it("suppresses Kubernetes-only findings in General YAML mode", () => {
+    const source = "kind: Pod\nmetadata: {name: risky}\nspec: {containers: [{name: app, image: nginx:latest}]}\n";
+    const result = analyzeYaml(source, "general");
+
+    expect(result.errors).toHaveLength(0);
+    expect(result.documents[0]).toMatchObject({ rootType: "mapping", findings: [] });
+    expect(result.documents[0]).not.toHaveProperty("kind");
+  });
+
+  it("accepts an explicit null scalar in General YAML mode", () => {
+    expect(analyzeYaml("null\n", "general").documents[0]).toMatchObject({
+      rootType: "scalar",
+      value: null,
+      findings: []
+    });
+  });
+
   it("reports duplicate keys", () => {
     const [error] = analyzeYaml("apiVersion: v1\nkind: Pod\nkind: Service\n").errors;
     expect(error).toMatchObject({ document: 1, line: 3, column: 1 });

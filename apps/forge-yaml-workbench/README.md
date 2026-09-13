@@ -1,11 +1,14 @@
 # Forge YAML Workbench
 
-Forge YAML Workbench is a browser-based Kubernetes manifest inspector for the SignalForge lab. It parses YAML in the browser and presents important Kubernetes fields in a human-readable report.
+Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. It parses YAML locally in the browser and offers Kubernetes-specific and General YAML inspection modes.
 
-## Version 0.2.0 scope
+## Version 0.3.0 scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
+- Start in Kubernetes mode and explicitly switch to General YAML mode without changing the editor contents.
+- Accept mapping, sequence, and scalar document roots in General YAML mode.
+- Summarize each General YAML document by root type and shape while suppressing Kubernetes-only operational findings.
 - Display resource identity, namespace, labels, selectors, replicas, Services, containers, images, tags or digests, ports, probes, resources, volumes, and ServiceAccount use.
 - Show an expandable object tree.
 - Detect YAML parser errors and duplicate keys.
@@ -43,7 +46,9 @@ The OWASP references identify which security guidance informed a finding; they a
 
 ## Validation boundary
 
-The Workbench performs YAML parsing and deterministic operational checks. It does not currently perform complete Kubernetes OpenAPI schema validation or contact the Kubernetes API server. A successful report does not prove that a manifest will be admitted or run successfully.
+The Workbench performs YAML parsing in both modes and deterministic operational checks only in Kubernetes mode. General YAML mode does not infer Kubernetes semantics. The Workbench does not currently perform complete Kubernetes OpenAPI schema validation or contact the Kubernetes API server. A successful report does not prove that a Kubernetes manifest will be admitted or run successfully.
+
+Browser-local Kubernetes schema validation is deferred to Milestone 036. Broader OWASP Kubernetes Top 10 coverage is deferred to Milestone 037.
 
 Before deployment, continue to use repository validation and Kubernetes server-side dry-run.
 
