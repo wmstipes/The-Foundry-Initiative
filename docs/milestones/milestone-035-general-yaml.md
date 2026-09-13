@@ -2,7 +2,7 @@
 
 Started: 2026-09-13
 
-Status: Source implementation, pull-request validation, approved `0.3.0` publication, reviewed Deployment-only rollout, and immediate runtime verification are complete on `codex/milestone-035-general-yaml`. Live browser acceptance and merge remain separate approval checkpoints.
+Status: Source implementation, pull-request validation, approved `0.3.0` publication, reviewed Deployment-only rollout, immediate runtime verification, and live browser acceptance are complete on `codex/milestone-035-general-yaml`. Final review and merge remain a separate approval checkpoint.
 
 ## Goal
 
@@ -54,7 +54,7 @@ Add an explicit General YAML inspection mode alongside the existing Kubernetes m
 - [x] Production build and whitespace validation pass locally.
 - [x] Clean locked installation, dependency audit, and repository validation pass.
 - [x] Pull-request CI and non-publishing multi-architecture image build pass.
-- [ ] Live browser acceptance passes for both modes after an approved deployment.
+- [x] Live browser acceptance passes for both modes after an approved deployment.
 - [x] Versioned `0.3.0` publication is separately approved and its AMD64/ARM64 OCI index digest is recorded.
 - [x] Deployment is separately dry-run, diff-reviewed, approved, rolled out, and runtime-verified at the pinned digest.
 - [ ] Final review and merge are separately approved.
