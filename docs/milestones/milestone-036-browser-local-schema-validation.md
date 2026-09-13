@@ -71,7 +71,7 @@ Schema mismatches include a YAML path and navigate to the nearest source locatio
 - [x] Analyzer and schema tests cover valid, invalid, unsupported, unavailable-CRD, not-evaluated, unknown-field, wrong-type, `IntOrString`, and source-location behavior.
 - [x] DOM tests cover separate report sections and explicit unsupported/unavailable labels.
 - [x] General YAML tests prove Kubernetes operational and schema results remain absent.
-- [x] All 41 tests pass.
+- [x] All 42 tests pass, including compilation of every schema in the explicit support set.
 - [x] Production build passes; output JavaScript is 599.43 kB uncompressed and 152.54 kB gzip.
 - [x] Dependency audit reports zero vulnerabilities.
 - [x] Whitespace validation passes.

@@ -333,7 +333,7 @@ Added an offline Kubernetes schema layer to Forge YAML Workbench while retaining
 - Added explicit `valid`, `invalid`, `unsupported`, `schema-unavailable`, and `not-evaluated` states.
 - Added clickable schema-error paths and clear UI category separation.
 - Preserved General YAML behavior and the absence of Kubernetes schema findings in that mode.
-- Expanded automated coverage from 30 to 41 passing tests.
+- Expanded automated coverage from 30 to 42 passing tests, including compilation of every supported schema.
 - Passed the production build, dependency audit, and whitespace validation.
 - Preserved the implementation as local commit `05cc547`; no branch, image, or cluster changes were published.
 
