@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-11
+**Last updated:** 2026-09-13
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -8,7 +8,7 @@ This document describes the current architecture of the active Foundry Initiativ
 
 SignalForge is a four-node Raspberry Pi Kubernetes lab for practicing cloud-native application delivery, release engineering, observability, troubleshooting, and eventually AI-assisted operations.
 
-The primary workload is the SignalForge Restaurant API, a small FastAPI service that makes infrastructure behavior visible through health endpoints, runtime metadata, application metrics, and intentionally simple operational workflows. Forge YAML Workbench is a separate stateless browser application for inspecting Kubernetes YAML without granting it cluster access.
+The primary workload is the SignalForge Restaurant API, a small FastAPI service that makes infrastructure behavior visible through health endpoints, runtime metadata, application metrics, and intentionally simple operational workflows. Forge YAML Workbench is a separate stateless browser application for inspecting Kubernetes and general YAML without granting it cluster access.
 
 ## Current topology
 
@@ -54,10 +54,10 @@ flowchart TD
 - Source: `apps/forge-yaml-workbench`
 - Manifests: `k8s/forge-yaml-workbench`
 - Namespace: `forge-tools`
-- Deployment: one stateless replica using release `0.1.1`
+- Deployment: one stateless replica using release `0.3.0`
 - Access: private-lab NodePort `30081`
 - Runtime: unprivileged NGINX on container port `8080`
-- Processing: YAML parsing, formatting, summaries and bounded findings run entirely in the browser
+- Processing: shared YAML parsing, formatting, diagnostics, file handling, and tree navigation run entirely in the browser; Kubernetes-specific findings run only in Kubernetes mode
 - Identity: no RBAC, Kubernetes API access, or mounted ServiceAccount token
 - Security: restricted Pod Security labels, non-root execution, RuntimeDefault seccomp, read-only root filesystem, dropped capabilities, and bounded writable `/tmp`
 - Delivery: guarded version tags publish AMD64 and ARM64 images; the Deployment pins both version and OCI index digest
@@ -164,13 +164,13 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 
 Potential next architecture steps include:
 
-1. Observe naturally occurring limited-alert behavior before designing notification delivery.
-2. Continue the demonstrated Prometheus and Grafana backup cadence.
-3. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
-4. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
-5. Evolve the rules-based `/analyze` endpoint into the ForgeOps AI-assisted incident copilot.
+1. Add browser-local Kubernetes schema validation against one pinned Kubernetes version, with explicit unsupported-resource and unavailable-CRD-schema results.
+2. Observe naturally occurring limited-alert behavior before designing notification delivery.
+3. Continue the demonstrated Prometheus and Grafana backup cadence.
+4. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
+5. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
+6. Evolve the rules-based `/analyze` endpoint into the ForgeOps AI-assisted incident copilot.
 
 ## Decision records
 
 Milestone documents currently serve as the chronological record of context, decisions, implementation, validation, and lessons. Larger cross-cutting decisions can later be promoted into dedicated records under `docs/decisions` when that additional structure provides value.
-

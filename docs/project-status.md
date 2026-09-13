@@ -27,15 +27,15 @@ The project has moved from basic workload deployment into repeatable engineering
 - Namespace: `forge-tools`
 - Deployment: `forge-yaml-workbench`
 - Replicas: 1 available and Ready
-- Release: `0.2.0`
-- Image: `wmstipes/signalforge-yaml-workbench:0.2.0@sha256:1be3942fc9acf62906b020872d31a61cc6e1dab4e879476b4ba233063fb57720`
+- Release: `0.3.0`
+- Image: `wmstipes/signalforge-yaml-workbench:0.3.0@sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`
 - Runtime ImageID: verified against the pinned OCI index digest
 - External lab access: NodePort `30081`
 - Data path: browser-local parsing and analysis; no server-side YAML persistence
-- Deployed version: Milestone 035 General YAML inspection `0.3.0` at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`; immediate runtime verification passed and live browser acceptance remains pending
+- Modes: Kubernetes inspection by default and explicit General YAML inspection for mapping, sequence, and scalar roots
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
-- Acceptance: rollout, runtime digest, ready EndpointSlice, health, page, security headers, clickable finding paths, remediation guidance, clipboard examples, cautions, and OWASP references passed
+- Acceptance: rollout, runtime digest, ready EndpointSlice, health, page, security headers, both inspection modes, content-preserving mode switches, General YAML root handling, Kubernetes-finding suppression, clickable finding paths, remediation guidance, clipboard examples, cautions, and OWASP references passed
 
 ## Completed milestones
 
@@ -64,6 +64,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 032: Forge YAML Workbench `0.1.1` built, published, hardened, deployed and browser-validated
 - 033: Workbench usability improved; `0.1.2` published, digest-pinned, deployed and live browser-validated
 - 034: Workbench deterministic Kubernetes checks and actionable remediation released as `0.2.0`, deployed, accepted, and merged
+- 035: General YAML inspection released as `0.3.0`, deployed, live browser-accepted, and merged
 
 ## Current observability state
 
@@ -160,7 +161,9 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Milestone 028 is complete. Lightweight Grafana is deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
+Begin Milestone 036 as a bounded Workbench increment: add Kubernetes schema validation against one pinned Kubernetes version while keeping schema data and validation in the browser. Report unsupported resources and unavailable CRD schemas explicitly, distinguish schema results from existing syntax and deterministic findings, and preserve General YAML mode without Kubernetes schema findings.
+
+Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
 The Milestone 029 [limited-alerting design](observability/limited-alerting-specification.md) was accepted by Mike and merged through PR #4 at `1837868` on 2026-09-10. It covers reduced scrape coverage and no-healthy-target conditions using the manual three-replica baseline. Five-minute and two-minute delays remain provisional, not measured operational thresholds. Performance alerts, notification channels, Alertmanager, and broader monitoring coverage remain deferred.
 
@@ -172,7 +175,9 @@ The Milestone 029 [limited-alerting design](observability/limited-alerting-speci
 
 Milestone 034 published, immutably pinned, deployed, and live browser-validated the approved `0.2.0` AMD64/ARM64 image, then merged through PR #10 at `9848618`. The running Pod is Ready with zero restarts and its runtime ImageID matches the reviewed OCI index digest.
 
-Milestone 035 has published and deployed its separately approved `0.3.0` AMD64/ARM64 image at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`. It adds an explicit General YAML mode alongside the default Kubernetes mode. Both modes share browser-local parsing, formatting, parser diagnostics, file handling, and tree navigation. General YAML accepts mappings, sequences, and scalars while omitting Kubernetes-only findings. The Deployment-only rollout completed with one Ready replica, zero restarts, a matching runtime ImageID, ready routing, HTTP 200 responses, both mode markers, and the expected security headers. Live browser interaction acceptance and merge remain separate checkpoints. Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
+Milestone 035 published and deployed its separately approved `0.3.0` AMD64/ARM64 image at OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`. It adds an explicit General YAML mode alongside the default Kubernetes mode. Both modes share browser-local parsing, formatting, parser diagnostics, file handling, and tree navigation. General YAML accepts mappings, sequences, and scalars while omitting Kubernetes-only findings. The Deployment-only rollout completed with one Ready replica, zero restarts, a matching runtime ImageID, ready routing, HTTP 200 responses, both mode markers, and the expected security headers. Live browser interaction acceptance passed, and PR #11 merged at `b45ee0b`.
+
+Continue observing naturally occurring alert behavior without injecting a failure merely to produce firing evidence.
 
 ## Known temporary limitation
 

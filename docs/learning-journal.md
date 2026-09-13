@@ -297,12 +297,16 @@ Added an explicit General YAML inspection mode beside the existing Kubernetes mo
 - Suppressed Kubernetes-only findings, remediation guidance, and OWASP references outside Kubernetes mode.
 - Preserved Kubernetes behavior as the tested default.
 - Expanded analyzer and browser interaction coverage from 23 to 30 passing tests.
-- Prepared package metadata for the `0.3.0` release candidate.
+- Released package metadata as `0.3.0`.
 - Passed pull-request CI and the non-publishing AMD64/ARM64 image build.
 - Published approved image `wmstipes/signalforge-yaml-workbench:0.3.0` through GitHub Actions.
 - Verified the registry's AMD64 and ARM64 manifests and recorded OCI index digest `sha256:3abd4292f6cbd506dbc976924d2b61cf8093a7653e02654efaedc207e3f3086f`.
-- Prepared the Kubernetes Deployment candidate with matching `0.3.0` version labels and immutable OCI index digest while leaving the cluster unchanged.
+- Reviewed the server-side dry-run and live Deployment-only diff before applying the approved candidate.
+- Deployed matching `0.3.0` version labels and the immutable OCI index digest with one Ready replica, zero restarts, and a matching runtime ImageID.
+- Verified ready routing, HTTP 200 health and page responses, both mode markers, and the expected security headers.
+- Completed live browser acceptance for both modes, including content-preserving switches, Kubernetes-finding suppression, and mapping, sequence, scalar, and explicit null roots.
+- Merged PR #11 at `b45ee0b` after all checks and approval gates passed.
 
 ### Next small step
 
-Run the digest-pinned `0.3.0` candidate through server-side dry-run and live diff review. Keep cluster deployment, live acceptance, and merge as separately approved checkpoints.
+Begin Milestone 036 as a separate bounded increment for browser-local Kubernetes schema validation against one pinned Kubernetes version. Report unsupported resources and unavailable CRD schemas explicitly, preserve General YAML behavior, and keep publication, deployment, and merge as separately approved checkpoints.
