@@ -60,7 +60,7 @@ The long-term goal is to evolve this service into **ForgeOps**, an AI-assisted K
 
 Forge YAML Workbench is a browser-based YAML inspector deployed in the restricted `forge-tools` namespace. Kubernetes inspection is the default, with an explicit General YAML mode for mappings, sequences, and scalars. Both modes share browser-local parsing, formatting, diagnostics, file handling, and tree navigation; Kubernetes-only findings, remediation, and OWASP guidance are suppressed in General YAML mode. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
 
-Milestone 036 recovered from the rejected `0.4.0` browser startup defect without weakening the strict CSP. The accepted `0.4.1` release precompiles 12 schemas pinned to Kubernetes `v1.36.4`, is deployed from an immutable AMD64/ARM64 index, and passed repeated browser acceptance before PR #13 merged. Milestone 037 is adding a pinned OWASP Kubernetes Top 10:2025 review profile with explicit direct, partial, and cluster-context-required coverage boundaries.
+Milestone 036 recovered from the rejected `0.4.0` browser startup defect without weakening the strict CSP. The accepted `0.4.1` release precompiles 12 schemas pinned to Kubernetes `v1.36.4`, is deployed from an immutable AMD64/ARM64 index, and passed repeated browser acceptance before PR #13 merged. Milestone 037's pinned OWASP Kubernetes Top 10:2025 review profile is implemented, verified, and published as the immutable `0.5.0` candidate; deployment remains separately gated.
 
 ## Repository map
 
