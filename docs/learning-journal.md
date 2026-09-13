@@ -376,7 +376,11 @@ Expanded Forge YAML Workbench from individual K01 references into a ten-category
 - Preserved General YAML suppression and the no-backend, no-cluster-access boundary.
 - Expanded automated coverage from 42 to 49 passing tests.
 - Passed validator reproducibility, the 706.33 kB / 110.42 kB gzip production build, the CSP scan, zero-vulnerability dependency audit, repository manifest validation, and whitespace validation.
+- Published draft PR #14 after explicit approval; all 19 remote files matched the verified local contents and all three non-publishing workflows passed.
+- Published the separately approved `0.5.0` AMD64/ARM64 image in run `34787257312`.
+- Verified OCI index `sha256:11e8fcc4989fe7dcdc1c5312786b80189a98b6a9acb82e979aa8235d756fcb8e`, AMD64 manifest `sha256:2a47101b9f176671e0954ca55e90b7ae4dfe42ba4b7ce5856ccd2f447822032e`, and ARM64 manifest `sha256:f1de89162f2de896d8907e2fcce17d511246881c919fa15e6ee3a1ea3f6077b3`.
+- Staged the immutable `0.5.0` Deployment-only candidate without applying it.
 
 ### Next small step
 
-Review the local checkpoint, then request approval before branch publication. Keep image publication, deployment, browser acceptance, PR readiness, and merge separately approved.
+Review the server-side dry-run and live diff for the staged immutable `0.5.0` Deployment-only update. Keep deployment, browser acceptance, PR readiness, and merge separately approved.
