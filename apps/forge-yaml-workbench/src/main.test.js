@@ -200,4 +200,30 @@ describe("Forge YAML Workbench browser interactions", () => {
       expect(document.querySelector("#action-status").textContent).toBe("Suggested YAML copied");
     });
   });
+
+  it("renders the pinned OWASP review profile without implying a score", () => {
+    replaceEditor("apiVersion: v1\nkind: Pod\nmetadata: {name: profile}\nspec:\n  containers: [{name: app, image: example/app:1.0.0}]\n");
+    document.querySelector('[data-tab="validation"]').click();
+
+    const profile = document.querySelector(".owasp-profile");
+    expect(profile.textContent).toContain("OWASP Kubernetes Top 10:2025 review profile");
+    expect(profile.querySelectorAll(".owasp-profile-item")).toHaveLength(10);
+    expect(profile.textContent).toContain("Direct");
+    expect(profile.textContent).toContain("Partial");
+    expect(profile.textContent).toContain("Cluster context required");
+    expect(profile.textContent).toContain("not a compliance score or pass/fail result");
+    expect(profile.querySelector("header code").textContent).toBe("828cfa2");
+  });
+
+  it("renders multiple OWASP references for a shared finding", () => {
+    replaceEditor("apiVersion: v1\nkind: Pod\nmetadata: {name: profile}\nspec:\n  containers: [{name: app, image: example/app:1.0.0}]\n");
+    document.querySelector('[data-tab="validation"]').click();
+
+    const message = [...document.querySelectorAll(".message")].find((item) =>
+      item.textContent.includes("ServiceAccount token may be mounted"));
+    expect([...message.querySelectorAll(".guidance-standard a")].map((item) => item.textContent)).toEqual([
+      expect.stringContaining("K01:2025"),
+      expect.stringContaining("K09:2025")
+    ]);
+  });
 });
