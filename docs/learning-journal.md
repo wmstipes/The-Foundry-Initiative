@@ -310,3 +310,40 @@ Added an explicit General YAML inspection mode beside the existing Kubernetes mo
 ### Next small step
 
 Begin Milestone 036 as a separate bounded increment for browser-local Kubernetes schema validation against one pinned Kubernetes version. Report unsupported resources and unavailable CRD schemas explicitly, preserve General YAML behavior, and keep publication, deployment, and merge as separately approved checkpoints.
+
+---
+
+## 2026-09-13 - Milestone 036 browser-local Kubernetes schema validation
+
+### What I worked on
+
+Added an offline Kubernetes schema layer to Forge YAML Workbench while retaining the browser-only trust boundary. Kubernetes remains the default mode. The Validation report now separates YAML syntax, Kubernetes document shape, deterministic operational review, and schema results. General YAML continues to provide syntax and structure inspection without Kubernetes findings.
+
+### What I learned
+
+- A schema-valid result needs an exact version and support-set label; without both, it can imply broader compatibility than was actually tested.
+- Unsupported built-in resources and custom resources with unavailable CRD schemas are knowledge-boundary states, not successes or failures.
+- Kubernetes `IntOrString` fields need explicit normalization when consuming the pinned OpenAPI v2 document through a JSON Schema validator.
+- Bundling only the transitive definitions for an explicit GVK set keeps the static application bounded while preserving offline operation.
+
+### What I finished
+
+- Pinned the source schema to Kubernetes `v1.36.4` and recorded the upstream SHA-256.
+- Added reproducible generation of a 12-GVK, 196-definition browser bundle.
+- Added explicit `valid`, `invalid`, `unsupported`, `schema-unavailable`, and `not-evaluated` states.
+- Added clickable schema-error paths and clear UI category separation.
+- Preserved General YAML behavior and the absence of Kubernetes schema findings in that mode.
+- Expanded automated coverage from 30 to 42 passing tests, including compilation of every supported schema.
+- Passed the production build, dependency audit, and whitespace validation.
+- Published draft PR #13 and passed Workbench CI plus the non-publishing AMD64/ARM64 container build.
+- Published the separately approved `0.4.0` OCI index at `sha256:96e3d8e4a1b563d5d719521bbd8f0d5f6f3e3a5fc3a299851d21186a20de3477` and verified active Linux AMD64 and ARM64 manifests.
+- Applied the separately reviewed Deployment-only update and verified one Ready Pod with zero restarts, the expected runtime image digest, one ready endpoint, HTTP 200 health and page responses, and the expected CSP and `nosniff` headers.
+- Found a blank-page defect during live browser acceptance: AJV's runtime schema compiler uses dynamic code generation, which the production `script-src 'self'` policy correctly blocks.
+- Kept the strict CSP unchanged and prepared a local `0.4.1` correction that checks in reproducible standalone validators generated at build time.
+- Added a production-bundle guard that fails if `eval` or `new Function` is present; all 42 tests, the production build, validator reproducibility, and the dependency audit pass locally.
+- Published the separately approved `0.4.1` correction in run `34780773917`; its active AMD64/ARM64 OCI index is `sha256:96c715c938f1636686190e294829c61f0f7af71117b353bd2df05a9fc67bddf2`.
+- Staged the Deployment-only update to the immutable `0.4.1` index; the live cluster remains on `0.4.0` pending server-side dry-run, diff review, and separate deployment approval.
+
+### Next small step
+
+Review the server-side dry-run and live diff for the staged immutable `0.4.1` Deployment-only update, then request separate approval before applying it. Repeated live browser acceptance, PR readiness, and merge remain later approval gates. Broader OWASP Kubernetes Top 10:2025 coverage remains Milestone 037.

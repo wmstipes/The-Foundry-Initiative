@@ -1,5 +1,6 @@
 import { analyzeYaml, formatYaml } from "./analyze.js";
 import { SAMPLE_YAML } from "./sample.js";
+import { KUBERNETES_SCHEMA_VERSION } from "./schema-validation.js";
 import "./styles.css";
 
 const app = document.querySelector("#app");
@@ -83,6 +84,18 @@ function containerCard(container) {
     "  </dl>",
     "</div>"
   ].join("");
+}
+
+function schemaBadge(schema) {
+  const labels = {
+    valid: "Schema valid",
+    invalid: "Schema invalid",
+    unsupported: "Schema unsupported",
+    "schema-unavailable": "CRD schema unavailable",
+    "not-evaluated": "Schema not evaluated"
+  };
+  return '<span class="schema-badge ' + escapeHtml(schema.status) + '">' +
+    escapeHtml(labels[schema.status] || schema.status) + " · " + escapeHtml(schema.kubernetesVersion) + "</span>";
 }
 
 function fixGuidance(item) {
@@ -196,7 +209,7 @@ function summaryView(analysis) {
 
   return analysis.documents.map((resource) => [
     '<article class="resource-card">',
-    '  <header><span class="kind">' + escapeHtml(resource.kind) + '</span><div><h3>' + escapeHtml(resource.name) + '</h3><p>' + escapeHtml(resource.apiVersion) + " · " + escapeHtml(resource.namespace) + '</p></div><small>Document ' + resource.index + "</small></header>",
+    '  <header><span class="kind">' + escapeHtml(resource.kind) + '</span><div><h3>' + escapeHtml(resource.name) + '</h3><p>' + escapeHtml(resource.apiVersion) + " · " + escapeHtml(resource.namespace) + '</p></div><div class="resource-status">' + schemaBadge(resource.schema) + '<small>Document ' + resource.index + "</small></div></header>",
     '  <dl class="field-grid">',
     resource.replicas !== null ? field("Replicas", escapeHtml(resource.replicas)) : "",
     resource.serviceType ? field("Service type", escapeHtml(resource.serviceType)) : "",
@@ -212,24 +225,45 @@ function summaryView(analysis) {
 }
 
 function validationView(analysis) {
-  const parserItems = [
-    ...analysis.errors.map((item) => ({ ...item, level: "error" })),
-    ...analysis.warnings.map((item) => ({ ...item, level: "warning" }))
+  const syntaxItems = [
+    ...analysis.syntaxErrors.map((item) => ({ ...item, level: "error" })),
+    ...analysis.syntaxWarnings.map((item) => ({ ...item, level: "warning" }))
   ];
+  const documentItems = analysis.documentErrors.map((item) => ({ ...item, level: "error" }));
   const operational = analysis.documents.flatMap((resource) => resource.findings.map((item) => ({
     ...item,
     title: resource.kind + "/" + resource.name + ": " + item.title
   })));
 
-  if (!parserItems.length && !operational.length) {
+  const schemaItems = analysis.mode === "kubernetes" ? analysis.documents.flatMap((resource) => {
+    const identity = resource.kind + "/" + resource.name;
+    if (resource.schema.status === "invalid") {
+      return resource.schema.errors.map((item) => ({ ...item, title: identity + ": " + item.title }));
+    }
+    const levels = {
+      valid: "valid",
+      unsupported: "note",
+      "schema-unavailable": "warning",
+      "not-evaluated": "warning"
+    };
+    return [{
+      level: levels[resource.schema.status] || "note",
+      title: identity,
+      explanation: resource.schema.message
+    }];
+  }) : [];
+
+  if (!syntaxItems.length && !documentItems.length && !operational.length && !schemaItems.length) {
     const detail = analysis.mode === "general"
-      ? "The YAML parsed successfully. Kubernetes operational checks are disabled in General YAML mode."
+      ? "The YAML parsed successfully. Kubernetes operational and schema checks are disabled in General YAML mode."
       : "The YAML parsed and passed the Workbench's bounded review.";
     return '<div class="empty success"><div>✓</div><h3>No findings in the current checks</h3><p>' + escapeHtml(detail) + '</p></div>';
   }
 
-  return (parserItems.length ? messages("Parser findings", parserItems, "error") : "") +
-    (operational.length ? messages("Operational review", operational, "warning") : "");
+  return (syntaxItems.length ? messages("YAML syntax", syntaxItems, "error") : "") +
+    (documentItems.length ? messages("Kubernetes document structure", documentItems, "error") : "") +
+    (operational.length ? messages("Deterministic operational review", operational, "warning") : "") +
+    (schemaItems.length ? messages("Kubernetes schema · " + KUBERNETES_SCHEMA_VERSION, schemaItems, "note") : "");
 }
 
 function treeNode(value, name = "root", depth = 0) {
@@ -256,7 +290,11 @@ function treeView(analysis) {
 function render() {
   const source = editor.value;
   const analysis = analyzeYaml(source, inspectionMode);
-  const findingCount = analysis.errors.length + analysis.warnings.length +
+  const schemaIssueCount = analysis.mode === "kubernetes" ? analysis.documents.reduce((total, document) =>
+    total + (document.schema.status === "invalid" ? document.schema.errors.length : (document.schema.status === "valid" ? 0 : 1)), 0) : 0;
+  const invalidSchemaCount = analysis.mode === "kubernetes" ? analysis.documents.reduce((total, document) =>
+    total + (document.schema.status === "invalid" ? document.schema.errors.length : 0), 0) : 0;
+  const findingCount = analysis.errors.length + analysis.warnings.length + schemaIssueCount +
     analysis.documents.reduce((total, document) => total + document.findings.length, 0);
 
   document.querySelector("#line-count").textContent = source ? source.split("\n").length + " lines" : "0 lines";
@@ -266,18 +304,20 @@ function render() {
   document.querySelector("#inspection-title").textContent = general ? "General YAML inspection" : "Kubernetes manifest inspection";
   document.querySelector("#inspection-description").textContent = general
     ? "Inspect mappings, sequences, and scalar YAML without Kubernetes-specific findings."
-    : "Parse structure and review important fields before deployment.";
+    : "Review syntax, deterministic operations, and the pinned Kubernetes " + KUBERNETES_SCHEMA_VERSION + " schema.";
   document.querySelector("#report-title").textContent = general ? "YAML report" : "Manifest report";
-  document.querySelector("#review-boundary").textContent = general ? "Syntax and document structure" : "Syntax and bounded operational guidance";
-  document.querySelector("#next-step").textContent = general ? "No Kubernetes checks in this mode." : "Use server-side dry-run before applying.";
+  document.querySelector("#review-boundary").textContent = general ? "Syntax and document structure" : "Syntax · deterministic operations · schema " + KUBERNETES_SCHEMA_VERSION;
+  document.querySelector("#next-step").textContent = general ? "No Kubernetes checks in this mode." : "No admission or live-cluster checks. Use server-side dry-run before applying.";
 
   const status = document.querySelector("#status");
   if (!source.trim()) {
     status.className = "status neutral";
     status.textContent = "Waiting for YAML";
-  } else if (analysis.errors.length) {
+  } else if (analysis.errors.length || invalidSchemaCount) {
     status.className = "status error";
-    status.textContent = analysis.errors.length + " parse error" + (analysis.errors.length === 1 ? "" : "s");
+    status.textContent = analysis.errors.length
+      ? analysis.errors.length + " YAML error" + (analysis.errors.length === 1 ? "" : "s")
+      : invalidSchemaCount + " schema error" + (invalidSchemaCount === 1 ? "" : "s");
   } else {
     status.className = "status " + (findingCount ? "warning" : "valid");
     status.textContent = analysis.documents.length + " parsed document" + (analysis.documents.length === 1 ? "" : "s") +

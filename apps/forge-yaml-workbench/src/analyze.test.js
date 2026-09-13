@@ -56,6 +56,45 @@ describe("Forge YAML Workbench analysis", () => {
     expect(result.errors).toHaveLength(0);
     expect(result.documents[0]).toMatchObject({ rootType: "mapping", findings: [] });
     expect(result.documents[0]).not.toHaveProperty("kind");
+    expect(result.documents[0]).not.toHaveProperty("schema");
+  });
+
+  it("keeps syntax, operational, and schema results separate", () => {
+    const source = [
+      "apiVersion: apps/v1",
+      "kind: Deployment",
+      "metadata: {name: separated}",
+      "spec:",
+      "  replicas: three",
+      "  mysteryField: true",
+      ""
+    ].join("\n");
+    const result = analyzeYaml(source);
+
+    expect(result.syntaxErrors).toEqual([]);
+    expect(result.documentErrors).toEqual([]);
+    expect(result.documents[0].findings.map((item) => item.title)).toContain("No containers found");
+    expect(result.documents[0].schema.status).toBe("invalid");
+    expect(result.documents[0].schema.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ path: ".spec.replicas", line: 5 }),
+      expect.objectContaining({ path: ".spec.mysteryField", line: 6 })
+    ]));
+  });
+
+  it("reports unsupported built-ins and unavailable CRD schemas without validity claims", () => {
+    const result = analyzeYaml([
+      "apiVersion: networking.k8s.io/v1",
+      "kind: Ingress",
+      "metadata: {name: unsupported}",
+      "---",
+      "apiVersion: database.example.com/v1",
+      "kind: Database",
+      "metadata: {name: custom}",
+      ""
+    ].join("\n"));
+
+    expect(result.documents[0].schema.status).toBe("unsupported");
+    expect(result.documents[1].schema.status).toBe("schema-unavailable");
   });
 
   it("accepts an explicit null scalar in General YAML mode", () => {

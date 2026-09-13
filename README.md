@@ -58,7 +58,9 @@ The long-term goal is to evolve this service into **ForgeOps**, an AI-assisted K
 
 ## Forge YAML Workbench
 
-Forge YAML Workbench is a browser-based YAML inspector deployed in the restricted `forge-tools` namespace. Version `0.3.0` keeps Kubernetes inspection as the default and adds an explicit General YAML mode for mappings, sequences, and scalars. Both modes share browser-local parsing, formatting, diagnostics, file handling, and tree navigation; Kubernetes-only findings, remediation, and OWASP guidance are suppressed in General YAML mode. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
+Forge YAML Workbench is a browser-based YAML inspector deployed in the restricted `forge-tools` namespace. Kubernetes inspection is the default, with an explicit General YAML mode for mappings, sequences, and scalars. Both modes share browser-local parsing, formatting, diagnostics, file handling, and tree navigation; Kubernetes-only findings, remediation, and OWASP guidance are suppressed in General YAML mode. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
+
+Milestone 036 deployed the published `0.4.0` candidate with schemas pinned to Kubernetes `v1.36.4`. Workload and HTTP checks passed, but live browser acceptance found that runtime AJV compilation was blocked by the strict CSP and left the page blank. The published `0.4.1` correction precompiles the same 12 supported GVK validators and adds a production-bundle CSP guard; its immutable Deployment update is staged for review, while deployment, repeated browser acceptance, and merge remain separately approved.
 
 ## Repository map
 
@@ -148,7 +150,7 @@ Planned next steps include:
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
 * evolve the rules-based `/analyze` logic toward an evidence-grounded ForgeOps workflow
-* add pinned, browser-local Kubernetes schema validation in Milestone 036
+* complete the separately approved publication, deployment, browser-acceptance, and merge gates for Milestone 036
 * expand OWASP Kubernetes Top 10:2025 coverage in Milestone 037
 
 ## Why this project exists
