@@ -383,7 +383,10 @@ Expanded Forge YAML Workbench from individual K01 references into a ten-category
 - Verified the live Pod is Ready with zero restarts, its configured and runtime ImageID match the reviewed OCI index, the EndpointSlice has one ready address, `/healthz` and the page return HTTP 200, and the strict security headers remain present.
 - Browser acceptance confirmed the OWASP profile and General YAML isolation, then found that a YAML path or line/column control selected the correct text without scrolling the editor to it.
 - Added centered editor scrolling and a long-manifest browser regression test as local patch candidate `0.5.1`; 50 tests, production build, and CSP scan pass.
+- Published the separately approved `0.5.1` AMD64/ARM64 patch image in run `34789023192`.
+- Verified OCI index `sha256:4011478de37f9316d65985f17d87d3652203e2bcffd75ee29646ddcd52a64ffa`, AMD64 manifest `sha256:ebad025531960fa9d18a67fd153aa4fd2c56556df87574f06db083564981d5d5`, and ARM64 manifest `sha256:bfabd7f46865db81a8d8b57954dc4c0c2ddcb01a7705390b3e633b6acb2e8238`.
+- Staged the immutable `0.5.1` Deployment candidate without applying it.
 
 ### Next small step
 
-Review the local `0.5.1` navigation correction. Keep patch publication, deployment, repeated browser acceptance, PR readiness, and merge separately approved.
+Review the server-side dry-run and live diff for the staged immutable `0.5.1` correction. Keep deployment, repeated browser acceptance, PR readiness, and merge separately approved.
