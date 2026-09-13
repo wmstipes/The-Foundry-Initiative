@@ -2,7 +2,7 @@
 
 Started: 2026-09-12
 
-Status: Version `0.2.0` release candidate prepared after implementation, local verification, pull-request CI, non-publishing multi-architecture build, and browser acceptance completed in draft PR #10. Publication, deployment, final review, and merge remain separate checkpoints.
+Status: Version `0.2.0` published as an immutable AMD64/ARM64 OCI image and pinned in the deployment manifest after implementation, local verification, pull-request CI, non-publishing multi-architecture build, and browser acceptance completed in draft PR #10. Deployment, final review, and merge remain separate checkpoints.
 
 ## Goal
 
@@ -35,7 +35,7 @@ Make each Workbench operational finding more actionable and add bounded cross-re
 - Findings remain bounded operational guidance, not Kubernetes schema or admission guarantees.
 - OWASP references identify relevant guidance and do not imply full OWASP coverage or compliance certification.
 - Suggested YAML is copied for operator review; the Workbench does not automatically mutate the manifest.
-- No application version bump, image publication, or live cluster change is included without a later explicit checkpoint.
+- No live cluster change is included without a later explicit dry-run, diff review, and approval checkpoint.
 
 ## Acceptance gates
 
@@ -45,7 +45,7 @@ Make each Workbench operational finding more actionable and add bounded cross-re
 - [x] Pull-request CI and non-publishing multi-architecture image build pass.
 - [x] Browser acceptance passes for clickable paths, expandable remediation guidance, copyable YAML, cautions, and OWASP references.
 - [x] Package metadata and lockfile identify the approved `0.2.0` release candidate.
-- [ ] Any versioned publication is separately approved and verified.
+- [x] Versioned `0.2.0` publication is separately approved and verified for AMD64 and ARM64 at OCI index digest `sha256:1be3942fc9acf62906b020872d31a61cc6e1dab4e879476b4ba233063fb57720`.
 - [ ] Any live Deployment update is separately dry-run, diff-reviewed, approved, and verified.
 - [ ] Final review and merge are separately approved.
 
