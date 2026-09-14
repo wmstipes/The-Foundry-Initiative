@@ -331,4 +331,152 @@ describe("Forge YAML Workbench browser interactions", () => {
       expect.stringContaining("K09:2025")
     ]);
   });
+
+  it("previews a browser-local Markdown report without changing or exporting YAML", () => {
+    const source = "apiVersion: v1\nkind: Pod\nmetadata: {name: report-preview}\nspec: {}\n";
+    const writeText = vi.fn();
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText }
+    });
+    Object.defineProperty(URL, "createObjectURL", {
+      configurable: true,
+      value: vi.fn(() => "blob:test")
+    });
+    replaceEditor(source);
+
+    document.querySelector("#generate-report").click();
+
+    expect(editor.value).toBe(source);
+    expect(document.querySelector("#report-preview").hidden).toBe(false);
+    expect(document.querySelector("#report-markdown").textContent).toContain(
+      "# Forge YAML Workbench Analysis Report"
+    );
+    expect(document.querySelector("#report-markdown").textContent).not.toContain(source);
+    expect(document.activeElement).toBe(document.querySelector("#report-markdown"));
+    expect(writeText).not.toHaveBeenCalled();
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+    expect(document.querySelector("#action-status").textContent).toBe(
+      "Markdown report ready for review"
+    );
+    expect(document.querySelector("#report-action-status").textContent).toBe(
+      "No report exported yet."
+    );
+
+    document.querySelector("#report-cancel").click();
+    expect(document.querySelector("#report-preview").hidden).toBe(true);
+    expect(document.activeElement).toBe(document.querySelector("#generate-report"));
+    expect(document.querySelector("#action-status").textContent).toBe("Report cancelled");
+  });
+
+  it("copies exactly the reviewed Markdown snapshot", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText }
+    });
+    replaceEditor("apiVersion: v1\nkind: Pod\nmetadata: {name: copied-report}\nspec: {}\n");
+    document.querySelector("#generate-report").click();
+    const reviewed = document.querySelector("#report-markdown").textContent;
+
+    document.querySelector("#report-copy").click();
+
+    await vi.waitFor(() => {
+      expect(writeText).toHaveBeenCalledWith(reviewed);
+      expect(document.querySelector("#action-status").textContent).toBe("Markdown report copied");
+      expect(document.querySelector("#report-action-status").textContent).toBe(
+        "Markdown copied to the clipboard."
+      );
+      expect(document.querySelector("#report-copy").textContent).toBe("Copied");
+      expect(document.querySelector("#report-copy").classList.contains("completed")).toBe(true);
+    });
+    expect(document.querySelector("#report-preview").hidden).toBe(false);
+    document.querySelector("#report-cancel").click();
+  });
+
+  it("downloads the reviewed report without marking YAML as saved", () => {
+    let downloadedAs;
+    Object.defineProperty(URL, "createObjectURL", {
+      configurable: true,
+      value: vi.fn(() => "blob:report")
+    });
+    Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: vi.fn() });
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function click() {
+      downloadedAs = this.download;
+    });
+    const source = editor.value + "# unsaved report source\n";
+    replaceEditor(source);
+    document.querySelector("#generate-report").click();
+
+    document.querySelector("#report-download").click();
+
+    expect(downloadedAs).toBe("signalforge-sample-report.md");
+    expect(document.querySelector("#action-status").textContent).toBe(
+      "signalforge-sample-report.md downloaded"
+    );
+    expect(document.querySelector("#report-action-status").textContent).toBe(
+      "signalforge-sample-report.md downloaded."
+    );
+    expect(document.querySelector("#report-download").textContent).toBe("Downloaded");
+    expect(document.querySelector("#report-download").classList.contains("completed")).toBe(true);
+    expect(editor.value).toBe(source);
+    document.querySelector("#report-cancel").click();
+
+    Object.defineProperty(window, "confirm", {
+      configurable: true,
+      value: vi.fn().mockReturnValue(false)
+    });
+    document.querySelector("#clear").click();
+    expect(window.confirm).toHaveBeenCalled();
+    expect(editor.value).toBe(source);
+  });
+
+  it("closes the report preview with Escape and contains keyboard focus", () => {
+    document.querySelector("#generate-report").click();
+    expect(document.activeElement).toBe(document.querySelector("#report-markdown"));
+
+    document.dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Tab",
+      bubbles: true,
+      cancelable: true
+    }));
+    expect(document.activeElement).toBe(document.querySelector("#report-cancel"));
+
+    document.dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Tab",
+      shiftKey: true,
+      bubbles: true,
+      cancelable: true
+    }));
+    expect(document.activeElement).toBe(document.querySelector("#report-markdown"));
+
+    document.dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Escape",
+      bubbles: true,
+      cancelable: true
+    }));
+    expect(document.querySelector("#report-preview").hidden).toBe(true);
+    expect(document.activeElement).toBe(document.querySelector("#generate-report"));
+    expect(document.querySelector("#action-status").textContent).toBe("Report cancelled");
+  });
+
+  it("invalidates a prepared report when the source or inspection mode changes", () => {
+    document.querySelector("#generate-report").click();
+    expect(document.querySelector("#report-preview").hidden).toBe(false);
+
+    replaceEditor(editor.value + "# changed\n");
+    expect(document.querySelector("#report-preview").hidden).toBe(true);
+    expect(document.querySelector("#report-markdown").textContent).toBe("");
+
+    document.querySelector("#generate-report").click();
+    document.querySelector('[data-mode="general"]').click();
+    expect(document.querySelector("#report-preview").hidden).toBe(true);
+
+    document.querySelector("#generate-report").click();
+    const markdown = document.querySelector("#report-markdown").textContent;
+    expect(markdown).toContain("**Inspection mode:** General YAML");
+    expect(markdown).not.toContain("# Kubernetes Review");
+    document.querySelector("#report-cancel").click();
+  });
+
 });

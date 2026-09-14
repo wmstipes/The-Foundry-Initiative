@@ -3,6 +3,7 @@ import { buildLineDiff } from "./format-diff.js";
 import { SAMPLE_YAML } from "./sample.js";
 import { KUBERNETES_SCHEMA_VERSION } from "./schema-validation.js";
 import { OWASP_PROFILE_VERSION, OWASP_SOURCE_COMMIT } from "./owasp-profile.js";
+import { buildMarkdownReport } from "./report.js";
 import "./styles.css";
 
 const app = document.querySelector("#app");
@@ -12,6 +13,8 @@ let currentFilename = "signalforge-sample.yaml";
 let cleanSnapshot = SAMPLE_YAML;
 let formatPreview = null;
 let formatPreviewReturnFocus = null;
+let reportPreview = null;
+let reportPreviewReturnFocus = null;
 
 app.innerHTML = [
   '<header class="topbar">',
@@ -25,7 +28,7 @@ app.innerHTML = [
   '    <div class="mode-selector" role="group" aria-label="YAML inspection mode"><button class="mode active" data-mode="kubernetes" aria-pressed="true">Kubernetes</button><button class="mode" data-mode="general" aria-pressed="false">General YAML</button></div>',
   '    <div class="actions">',
   '      <input id="file-input" type="file" accept=".yaml,.yml,text/yaml,application/yaml" hidden />',
-  '      <button id="upload" aria-keyshortcuts="Control+O Meta+O" title="Open file (Ctrl+O)">Open file</button><button id="sample">Load sample</button><button id="format" aria-keyshortcuts="Control+Shift+F Meta+Shift+F" title="Format (Ctrl+Shift+F)">Format</button><button id="download" aria-keyshortcuts="Control+S Meta+S" title="Download (Ctrl+S)">Download</button><button id="clear" class="quiet">Clear</button>',
+  '      <button id="upload" aria-keyshortcuts="Control+O Meta+O" title="Open file (Ctrl+O)">Open file</button><button id="sample">Load sample</button><button id="format" aria-keyshortcuts="Control+Shift+F Meta+Shift+F" title="Format (Ctrl+Shift+F)">Format</button><button id="generate-report">Generate report</button><button id="download" aria-keyshortcuts="Control+S Meta+S" title="Download YAML (Ctrl+S)">Download YAML</button><button id="clear" class="quiet">Clear</button>',
   '    </div>',
   '    <div id="action-status" class="action-status" role="status" aria-live="polite" aria-atomic="true">Ready</div>',
   '    </div>',
@@ -49,6 +52,14 @@ app.innerHTML = [
   '    <div class="diff-heading" aria-hidden="true"><span></span><span>Before</span><span>After</span><span>YAML</span></div>',
   '    <div id="format-diff" class="format-diff" tabindex="0"></div>',
   '    <footer><button id="format-cancel" class="quiet">Cancel</button><button id="format-apply">Apply formatting</button></footer>',
+  '  </section>',
+  '</div>',
+  '<div id="report-preview" class="report-preview" hidden>',
+  '  <section class="report-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="report-preview-title" aria-describedby="report-preview-description">',
+  '    <header><div><span class="eyebrow">MARKDOWN REPORT</span><h2 id="report-preview-title">Review analysis report</h2><p id="report-preview-description">The report stays in browser memory until you explicitly copy or download it.</p></div><div id="report-preview-summary" class="report-preview-summary"></div></header>',
+  '    <p class="report-export-boundary">Exported reports can contain resource names, namespaces, YAML paths, findings, and recommendations derived from your YAML. The complete source YAML is not included.</p>',
+  '    <pre id="report-markdown" class="report-markdown" tabindex="0" aria-label="Generated Markdown report"></pre>',
+  '    <footer><div id="report-action-status" class="report-action-status" role="status" aria-live="polite" aria-atomic="true">No report exported yet.</div><div class="report-actions"><button id="report-cancel" class="quiet">Cancel</button><button id="report-copy" data-default-label="Copy Markdown">Copy Markdown</button><button id="report-download" data-default-label="Download .md">Download .md</button></div></footer>',
   '  </section>',
   '</div>'
 ].join("");
@@ -211,6 +222,54 @@ function closeFormatPreview(message) {
   if (message) announce(message);
 }
 
+function resetReportFeedback() {
+  document.querySelectorAll("#report-copy, #report-download").forEach((button) => {
+    button.classList.remove("completed");
+    button.textContent = button.dataset.defaultLabel;
+  });
+  const status = document.querySelector("#report-action-status");
+  status.className = "report-action-status";
+  status.textContent = "No report exported yet.";
+}
+
+function reportFeedback(message, button, tone = "success") {
+  resetReportFeedback();
+  const status = document.querySelector("#report-action-status");
+  status.className = "report-action-status " + tone;
+  status.textContent = message;
+  if (button && tone === "success") {
+    button.classList.add("completed");
+    button.textContent = button.id === "report-copy" ? "Copied" : "Downloaded";
+  }
+}
+
+function openReportPreview(report) {
+  reportPreview = report;
+  reportPreviewReturnFocus = document.querySelector("#generate-report");
+  document.querySelector("#report-preview-summary").textContent =
+    report.documentCount + " document" + (report.documentCount === 1 ? "" : "s") + " · " +
+    report.findingCount + " finding" + (report.findingCount === 1 ? "" : "s");
+  document.querySelector("#report-markdown").textContent = report.markdown;
+  resetReportFeedback();
+  document.querySelector("#report-preview").hidden = false;
+  document.querySelector("#report-markdown").focus();
+  announce("Markdown report ready for review");
+}
+
+function closeReportPreview(message, restoreFocus = true) {
+  document.querySelector("#report-preview").hidden = true;
+  document.querySelector("#report-markdown").textContent = "";
+  reportPreview = null;
+  const returnFocus = reportPreviewReturnFocus;
+  reportPreviewReturnFocus = null;
+  if (restoreFocus && returnFocus?.focus) returnFocus.focus();
+  if (message) announce(message);
+}
+
+function invalidateReportPreview() {
+  if (reportPreview) closeReportPreview(null, false);
+}
+
 function setActiveTab(tabName) {
   activeTab = tabName;
   document.querySelectorAll(".tab").forEach((item) => {
@@ -263,6 +322,7 @@ async function copyText(value) {
 }
 
 function loadEditor(value, filename, message) {
+  invalidateReportPreview();
   editor.value = value;
   currentFilename = normalizedFilename(filename);
   cleanSnapshot = value;
@@ -416,6 +476,7 @@ function render() {
 }
 
 editor.addEventListener("input", () => {
+  invalidateReportPreview();
   announce("Editing YAML");
   render();
 });
@@ -424,6 +485,7 @@ document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click",
   render();
 }));
 document.querySelectorAll(".mode").forEach((button) => button.addEventListener("click", () => {
+  invalidateReportPreview();
   inspectionMode = button.dataset.mode;
   document.querySelectorAll(".mode").forEach((item) => {
     const selected = item.dataset.mode === inspectionMode;
@@ -439,6 +501,7 @@ document.querySelector("#clear").addEventListener("click", () => {
     announce("Clear cancelled");
     return;
   }
+  invalidateReportPreview();
   editor.value = "";
   currentFilename = "manifest.yaml";
   cleanSnapshot = "";
@@ -480,20 +543,46 @@ document.querySelector("#format-apply").addEventListener("click", () => {
   editor.focus();
   announce("YAML formatted", "success");
 });
+function downloadText(value, type, filename) {
+  const blob = new Blob([value], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 document.querySelector("#download").addEventListener("click", () => {
   if (!editor.value) {
     announce("Nothing to download");
     return;
   }
-  const blob = new Blob([editor.value], { type: "application/yaml" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = currentFilename;
-  link.click();
-  URL.revokeObjectURL(url);
+  downloadText(editor.value, "application/yaml", currentFilename);
   cleanSnapshot = editor.value;
   announce(currentFilename + " downloaded", "success");
+});
+document.querySelector("#generate-report").addEventListener("click", () => {
+  const analysis = analyzeYaml(editor.value, inspectionMode);
+  openReportPreview(buildMarkdownReport({ filename: currentFilename, analysis }));
+});
+document.querySelector("#report-cancel").addEventListener("click", () => closeReportPreview("Report cancelled"));
+document.querySelector("#report-copy").addEventListener("click", async () => {
+  if (!reportPreview) return;
+  try {
+    await copyText(reportPreview.markdown);
+    reportFeedback("Markdown copied to the clipboard.", document.querySelector("#report-copy"));
+    announce("Markdown report copied", "success");
+  } catch {
+    reportFeedback("Copy failed. Select the report text and copy it manually.", null, "error");
+    announce("Could not copy automatically — use the preview to select the report", "error");
+  }
+});
+document.querySelector("#report-download").addEventListener("click", () => {
+  if (!reportPreview) return;
+  downloadText(reportPreview.markdown, "text/markdown;charset=utf-8", reportPreview.filename);
+  reportFeedback(reportPreview.filename + " downloaded.", document.querySelector("#report-download"));
+  announce(reportPreview.filename + " downloaded", "success");
 });
 document.querySelector("#results").addEventListener("click", async (event) => {
   const copy = event.target.closest(".copy-guidance");
@@ -510,6 +599,25 @@ document.querySelector("#results").addEventListener("click", async (event) => {
   if (location) focusEditorLocation(location.dataset.line, location.dataset.column);
 });
 document.addEventListener("keydown", (event) => {
+  if (reportPreview && event.key === "Escape") {
+    event.preventDefault();
+    closeReportPreview("Report cancelled");
+    return;
+  }
+  if (reportPreview && event.key === "Tab") {
+    const focusable = [...document.querySelectorAll("#report-preview [tabindex='0'], #report-preview button")];
+    const current = focusable.indexOf(document.activeElement);
+    const next = event.shiftKey
+      ? (current <= 0 ? focusable.length - 1 : current - 1)
+      : (current === focusable.length - 1 ? 0 : current + 1);
+    event.preventDefault();
+    focusable[next].focus();
+    return;
+  }
+  if (reportPreview && (event.ctrlKey || event.metaKey)) {
+    if (["o", "s", "f"].includes(event.key.toLowerCase())) event.preventDefault();
+    return;
+  }
   if (formatPreview && event.key === "Escape") {
     event.preventDefault();
     closeFormatPreview("Formatting cancelled");

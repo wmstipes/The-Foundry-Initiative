@@ -163,6 +163,22 @@ code { color: #dbe7f2; font-family: "Cascadia Code", Consolas, monospace; font-s
 .diff-row.removed .diff-marker, .diff-row.removed code { color: #ff9a9a; }
 .format-preview-dialog > footer { display: flex; justify-content: flex-end; gap: 9px; padding: 13px 18px; border-top: 1px solid var(--line); }
 #format-apply { border-color: #8a641f; background: #3a2c17; color: #ffd180; font-weight: 700; }
+.report-preview { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: rgba(3, 7, 11, .82); }
+.report-preview[hidden] { display: none; }
+.report-preview-dialog { display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; width: min(1040px, 100%); max-height: min(860px, calc(100vh - 48px)); border: 1px solid #4a5b6c; border-radius: 12px; overflow: hidden; background: var(--panel); box-shadow: 0 28px 90px rgba(0, 0, 0, .65); }
+.report-preview-dialog > header { display: flex; align-items: start; justify-content: space-between; gap: 20px; padding: 17px 20px; border-bottom: 1px solid var(--line); }
+.report-preview-dialog h2 { margin: 4px 0 0; font-size: 1.05rem; }
+.report-preview-dialog header p { margin: 5px 0 0; color: var(--muted); font-size: .8rem; }
+.report-preview-summary { flex: 0 0 auto; padding: 6px 9px; border-radius: 999px; background: rgba(104, 185, 245, .12); color: var(--blue); font-size: .74rem; font-weight: 700; }
+.report-export-boundary { margin: 0; padding: 11px 20px; border-bottom: 1px solid var(--line); background: rgba(245, 165, 36, .08); color: #d9c293; font-size: .76rem; line-height: 1.45; }
+.report-markdown { min-height: 280px; margin: 0; padding: 18px 20px; overflow: auto; border: 0; background: #0c1219; color: #dbe7f2; font-family: "Cascadia Code", Consolas, monospace; font-size: .78rem; line-height: 1.55; white-space: pre; }
+.report-preview-dialog > footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 18px; border-top: 1px solid var(--line); }
+.report-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; }
+.report-action-status { min-height: 1.1rem; color: var(--muted); font-size: .75rem; }
+.report-action-status.success { color: var(--teal); }
+.report-action-status.error { color: var(--red); }
+#report-copy, #report-download { border-color: #8a641f; background: #3a2c17; color: #ffd180; font-weight: 700; }
+#report-copy.completed, #report-download.completed { border-color: #2f9b88; background: rgba(67, 217, 189, .16); color: var(--teal); box-shadow: inset 0 0 0 1px rgba(67, 217, 189, .24); }
 footer { display: flex; justify-content: space-between; padding: 12px 4px 0; color: var(--muted); font-size: .75rem; }
 @media (max-width: 900px) {
   .topbar { padding: 0 16px; }

@@ -13,18 +13,18 @@ These manifests define the deployed SignalForge browser-local Forge YAML Workben
 Tracked deployment release:
 
 ```text
-0.6.0
+0.7.0
 ```
 
 Immutable deployed image reference:
 
 ```text
-wmstipes/signalforge-yaml-workbench:0.6.0@sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc
+wmstipes/signalforge-yaml-workbench:0.7.0@sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2
 ```
 
-The published OCI index contains active `linux/amd64` manifest `sha256:f051ce44976c1abdd2076415edc6476ef57cb8c5e2c7cb196cb1391616ab5f0a` and `linux/arm64` manifest `sha256:d5795e44b4553b8bd6b8a96c7ad6e3b574e8b9e7dcdbc80c0ed1f34ef2e01208`. The additional unknown-platform entries are BuildKit attestation manifests linked to those images. No floating image tag is used.
+The published OCI index contains active `linux/amd64` manifest `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and `linux/arm64` manifest `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`. The additional unknown-platform entries are BuildKit attestation manifests linked to those images. No floating image tag is used.
 
-The tracked Deployment and live cluster both use accepted immutable `0.6.0`. The Deployment-only rollout followed successful manifest validation, server-side dry-run, live diff review, and explicit approval.
+The tracked Deployment and live cluster both use accepted immutable `0.7.0`. The Deployment-only rollout followed successful manifest validation, server-side dry-run, live diff review, and explicit approval.
 
 ## Security and data boundaries
 
@@ -64,4 +64,4 @@ kubectl rollout status deployment/forge-yaml-workbench -n forge-tools --timeout=
 kubectl get deployment,pods,service -n forge-tools -o wide
 ```
 
-The live `0.6.0` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`. NodePort `30081`, its ready EndpointSlice, fresh HTTP 200 responses from `/healthz` and the application page, Content Security Policy, and `X-Content-Type-Options` passed runtime verification. Interactive browser acceptance confirmed the formatting preview, unchanged editor state before Apply, Cancel preservation, Apply formatting, invalid-YAML validation behavior, Kubernetes and General YAML modes, the OWASP profile, and corrected finding-link scrolling.
+The live `0.7.0` deployment has one available Ready replica with zero restarts and a runtime ImageID matching OCI index digest `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`. NodePort `30081`, its ready EndpointSlice, fresh HTTP 200 responses from `/healthz` and the application page, Content Security Policy, and `X-Content-Type-Options` passed runtime verification. Interactive browser acceptance confirmed the formatting preview, browser-local Kubernetes and General YAML Markdown reports, visible Copied and Downloaded states, predictable report filenames, mode isolation, cancellation, unchanged editor and unsaved state, the OWASP profile, and corrected finding-link scrolling.

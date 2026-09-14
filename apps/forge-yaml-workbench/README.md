@@ -2,7 +2,7 @@
 
 Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. It parses YAML locally in the browser and offers Kubernetes-specific and General YAML inspection modes.
 
-## Version 0.6.0 candidate source scope
+## Version 0.7.0 candidate source scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
@@ -19,6 +19,9 @@ Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. 
 - Present a pinned OWASP Kubernetes Top 10:2025 review profile with direct, partial, and cluster-context-required labels.
 - Center the editor on a finding's selected line when its YAML path or line/column control is activated.
 - Perform analysis in the browser without sending YAML to another service.
+- Generate a deterministic Markdown analysis report in browser memory.
+- Preview the report before explicitly copying it to the operating-system clipboard or downloading it as a local `.md` file.
+- Keep the complete source YAML out of the report and preserve unsaved YAML state during report export.
 
 ## Milestone 033 usability improvements
 
@@ -112,6 +115,23 @@ The `0.6.0` candidate changes formatting from immediate editor mutation into an 
 - invalid YAML continues to remain unchanged and routes to the Validation report
 
 The preview reuses the existing deterministic formatter. It does not repair invalid YAML, infer intended indentation, or provide automatic remediation.
+
+## Milestone 039 Markdown analysis reports
+
+The `0.7.0` candidate adds an explicit review-first report workflow:
+
+- **Generate report** builds Markdown from the current browser-local analysis snapshot
+- the preview identifies manifest-derived content that can leave browser memory
+- **Copy Markdown** and **Download .md** are explicit export actions
+- Cancel and Escape discard the prepared snapshot without exporting it
+- changing the YAML, inspection mode, or opened file invalidates a prepared report
+- report downloads use a predictable `*-report.md` filename without marking YAML edits as saved
+- Kubernetes reports retain separate syntax, structure, operational, schema, and OWASP sections
+- General YAML reports contain only syntax and document-structure analysis
+
+The report does not reproduce the complete source YAML. It can still contain source filenames, resource names, namespaces, paths, findings, recommendations, example YAML, and security references. Copying places that content on the operating-system clipboard; downloading writes it to a local file.
+
+Report generation adds no network request, backend, cluster access, credential use, report history, or automatic remediation. Image publication and deployment remain separate release gates.
 
 ## Local development
 

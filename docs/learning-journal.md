@@ -434,3 +434,78 @@ Changed Forge YAML Workbench formatting from immediate editor mutation into an e
 
 Select the next bounded milestone; Milestone 038 has no remaining release, deployment, acceptance, or merge gates.
 
+## 2026-09-14 — Milestone 039 planning: browser-local Markdown reports
+
+### What changed
+
+- Anchored the milestone to `main` commit `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c` after Milestone 038 closeout.
+- Approved a deterministic Markdown report built from the existing browser-local analysis model.
+- Defined a review-first workflow with explicit Copy Markdown and Download .md actions.
+- Kept full source YAML out of the report and identified clipboard and local download as deliberate trust-boundary crossings.
+- Preserved separate gates for implementation, image publication, deployment, live acceptance, and merge.
+
+### Why this matters
+
+The Workbench can become more useful for peer review, change records, and learning evidence without acquiring a backend or cluster credentials. Treating report export as an explicit operator action also makes the boundary visible instead of silently moving manifest-derived information outside browser memory.
+
+### Next small step
+
+Implement the pure report generator and accessible preview workflow on `codex/milestone-039-markdown-report`, then run the complete local validation suite before considering publication.
+
+## 2026-09-14 — Milestone 039 implementation
+
+### What changed
+
+- Added a pure deterministic Markdown generator driven by the existing browser-local analysis result.
+- Added a review dialog with explicit Copy Markdown, Download .md, Cancel, and Escape actions.
+- Preserved unsaved YAML state and invalidated prepared reports when their YAML, inspection mode, or file context changed.
+- Added unit and DOM interaction coverage for the report contract, mode boundaries, export actions, focus behavior, Markdown safety, and filename derivation.
+- Advanced the source candidate to `0.7.0` without changing the tracked Deployment or live `0.6.0` runtime.
+
+### What remains gated
+
+The complete local validation suite and browser checks must pass before publication is considered. Image publication, digest pinning, deployment, live acceptance, final documentation, and merge each remain later gates.
+
+## 2026-09-14 — Milestone 039 source acceptance
+
+### Validation result
+
+- All 69 automated tests passed.
+- Validator reproducibility, production build, strict-CSP scan, dependency audit, Kubernetes manifest validation, whitespace validation, and clean-worktree checks passed.
+- Local browser acceptance passed for Kubernetes and General YAML reports, report review, Copy Markdown, Download .md, Escape cancellation, filename derivation, and unsaved-state preservation.
+- Browser review exposed missing visible export confirmation because feedback was rendered behind the modal.
+- Added and accepted an in-modal live message plus highlighted **Copied** and **Downloaded** button states.
+- Opened draft PR #18; Workbench CI run 108 and the non-publishing AMD64/ARM64 Docker build run 110 passed.
+
+### Gate state
+
+Source acceptance is complete for candidate `0.7.0`. Immutable image publication, digest recording, cluster deployment, live acceptance, and merge remain separately gated.
+
+## 2026-09-14 — Milestone 039 image publication
+
+### What changed
+
+- Received explicit approval to publish Workbench `0.7.0`.
+- Workflow run `34886290349` built and pushed the AMD64/ARM64 image from source commit `84123ae842ce85d8e37bd02d8e96f3fb4d9765ae`.
+- Recorded immutable OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`.
+- Independently confirmed AMD64 manifest `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and ARM64 manifest `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`.
+- Kept the running `0.6.0` Deployment unchanged.
+- After separate approval, staged matching `0.7.0` labels and the immutable OCI index in the tracked Deployment manifest without applying it to the cluster.
+
+### Next small step
+
+Repository validation and server-side dry-run passed. The live diff contained only the reviewed `0.7.0` labels, immutable image update, and expected generation preview.
+
+## 2026-09-14 — Milestone 039 deployment and live acceptance
+
+### What changed
+
+- Applied only the explicitly approved Workbench Deployment manifest.
+- Verified one available Ready Pod on `forge-node-03` with zero restarts and one ready EndpointSlice.
+- Confirmed both the configured image and runtime ImageID use the reviewed immutable `0.7.0` OCI index.
+- Received fresh HTTP 200 responses from `/healthz` and the application page through NodePort `30081`, with health body `ok`, Content Security Policy, and `X-Content-Type-Options: nosniff`.
+- Completed live browser acceptance for Kubernetes and General YAML reports, visible Copy and Download completion states, predictable Markdown download naming, mode isolation, cancellation, and unchanged editor and unsaved state.
+
+### Next small step
+
+Complete final documentation and PR review. Marking draft PR #18 ready and merging remain separate approval gates.

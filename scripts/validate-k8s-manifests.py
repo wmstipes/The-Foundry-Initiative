@@ -41,9 +41,9 @@ METRICS_SERVER_CA_ARGUMENT = (
 WORKBENCH_MANIFEST_DIR = Path("k8s/forge-yaml-workbench")
 WORKBENCH_NAMESPACE = "forge-tools"
 WORKBENCH_APP = "forge-yaml-workbench"
-WORKBENCH_VERSION = "0.6.0"
+WORKBENCH_VERSION = "0.7.0"
 WORKBENCH_IMAGE_DIGEST = (
-    "sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc"
+    "sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2"
 )
 WORKBENCH_IMAGE = (
     f"wmstipes/signalforge-yaml-workbench:{WORKBENCH_VERSION}"
