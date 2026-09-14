@@ -490,7 +490,8 @@ Source acceptance is complete for candidate `0.7.0`. Immutable image publication
 - Recorded immutable OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`.
 - Independently confirmed AMD64 manifest `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and ARM64 manifest `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`.
 - Kept the running `0.6.0` Deployment unchanged.
+- After separate approval, staged matching `0.7.0` labels and the immutable OCI index in the tracked Deployment manifest without applying it to the cluster.
 
 ### Next small step
 
-Prepare the digest-pinned manifest and read-only deployment review. Applying the Deployment still requires explicit approval.
+Validate the staged manifest and complete the server-side dry-run and live diff review. Applying the Deployment still requires explicit approval.
