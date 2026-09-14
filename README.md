@@ -58,9 +58,9 @@ The long-term goal is to evolve this service into **ForgeOps**, an AI-assisted K
 
 ## Forge YAML Workbench
 
-Forge YAML Workbench is a browser-based YAML inspector deployed in the restricted `forge-tools` namespace. Kubernetes inspection is the default, with an explicit General YAML mode for mappings, sequences, and scalars. Both modes share browser-local parsing, formatting, diagnostics, file handling, and tree navigation; the `0.6.0` source candidate adds an explicit browser-local before/after formatting preview with Apply and Cancel, while Kubernetes-only findings, remediation, and OWASP guidance remain suppressed in General YAML mode. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
+Forge YAML Workbench is a browser-based YAML inspector deployed in the restricted `forge-tools` namespace. Kubernetes inspection is the default, with an explicit General YAML mode for mappings, sequences, and scalars. Both modes share browser-local parsing, formatting, diagnostics, file handling, and tree navigation. Immutable release `0.6.0` adds an explicit browser-local before/after formatting preview with Apply and Cancel, while Kubernetes-only findings, remediation, and OWASP guidance remain suppressed in General YAML mode. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
 
-Milestone 036 recovered from the rejected `0.4.0` browser startup defect without weakening the strict CSP. Milestone 037's pinned OWASP Kubernetes Top 10:2025 profile is deployed as immutable `0.5.1`. Browser acceptance found and then verified the correction for finding links that selected the right YAML without scrolling it into view; the browser-only trust boundary remains unchanged.
+Milestone 036 recovered from the rejected `0.4.0` browser startup defect without weakening the strict CSP. Milestone 037 added the pinned OWASP Kubernetes Top 10:2025 profile and corrected finding navigation. Milestone 038 deployed the explicit formatting-preview workflow as immutable `0.6.0`; runtime and live browser acceptance passed without changing the browser-only trust boundary.
 
 ## Repository map
 
@@ -121,7 +121,7 @@ Completed SignalForge milestones include:
 * secure Kubernetes Metrics Server deployed with all four nodes available through `kubectl top`
 * NVMe-backed Prometheus deployed with Pod-replacement persistence and isolated off-node backup/restore validation
 * Grafana dashboards and bounded Prometheus rule evaluation deployed and recovery-tested
-* Forge YAML Workbench `0.5.1` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks, General YAML mode, the pinned OWASP Kubernetes Top 10:2025 review profile, and corrected finding navigation
+* Forge YAML Workbench `0.6.0` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks, General YAML mode, the pinned OWASP Kubernetes Top 10:2025 review profile, corrected finding navigation, and explicit formatting preview
 
 ## Earlier utility: foundry-check
 

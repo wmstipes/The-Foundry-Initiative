@@ -27,24 +27,22 @@ The project has moved from basic workload deployment into repeatable engineering
 - Namespace: `forge-tools`
 - Deployment: `forge-yaml-workbench`
 - Replicas: 1 available and Ready
-- Release: accepted `0.5.1` deployed
-- Image: `wmstipes/signalforge-yaml-workbench:0.5.1@sha256:4011478de37f9316d65985f17d87d3652203e2bcffd75ee29646ddcd52a64ffa`
+- Release: accepted `0.6.0` deployed
+- Image: `wmstipes/signalforge-yaml-workbench:0.6.0@sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`
 - Runtime ImageID: verified against the pinned OCI index digest
 - External lab access: NodePort `30081`
 - Data path: browser-local parsing and analysis; no server-side YAML persistence
 - Modes: Kubernetes inspection by default and explicit General YAML inspection for mapping, sequence, and scalar roots
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
-- Acceptance: immutable `0.5.1` is deployed; runtime digest, ready EndpointSlice, health, page response, security headers, OWASP profile, schema states, General YAML isolation, and corrected finding navigation passed
-- Candidate release: `0.6.0` formatting preview published and digest-verified at `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`; deployment has not occurred
+- Acceptance: immutable `0.6.0` is deployed; configured and runtime digests, one Ready Pod with zero restarts, ready EndpointSlice, NodePort health and page responses, security headers, both YAML modes, preview Apply and Cancel behavior, and invalid-YAML handling passed
 
-## Active milestone
+## Milestone 038 closeout
 
-- 038: browser-local formatting preview
-- Candidate: `0.6.0`
+- Release: `0.6.0`
 - Source acceptance: 58 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, AMD64/ARM64 non-publishing build, repository validation, whitespace validation, Windows build, and local browser interactions passed
 - Behavior: valid formatting changes require explicit Apply or Cancel; invalid YAML remains unchanged and routes to Validation
-- Release state: `0.6.0` is published for AMD64/ARM64 and staged in the tracked Deployment; the live Deployment remains on immutable `0.5.1` pending separate approval
+- Release acceptance: the AMD64/ARM64 OCI index was independently digest-verified, deployed after an approved Deployment-only diff, and passed runtime, HTTP, security-header, and live browser validation
 
 ## Completed milestones
 
@@ -76,15 +74,16 @@ The project has moved from basic workload deployment into repeatable engineering
 - 035: General YAML inspection released as `0.3.0`, deployed, live browser-accepted, and merged
 - 036: corrected `0.4.1` published, digest-pinned, deployed, live browser-accepted, and merged through PR #13 at `fc16ad1`
 - 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation released as `0.5.1`, deployed, browser-accepted, and squash-merged through PR #14 at `dd46a08`
+- 038: browser-local formatting preview released as `0.6.0`, digest-pinned, deployed, runtime-verified, and live browser-accepted; PR #16 awaits final review and merge
 
 ## Latest completed milestone
 
-- 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation deployed and browser-accepted as immutable `0.5.1`
-- Coverage labels: K01 direct; K02-K06, K08, and K09 partial; K07 and K10 cluster-context-required
+- 038: browser-local, line-oriented formatting preview with explicit Apply, Cancel, and Escape behavior
 - Trust boundary: browser-local only, with no backend, cluster access, cloud access, credentials, or automatic remediation
-- Local verification: 50 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository manifest validation, and whitespace checks pass
-- Publication and deployment: immutable AMD64/ARM64 `0.5.0` and `0.5.1` images are published; `0.5.1` is live and passed runtime and browser checks
-- Completion: PR #14 was marked ready after acceptance and squash-merged at `dd46a08`; all three post-merge workflows passed on `main`
+- Verification: 58 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository validation, whitespace checks, Windows build, and local browser interactions passed
+- Publication and deployment: immutable AMD64/ARM64 `0.6.0` is live at OCI index `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`
+- Runtime acceptance: one Ready Pod, zero restarts, exact configured/runtime digest match, ready EndpointSlice, fresh HTTP 200 responses, expected security headers, and all live browser checks passed
+- Completion: implementation, release, deployment, and acceptance are complete; PR #16 awaits final review and merge
 
 ## Current observability state
 
@@ -181,7 +180,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Select the next bounded milestone from the roadmap; no Milestone 037 release or merge gates remain open.
+Complete final review and merge of PR #16, then select the next bounded milestone from the roadmap.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
@@ -205,4 +204,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench `0.5.1` is deployed from the published AMD64/ARM64 OCI index at `sha256:4011478de37f9316d65985f17d87d3652203e2bcffd75ee29646ddcd52a64ffa`. Its runtime, OWASP profile, schema boundaries, General YAML isolation, strict headers, and corrected finding-link scrolling passed live acceptance. NodePort `30081` remains private-lab HTTP exposure.
+Forge YAML Workbench `0.6.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`. Its runtime, formatting preview, OWASP profile, schema boundaries, General YAML isolation, strict headers, and corrected finding-link scrolling passed live acceptance. NodePort `30081` remains private-lab HTTP exposure.

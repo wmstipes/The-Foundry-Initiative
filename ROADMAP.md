@@ -1,12 +1,12 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-13
+**Last updated:** 2026-09-14
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-037 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 037's immutable `0.5.1` image is live and browser-accepted, including the corrected finding-navigation scroll behavior. Milestone 038 has a published and digest-verified `0.6.0` browser-local formatting-preview candidate; deployment remains pending approval.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-038 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 038's immutable `0.6.0` image is live and browser-accepted with the explicit formatting-preview workflow, while the browser-only trust boundary remains unchanged.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -227,7 +227,7 @@ See [Milestone 037](docs/milestones/milestone-037-owasp-kubernetes-profile.md).
 
 #### Milestone 038 — Formatting preview
 
-**Status:** `0.6.0` published and digest-verified; deployment pending approval.
+**Status:** Complete. Immutable `0.6.0` was published, digest-pinned, deployed, runtime-verified, and live browser-accepted; PR #16 awaits final review and merge.
 
 - Replace immediate formatting mutation with a browser-local, line-oriented preview.
 - Keep the editor unchanged until explicit Apply and preserve it through Cancel or Escape.

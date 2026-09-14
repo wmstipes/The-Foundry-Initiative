@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-13
+**Last updated:** 2026-09-14
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -54,7 +54,7 @@ flowchart TD
 - Source: `apps/forge-yaml-workbench`
 - Manifests: `k8s/forge-yaml-workbench`
 - Namespace: `forge-tools`
-- Deployment: one stateless replica using accepted immutable release `0.5.1`
+- Deployment: one stateless replica using accepted immutable release `0.6.0`
 - Access: private-lab NodePort `30081`
 - Runtime: unprivileged NGINX on container port `8080`
 - Processing: shared YAML parsing, formatting preview, line-diff generation, diagnostics, file handling, and tree navigation run entirely in the browser; formatting changes require explicit Apply or Cancel, while Kubernetes-specific operational findings, the bundled `v1.36.4` schema validator, and the pinned OWASP Top 10:2025 review profile run only in Kubernetes mode
@@ -166,7 +166,7 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 
 Potential next architecture steps include:
 
-1. Publish the separately approved Workbench `0.6.0` candidate, verify its immutable multi-architecture digest, and review a Deployment-only dry-run and diff before any live change.
+1. Select the next bounded Workbench milestone after `0.6.0` completed publication, approved Deployment-only rollout, runtime verification, and live browser acceptance.
 2. Observe naturally occurring limited-alert behavior before designing notification delivery.
 3. Continue the demonstrated Prometheus and Grafana backup cadence.
 4. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.

@@ -366,7 +366,7 @@ Expanded Forge YAML Workbench from individual K01 references into a ten-category
 - One manifest condition can inform multiple risks, so the UI needs shared mappings without duplicating the underlying finding.
 - Zero matching signals must be labeled explicitly as “not a pass result.”
 
-### What I finished locally
+### What I finished
 
 - Pinned all ten OWASP category links to upstream commit `828cfa2e2d7af63cdf7025c09ca871265d71f59c`.
 - Labeled K01 direct; K02-K06, K08, and K09 partial; and K07 plus K10 cluster-context-required.
@@ -424,9 +424,12 @@ Changed Forge YAML Workbench formatting from immediate editor mutation into an e
 - Prepared candidate version `0.6.0`.
 - Published the separately approved AMD64/ARM64 image in run `34858580511` and independently verified OCI index `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`.
 - Verified AMD64 manifest `sha256:f051ce44976c1abdd2076415edc6476ef57cb8c5e2c7cb196cb1391616ab5f0a` and ARM64 manifest `sha256:d5795e44b4553b8bd6b8a96c7ad6e3b574e8b9e7dcdbc80c0ed1f34ef2e01208`.
-- Staged the immutable `0.6.0` Deployment manifest without applying it to the cluster.
+- Reviewed a successful server-side dry-run and exact Deployment-only live diff before Mike explicitly approved the rollout.
+- Deployed immutable `0.6.0` and verified one Ready Pod with zero restarts, a matching configured image and runtime ImageID, and a ready EndpointSlice.
+- Verified fresh HTTP 200 responses from `/healthz` and the application page through NodePort `30081`, with the expected CSP and `nosniff` headers.
+- Completed live browser acceptance for preview display, unchanged pre-Apply content, Cancel preservation, Apply formatting, invalid-YAML validation behavior, and both inspection modes.
 
 ### Next small step
 
-Review the exact Deployment-only server-side dry-run and live diff. Request separate approval before applying the immutable `0.6.0` candidate to the cluster.
+Complete final review and merge of PR #16, then select the next bounded milestone.
 

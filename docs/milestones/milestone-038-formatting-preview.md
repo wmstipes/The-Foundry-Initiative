@@ -1,6 +1,6 @@
 # Milestone 038 — Formatting preview
 
-**Status:** `0.6.0` published and digest-verified; deployment pending approval  
+**Status:** Acceptance complete; PR #16 final review and merge pending  
 **Started:** 2026-09-14  
 **Branch:** `codex/milestone-038-format-preview`
 
@@ -56,6 +56,11 @@ This milestone does not add:
 - Repository Kubernetes manifest validation and whitespace checks passed.
 - Local browser acceptance confirmed preview display for valid changes, unchanged editor content before approval, Apply, Cancel, and the invalid-YAML route to Validation.
 - Invalid test input initially clarified the boundary: formatting normalizes valid YAML but does not guess repairs for syntax errors.
+- The reviewed server-side dry-run passed, and the live diff was limited to version labels plus the immutable `0.6.0` image reference before explicit deployment approval.
+- The rollout produced one Ready Pod with zero restarts; configured image and runtime ImageID exactly matched OCI index `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`.
+- The Service retained NodePort `30081`, and its EndpointSlice routed to the Ready Pod on port `8080`.
+- Fresh NodePort requests returned HTTP 200 for `/healthz` and the application page with the expected CSP and `X-Content-Type-Options: nosniff` headers.
+- Live browser acceptance passed for preview display, unchanged editor content before Apply, Cancel preservation, Apply formatting, invalid-YAML validation behavior, and both Kubernetes and General YAML modes.
 
 ## Release state
 
@@ -65,9 +70,9 @@ This milestone does not add:
 - OCI index: `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`
 - AMD64 manifest: `sha256:f051ce44976c1abdd2076415edc6476ef57cb8c5e2c7cb196cb1391616ab5f0a`
 - ARM64 manifest: `sha256:d5795e44b4553b8bd6b8a96c7ad6e3b574e8b9e7dcdbc80c0ed1f34ef2e01208`
-- Tracked Deployment: immutable `0.6.0` candidate staged for review
-- Live version remains: `0.5.1`
-- PR state: draft
+- Tracked Deployment: immutable `0.6.0` image pinned by version and OCI index digest
+- Live version: accepted `0.6.0`
+- PR state: #16 awaits final review and merge
 
 ## Trust boundary
 
