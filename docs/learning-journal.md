@@ -452,3 +452,17 @@ The Workbench can become more useful for peer review, change records, and learni
 
 Implement the pure report generator and accessible preview workflow on `codex/milestone-039-markdown-report`, then run the complete local validation suite before considering publication.
 
+## 2026-09-14 — Milestone 039 implementation
+
+### What changed
+
+- Added a pure deterministic Markdown generator driven by the existing browser-local analysis result.
+- Added a review dialog with explicit Copy Markdown, Download .md, Cancel, and Escape actions.
+- Preserved unsaved YAML state and invalidated prepared reports when their YAML, inspection mode, or file context changed.
+- Added unit and DOM interaction coverage for the report contract, mode boundaries, export actions, focus behavior, Markdown safety, and filename derivation.
+- Advanced the source candidate to `0.7.0` without changing the tracked Deployment or live `0.6.0` runtime.
+
+### What remains gated
+
+The complete local validation suite and browser checks must pass before publication is considered. Image publication, digest pinning, deployment, live acceptance, final documentation, and merge each remain later gates.
+
