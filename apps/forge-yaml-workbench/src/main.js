@@ -191,7 +191,7 @@ function openFormatPreview(before, after) {
   formatPreview = { before, after };
   formatPreviewReturnFocus = document.activeElement;
   document.querySelector("#format-preview-summary").textContent =
-    diff.added + " added · " + diff.removed + " removed";
+    diff.added + " added · " + diff.removed + " removed" + (diff.simplified ? " · simplified alignment" : "");
   document.querySelector("#format-diff").innerHTML = diffRows(diff.rows);
   document.querySelector("#format-preview").hidden = false;
   document.querySelector("#format-apply").focus();
@@ -507,9 +507,19 @@ document.querySelector("#results").addEventListener("click", async (event) => {
   if (location) focusEditorLocation(location.dataset.line, location.dataset.column);
 });
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && formatPreview) {
+  if (formatPreview && event.key === "Escape") {
     event.preventDefault();
     closeFormatPreview("Formatting cancelled");
+    return;
+  }
+  if (formatPreview && event.key === "Tab") {
+    const focusable = [...document.querySelectorAll("#format-preview [tabindex='0'], #format-preview button")];
+    const current = focusable.indexOf(document.activeElement);
+    const next = event.shiftKey
+      ? (current <= 0 ? focusable.length - 1 : current - 1)
+      : (current === focusable.length - 1 ? 0 : current + 1);
+    event.preventDefault();
+    focusable[next].focus();
     return;
   }
   if (!(event.ctrlKey || event.metaKey)) return;
