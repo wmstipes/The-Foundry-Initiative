@@ -240,7 +240,7 @@ See [Milestone 038](docs/milestones/milestone-038-formatting-preview.md).
 
 #### Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Implementation complete; local validation pending.
+**Status:** Automated validation complete; browser acceptance pending.
 
 - Generate a deterministic Markdown report from the current browser-local analysis snapshot.
 - Let the operator review the report before explicitly copying it or downloading it as a `.md` file.
