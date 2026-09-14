@@ -428,8 +428,9 @@ Changed Forge YAML Workbench formatting from immediate editor mutation into an e
 - Deployed immutable `0.6.0` and verified one Ready Pod with zero restarts, a matching configured image and runtime ImageID, and a ready EndpointSlice.
 - Verified fresh HTTP 200 responses from `/healthz` and the application page through NodePort `30081`, with the expected CSP and `nosniff` headers.
 - Completed live browser acceptance for preview display, unchanged pre-Apply content, Cancel preservation, Apply formatting, invalid-YAML validation behavior, and both inspection modes.
+- Merged PR #16 at `4fed28c`; Workbench CI run 107, Kubernetes Manifest Validation run 104, and Restaurant API Docker Build run 53 passed on `main`.
 
 ### Next small step
 
-Complete final review and merge of PR #16, then select the next bounded milestone.
+Select the next bounded milestone; Milestone 038 has no remaining release, deployment, acceptance, or merge gates.
 
