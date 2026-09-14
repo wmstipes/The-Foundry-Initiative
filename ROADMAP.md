@@ -240,7 +240,7 @@ See [Milestone 038](docs/milestones/milestone-038-formatting-preview.md).
 
 #### Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Digest-pinned `0.7.0` Deployment candidate staged; deployment review pending.
+**Status:** Digest-pinned `0.7.0` Deployment candidate reviewed; deployment approval pending.
 
 - Generate a deterministic Markdown report from the current browser-local analysis snapshot.
 - Let the operator review the report before explicitly copying it or downloading it as a `.md` file.
