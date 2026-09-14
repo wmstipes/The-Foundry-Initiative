@@ -1,6 +1,6 @@
 # Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Implementation complete; local validation pending
+**Status:** Automated validation complete; browser acceptance pending
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-039-markdown-report`
 **Baseline:** `main` at `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c`
@@ -101,7 +101,19 @@ This milestone does not add:
 - Updated the candidate application and lockfile version to `0.7.0`.
 - Left the Kubernetes Deployment and accepted `0.6.0` runtime unchanged.
 
-Local validation and browser acceptance evidence remain pending. Image publication, manifest mutation, cluster deployment, and pull-request merge are not authorized by this implementation gate.
+Automated validation is complete. Browser acceptance remains pending. Image publication, manifest mutation, cluster deployment, and pull-request merge are not authorized by this implementation gate.
+
+## Validation evidence
+
+- All 69 tests passed across analyzer, schema, OWASP profile, formatting diff, Markdown report, and DOM interaction suites.
+- Validator reproducibility passed for all 12 bundled Kubernetes resources.
+- The production build completed successfully.
+- Strict-CSP validation confirmed that the production JavaScript contains no eval or Function-constructor usage.
+- Dependency audit reported zero vulnerabilities.
+- Repository Kubernetes manifest validation passed.
+- Repository whitespace validation passed with a clean worktree.
+- Initial browser review confirmed report generation, Copy, and Download behavior and identified missing visible in-modal action feedback.
+- The candidate now provides an in-modal live status plus a highlighted **Copied** or **Downloaded** button state; automated interaction coverage passes, and final visual confirmation remains pending.
 
 ## Candidate release
 
