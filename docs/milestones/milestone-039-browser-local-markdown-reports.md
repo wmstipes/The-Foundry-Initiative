@@ -1,6 +1,6 @@
 # Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Source acceptance complete; image publication pending approval
+**Status:** Candidate CI complete; image publication pending approval
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-039-markdown-report`
 **Baseline:** `main` at `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c`
@@ -116,6 +116,9 @@ Automated validation and local browser acceptance are complete. Image publicatio
 - Browser acceptance confirmed Kubernetes and General YAML report generation, unchanged editor content, correct report sections and mode isolation, clipboard copy, predictable Markdown download naming, Escape cancellation, and preservation of unsaved YAML state.
 - Browser review identified that successful Copy and Download actions initially reported status only behind the modal.
 - The corrected candidate provides an in-modal live status plus a highlighted **Copied** or **Downloaded** button state; final browser confirmation passed for both actions.
+- Draft PR #18 opened against `main` without authorizing publication, deployment, readiness, or merge.
+- Workbench CI run 108 passed all pull-request checks.
+- Docker build run 110 successfully built the AMD64 and ARM64 candidate through the pull-request path with `push: false`; no image was published.
 
 ## Candidate release
 
