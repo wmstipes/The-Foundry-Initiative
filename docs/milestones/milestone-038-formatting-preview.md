@@ -1,6 +1,6 @@
 # Milestone 038 — Formatting preview
 
-**Status:** Implementation in progress  
+**Status:** `0.6.0` source candidate accepted; publication and deployment pending approval  
 **Started:** 2026-09-14  
 **Branch:** `codex/milestone-038-format-preview`
 
@@ -46,6 +46,24 @@ This milestone does not add:
 - Kubernetes and General YAML modes use the same formatting preview.
 - Multi-document formatting remains parseable and does not create empty documents.
 - Automated analyzer, diff, DOM, build, CSP, dependency-audit, repository-manifest, and whitespace checks pass before release consideration.
+
+## Acceptance evidence
+
+- Automated coverage increased to 58 passing tests across analyzer, schema, OWASP profile, line-diff, and DOM interaction suites.
+- Pull-request Workbench CI run 89 passed validator reproducibility, tests, production build, strict-CSP compatibility, and dependency audit.
+- Pull-request Docker build run 91 built the AMD64 and ARM64 candidate without publishing it.
+- Windows validation passed after making generated-validator comparison neutral to CRLF versus LF checkout differences.
+- Repository Kubernetes manifest validation and whitespace checks passed.
+- Local browser acceptance confirmed preview display for valid changes, unchanged editor content before approval, Apply, Cancel, and the invalid-YAML route to Validation.
+- Invalid test input initially clarified the boundary: formatting normalizes valid YAML but does not guess repairs for syntax errors.
+
+## Release state
+
+- Candidate version: `0.6.0`
+- Published image: not yet
+- Deployment change: none
+- Live version remains: `0.5.1`
+- PR state: draft
 
 ## Trust boundary
 
