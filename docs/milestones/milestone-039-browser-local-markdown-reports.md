@@ -1,6 +1,6 @@
 # Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Planning approved; implementation pending  
+**Status:** Implementation complete; local validation pending  
 **Started:** 2026-09-14  
 **Branch:** `codex/milestone-039-markdown-report`  
 **Baseline:** `main` at `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c`
@@ -90,6 +90,18 @@ This milestone does not add:
 - Editing, changing inspection mode, opening another file, loading the sample, or clearing invalidates any prepared report.
 - Existing analyzer, schema, OWASP, formatter, diff, and YAML-download behavior remains covered.
 - Validator reproducibility, automated tests, production build, strict-CSP compatibility, dependency audit, repository validation, whitespace checks, and local browser acceptance pass before release consideration.
+
+## Implementation state
+
+- Added `src/report.js` as a pure deterministic report generator with no DOM or network dependency.
+- Added report unit coverage for Kubernetes, General YAML, empty input, invalid syntax, multi-document ordering, schema boundary states, Markdown escaping, safe code fences, and portable filenames.
+- Added an accessible browser-local preview with explicit Copy Markdown, Download .md, Cancel, and Escape actions.
+- Added focus containment and restoration following the established formatting-preview interaction.
+- Added DOM coverage for no-export preview generation, exact-snapshot copying, report filename selection, unsaved-state preservation, cancellation, keyboard behavior, mode isolation, and stale-report invalidation.
+- Updated the candidate application and lockfile version to `0.7.0`.
+- Left the Kubernetes Deployment and accepted `0.6.0` runtime unchanged.
+
+Local validation and browser acceptance evidence remain pending. Image publication, manifest mutation, cluster deployment, and pull-request merge are not authorized by this implementation gate.
 
 ## Candidate release
 
