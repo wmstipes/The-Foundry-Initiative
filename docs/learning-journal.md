@@ -494,4 +494,4 @@ Source acceptance is complete for candidate `0.7.0`. Immutable image publication
 
 ### Next small step
 
-Validate the staged manifest and complete the server-side dry-run and live diff review. Applying the Deployment still requires explicit approval.
+Repository validation and server-side dry-run passed. The live diff contained only the reviewed `0.7.0` labels, immutable image update, and expected generation preview. Applying the Deployment still requires explicit approval.
