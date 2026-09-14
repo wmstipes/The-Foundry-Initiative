@@ -1,6 +1,6 @@
 # Milestone 038 — Formatting preview
 
-**Status:** Acceptance complete; PR #16 final review and merge pending  
+**Status:** Complete; merged through PR #16 at `4fed28c`  
 **Started:** 2026-09-14  
 **Branch:** `codex/milestone-038-format-preview`
 
@@ -72,7 +72,8 @@ This milestone does not add:
 - ARM64 manifest: `sha256:d5795e44b4553b8bd6b8a96c7ad6e3b574e8b9e7dcdbc80c0ed1f34ef2e01208`
 - Tracked Deployment: immutable `0.6.0` image pinned by version and OCI index digest
 - Live version: accepted `0.6.0`
-- PR state: #16 awaits final review and merge
+- PR state: merged at `4fed28c`
+- Post-merge checks: Workbench CI run 107, Kubernetes Manifest Validation run 104, and Restaurant API Docker Build run 53 passed on `main`
 
 ## Trust boundary
 

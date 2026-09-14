@@ -74,7 +74,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 035: General YAML inspection released as `0.3.0`, deployed, live browser-accepted, and merged
 - 036: corrected `0.4.1` published, digest-pinned, deployed, live browser-accepted, and merged through PR #13 at `fc16ad1`
 - 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation released as `0.5.1`, deployed, browser-accepted, and squash-merged through PR #14 at `dd46a08`
-- 038: browser-local formatting preview released as `0.6.0`, digest-pinned, deployed, runtime-verified, and live browser-accepted; PR #16 awaits final review and merge
+- 038: browser-local formatting preview released as `0.6.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #16 at `4fed28c`
 
 ## Latest completed milestone
 
@@ -83,7 +83,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Verification: 58 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository validation, whitespace checks, Windows build, and local browser interactions passed
 - Publication and deployment: immutable AMD64/ARM64 `0.6.0` is live at OCI index `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`
 - Runtime acceptance: one Ready Pod, zero restarts, exact configured/runtime digest match, ready EndpointSlice, fresh HTTP 200 responses, expected security headers, and all live browser checks passed
-- Completion: implementation, release, deployment, and acceptance are complete; PR #16 awaits final review and merge
+- Completion: PR #16 merged at `4fed28c`; Workbench CI run 107, Kubernetes Manifest Validation run 104, and Restaurant API Docker Build run 53 passed on `main`
 
 ## Current observability state
 
@@ -180,7 +180,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete final review and merge of PR #16, then select the next bounded milestone from the roadmap.
+Select the next bounded milestone from the roadmap; no Milestone 038 release, deployment, acceptance, or merge gates remain open.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 

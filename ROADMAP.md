@@ -227,7 +227,7 @@ See [Milestone 037](docs/milestones/milestone-037-owasp-kubernetes-profile.md).
 
 #### Milestone 038 — Formatting preview
 
-**Status:** Complete. Immutable `0.6.0` was published, digest-pinned, deployed, runtime-verified, and live browser-accepted; PR #16 awaits final review and merge.
+**Status:** Complete. Immutable `0.6.0` was published, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #16 at `4fed28c`.
 
 - Replace immediate formatting mutation with a browser-local, line-oriented preview.
 - Keep the editor unchanged until explicit Apply and preserve it through Cancel or Escape.
