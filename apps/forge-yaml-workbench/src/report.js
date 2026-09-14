@@ -1,6 +1,6 @@
 function markdownText(value) {
   return String(value ?? "")
-    .replace(/[\\\`*_[\]<>|~]/g, "\\.replace(/[\\\`*_[\]{}<>#+.!|()-]/g, "\\$&")")
+    .replace(/[\\\`*_[\]<>|~]/g, "\\$&")
     .replace(/\r?\n/g, " ");
 }
 
