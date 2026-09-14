@@ -1,6 +1,6 @@
 # Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Digest-pinned 0.7.0 Deployment candidate reviewed; deployment approval pending
+**Status:** Immutable 0.7.0 deployed and live browser-accepted; final review pending
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-039-markdown-report`
 **Baseline:** `main` at `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c`
@@ -100,9 +100,10 @@ This milestone does not add:
 - Added DOM coverage for no-export preview generation, exact-snapshot copying, report filename selection, unsaved-state preservation, cancellation, keyboard behavior, mode isolation, and stale-report invalidation.
 - Updated the candidate application and lockfile version to `0.7.0`.
 - Initially left the Kubernetes Deployment and accepted `0.6.0` runtime unchanged during source acceptance.
-- After separate approval, staged version labels `0.7.0` and image `wmstipes/signalforge-yaml-workbench:0.7.0@sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` in the tracked Deployment; the live cluster remains unchanged.
+- After separate approval, staged version labels `0.7.0` and image `wmstipes/signalforge-yaml-workbench:0.7.0@sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` in the tracked Deployment.
+- After separate deployment approval, applied only the reviewed Deployment and completed runtime, HTTP, security-header, and live browser acceptance.
 
-Automated validation, local browser acceptance, separately approved image publication, and separately approved tracked-manifest mutation are complete. Cluster deployment, live acceptance, and pull-request merge remain separately gated; the running `0.6.0` deployment is unchanged.
+Automated validation, local browser acceptance, separately approved image publication, tracked-manifest mutation, cluster deployment, and live acceptance are complete. Final review, pull-request readiness, and merge remain separately gated.
 
 ## Validation evidence
 
@@ -127,10 +128,14 @@ Automated validation, local browser acceptance, separately approved image public
 - Server-side dry-run accepted the Deployment candidate.
 - The live diff showed only the two `app.kubernetes.io/version` changes, the immutable image update, and the expected Kubernetes-managed generation preview.
 - Repository whitespace validation passed and the local worktree was clean.
+- The approved Deployment-only rollout completed with one available Ready Pod on `forge-node-03`, zero restarts, and one ready EndpointSlice address.
+- The configured image and runtime ImageID match OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`.
+- Fresh NodePort requests returned HTTP 200 with health body `ok`, the expected Content Security Policy, and `X-Content-Type-Options: nosniff`.
+- Live browser acceptance passed Kubernetes and General YAML report generation, visible Copied and Downloaded feedback, predictable Markdown download naming, mode isolation, Cancel and Escape behavior, and preservation of editor contents and unsaved state.
 
 ## Candidate release
 
-Application version `0.7.0` was published only after explicit approval. The immutable OCI index is `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`. Publication does not authorize manifest mutation or cluster deployment.
+Application version `0.7.0` was published, digest-pinned, and deployed only through its separate approval gates. The accepted immutable OCI index is `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`.
 
 ## Gated delivery workflow
 
