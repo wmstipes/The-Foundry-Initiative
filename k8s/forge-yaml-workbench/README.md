@@ -10,21 +10,21 @@ These manifests define the deployed SignalForge browser-local Forge YAML Workben
 
 ## Image
 
-Tracked deployment release:
+Tracked deployment candidate:
 
 ```text
-0.6.0
+0.7.0
 ```
 
-Immutable deployed image reference:
+Immutable candidate image reference:
 
 ```text
-wmstipes/signalforge-yaml-workbench:0.6.0@sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc
+wmstipes/signalforge-yaml-workbench:0.7.0@sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2
 ```
 
-The published OCI index contains active `linux/amd64` manifest `sha256:f051ce44976c1abdd2076415edc6476ef57cb8c5e2c7cb196cb1391616ab5f0a` and `linux/arm64` manifest `sha256:d5795e44b4553b8bd6b8a96c7ad6e3b574e8b9e7dcdbc80c0ed1f34ef2e01208`. The additional unknown-platform entries are BuildKit attestation manifests linked to those images. No floating image tag is used.
+The published OCI index contains active `linux/amd64` manifest `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and `linux/arm64` manifest `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`. The additional unknown-platform entries are BuildKit attestation manifests linked to those images. No floating image tag is used.
 
-The tracked Deployment and live cluster both use accepted immutable `0.6.0`. The Deployment-only rollout followed successful manifest validation, server-side dry-run, live diff review, and explicit approval.
+The tracked Deployment stages immutable `0.7.0` for review. The live cluster remains on accepted immutable `0.6.0` until manifest validation, server-side dry-run, live diff review, and separate deployment approval are complete.
 
 ## Security and data boundaries
 
