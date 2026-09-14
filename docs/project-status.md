@@ -75,11 +75,11 @@ The project has moved from basic workload deployment into repeatable engineering
 - 036: corrected `0.4.1` published, digest-pinned, deployed, live browser-accepted, and merged through PR #13 at `fc16ad1`
 - 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation released as `0.5.1`, deployed, browser-accepted, and squash-merged through PR #14 at `dd46a08`
 - 038: browser-local formatting preview released as `0.6.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #16 at `4fed28c`
-- 039: browser-local Markdown analysis report planning approved; implementation, publication, deployment, and acceptance remain pending
+- 039: browser-local Markdown report implementation complete on the milestone branch; local validation, publication, deployment, and acceptance remain pending
 
 ## Active milestone
 
-Milestone 039 planning is approved. The bounded implementation will generate a deterministic Markdown report from the current browser-local analysis, preview it before export, and require an explicit Copy or Download action. It will not embed the complete YAML, add persistence, contact a backend or cluster, or change the running `0.6.0` deployment during the implementation gate.
+Milestone 039 implementation is complete on `codex/milestone-039-markdown-report`, with local validation pending. The candidate generates a deterministic Markdown report from the current browser-local analysis, previews it before export, and requires an explicit Copy or Download action. It does not embed the complete YAML, add persistence, contact a backend or cluster, or change the running `0.6.0` deployment.
 
 ## Latest completed milestone
 
@@ -185,7 +185,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Implement the approved Milestone 039 browser-local Markdown report generator and reviewed Copy/Download workflow on `codex/milestone-039-markdown-report`. Image publication, deployment, live acceptance, and merge remain separate approval gates.
+Run the complete Milestone 039 local validation suite and browser acceptance against the `0.7.0` candidate. Image publication, deployment, live acceptance, and merge remain separate approval gates.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
