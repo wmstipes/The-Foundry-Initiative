@@ -161,6 +161,28 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(document.querySelector("#action-status").textContent).toBe("Formatting cancelled");
   });
 
+  it("keeps keyboard focus inside the formatting preview", () => {
+    replaceEditor("kind:  Pod\nmetadata: {name: demo}\n");
+    document.querySelector("#format").click();
+    expect(document.activeElement).toBe(document.querySelector("#format-apply"));
+
+    document.dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Tab",
+      bubbles: true,
+      cancelable: true
+    }));
+    expect(document.activeElement).toBe(document.querySelector("#format-diff"));
+
+    document.dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Tab",
+      shiftKey: true,
+      bubbles: true,
+      cancelable: true
+    }));
+    expect(document.activeElement).toBe(document.querySelector("#format-apply"));
+    document.querySelector("#format-cancel").click();
+  });
+
   it("switches to Validation and focuses a parser-error line", () => {
     replaceEditor("apiVersion: v1\nkind: Pod\nkind: Service\n");
 
