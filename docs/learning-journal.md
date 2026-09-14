@@ -421,9 +421,12 @@ Changed Forge YAML Workbench formatting from immediate editor mutation into an e
 - Passed pull-request CI, validator reproducibility, CSP compatibility, zero-vulnerability audit, repository validation, whitespace validation, and non-publishing AMD64/ARM64 builds.
 - Confirmed the generated-validator check and production build on Windows after correcting line-ending portability.
 - Completed local browser acceptance for valid formatting changes, Apply, Cancel, and invalid-YAML validation.
-- Prepared candidate version `0.6.0` without publishing or deploying it.
+- Prepared candidate version `0.6.0`.
+- Published the separately approved AMD64/ARM64 image in run `34858580511` and independently verified OCI index `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`.
+- Verified AMD64 manifest `sha256:f051ce44976c1abdd2076415edc6476ef57cb8c5e2c7cb196cb1391616ab5f0a` and ARM64 manifest `sha256:d5795e44b4553b8bd6b8a96c7ad6e3b574e8b9e7dcdbc80c0ed1f34ef2e01208`.
+- Staged the immutable `0.6.0` Deployment manifest without applying it to the cluster.
 
 ### Next small step
 
-Request separate approval to publish the immutable AMD64/ARM64 `0.6.0` image. After digest verification, review the exact Deployment-only dry-run and diff before any cluster change.
+Review the exact Deployment-only server-side dry-run and live diff. Request separate approval before applying the immutable `0.6.0` candidate to the cluster.
 
