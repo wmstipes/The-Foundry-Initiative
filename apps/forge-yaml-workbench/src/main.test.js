@@ -110,15 +110,87 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(document.querySelector("#results").textContent).toContain("null");
   });
 
-  it("reports whether formatting changed the YAML", () => {
-    replaceEditor("apiVersion: v1\nkind:  Pod\nmetadata: {name: demo}\n");
+  it("previews formatting without changing YAML until Apply is selected", () => {
+    const source = "apiVersion: v1\nkind:  Pod\nmetadata: {name: demo}\n";
+    replaceEditor(source);
 
     document.querySelector("#format").click();
+    expect(editor.value).toBe(source);
+    expect(document.querySelector("#format-preview").hidden).toBe(false);
+    expect(document.querySelector("#format-preview-summary").textContent).toMatch(/added.*removed/);
+    expect(document.querySelectorAll(".diff-row.added").length).toBeGreaterThan(0);
+    expect(document.querySelectorAll(".diff-row.removed").length).toBeGreaterThan(0);
+    expect(document.activeElement).toBe(document.querySelector("#format-apply"));
+    expect(document.querySelector("#action-status").textContent).toBe("Formatting preview ready");
+
+    document.querySelector("#format-apply").click();
     expect(editor.value).toContain("metadata:\n  name: demo");
+    expect(document.querySelector("#format-preview").hidden).toBe(true);
     expect(document.querySelector("#action-status").textContent).toBe("YAML formatted");
 
     document.querySelector("#format").click();
+    expect(document.querySelector("#format-preview").hidden).toBe(true);
     expect(document.querySelector("#action-status").textContent).toBe("Already formatted — no changes needed");
+  });
+
+  it("explains a final-newline-only formatting change", () => {
+    const source = "apiVersion: v1\nkind: Pod\nmetadata:\n  name: demo";
+    replaceEditor(source);
+
+    document.querySelector("#format").click();
+    expect(editor.value).toBe(source);
+    expect(document.querySelector("#format-preview-summary").textContent).toContain("final newline added");
+    document.querySelector("#format-cancel").click();
+  });
+
+  it("cancels a formatting preview without changing the editor", () => {
+    const source = "kind:  Pod\nmetadata: {name: demo}\n";
+    replaceEditor(source);
+    document.querySelector("#format").click();
+
+    document.querySelector("#format-cancel").click();
+    expect(editor.value).toBe(source);
+    expect(document.querySelector("#format-preview").hidden).toBe(true);
+    expect(document.querySelector("#action-status").textContent).toBe("Formatting cancelled");
+    expect(document.activeElement).toBe(document.querySelector("#format"));
+  });
+
+  it("closes a formatting preview with Escape", () => {
+    const source = "kind:  Pod\nmetadata: {name: demo}\n";
+    replaceEditor(source);
+    document.querySelector("#format").click();
+
+    document.dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Escape",
+      bubbles: true,
+      cancelable: true
+    }));
+
+    expect(editor.value).toBe(source);
+    expect(document.querySelector("#format-preview").hidden).toBe(true);
+    expect(document.querySelector("#action-status").textContent).toBe("Formatting cancelled");
+  });
+
+  it("keeps keyboard focus inside the formatting preview", () => {
+    replaceEditor("kind:  Pod\nmetadata: {name: demo}\n");
+    document.querySelector("#format").click();
+    expect(document.activeElement).toBe(document.querySelector("#format-apply"));
+
+    document.dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Tab",
+      bubbles: true,
+      cancelable: true
+    }));
+    expect(document.activeElement).toBe(document.querySelector("#format-diff"));
+
+    document.dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Tab",
+      shiftKey: true,
+      bubbles: true,
+      cancelable: true
+    }));
+    expect(document.activeElement).toBe(document.querySelector("#format-apply"));
+    document.querySelector("#format-cancel").click();
   });
 
   it("switches to Validation and focuses a parser-error line", () => {
@@ -160,8 +232,9 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(editor.value).toBe("");
   });
 
-  it("supports the format keyboard shortcut", () => {
-    replaceEditor("apiVersion: v1\nkind:  Pod\nmetadata: {name: demo}\n");
+  it("opens the formatting preview with the keyboard shortcut", () => {
+    const source = "apiVersion: v1\nkind:  Pod\nmetadata: {name: demo}\n";
+    replaceEditor(source);
     document.dispatchEvent(new KeyboardEvent("keydown", {
       key: "F",
       ctrlKey: true,
@@ -170,8 +243,10 @@ describe("Forge YAML Workbench browser interactions", () => {
       cancelable: true
     }));
 
-    expect(editor.value).toContain("metadata:\n  name: demo");
-    expect(document.querySelector("#action-status").textContent).toBe("YAML formatted");
+    expect(editor.value).toBe(source);
+    expect(document.querySelector("#format-preview").hidden).toBe(false);
+    expect(document.querySelector("#action-status").textContent).toBe("Formatting preview ready");
+    document.querySelector("#format-cancel").click();
   });
 
   it("preserves an opened YAML filename when downloading", async () => {

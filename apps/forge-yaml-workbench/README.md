@@ -2,7 +2,7 @@
 
 Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. It parses YAML locally in the browser and offers Kubernetes-specific and General YAML inspection modes.
 
-## Version 0.5.1 source scope
+## Version 0.6.0 candidate source scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
@@ -97,6 +97,21 @@ The profile is pinned to OWASP source commit `828cfa2e2d7af63cdf7025c09ca871265d
 Partial coverage never establishes that the category passed. Effective RBAC, admission, segmentation, exposure, identity, component, cloud, audit, logging, and monitoring state require context the Workbench deliberately does not access.
 
 Before deployment, continue to use repository validation and Kubernetes server-side dry-run.
+
+## Milestone 038 formatting preview
+
+The `0.6.0` candidate changes formatting from immediate editor mutation into an explicit review workflow:
+
+- valid YAML with formatting changes opens a browser-local, line-oriented preview
+- before and after line numbers accompany added, removed, and unchanged lines
+- the editor remains unchanged until **Apply formatting** is selected
+- **Cancel** and Escape preserve the original YAML
+- keyboard focus starts inside the preview, remains contained, and returns to the Format control
+- final-newline and line-ending normalization are labeled explicitly
+- unusually large comparisons use a bounded, labeled simplified alignment
+- invalid YAML continues to remain unchanged and routes to the Validation report
+
+The preview reuses the existing deterministic formatter. It does not repair invalid YAML, infer intended indentation, or provide automatic remediation.
 
 ## Local development
 
