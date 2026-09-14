@@ -5,9 +5,47 @@ function lines(source) {
   return values;
 }
 
+function replacementRows(previous, next) {
+  let prefix = 0;
+  while (prefix < previous.length && prefix < next.length && previous[prefix] === next[prefix]) prefix += 1;
+
+  let suffix = 0;
+  while (suffix < previous.length - prefix && suffix < next.length - prefix &&
+      previous[previous.length - suffix - 1] === next[next.length - suffix - 1]) suffix += 1;
+
+  return [
+    ...previous.slice(0, prefix).map((text, index) => ({
+      type: "context", beforeNumber: index + 1, afterNumber: index + 1, text
+    })),
+    ...previous.slice(prefix, previous.length - suffix).map((text, index) => ({
+      type: "removed", beforeNumber: prefix + index + 1, afterNumber: null, text
+    })),
+    ...next.slice(prefix, next.length - suffix).map((text, index) => ({
+      type: "added", beforeNumber: null, afterNumber: prefix + index + 1, text
+    })),
+    ...previous.slice(previous.length - suffix).map((text, index) => ({
+      type: "context",
+      beforeNumber: previous.length - suffix + index + 1,
+      afterNumber: next.length - suffix + index + 1,
+      text
+    }))
+  ];
+}
+
 export function buildLineDiff(before, after) {
   const previous = lines(before);
   const next = lines(after);
+  const alignmentCells = previous.length * next.length;
+  if (alignmentCells > 1_000_000) {
+    const rows = replacementRows(previous, next);
+    return {
+      rows,
+      added: rows.filter((row) => row.type === "added").length,
+      removed: rows.filter((row) => row.type === "removed").length,
+      simplified: true
+    };
+  }
+
   const matrix = Array.from({ length: previous.length + 1 }, () =>
     new Uint32Array(next.length + 1));
 
@@ -57,6 +95,7 @@ export function buildLineDiff(before, after) {
   return {
     rows,
     added: rows.filter((row) => row.type === "added").length,
-    removed: rows.filter((row) => row.type === "removed").length
+    removed: rows.filter((row) => row.type === "removed").length,
+    simplified: false
   };
 }
