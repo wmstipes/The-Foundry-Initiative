@@ -121,7 +121,7 @@ Automated validation, local browser acceptance, and the separately approved imag
 - Docker build run 110 successfully built the AMD64 and ARM64 candidate through the pull-request path with `push: false`; no image was published.
 - After explicit publication approval, workflow run `34886290349` built and pushed `wmstipes/signalforge-yaml-workbench:0.7.0` from source commit `84123ae842ce85d8e37bd02d8e96f3fb4d9765ae` for `linux/amd64` and `linux/arm64`.
 - The published OCI index digest is `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`.
-- The workflow exported architecture manifests `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`; their platform mapping remains pending independent registry inspection.
+- Independent registry inspection confirmed Linux AMD64 manifest `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and Linux ARM64 manifest `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`.
 
 ## Candidate release
 
