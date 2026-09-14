@@ -481,3 +481,15 @@ The complete local validation suite and browser checks must pass before publicat
 
 Source acceptance is complete for candidate `0.7.0`. Immutable image publication, digest recording, cluster deployment, live acceptance, and merge remain separately gated.
 
+## 2026-09-14 — Milestone 039 image publication
+
+### What changed
+
+- Received explicit approval to publish Workbench `0.7.0`.
+- Workflow run `34886290349` built and pushed the AMD64/ARM64 image from source commit `84123ae842ce85d8e37bd02d8e96f3fb4d9765ae`.
+- Recorded immutable OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`.
+- Kept the running `0.6.0` Deployment unchanged.
+
+### Next small step
+
+Independently map the two architecture manifests, then prepare the digest-pinned manifest and read-only deployment review. Applying the Deployment still requires explicit approval.
