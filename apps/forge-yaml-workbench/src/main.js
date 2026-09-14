@@ -189,7 +189,7 @@ function diffRows(rows) {
 function openFormatPreview(before, after) {
   const diff = buildLineDiff(before, after);
   formatPreview = { before, after };
-  formatPreviewReturnFocus = document.activeElement;
+  formatPreviewReturnFocus = document.querySelector("#format");
   document.querySelector("#format-preview-summary").textContent =
     diff.added + " added · " + diff.removed + " removed" + (diff.simplified ? " · simplified alignment" : "");
   document.querySelector("#format-diff").innerHTML = diffRows(diff.rows);
