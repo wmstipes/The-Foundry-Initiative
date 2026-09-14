@@ -9,6 +9,7 @@ import "./styles.css";
 const app = document.querySelector("#app");
 let activeTab = "summary";
 let inspectionMode = "kubernetes";
+let validationFilter = "all";
 let currentFilename = "signalforge-sample.yaml";
 let cleanSnapshot = SAMPLE_YAML;
 let formatPreview = null;
@@ -179,6 +180,34 @@ function messages(title, items, fallbackLevel) {
   }).join("") + "</section>";
 }
 
+const VALIDATION_FILTERS = [
+  { value: "all", label: "All" },
+  { value: "error", label: "Errors" },
+  { value: "warning", label: "Warnings" },
+  { value: "note", label: "Notes" },
+  { value: "valid", label: "Valid" }
+];
+
+function validationFilterControls(counts, total, visibleCount) {
+  const summary = validationFilter === "all" ? "" :
+    '<p class="validation-filter-summary" role="status" aria-live="polite" aria-atomic="true">Displaying ' +
+      visibleCount + " of " + total + " validation results</p>";
+  return [
+    '<div class="validation-filter-bar">',
+    '<div class="validation-filters" role="group" aria-label="Filter validation results by level">',
+    VALIDATION_FILTERS.map(({ value, label }) => {
+      const count = value === "all" ? total : counts[value];
+      const selected = value === validationFilter;
+      return '<button class="validation-filter' + (selected ? " active" : "") + '" data-validation-filter="' + value +
+        '" aria-pressed="' + selected + '" aria-label="' + label + ", " + count +
+        " validation result" + (count === 1 ? "" : "s") + '">' + label + '<span aria-hidden="true">' + count + "</span></button>";
+    }).join(""),
+    "</div>",
+    summary,
+    "</div>"
+  ].join("");
+}
+
 function announce(message, tone = "neutral") {
   const status = document.querySelector("#action-status");
   status.className = "action-status " + tone;
@@ -323,6 +352,7 @@ async function copyText(value) {
 
 function loadEditor(value, filename, message) {
   invalidateReportPreview();
+  validationFilter = "all";
   editor.value = value;
   currentFilename = normalizedFilename(filename);
   cleanSnapshot = value;
@@ -399,18 +429,45 @@ function validationView(analysis) {
     }];
   }) : [];
 
-  if (!syntaxItems.length && !documentItems.length && !operational.length && !schemaItems.length) {
+  const sections = [
+    { title: "YAML syntax", items: syntaxItems, fallbackLevel: "error" },
+    { title: "Kubernetes document structure", items: documentItems, fallbackLevel: "error" },
+    { title: "Deterministic operational review", items: operational, fallbackLevel: "warning" },
+    { title: "Kubernetes schema · " + KUBERNETES_SCHEMA_VERSION, items: schemaItems, fallbackLevel: "note" }
+  ];
+  const counts = { error: 0, warning: 0, note: 0, valid: 0 };
+  sections.forEach(({ items, fallbackLevel }) => items.forEach((item) => {
+    counts[item.level || fallbackLevel] += 1;
+  }));
+  const total = Object.values(counts).reduce((sum, count) => sum + count, 0);
+  const visibleSections = sections.map((section) => ({
+    ...section,
+    items: validationFilter === "all"
+      ? section.items
+      : section.items.filter((item) => (item.level || section.fallbackLevel) === validationFilter)
+  }));
+  const visibleCount = validationFilter === "all" ? total : counts[validationFilter];
+  const controls = validationFilterControls(counts, total, visibleCount);
+  const owasp = analysis.mode === "kubernetes" && analysis.owaspProfile.length
+    ? owaspProfileView(analysis.owaspProfile)
+    : "";
+
+  if (!total) {
     const detail = analysis.mode === "general"
       ? "The YAML parsed successfully. Kubernetes operational and schema checks are disabled in General YAML mode."
       : "The YAML parsed and passed the Workbench's bounded review.";
-    return '<div class="empty success"><div>✓</div><h3>No findings in the current checks</h3><p>' + escapeHtml(detail) + '</p></div>';
+    return controls + '<div class="empty success"><div>✓</div><h3>No findings in the current checks</h3><p>' +
+      escapeHtml(detail) + "</p></div>" + owasp;
   }
 
-  return (syntaxItems.length ? messages("YAML syntax", syntaxItems, "error") : "") +
-    (documentItems.length ? messages("Kubernetes document structure", documentItems, "error") : "") +
-    (operational.length ? messages("Deterministic operational review", operational, "warning") : "") +
-    (schemaItems.length ? messages("Kubernetes schema · " + KUBERNETES_SCHEMA_VERSION, schemaItems, "note") : "") +
-    (analysis.mode === "kubernetes" && analysis.owaspProfile.length ? owaspProfileView(analysis.owaspProfile) : "");
+  const visibleResults = visibleSections.map(({ title, items, fallbackLevel }) =>
+    items.length ? messages(title, items, fallbackLevel) : "").join("");
+  const empty = validationFilter !== "all" && !visibleCount
+    ? '<div class="empty filtered-empty"><div>0</div><h3>No ' + escapeHtml(validationFilter) +
+      ' results in the current analysis</h3><p>The complete analysis still contains ' + total +
+      " validation result" + (total === 1 ? "" : "s") + ". Choose another filter to review them.</p></div>"
+    : "";
+  return controls + visibleResults + empty + owasp;
 }
 
 function treeNode(value, name = "root", depth = 0) {
@@ -486,6 +543,7 @@ document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click",
 }));
 document.querySelectorAll(".mode").forEach((button) => button.addEventListener("click", () => {
   invalidateReportPreview();
+  validationFilter = "all";
   inspectionMode = button.dataset.mode;
   document.querySelectorAll(".mode").forEach((item) => {
     const selected = item.dataset.mode === inspectionMode;
@@ -502,6 +560,7 @@ document.querySelector("#clear").addEventListener("click", () => {
     return;
   }
   invalidateReportPreview();
+  validationFilter = "all";
   editor.value = "";
   currentFilename = "manifest.yaml";
   cleanSnapshot = "";
@@ -585,6 +644,15 @@ document.querySelector("#report-download").addEventListener("click", () => {
   announce(reportPreview.filename + " downloaded", "success");
 });
 document.querySelector("#results").addEventListener("click", async (event) => {
+  const filter = event.target.closest("[data-validation-filter]");
+  if (filter) {
+    validationFilter = filter.dataset.validationFilter;
+    render();
+    document.querySelector('[data-validation-filter="' + validationFilter + '"]').focus();
+    const label = VALIDATION_FILTERS.find((item) => item.value === validationFilter).label;
+    announce(label + " validation results selected", "success");
+    return;
+  }
   const copy = event.target.closest(".copy-guidance");
   if (copy) {
     try {

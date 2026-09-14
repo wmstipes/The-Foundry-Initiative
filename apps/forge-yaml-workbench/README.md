@@ -2,7 +2,7 @@
 
 Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. It parses YAML locally in the browser and offers Kubernetes-specific and General YAML inspection modes.
 
-## Version 0.7.0 candidate source scope
+## Version 0.8.0 candidate source scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
@@ -22,6 +22,8 @@ Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. 
 - Generate a deterministic Markdown analysis report in browser memory.
 - Preview the report before explicitly copying it to the operating-system clipboard or downloading it as a local `.md` file.
 - Keep the complete source YAML out of the report and preserve unsaved YAML state during report export.
+- Filter Validation results by All, Errors, Warnings, Notes, or Valid without changing the underlying analysis.
+- Keep OWASP coverage, overall status, the tab badge, and Markdown reports independent of the selected display filter.
 
 ## Milestone 033 usability improvements
 
@@ -132,6 +134,20 @@ The `0.7.0` candidate adds an explicit review-first report workflow:
 The report does not reproduce the complete source YAML. It can still contain source filenames, resource names, namespaces, paths, findings, recommendations, example YAML, and security references. Copying places that content on the operating-system clipboard; downloading writes it to a local file.
 
 Report generation adds no network request, backend, cluster access, credential use, report history, or automatic remediation. Image publication and deployment remain separate release gates.
+
+## Milestone 040 Validation result filters
+
+The `0.8.0` candidate adds a presentation-only filter layer to the Validation tab:
+
+- **All**, **Errors**, **Warnings**, **Notes**, and **Valid** show current result counts
+- only matching syntax, document-structure, operational, and schema entries are displayed
+- empty result sections are hidden and a filtered-empty state identifies the selected subset
+- edits preserve the selected filter while recomputing counts
+- inspection-mode changes, sample or file loading, and clearing reset the filter to **All**
+- the OWASP review profile remains visible outside severity filtering
+- the tab badge, overall status, and generated Markdown remain complete and unfiltered
+
+Filter state exists only in browser memory. It adds no persistence, network activity, backend, cluster access, credentials, analysis mutation, or new export boundary.
 
 ## Local development
 

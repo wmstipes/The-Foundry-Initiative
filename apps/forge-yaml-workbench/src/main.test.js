@@ -63,6 +63,118 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(document.querySelector("#results").textContent).toContain(".spec.mysteryField");
   });
 
+  it("filters validation results by level with accurate counts and preserved ordering", () => {
+    replaceEditor([
+      "apiVersion: v1",
+      "kind: ConfigMap",
+      "metadata: {name: valid-config}",
+      "---",
+      "apiVersion: networking.k8s.io/v1",
+      "kind: Ingress",
+      "metadata: {name: unsupported}",
+      "---",
+      "apiVersion: v1",
+      "kind: Pod",
+      "metadata: {name: risky}",
+      "spec:",
+      "  containers:",
+      "    - name: app",
+      "      image: nginx:latest",
+      "---",
+      "apiVersion: apps/v1",
+      "kind: Deployment",
+      "metadata: {name: invalid}",
+      "spec:",
+      "  replicas: three",
+      "  mysteryField: true",
+      ""
+    ].join("\n"));
+    document.querySelector('[data-tab="validation"]').click();
+
+    const counts = Object.fromEntries([...document.querySelectorAll("[data-validation-filter]")].map((button) => [
+      button.dataset.validationFilter,
+      Number(button.querySelector("span").textContent)
+    ]));
+    expect(counts.all).toBe(counts.error + counts.warning + counts.note + counts.valid);
+    expect(counts.error).toBeGreaterThan(0);
+    expect(counts.warning).toBeGreaterThan(0);
+    expect(counts.note).toBeGreaterThan(0);
+    expect(counts.valid).toBeGreaterThan(0);
+    expect(document.querySelector('[data-validation-filter="all"]').getAttribute("aria-pressed")).toBe("true");
+
+    for (const level of ["error", "warning", "note", "valid"]) {
+      document.querySelector(`[data-validation-filter="${level}"]`).click();
+      expect([...document.querySelectorAll(".message")].every((message) => message.classList.contains(level))).toBe(true);
+      expect(document.querySelectorAll(".message")).toHaveLength(counts[level]);
+      expect(document.querySelector(".validation-filter-summary").textContent).toBe(
+        `Displaying ${counts[level]} of ${counts.all} validation results`
+      );
+      expect(document.querySelector(`[data-validation-filter="${level}"]`).getAttribute("aria-pressed")).toBe("true");
+      expect(document.activeElement).toBe(document.querySelector(`[data-validation-filter="${level}"]`));
+    }
+  });
+
+  it("keeps the OWASP profile outside validation filtering and explains filtered-empty results", () => {
+    replaceEditor("apiVersion: v1\nkind: ConfigMap\nmetadata: {name: error-only}\nmysteryField: true\n");
+    document.querySelector('[data-tab="validation"]').click();
+    document.querySelector('[data-validation-filter="note"]').click();
+
+    expect(document.querySelectorAll(".messages")).toHaveLength(0);
+    expect(document.querySelector(".filtered-empty h3").textContent).toBe("No note results in the current analysis");
+    expect(document.querySelector(".filtered-empty").textContent).toContain("complete analysis still contains");
+    expect(document.querySelector(".owasp-profile")).not.toBeNull();
+    expect(document.querySelector("#finding-count").textContent).not.toBe("");
+  });
+
+  it("preserves a selected filter while edits recompute counts", () => {
+    replaceEditor("apiVersion: v1\nkind: Pod\nmetadata: {name: risky}\nspec:\n  containers:\n    - name: app\n      image: nginx:latest\n");
+    document.querySelector('[data-tab="validation"]').click();
+    document.querySelector('[data-validation-filter="warning"]').click();
+    expect(document.querySelectorAll(".message.warning").length).toBeGreaterThan(0);
+
+    replaceEditor("apiVersion: v1\nkind: ConfigMap\nmetadata: {name: clean}\n");
+
+    expect(document.querySelector('[data-validation-filter="warning"]').getAttribute("aria-pressed")).toBe("true");
+    expect(document.querySelector('[data-validation-filter="warning"] span').textContent).toBe("0");
+    expect(document.querySelector(".filtered-empty h3").textContent).toBe("No warning results in the current analysis");
+  });
+
+  it("resets validation filtering when the mode or loaded input changes", async () => {
+    document.querySelector('[data-tab="validation"]').click();
+    document.querySelector('[data-validation-filter="warning"]').click();
+    document.querySelector('[data-mode="general"]').click();
+    expect(document.querySelector('[data-validation-filter="all"]').getAttribute("aria-pressed")).toBe("true");
+
+    document.querySelector('[data-validation-filter="warning"]').click();
+    document.querySelector("#sample").click();
+    expect(document.querySelector('[data-validation-filter="all"]').getAttribute("aria-pressed")).toBe("true");
+
+    document.querySelector('[data-validation-filter="note"]').click();
+    const input = document.querySelector("#file-input");
+    Object.defineProperty(input, "files", {
+      configurable: true,
+      value: [new File(["settings:\n  theme: dark\n"], "settings.yaml", { type: "application/yaml" })]
+    });
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(document.querySelector('[data-validation-filter="all"]').getAttribute("aria-pressed")).toBe("true");
+
+    document.querySelector('[data-validation-filter="valid"]').click();
+    document.querySelector("#clear").click();
+    expect(document.querySelector('[data-validation-filter="all"]').getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("keeps Markdown reports complete when the Validation display is filtered", () => {
+    replaceEditor("apiVersion: v1\nkind: Pod\nmetadata: {name: report-filter}\nspec:\n  containers:\n    - name: app\n      image: nginx:latest\n");
+    document.querySelector('[data-tab="validation"]').click();
+    document.querySelector('[data-validation-filter="valid"]').click();
+    expect(document.querySelector("#results").textContent).not.toContain("mutable image reference");
+
+    document.querySelector("#generate-report").click();
+    expect(document.querySelector("#report-markdown").textContent).toContain("mutable image reference");
+    document.querySelector("#report-cancel").click();
+  });
+
   it("scrolls the editor to a selected finding location", () => {
     const source = [
       "apiVersion: v1",
@@ -83,6 +195,7 @@ describe("Forge YAML Workbench browser interactions", () => {
 
     replaceEditor(source);
     document.querySelector('[data-tab="validation"]').click();
+    document.querySelector('[data-validation-filter="error"]').click();
     const location = [...document.querySelectorAll(".message-location")].find((item) =>
       item.textContent.includes("Line 65"));
     expect(location).not.toBeUndefined();
@@ -291,6 +404,7 @@ describe("Forge YAML Workbench browser interactions", () => {
     });
     replaceEditor("apiVersion: v1\nkind: Pod\nmetadata: {name: guidance}\nspec:\n  containers: [{name: app, image: example/app:1.0.0}]\n");
     document.querySelector('[data-tab="validation"]').click();
+    document.querySelector('[data-validation-filter="note"]').click();
 
     const message = [...document.querySelectorAll(".message")].find((item) =>
       item.textContent.includes("privilege escalation not disabled"));

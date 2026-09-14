@@ -509,3 +509,40 @@ Repository validation and server-side dry-run passed. The live diff contained on
 ### Next small step
 
 PR #18 merged at `1e0c525`. Workbench CI run 136, Kubernetes Manifest Validation run 121, and Restaurant API Docker Build run 55 passed on `main`. Select the next bounded milestone while preserving the browser-local trust boundary and separate release gates.
+
+## 2026-09-14 — Milestone 040 planning: Validation result filters
+
+### What changed
+
+- Anchored the milestone to `main` commit `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4` after Milestone 039 cleanup.
+- Approved counted All, Errors, Warnings, Notes, and Valid filters for existing Validation entries.
+- Kept the tab badge, overall status, OWASP profile, and Markdown report based on the complete analysis.
+- Defined ephemeral filter state that persists across edits but resets at mode and input-replacement boundaries.
+- Preserved separate gates for implementation, publication, manifest mutation, deployment, live acceptance, PR readiness, and merge.
+
+### Why this matters
+
+The Validation view now combines syntax, document shape, deterministic operations, and schema results. A presentation-only filter makes larger reviews easier without expanding what the Workbench reads, stores, or claims to know.
+
+## 2026-09-14 — Milestone 040 implementation
+
+### What changed
+
+- Added counted Validation controls for All, Errors, Warnings, Notes, and Valid.
+- Hid empty filtered sections and added visible-versus-total and filtered-empty explanations.
+- Preserved result ordering, finding navigation, fix guidance, OWASP separation, complete status indicators, and complete Markdown reports.
+- Preserved the selected filter through YAML edits while resetting it for inspection-mode changes, sample or file loading, and clearing.
+- Added keyboard focus, pressed-state, live-feedback, recomputation, reset, empty-result, OWASP, and report-isolation DOM coverage.
+- Advanced source metadata to candidate `0.8.0` without changing the tracked Deployment or live immutable `0.7.0` runtime.
+
+### What remains gated
+
+Complete visual browser review and the non-publishing multi-architecture build before considering publication. Branch publication, image publication, manifest mutation, deployment, live browser acceptance, PR readiness, and merge remain separate approval gates.
+
+### Automated validation result
+
+- All 74 tests passed, including filtered finding navigation and Copy YAML behavior.
+- Validator reproducibility, production build, strict-CSP scan, zero-vulnerability audit, repository Kubernetes manifest validation, and whitespace validation passed.
+- The repository contains no Workbench Deployment diff; accepted immutable `0.7.0` remains the declared and live runtime.
+- Docker is unavailable in this workspace, leaving the non-publishing multi-architecture build for the established GitHub pull-request workflow.
+- The remote browser could not reach the workspace loopback server, so visual browser acceptance remains a later explicit gate rather than an inferred result.
