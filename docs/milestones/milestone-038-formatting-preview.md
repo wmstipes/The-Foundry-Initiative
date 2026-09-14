@@ -1,6 +1,6 @@
 # Milestone 038 — Formatting preview
 
-**Status:** `0.6.0` source candidate accepted; publication and deployment pending approval  
+**Status:** `0.6.0` published and digest-verified; deployment pending approval  
 **Started:** 2026-09-14  
 **Branch:** `codex/milestone-038-format-preview`
 
@@ -50,8 +50,8 @@ This milestone does not add:
 ## Acceptance evidence
 
 - Automated coverage increased to 58 passing tests across analyzer, schema, OWASP profile, line-diff, and DOM interaction suites.
-- Pull-request Workbench CI run 89 passed validator reproducibility, tests, production build, strict-CSP compatibility, and dependency audit.
-- Pull-request Docker build run 91 built the AMD64 and ARM64 candidate without publishing it.
+- Final-candidate pull-request Workbench CI run 98 passed validator reproducibility, tests, production build, strict-CSP compatibility, and dependency audit.
+- Final-candidate pull-request Docker build run 100 built the AMD64 and ARM64 candidate without publishing it.
 - Windows validation passed after making generated-validator comparison neutral to CRLF versus LF checkout differences.
 - Repository Kubernetes manifest validation and whitespace checks passed.
 - Local browser acceptance confirmed preview display for valid changes, unchanged editor content before approval, Apply, Cancel, and the invalid-YAML route to Validation.
@@ -60,8 +60,12 @@ This milestone does not add:
 ## Release state
 
 - Candidate version: `0.6.0`
-- Published image: not yet
-- Deployment change: none
+- Publication workflow: run `34858580511` / run number 101 passed
+- Published image: `wmstipes/signalforge-yaml-workbench:0.6.0`
+- OCI index: `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`
+- AMD64 manifest: `sha256:f051ce44976c1abdd2076415edc6476ef57cb8c5e2c7cb196cb1391616ab5f0a`
+- ARM64 manifest: `sha256:d5795e44b4553b8bd6b8a96c7ad6e3b574e8b9e7dcdbc80c0ed1f34ef2e01208`
+- Tracked Deployment: immutable `0.6.0` candidate staged for review
 - Live version remains: `0.5.1`
 - PR state: draft
 
