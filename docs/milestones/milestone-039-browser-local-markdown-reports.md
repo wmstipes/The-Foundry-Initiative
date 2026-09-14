@@ -1,6 +1,6 @@
 # Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Candidate CI complete; image publication pending approval
+**Status:** Immutable 0.7.0 image published; deployment review pending
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-039-markdown-report`
 **Baseline:** `main` at `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c`
@@ -101,7 +101,7 @@ This milestone does not add:
 - Updated the candidate application and lockfile version to `0.7.0`.
 - Left the Kubernetes Deployment and accepted `0.6.0` runtime unchanged.
 
-Automated validation and local browser acceptance are complete. Image publication, manifest mutation, cluster deployment, and pull-request merge remain separately gated and are not authorized by the completed implementation gate.
+Automated validation, local browser acceptance, and the separately approved image publication are complete. Manifest mutation, cluster deployment, live acceptance, and pull-request merge remain separately gated; the running `0.6.0` deployment is unchanged.
 
 ## Validation evidence
 
@@ -119,10 +119,13 @@ Automated validation and local browser acceptance are complete. Image publicatio
 - Draft PR #18 opened against `main` without authorizing publication, deployment, readiness, or merge.
 - Workbench CI run 108 passed all pull-request checks.
 - Docker build run 110 successfully built the AMD64 and ARM64 candidate through the pull-request path with `push: false`; no image was published.
+- After explicit publication approval, workflow run `34886290349` built and pushed `wmstipes/signalforge-yaml-workbench:0.7.0` from source commit `84123ae842ce85d8e37bd02d8e96f3fb4d9765ae` for `linux/amd64` and `linux/arm64`.
+- The published OCI index digest is `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`.
+- The workflow exported architecture manifests `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`; their platform mapping remains pending independent registry inspection.
 
 ## Candidate release
 
-The proposed application version is `0.7.0` because this is a new user-facing capability. Version selection does not authorize image publication or deployment.
+Application version `0.7.0` was published only after explicit approval. The immutable OCI index is `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`. Publication does not authorize manifest mutation or cluster deployment.
 
 ## Gated delivery workflow
 
