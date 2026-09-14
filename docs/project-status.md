@@ -75,20 +75,20 @@ The project has moved from basic workload deployment into repeatable engineering
 - 036: corrected `0.4.1` published, digest-pinned, deployed, live browser-accepted, and merged through PR #13 at `fc16ad1`
 - 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation released as `0.5.1`, deployed, browser-accepted, and squash-merged through PR #14 at `dd46a08`
 - 038: browser-local formatting preview released as `0.6.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #16 at `4fed28c`
-- 039: browser-local Markdown reports released as immutable `0.7.0`, digest-pinned, deployed, runtime-verified, and live browser-accepted; final review and merge remain pending
+- 039: browser-local Markdown reports released as immutable `0.7.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #18 at `1e0c525`
 
 ## Active milestone
 
-Milestone 039 candidate acceptance is complete on `codex/milestone-039-markdown-report`. All 69 tests plus validator, build, CSP, audit, manifest, whitespace, and clean-worktree checks pass; local browser acceptance confirms the report workflow and corrected in-modal export feedback; draft PR #18 Workbench CI run 108 and non-publishing multi-architecture Docker build run 110 passed. After explicit approval, workflow run `34886290349` published `wmstipes/signalforge-yaml-workbench:0.7.0` from source `84123ae842ce85d8e37bd02d8e96f3fb4d9765ae` at OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` for AMD64 and ARM64. Independent registry inspection confirmed AMD64 manifest `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and ARM64 manifest `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`. The released application generates a deterministic Markdown report from the current browser-local analysis, previews it before export, and requires an explicit Copy or Download action. It does not embed the complete YAML, add persistence, or contact a backend or cluster. The approved Deployment-only rollout completed with one Ready Pod on `forge-node-03`, zero restarts, a matching runtime ImageID, one ready EndpointSlice, HTTP 200 health and page responses, expected security headers, and passing live browser acceptance.
+Milestone 039 is complete and merged into `main` through PR #18 at `1e0c525`. All 69 tests plus validator, build, CSP, audit, manifest, whitespace, and clean-worktree checks pass; local browser acceptance confirms the report workflow and corrected in-modal export feedback; draft PR #18 Workbench CI run 108 and non-publishing multi-architecture Docker build run 110 passed. After explicit approval, workflow run `34886290349` published `wmstipes/signalforge-yaml-workbench:0.7.0` from source `84123ae842ce85d8e37bd02d8e96f3fb4d9765ae` at OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` for AMD64 and ARM64. Independent registry inspection confirmed AMD64 manifest `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and ARM64 manifest `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`. The released application generates a deterministic Markdown report from the current browser-local analysis, previews it before export, and requires an explicit Copy or Download action. It does not embed the complete YAML, add persistence, or contact a backend or cluster. The approved Deployment-only rollout completed with one Ready Pod on `forge-node-03`, zero restarts, a matching runtime ImageID, one ready EndpointSlice, HTTP 200 health and page responses, expected security headers, and passing live browser acceptance.
 
 ## Latest completed milestone
 
-- 038: browser-local, line-oriented formatting preview with explicit Apply, Cancel, and Escape behavior
-- Trust boundary: browser-local only, with no backend, cluster access, cloud access, credentials, or automatic remediation
-- Verification: 58 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository validation, whitespace checks, Windows build, and local browser interactions passed
-- Publication and deployment: immutable AMD64/ARM64 `0.6.0` is live at OCI index `sha256:4166df67190eaaade054be09c91f0ef8a76e832f290f7383fc4e58c7dd7469bc`
-- Runtime acceptance: one Ready Pod, zero restarts, exact configured/runtime digest match, ready EndpointSlice, fresh HTTP 200 responses, expected security headers, and all live browser checks passed
-- Completion: PR #16 merged at `4fed28c`; Workbench CI run 107, Kubernetes Manifest Validation run 104, and Restaurant API Docker Build run 53 passed on `main`
+- 039: deterministic browser-local Markdown reports with review-first Copy and Download actions
+- Trust boundary: browser-local analysis and preview; clipboard and download remain explicit operator-controlled boundary crossings
+- Verification: 69 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository validation, whitespace checks, Windows build, and local browser interactions passed
+- Publication and deployment: immutable AMD64/ARM64 `0.7.0` is live at OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`
+- Runtime acceptance: one Ready Pod, zero restarts, exact configured/runtime digest match, ready EndpointSlice, fresh HTTP 200 responses, expected security headers, and all report browser checks passed
+- Completion: PR #18 merged at `1e0c525`; Workbench CI run 136, Kubernetes Manifest Validation run 121, and Restaurant API Docker Build run 55 passed on `main`
 
 ## Current observability state
 
@@ -185,7 +185,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete the final documentation and pull-request review for Milestone 039. Marking draft PR #18 ready and merging remain separate approval gates.
+Select the next bounded milestone after Milestone 039 while preserving the Workbench trust boundary and gated release workflow.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
