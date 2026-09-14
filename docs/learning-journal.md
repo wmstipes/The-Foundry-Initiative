@@ -394,3 +394,36 @@ Expanded Forge YAML Workbench from individual K01 references into a ten-category
 ### Next small step
 
 Select the next bounded milestone from the roadmap while preserving the Workbench trust boundary and gated release workflow.
+
+---
+
+## 2026-09-14 - Milestone 038 browser-local formatting preview
+
+### What I worked on
+
+Changed Forge YAML Workbench formatting from immediate editor mutation into an explicit review workflow. Valid formatting changes now produce a line-oriented browser-local preview with before and after line numbers, while Apply, Cancel, and Escape make the mutation boundary visible.
+
+### What I learned
+
+- Formatting and repair are different operations: a deterministic formatter can normalize valid YAML, but malformed YAML must remain unchanged because the intended structure is ambiguous.
+- A preview needs to explain newline and line-ending normalization even when the visible YAML lines otherwise match.
+- Line-diff alignment needs an explicit work bound so a convenience feature cannot allocate an unbounded matrix.
+- Reproducibility checks must compare semantic generated text across platform checkout conventions; CRLF versus LF alone does not make a validator stale.
+- Browser acceptance remains valuable even with DOM tests because operator expectations reveal where workflow boundaries need clearer explanation.
+
+### What I finished locally
+
+- Added a line-oriented formatting preview with added, removed, and unchanged states.
+- Required explicit Apply before updating the editor and preserved input through Cancel or Escape.
+- Added dialog semantics, initial focus, focus containment, and return focus.
+- Added normalization metadata and a labeled simplified-alignment fallback.
+- Expanded automated coverage to 58 passing tests.
+- Passed pull-request CI, validator reproducibility, CSP compatibility, zero-vulnerability audit, repository validation, whitespace validation, and non-publishing AMD64/ARM64 builds.
+- Confirmed the generated-validator check and production build on Windows after correcting line-ending portability.
+- Completed local browser acceptance for valid formatting changes, Apply, Cancel, and invalid-YAML validation.
+- Prepared candidate version `0.6.0` without publishing or deploying it.
+
+### Next small step
+
+Request separate approval to publish the immutable AMD64/ARM64 `0.6.0` image. After digest verification, review the exact Deployment-only dry-run and diff before any cluster change.
+
