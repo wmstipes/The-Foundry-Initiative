@@ -1,4 +1,5 @@
 import { analyzeYaml, formatYaml } from "./analyze.js";
+import { buildLineDiff } from "./format-diff.js";
 import { SAMPLE_YAML } from "./sample.js";
 import { KUBERNETES_SCHEMA_VERSION } from "./schema-validation.js";
 import { OWASP_PROFILE_VERSION, OWASP_SOURCE_COMMIT } from "./owasp-profile.js";
@@ -9,6 +10,8 @@ let activeTab = "summary";
 let inspectionMode = "kubernetes";
 let currentFilename = "signalforge-sample.yaml";
 let cleanSnapshot = SAMPLE_YAML;
+let formatPreview = null;
+let formatPreviewReturnFocus = null;
 
 app.innerHTML = [
   '<header class="topbar">',
@@ -39,7 +42,15 @@ app.innerHTML = [
   '    </div>',
   '  </section>',
   '  <footer><span id="review-boundary">Syntax and bounded operational guidance</span><span id="next-step">Use server-side dry-run before applying.</span></footer>',
-  '</main>'
+  '</main>',
+  '<div id="format-preview" class="format-preview" hidden>',
+  '  <section class="format-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="format-preview-title" aria-describedby="format-preview-description">',
+  '    <header><div><span class="eyebrow">FORMAT PREVIEW</span><h2 id="format-preview-title">Review formatting changes</h2><p id="format-preview-description">The editor will not change until you apply this preview.</p></div><div id="format-preview-summary" class="format-preview-summary"></div></header>',
+  '    <div class="diff-heading" aria-hidden="true"><span></span><span>Before</span><span>After</span><span>YAML</span></div>',
+  '    <div id="format-diff" class="format-diff" tabindex="0"></div>',
+  '    <footer><button id="format-cancel" class="quiet">Cancel</button><button id="format-apply">Apply formatting</button></footer>',
+  '  </section>',
+  '</div>'
 ].join("");
 
 const editor = document.querySelector("#editor");
@@ -161,6 +172,40 @@ function announce(message, tone = "neutral") {
   const status = document.querySelector("#action-status");
   status.className = "action-status " + tone;
   status.textContent = message;
+}
+
+function diffRows(rows) {
+  return rows.map((row) => {
+    const marker = row.type === "added" ? "+" : (row.type === "removed" ? "−" : "");
+    const label = row.type === "added" ? "Added line" : (row.type === "removed" ? "Removed line" : "Unchanged line");
+    return '<div class="diff-row ' + row.type + '" aria-label="' + label + '">' +
+      '<span class="diff-marker" aria-hidden="true">' + marker + "</span>" +
+      '<span class="diff-line-number">' + (row.beforeNumber ?? "") + "</span>" +
+      '<span class="diff-line-number">' + (row.afterNumber ?? "") + "</span>" +
+      "<code>" + escapeHtml(row.text || " ") + "</code></div>";
+  }).join("");
+}
+
+function openFormatPreview(before, after) {
+  const diff = buildLineDiff(before, after);
+  formatPreview = { before, after };
+  formatPreviewReturnFocus = document.activeElement;
+  document.querySelector("#format-preview-summary").textContent =
+    diff.added + " added · " + diff.removed + " removed";
+  document.querySelector("#format-diff").innerHTML = diffRows(diff.rows);
+  document.querySelector("#format-preview").hidden = false;
+  document.querySelector("#format-apply").focus();
+  announce("Formatting preview ready");
+}
+
+function closeFormatPreview(message) {
+  document.querySelector("#format-preview").hidden = true;
+  document.querySelector("#format-diff").innerHTML = "";
+  formatPreview = null;
+  const returnFocus = formatPreviewReturnFocus;
+  formatPreviewReturnFocus = null;
+  if (returnFocus?.focus) returnFocus.focus();
+  if (message) announce(message);
 }
 
 function setActiveTab(tabName) {
@@ -411,13 +456,26 @@ document.querySelector("#format").addEventListener("click", () => {
     return;
   }
   try {
-    editor.value = formatYaml(editor.value);
-    announce(editor.value === before ? "Already formatted — no changes needed" : "YAML formatted", "success");
+    const after = formatYaml(before);
+    if (after === before) {
+      announce("Already formatted — no changes needed", "success");
+    } else {
+      openFormatPreview(before, after);
+    }
   } catch {
     setActiveTab("validation");
     announce("Formatting failed — see Validation", "error");
   }
   render();
+});
+document.querySelector("#format-cancel").addEventListener("click", () => closeFormatPreview("Formatting cancelled"));
+document.querySelector("#format-apply").addEventListener("click", () => {
+  if (!formatPreview) return;
+  editor.value = formatPreview.after;
+  closeFormatPreview();
+  render();
+  editor.focus();
+  announce("YAML formatted", "success");
 });
 document.querySelector("#download").addEventListener("click", () => {
   if (!editor.value) {
@@ -449,6 +507,11 @@ document.querySelector("#results").addEventListener("click", async (event) => {
   if (location) focusEditorLocation(location.dataset.line, location.dataset.column);
 });
 document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && formatPreview) {
+    event.preventDefault();
+    closeFormatPreview("Formatting cancelled");
+    return;
+  }
   if (!(event.ctrlKey || event.metaKey)) return;
   if (event.key.toLowerCase() === "o") {
     event.preventDefault();
