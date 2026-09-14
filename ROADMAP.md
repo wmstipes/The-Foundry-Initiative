@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-038 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 039's immutable `0.7.0` image is live and browser-accepted with formatting preview plus explicit Markdown report Copy and Download actions, while the browser-only trust boundary remains unchanged.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-039 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 039's immutable `0.7.0` image is live and browser-accepted with formatting preview plus explicit Markdown report Copy and Download actions, while the browser-only trust boundary remains unchanged.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -240,7 +240,7 @@ See [Milestone 038](docs/milestones/milestone-038-formatting-preview.md).
 
 #### Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Immutable `0.7.0` deployed and live browser-accepted; final review pending.
+**Status:** Complete. Immutable `0.7.0` was deployed, runtime-verified, live browser-accepted, and merged through PR #18 at `1e0c525`.
 
 - Generate a deterministic Markdown report from the current browser-local analysis snapshot.
 - Let the operator review the report before explicitly copying it or downloading it as a `.md` file.
@@ -250,7 +250,7 @@ See [Milestone 038](docs/milestones/milestone-038-formatting-preview.md).
 - Published the separately approved AMD64/ARM64 `0.7.0` image at immutable OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` in workflow run `34886290349`.
 - Deployed the separately approved Deployment-only update with matching `0.7.0` labels and the immutable OCI index.
 - Verified one Ready Pod with zero restarts, a matching runtime ImageID, a ready EndpointSlice, HTTP 200 health and page responses, strict security headers, and the complete live browser workflow.
-- Retain separate gates for final review, pull-request readiness, and merge.
+- Completed final review and merged PR #18 at `1e0c525`; all three post-merge workflows passed.
 
 See [Milestone 039](docs/milestones/milestone-039-browser-local-markdown-reports.md).
 
