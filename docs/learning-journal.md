@@ -508,4 +508,4 @@ Repository validation and server-side dry-run passed. The live diff contained on
 
 ### Next small step
 
-Complete final documentation and PR review. Marking draft PR #18 ready and merging remain separate approval gates.
+PR #18 merged at `1e0c525`. Workbench CI run 136, Kubernetes Manifest Validation run 121, and Restaurant API Docker Build run 55 passed on `main`. Select the next bounded milestone while preserving the browser-local trust boundary and separate release gates.
