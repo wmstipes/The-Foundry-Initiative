@@ -1,6 +1,6 @@
 # Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Immutable 0.7.0 image published; deployment review pending
+**Status:** Digest-pinned 0.7.0 Deployment candidate staged; deployment review pending
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-039-markdown-report`
 **Baseline:** `main` at `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c`
@@ -99,9 +99,10 @@ This milestone does not add:
 - Added focus containment and restoration following the established formatting-preview interaction.
 - Added DOM coverage for no-export preview generation, exact-snapshot copying, report filename selection, unsaved-state preservation, cancellation, keyboard behavior, mode isolation, and stale-report invalidation.
 - Updated the candidate application and lockfile version to `0.7.0`.
-- Left the Kubernetes Deployment and accepted `0.6.0` runtime unchanged.
+- Initially left the Kubernetes Deployment and accepted `0.6.0` runtime unchanged during source acceptance.
+- After separate approval, staged version labels `0.7.0` and image `wmstipes/signalforge-yaml-workbench:0.7.0@sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` in the tracked Deployment; the live cluster remains unchanged.
 
-Automated validation, local browser acceptance, and the separately approved image publication are complete. Manifest mutation, cluster deployment, live acceptance, and pull-request merge remain separately gated; the running `0.6.0` deployment is unchanged.
+Automated validation, local browser acceptance, separately approved image publication, and separately approved tracked-manifest mutation are complete. Cluster deployment, live acceptance, and pull-request merge remain separately gated; the running `0.6.0` deployment is unchanged.
 
 ## Validation evidence
 
