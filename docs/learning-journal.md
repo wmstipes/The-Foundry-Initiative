@@ -488,8 +488,9 @@ Source acceptance is complete for candidate `0.7.0`. Immutable image publication
 - Received explicit approval to publish Workbench `0.7.0`.
 - Workflow run `34886290349` built and pushed the AMD64/ARM64 image from source commit `84123ae842ce85d8e37bd02d8e96f3fb4d9765ae`.
 - Recorded immutable OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`.
+- Independently confirmed AMD64 manifest `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and ARM64 manifest `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`.
 - Kept the running `0.6.0` Deployment unchanged.
 
 ### Next small step
 
-Independently map the two architecture manifests, then prepare the digest-pinned manifest and read-only deployment review. Applying the Deployment still requires explicit approval.
+Prepare the digest-pinned manifest and read-only deployment review. Applying the Deployment still requires explicit approval.
