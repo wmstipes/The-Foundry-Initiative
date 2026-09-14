@@ -494,4 +494,18 @@ Source acceptance is complete for candidate `0.7.0`. Immutable image publication
 
 ### Next small step
 
-Repository validation and server-side dry-run passed. The live diff contained only the reviewed `0.7.0` labels, immutable image update, and expected generation preview. Applying the Deployment still requires explicit approval.
+Repository validation and server-side dry-run passed. The live diff contained only the reviewed `0.7.0` labels, immutable image update, and expected generation preview.
+
+## 2026-09-14 — Milestone 039 deployment and live acceptance
+
+### What changed
+
+- Applied only the explicitly approved Workbench Deployment manifest.
+- Verified one available Ready Pod on `forge-node-03` with zero restarts and one ready EndpointSlice.
+- Confirmed both the configured image and runtime ImageID use the reviewed immutable `0.7.0` OCI index.
+- Received fresh HTTP 200 responses from `/healthz` and the application page through NodePort `30081`, with health body `ok`, Content Security Policy, and `X-Content-Type-Options: nosniff`.
+- Completed live browser acceptance for Kubernetes and General YAML reports, visible Copy and Download completion states, predictable Markdown download naming, mode isolation, cancellation, and unchanged editor and unsaved state.
+
+### Next small step
+
+Complete final documentation and PR review. Marking draft PR #18 ready and merging remain separate approval gates.
