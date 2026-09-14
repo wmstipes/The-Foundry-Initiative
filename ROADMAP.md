@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-037 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 037's immutable `0.5.1` image is live and browser-accepted, including the corrected finding-navigation scroll behavior.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-037 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 037's immutable `0.5.1` image is live and browser-accepted, including the corrected finding-navigation scroll behavior. Milestone 038 has an accepted `0.6.0` source candidate for browser-local formatting preview; publication and deployment remain pending approval.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -225,7 +225,20 @@ See [Milestone 036](docs/milestones/milestone-036-browser-local-schema-validatio
 
 See [Milestone 037](docs/milestones/milestone-037-owasp-kubernetes-profile.md).
 
-- Later increments: before/after formatting diff, copy and report export, finding filters, tree search, drag-and-drop, display preferences, and bounded large-file processing.
+#### Milestone 038 — Formatting preview
+
+**Status:** `0.6.0` source candidate accepted; publication and deployment pending approval.
+
+- Replace immediate formatting mutation with a browser-local, line-oriented preview.
+- Keep the editor unchanged until explicit Apply and preserve it through Cancel or Escape.
+- Show before/after line numbers, added and removed lines, and normalization details.
+- Retain the invalid-YAML path to Validation without attempting speculative repair.
+- Bound expensive alignment work while leaving broader large-file guarantees for a later milestone.
+- Preserve both inspection modes and the no-backend, no-cluster-access trust boundary.
+
+See [Milestone 038](docs/milestones/milestone-038-formatting-preview.md).
+
+- Later increments: copy and report export, finding filters, tree search, drag-and-drop, display preferences, and bounded large-file processing.
 
 ### Later outcomes in this phase
 
