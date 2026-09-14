@@ -36,6 +36,15 @@ The project has moved from basic workload deployment into repeatable engineering
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
 - Acceptance: immutable `0.5.1` is deployed; runtime digest, ready EndpointSlice, health, page response, security headers, OWASP profile, schema states, General YAML isolation, and corrected finding navigation passed
+- Candidate source: `0.6.0` formatting preview accepted locally; image publication and deployment have not occurred
+
+## Active milestone
+
+- 038: browser-local formatting preview
+- Candidate: `0.6.0`
+- Source acceptance: 58 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, AMD64/ARM64 non-publishing build, repository validation, whitespace validation, Windows build, and local browser interactions passed
+- Behavior: valid formatting changes require explicit Apply or Cancel; invalid YAML remains unchanged and routes to Validation
+- Release state: no `0.6.0` image has been published and the live Deployment remains on immutable `0.5.1`
 
 ## Completed milestones
 
