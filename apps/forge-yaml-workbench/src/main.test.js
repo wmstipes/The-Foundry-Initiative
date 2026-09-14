@@ -133,6 +133,16 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(document.querySelector("#action-status").textContent).toBe("Already formatted — no changes needed");
   });
 
+  it("explains a final-newline-only formatting change", () => {
+    const source = "apiVersion: v1\nkind: Pod\nmetadata:\n  name: demo";
+    replaceEditor(source);
+
+    document.querySelector("#format").click();
+    expect(editor.value).toBe(source);
+    expect(document.querySelector("#format-preview-summary").textContent).toContain("final newline added");
+    document.querySelector("#format-cancel").click();
+  });
+
   it("cancels a formatting preview without changing the editor", () => {
     const source = "kind:  Pod\nmetadata: {name: demo}\n";
     replaceEditor(source);
