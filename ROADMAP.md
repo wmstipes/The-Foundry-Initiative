@@ -240,14 +240,15 @@ See [Milestone 038](docs/milestones/milestone-038-formatting-preview.md).
 
 #### Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Candidate CI complete; image publication pending approval.
+**Status:** Immutable `0.7.0` image published; deployment review pending.
 
 - Generate a deterministic Markdown report from the current browser-local analysis snapshot.
 - Let the operator review the report before explicitly copying it or downloading it as a `.md` file.
 - Include mode-appropriate summaries, diagnostics, findings, schema results, recommendations, and boundary language without embedding the complete source YAML.
 - Treat clipboard copy and local download as explicit trust-boundary crossings.
 - Preserve editor contents, unsaved-state tracking, both inspection modes, and the no-backend, no-cluster-access boundary.
-- Retain separate approval gates for implementation, image publication, deployment, live acceptance, and merge.
+- Published the separately approved AMD64/ARM64 `0.7.0` image at immutable OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` in workflow run `34886290349`.
+- Retain separate approval gates for manifest mutation, deployment, live acceptance, and merge.
 
 See [Milestone 039](docs/milestones/milestone-039-browser-local-markdown-reports.md).
 
