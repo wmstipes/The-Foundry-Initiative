@@ -17,6 +17,16 @@ describe("formatting line diff", () => {
     ]);
   });
 
+  it("uses bounded replacement alignment for unusually large comparisons", () => {
+    const before = Array.from({ length: 1001 }, (_, index) => "old-" + index).join("\n");
+    const after = Array.from({ length: 1001 }, (_, index) => "new-" + index).join("\n");
+    const diff = buildLineDiff(before, after);
+
+    expect(diff).toMatchObject({ added: 1001, removed: 1001, simplified: true });
+    expect(diff.rows[0]).toMatchObject({ type: "removed", beforeNumber: 1 });
+    expect(diff.rows.at(-1)).toMatchObject({ type: "added", afterNumber: 1001 });
+  });
+
   it("normalizes CRLF and omits the trailing newline marker", () => {
     const diff = buildLineDiff("one\r\ntwo\r\n", "one\ntwo\n");
 
