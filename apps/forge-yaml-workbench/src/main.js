@@ -59,7 +59,7 @@ app.innerHTML = [
   '    <header><div><span class="eyebrow">MARKDOWN REPORT</span><h2 id="report-preview-title">Review analysis report</h2><p id="report-preview-description">The report stays in browser memory until you explicitly copy or download it.</p></div><div id="report-preview-summary" class="report-preview-summary"></div></header>',
   '    <p class="report-export-boundary">Exported reports can contain resource names, namespaces, YAML paths, findings, and recommendations derived from your YAML. The complete source YAML is not included.</p>',
   '    <pre id="report-markdown" class="report-markdown" tabindex="0" aria-label="Generated Markdown report"></pre>',
-  '    <footer><button id="report-cancel" class="quiet">Cancel</button><button id="report-copy">Copy Markdown</button><button id="report-download">Download .md</button></footer>',
+  '    <footer><div id="report-action-status" class="report-action-status" role="status" aria-live="polite" aria-atomic="true">No report exported yet.</div><div class="report-actions"><button id="report-cancel" class="quiet">Cancel</button><button id="report-copy" data-default-label="Copy Markdown">Copy Markdown</button><button id="report-download" data-default-label="Download .md">Download .md</button></div></footer>',
   '  </section>',
   '</div>'
 ].join("");
@@ -222,6 +222,27 @@ function closeFormatPreview(message) {
   if (message) announce(message);
 }
 
+function resetReportFeedback() {
+  document.querySelectorAll("#report-copy, #report-download").forEach((button) => {
+    button.classList.remove("completed");
+    button.textContent = button.dataset.defaultLabel;
+  });
+  const status = document.querySelector("#report-action-status");
+  status.className = "report-action-status";
+  status.textContent = "No report exported yet.";
+}
+
+function reportFeedback(message, button, tone = "success") {
+  resetReportFeedback();
+  const status = document.querySelector("#report-action-status");
+  status.className = "report-action-status " + tone;
+  status.textContent = message;
+  if (button && tone === "success") {
+    button.classList.add("completed");
+    button.textContent = button.id === "report-copy" ? "Copied" : "Downloaded";
+  }
+}
+
 function openReportPreview(report) {
   reportPreview = report;
   reportPreviewReturnFocus = document.querySelector("#generate-report");
@@ -229,6 +250,7 @@ function openReportPreview(report) {
     report.documentCount + " document" + (report.documentCount === 1 ? "" : "s") + " · " +
     report.findingCount + " finding" + (report.findingCount === 1 ? "" : "s");
   document.querySelector("#report-markdown").textContent = report.markdown;
+  resetReportFeedback();
   document.querySelector("#report-preview").hidden = false;
   document.querySelector("#report-markdown").focus();
   announce("Markdown report ready for review");
@@ -549,14 +571,17 @@ document.querySelector("#report-copy").addEventListener("click", async () => {
   if (!reportPreview) return;
   try {
     await copyText(reportPreview.markdown);
+    reportFeedback("Markdown copied to the clipboard.", document.querySelector("#report-copy"));
     announce("Markdown report copied", "success");
   } catch {
+    reportFeedback("Copy failed. Select the report text and copy it manually.", null, "error");
     announce("Could not copy automatically — use the preview to select the report", "error");
   }
 });
 document.querySelector("#report-download").addEventListener("click", () => {
   if (!reportPreview) return;
   downloadText(reportPreview.markdown, "text/markdown;charset=utf-8", reportPreview.filename);
+  reportFeedback(reportPreview.filename + " downloaded.", document.querySelector("#report-download"));
   announce(reportPreview.filename + " downloaded", "success");
 });
 document.querySelector("#results").addEventListener("click", async (event) => {
