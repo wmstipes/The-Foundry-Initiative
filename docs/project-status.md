@@ -75,7 +75,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 036: corrected `0.4.1` published, digest-pinned, deployed, live browser-accepted, and merged through PR #13 at `fc16ad1`
 - 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation released as `0.5.1`, deployed, browser-accepted, and squash-merged through PR #14 at `dd46a08`
 - 038: browser-local formatting preview released as `0.6.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #16 at `4fed28c`
-- 039: browser-local Markdown report candidate passes automated, browser, and draft-PR CI acceptance; immutable `0.7.0` is published, while deployment and merge remain pending
+- 039: browser-local Markdown report candidate passes automated, browser, and draft-PR CI acceptance; immutable `0.7.0` is published and the digest-pinned Deployment candidate is staged, while deployment and merge remain pending
 
 ## Active milestone
 
@@ -185,7 +185,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Prepare the digest-pinned Deployment manifest, server-side dry-run, and live diff for review using OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`. Cluster deployment, live acceptance, and merge remain later approval gates.
+Validate the staged digest-pinned Deployment manifest, then review a server-side dry-run and live diff. Cluster deployment, live acceptance, and merge remain later approval gates.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
