@@ -238,7 +238,20 @@ See [Milestone 037](docs/milestones/milestone-037-owasp-kubernetes-profile.md).
 
 See [Milestone 038](docs/milestones/milestone-038-formatting-preview.md).
 
-- Later increments: copy and report export, finding filters, tree search, drag-and-drop, display preferences, and bounded large-file processing.
+#### Milestone 039 — Browser-local Markdown analysis reports
+
+**Status:** Planning approved; implementation pending.
+
+- Generate a deterministic Markdown report from the current browser-local analysis snapshot.
+- Let the operator review the report before explicitly copying it or downloading it as a `.md` file.
+- Include mode-appropriate summaries, diagnostics, findings, schema results, recommendations, and boundary language without embedding the complete source YAML.
+- Treat clipboard copy and local download as explicit trust-boundary crossings.
+- Preserve editor contents, unsaved-state tracking, both inspection modes, and the no-backend, no-cluster-access boundary.
+- Retain separate approval gates for implementation, image publication, deployment, live acceptance, and merge.
+
+See [Milestone 039](docs/milestones/milestone-039-browser-local-markdown-reports.md).
+
+- Later increments: finding filters, tree search, drag-and-drop, display preferences, additional export formats, and bounded large-file processing.
 
 ### Later outcomes in this phase
 
