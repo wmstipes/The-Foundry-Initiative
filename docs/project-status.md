@@ -75,11 +75,11 @@ The project has moved from basic workload deployment into repeatable engineering
 - 036: corrected `0.4.1` published, digest-pinned, deployed, live browser-accepted, and merged through PR #13 at `fc16ad1`
 - 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation released as `0.5.1`, deployed, browser-accepted, and squash-merged through PR #14 at `dd46a08`
 - 038: browser-local formatting preview released as `0.6.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #16 at `4fed28c`
-- 039: browser-local Markdown report candidate passes automated and browser acceptance; publication, deployment, and merge remain pending
+- 039: browser-local Markdown report candidate passes automated, browser, and draft-PR CI acceptance; publication, deployment, and merge remain pending
 
 ## Active milestone
 
-Milestone 039 source acceptance is complete on `codex/milestone-039-markdown-report`. All 69 tests plus validator, build, CSP, audit, manifest, whitespace, and clean-worktree checks pass, and local browser acceptance confirms the report workflow and corrected in-modal export feedback. The candidate generates a deterministic Markdown report from the current browser-local analysis, previews it before export, and requires an explicit Copy or Download action. It does not embed the complete YAML, add persistence, contact a backend or cluster, or change the running `0.6.0` deployment.
+Milestone 039 candidate acceptance is complete on `codex/milestone-039-markdown-report`. All 69 tests plus validator, build, CSP, audit, manifest, whitespace, and clean-worktree checks pass; local browser acceptance confirms the report workflow and corrected in-modal export feedback; draft PR #18 Workbench CI run 108 and non-publishing multi-architecture Docker build run 110 passed. The candidate generates a deterministic Markdown report from the current browser-local analysis, previews it before export, and requires an explicit Copy or Download action. It does not embed the complete YAML, add persistence, contact a backend or cluster, or change the running `0.6.0` deployment.
 
 ## Latest completed milestone
 
