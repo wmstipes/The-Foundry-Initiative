@@ -1,6 +1,6 @@
 # Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Immutable 0.7.0 deployed and live browser-accepted; final review pending
+**Status:** Complete. Immutable `0.7.0` deployed and live browser-accepted; merged through PR #18 at `1e0c525`
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-039-markdown-report`
 **Baseline:** `main` at `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c`
@@ -103,7 +103,7 @@ This milestone does not add:
 - After separate approval, staged version labels `0.7.0` and image `wmstipes/signalforge-yaml-workbench:0.7.0@sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` in the tracked Deployment.
 - After separate deployment approval, applied only the reviewed Deployment and completed runtime, HTTP, security-header, and live browser acceptance.
 
-Automated validation, local browser acceptance, separately approved image publication, tracked-manifest mutation, cluster deployment, and live acceptance are complete. Final review, pull-request readiness, and merge remain separately gated.
+Automated validation, local browser acceptance, separately approved image publication, tracked-manifest mutation, cluster deployment, live acceptance, final review, pull-request readiness, and merge are complete.
 
 ## Validation evidence
 
@@ -132,6 +132,8 @@ Automated validation, local browser acceptance, separately approved image public
 - The configured image and runtime ImageID match OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`.
 - Fresh NodePort requests returned HTTP 200 with health body `ok`, the expected Content Security Policy, and `X-Content-Type-Options: nosniff`.
 - Live browser acceptance passed Kubernetes and General YAML report generation, visible Copied and Downloaded feedback, predictable Markdown download naming, mode isolation, Cancel and Escape behavior, and preservation of editor contents and unsaved state.
+- PR #18 merged into `main` at `1e0c5259d0431b1c34a8c9cfed10609b82ba3904`.
+- Post-merge Workbench CI run 136, Kubernetes Manifest Validation run 121, and Restaurant API Docker Build run 55 passed on `main`.
 
 ## Candidate release
 
