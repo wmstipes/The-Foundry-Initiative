@@ -22,7 +22,7 @@ describe("Markdown analysis reports", () => {
     expect(first).toEqual(second);
     expect(first.filename).toBe("demo-report.md");
     expect(first.markdown).toContain("# Forge YAML Workbench Analysis Report");
-    expect(first.markdown).toContain("## Document 1 — Pod/report\\-demo");
+    expect(first.markdown).toContain("## Document 1 — Pod/report-demo");
     expect(first.markdown).toContain("## Deterministic Operational Findings");
     expect(first.markdown).toContain("## Kubernetes Schema Results");
     expect(first.markdown).toContain("OWASP Kubernetes Top 10:2025 Review Profile");
