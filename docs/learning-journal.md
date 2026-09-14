@@ -466,3 +466,17 @@ Implement the pure report generator and accessible preview workflow on `codex/mi
 
 The complete local validation suite and browser checks must pass before publication is considered. Image publication, digest pinning, deployment, live acceptance, final documentation, and merge each remain later gates.
 
+## 2026-09-14 — Milestone 039 source acceptance
+
+### Validation result
+
+- All 69 automated tests passed.
+- Validator reproducibility, production build, strict-CSP scan, dependency audit, Kubernetes manifest validation, whitespace validation, and clean-worktree checks passed.
+- Local browser acceptance passed for Kubernetes and General YAML reports, report review, Copy Markdown, Download .md, Escape cancellation, filename derivation, and unsaved-state preservation.
+- Browser review exposed missing visible export confirmation because feedback was rendered behind the modal.
+- Added and accepted an in-modal live message plus highlighted **Copied** and **Downloaded** button states.
+
+### Gate state
+
+Source acceptance is complete for candidate `0.7.0`. Immutable image publication, digest recording, cluster deployment, live acceptance, and merge remain separately gated.
+
