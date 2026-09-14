@@ -1,6 +1,6 @@
 # Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Automated validation complete; browser acceptance pending
+**Status:** Source acceptance complete; image publication pending approval
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-039-markdown-report`
 **Baseline:** `main` at `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c`
@@ -101,7 +101,7 @@ This milestone does not add:
 - Updated the candidate application and lockfile version to `0.7.0`.
 - Left the Kubernetes Deployment and accepted `0.6.0` runtime unchanged.
 
-Automated validation is complete. Browser acceptance remains pending. Image publication, manifest mutation, cluster deployment, and pull-request merge are not authorized by this implementation gate.
+Automated validation and local browser acceptance are complete. Image publication, manifest mutation, cluster deployment, and pull-request merge remain separately gated and are not authorized by the completed implementation gate.
 
 ## Validation evidence
 
@@ -113,7 +113,9 @@ Automated validation is complete. Browser acceptance remains pending. Image publ
 - Repository Kubernetes manifest validation passed.
 - Repository whitespace validation passed with a clean worktree.
 - Initial browser review confirmed report generation, Copy, and Download behavior and identified missing visible in-modal action feedback.
-- The candidate now provides an in-modal live status plus a highlighted **Copied** or **Downloaded** button state; automated interaction coverage passes, and final visual confirmation remains pending.
+- Browser acceptance confirmed Kubernetes and General YAML report generation, unchanged editor content, correct report sections and mode isolation, clipboard copy, predictable Markdown download naming, Escape cancellation, and preservation of unsaved YAML state.
+- Browser review identified that successful Copy and Download actions initially reported status only behind the modal.
+- The corrected candidate provides an in-modal live status plus a highlighted **Copied** or **Downloaded** button state; final browser confirmation passed for both actions.
 
 ## Candidate release
 
