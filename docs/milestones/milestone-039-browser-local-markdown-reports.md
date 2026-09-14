@@ -1,8 +1,8 @@
 # Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Implementation complete; local validation pending  
-**Started:** 2026-09-14  
-**Branch:** `codex/milestone-039-markdown-report`  
+**Status:** Implementation complete; local validation pending
+**Started:** 2026-09-14
+**Branch:** `codex/milestone-039-markdown-report`
 **Baseline:** `main` at `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c`
 
 ## Goal
