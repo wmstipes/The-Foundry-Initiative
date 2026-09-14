@@ -1,5 +1,6 @@
 function lines(source) {
   const normalized = String(source).replace(/\r\n?/g, "\n");
+  if (!normalized) return [];
   const values = normalized.split("\n");
   if (normalized.endsWith("\n")) values.pop();
   return values;
@@ -33,8 +34,16 @@ function replacementRows(previous, next) {
 }
 
 export function buildLineDiff(before, after) {
-  const previous = lines(before);
-  const next = lines(after);
+  const previousSource = String(before);
+  const nextSource = String(after);
+  const previous = lines(previousSource);
+  const next = lines(nextSource);
+  const metadata = {
+    newlineChange: previousSource.endsWith("\n") === nextSource.endsWith("\n")
+      ? null
+      : (nextSource.endsWith("\n") ? "added" : "removed"),
+    lineEndingsChanged: /\r/.test(previousSource) !== /\r/.test(nextSource)
+  };
   const alignmentCells = previous.length * next.length;
   if (alignmentCells > 1_000_000) {
     const rows = replacementRows(previous, next);
@@ -42,7 +51,8 @@ export function buildLineDiff(before, after) {
       rows,
       added: rows.filter((row) => row.type === "added").length,
       removed: rows.filter((row) => row.type === "removed").length,
-      simplified: true
+      simplified: true,
+      ...metadata
     };
   }
 
@@ -73,7 +83,7 @@ export function buildLineDiff(before, after) {
       newIndex += 1;
     } else if (newIndex < next.length &&
         (oldIndex === previous.length ||
-          matrix[oldIndex][newIndex + 1] >= matrix[oldIndex + 1][newIndex])) {
+          matrix[oldIndex][newIndex + 1] > matrix[oldIndex + 1][newIndex])) {
       rows.push({
         type: "added",
         beforeNumber: null,
@@ -96,6 +106,7 @@ export function buildLineDiff(before, after) {
     rows,
     added: rows.filter((row) => row.type === "added").length,
     removed: rows.filter((row) => row.type === "removed").length,
-    simplified: false
+    simplified: false,
+    ...metadata
   };
 }
