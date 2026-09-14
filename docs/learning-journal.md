@@ -434,3 +434,21 @@ Changed Forge YAML Workbench formatting from immediate editor mutation into an e
 
 Select the next bounded milestone; Milestone 038 has no remaining release, deployment, acceptance, or merge gates.
 
+## 2026-09-14 — Milestone 039 planning: browser-local Markdown reports
+
+### What changed
+
+- Anchored the milestone to `main` commit `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c` after Milestone 038 closeout.
+- Approved a deterministic Markdown report built from the existing browser-local analysis model.
+- Defined a review-first workflow with explicit Copy Markdown and Download .md actions.
+- Kept full source YAML out of the report and identified clipboard and local download as deliberate trust-boundary crossings.
+- Preserved separate gates for implementation, image publication, deployment, live acceptance, and merge.
+
+### Why this matters
+
+The Workbench can become more useful for peer review, change records, and learning evidence without acquiring a backend or cluster credentials. Treating report export as an explicit operator action also makes the boundary visible instead of silently moving manifest-derived information outside browser memory.
+
+### Next small step
+
+Implement the pure report generator and accessible preview workflow on `codex/milestone-039-markdown-report`, then run the complete local validation suite before considering publication.
+
