@@ -185,7 +185,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Validate the staged digest-pinned Deployment manifest, then review a server-side dry-run and live diff. Cluster deployment, live acceptance, and merge remain later approval gates.
+The digest-pinned Deployment candidate passed repository validation and server-side dry-run. Its live diff is limited to matching `0.7.0` labels, the verified immutable OCI index, and the expected Kubernetes-managed generation preview. Obtain explicit deployment approval before applying it; live acceptance and merge remain later gates.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
