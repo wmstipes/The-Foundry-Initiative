@@ -359,6 +359,9 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(document.querySelector("#action-status").textContent).toBe(
       "Markdown report ready for review"
     );
+    expect(document.querySelector("#report-action-status").textContent).toBe(
+      "No report exported yet."
+    );
 
     document.querySelector("#report-cancel").click();
     expect(document.querySelector("#report-preview").hidden).toBe(true);
@@ -381,6 +384,11 @@ describe("Forge YAML Workbench browser interactions", () => {
     await vi.waitFor(() => {
       expect(writeText).toHaveBeenCalledWith(reviewed);
       expect(document.querySelector("#action-status").textContent).toBe("Markdown report copied");
+      expect(document.querySelector("#report-action-status").textContent).toBe(
+        "Markdown copied to the clipboard."
+      );
+      expect(document.querySelector("#report-copy").textContent).toBe("Copied");
+      expect(document.querySelector("#report-copy").classList.contains("completed")).toBe(true);
     });
     expect(document.querySelector("#report-preview").hidden).toBe(false);
     document.querySelector("#report-cancel").click();
@@ -406,6 +414,11 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(document.querySelector("#action-status").textContent).toBe(
       "signalforge-sample-report.md downloaded"
     );
+    expect(document.querySelector("#report-action-status").textContent).toBe(
+      "signalforge-sample-report.md downloaded."
+    );
+    expect(document.querySelector("#report-download").textContent).toBe("Downloaded");
+    expect(document.querySelector("#report-download").classList.contains("completed")).toBe(true);
     expect(editor.value).toBe(source);
     document.querySelector("#report-cancel").click();
 
