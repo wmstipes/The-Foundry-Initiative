@@ -190,8 +190,11 @@ function openFormatPreview(before, after) {
   const diff = buildLineDiff(before, after);
   formatPreview = { before, after };
   formatPreviewReturnFocus = document.querySelector("#format");
-  document.querySelector("#format-preview-summary").textContent =
-    diff.added + " added · " + diff.removed + " removed" + (diff.simplified ? " · simplified alignment" : "");
+  const summary = [diff.added + " added", diff.removed + " removed"];
+  if (diff.newlineChange) summary.push("final newline " + diff.newlineChange);
+  if (diff.lineEndingsChanged) summary.push("line endings normalized");
+  if (diff.simplified) summary.push("simplified alignment");
+  document.querySelector("#format-preview-summary").textContent = summary.join(" · ");
   document.querySelector("#format-diff").innerHTML = diffRows(diff.rows);
   document.querySelector("#format-preview").hidden = false;
   document.querySelector("#format-apply").focus();
@@ -520,6 +523,10 @@ document.addEventListener("keydown", (event) => {
       : (current === focusable.length - 1 ? 0 : current + 1);
     event.preventDefault();
     focusable[next].focus();
+    return;
+  }
+  if (formatPreview && (event.ctrlKey || event.metaKey)) {
+    if (["o", "s", "f"].includes(event.key.toLowerCase())) event.preventDefault();
     return;
   }
   if (!(event.ctrlKey || event.metaKey)) return;
