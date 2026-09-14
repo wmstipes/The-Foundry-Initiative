@@ -178,7 +178,7 @@ export function buildMarkdownReport({ filename, analysis }) {
   if (!analysis.documents.length) {
     lines.push("No YAML documents were parsed.");
   } else {
-    lines.push(analysis.documents.map(kubernetesDocument).join("\n\n"));
+    lines.push(analysis.documents.map(kubernetes ? kubernetesDocument : generalDocument).join("\n\n"));
   }
 
   const syntaxErrors = diagnosticsSection("YAML Syntax Errors", analysis.syntaxErrors || [], "error");
