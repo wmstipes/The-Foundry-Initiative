@@ -1,6 +1,6 @@
 # Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Digest-pinned 0.7.0 Deployment candidate staged; deployment review pending
+**Status:** Digest-pinned 0.7.0 Deployment candidate reviewed; deployment approval pending
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-039-markdown-report`
 **Baseline:** `main` at `3b562ef0c4be7fc15fd5bd3cbe98e7d5ca73373c`
@@ -123,6 +123,10 @@ Automated validation, local browser acceptance, separately approved image public
 - After explicit publication approval, workflow run `34886290349` built and pushed `wmstipes/signalforge-yaml-workbench:0.7.0` from source commit `84123ae842ce85d8e37bd02d8e96f3fb4d9765ae` for `linux/amd64` and `linux/arm64`.
 - The published OCI index digest is `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`.
 - Independent registry inspection confirmed Linux AMD64 manifest `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and Linux ARM64 manifest `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`.
+- The repository validator was advanced to require exactly the approved `0.7.0` version and OCI index; all Kubernetes manifest checks then passed.
+- Server-side dry-run accepted the Deployment candidate.
+- The live diff showed only the two `app.kubernetes.io/version` changes, the immutable image update, and the expected Kubernetes-managed generation preview.
+- Repository whitespace validation passed and the local worktree was clean.
 
 ## Candidate release
 
