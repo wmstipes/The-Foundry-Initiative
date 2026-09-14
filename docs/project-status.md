@@ -79,7 +79,7 @@ The project has moved from basic workload deployment into repeatable engineering
 
 ## Active milestone
 
-Milestone 039 candidate acceptance is complete on `codex/milestone-039-markdown-report`. All 69 tests plus validator, build, CSP, audit, manifest, whitespace, and clean-worktree checks pass; local browser acceptance confirms the report workflow and corrected in-modal export feedback; draft PR #18 Workbench CI run 108 and non-publishing multi-architecture Docker build run 110 passed. After explicit approval, workflow run `34886290349` published `wmstipes/signalforge-yaml-workbench:0.7.0` from source `84123ae842ce85d8e37bd02d8e96f3fb4d9765ae` at OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` for AMD64 and ARM64. The candidate generates a deterministic Markdown report from the current browser-local analysis, previews it before export, and requires an explicit Copy or Download action. It does not embed the complete YAML, add persistence, contact a backend or cluster, or change the running `0.6.0` deployment.
+Milestone 039 candidate acceptance is complete on `codex/milestone-039-markdown-report`. All 69 tests plus validator, build, CSP, audit, manifest, whitespace, and clean-worktree checks pass; local browser acceptance confirms the report workflow and corrected in-modal export feedback; draft PR #18 Workbench CI run 108 and non-publishing multi-architecture Docker build run 110 passed. After explicit approval, workflow run `34886290349` published `wmstipes/signalforge-yaml-workbench:0.7.0` from source `84123ae842ce85d8e37bd02d8e96f3fb4d9765ae` at OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` for AMD64 and ARM64. Independent registry inspection confirmed AMD64 manifest `sha256:1bae69ab2d812f6ee2d8209a01afdc31dc98b28d2c5b4e1925edc7847512448e` and ARM64 manifest `sha256:4aa7295d62481d12973cde2d46ba0a258e1858dc5ac192d89a132134178f269d`. The candidate generates a deterministic Markdown report from the current browser-local analysis, previews it before export, and requires an explicit Copy or Download action. It does not embed the complete YAML, add persistence, contact a backend or cluster, or change the running `0.6.0` deployment.
 
 ## Latest completed milestone
 
@@ -185,7 +185,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Independently map the published AMD64 and ARM64 manifests, then prepare the digest-pinned Deployment manifest, server-side dry-run, and live diff for review. Cluster deployment, live acceptance, and merge remain later approval gates.
+Prepare the digest-pinned Deployment manifest, server-side dry-run, and live diff for review using OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`. Cluster deployment, live acceptance, and merge remain later approval gates.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
