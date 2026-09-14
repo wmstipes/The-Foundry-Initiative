@@ -240,7 +240,7 @@ See [Milestone 038](docs/milestones/milestone-038-formatting-preview.md).
 
 #### Milestone 039 — Browser-local Markdown analysis reports
 
-**Status:** Immutable `0.7.0` image published; deployment review pending.
+**Status:** Digest-pinned `0.7.0` Deployment candidate staged; deployment review pending.
 
 - Generate a deterministic Markdown report from the current browser-local analysis snapshot.
 - Let the operator review the report before explicitly copying it or downloading it as a `.md` file.
@@ -248,7 +248,8 @@ See [Milestone 038](docs/milestones/milestone-038-formatting-preview.md).
 - Treat clipboard copy and local download as explicit trust-boundary crossings.
 - Preserve editor contents, unsaved-state tracking, both inspection modes, and the no-backend, no-cluster-access boundary.
 - Published the separately approved AMD64/ARM64 `0.7.0` image at immutable OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2` in workflow run `34886290349`.
-- Retain separate approval gates for manifest mutation, deployment, live acceptance, and merge.
+- Staged the separately approved Deployment manifest update with matching `0.7.0` labels and the immutable OCI index; the live cluster remains on `0.6.0`.
+- Retain separate approval gates for cluster deployment, live acceptance, and merge.
 
 See [Milestone 039](docs/milestones/milestone-039-browser-local-markdown-reports.md).
 
