@@ -11,9 +11,23 @@ describe("formatting line diff", () => {
     expect(diff).toMatchObject({ added: 2, removed: 1 });
     expect(diff.rows).toEqual([
       { type: "context", beforeNumber: 1, afterNumber: 1, text: "kind: Pod" },
+      { type: "removed", beforeNumber: 2, afterNumber: null, text: "metadata: {name: demo}" },
       { type: "added", beforeNumber: null, afterNumber: 2, text: "metadata:" },
-      { type: "added", beforeNumber: null, afterNumber: 3, text: "  name: demo" },
-      { type: "removed", beforeNumber: 2, afterNumber: null, text: "metadata: {name: demo}" }
+      { type: "added", beforeNumber: null, afterNumber: 3, text: "  name: demo" }
+    ]);
+  });
+
+  it("reports newline-only normalization", () => {
+    const diff = buildLineDiff("kind: Pod", "kind: Pod\n");
+
+    expect(diff).toMatchObject({
+      added: 0,
+      removed: 0,
+      newlineChange: "added",
+      lineEndingsChanged: false
+    });
+    expect(diff.rows).toEqual([
+      { type: "context", beforeNumber: 1, afterNumber: 1, text: "kind: Pod" }
     ]);
   });
 
