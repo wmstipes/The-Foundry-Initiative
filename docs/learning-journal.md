@@ -475,6 +475,7 @@ The complete local validation suite and browser checks must pass before publicat
 - Local browser acceptance passed for Kubernetes and General YAML reports, report review, Copy Markdown, Download .md, Escape cancellation, filename derivation, and unsaved-state preservation.
 - Browser review exposed missing visible export confirmation because feedback was rendered behind the modal.
 - Added and accepted an in-modal live message plus highlighted **Copied** and **Downloaded** button states.
+- Opened draft PR #18; Workbench CI run 108 and the non-publishing AMD64/ARM64 Docker build run 110 passed.
 
 ### Gate state
 
