@@ -1,6 +1,6 @@
 # Milestone 043 — Curated documentation front door
 
-**Status:** Wiki published and Git-backed acceptance complete; public browser accessibility review, PR readiness, merge, and cleanup remain separately gated
+**Status:** Wiki publication and browser acceptance complete; PR readiness, merge, and cleanup remain separately gated
 
 **Started:** 2026-09-15
 
@@ -103,7 +103,7 @@ GitHub does not evaluate path filters for tag pushes, so version-tag publication
 - The post-push local and `origin/master` refs matched exactly and the Wiki worktree was clean.
 - The initial browser-created Home and sidebar scaffolding commits remain in history; the published commit replaces only their provisional content.
 - All repository destinations referenced by the Wiki were confirmed through the connected GitHub API.
-- Public HTML rendering is blocked from the validation runtime. Visible rendering, link navigation, keyboard navigation, 200-percent zoom, and restricted-editing confirmation remain explicit browser acceptance checks.
+- User browser acceptance confirmed correct visible rendering, all navigation destinations, keyboard navigation, readability at 200-percent zoom, and collaborator-only Wiki editing.
 
 ## Deterministic verification
 
@@ -122,7 +122,7 @@ Publication acceptance additionally requires a draft PR with expected files and 
 1. Planning — complete after explicit approval.
 2. Local implementation — complete after explicit approval.
 3. Branch publication and draft PR — complete after explicit approval.
-4. Live Wiki mutation — complete after explicit approval at Wiki commit `0a945b4cac2ba1c781a55f9aa1a8c389426892e3`; public browser accessibility review remains pending.
+4. Live Wiki mutation and browser accessibility review — complete after explicit approval at Wiki commit `0a945b4cac2ba1c781a55f9aa1a8c389426892e3`.
 5. Pull-request readiness — not authorized.
 6. Merge — not authorized.
 7. Cleanup — not authorized.
