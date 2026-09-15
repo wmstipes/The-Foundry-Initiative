@@ -166,7 +166,7 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 
 Potential next architecture steps include:
 
-1. Complete the separately gated PR readiness, merge, and cleanup workflow for accepted Milestone 042 release `0.10.0`.
+1. Evaluate a curated reader-facing documentation front door without duplicating the authoritative repository documentation.
 2. Observe naturally occurring limited-alert behavior before designing notification delivery.
 3. Continue the demonstrated Prometheus and Grafana backup cadence.
 4. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.

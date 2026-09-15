@@ -1,6 +1,6 @@
 # Milestone 042 — Safe browser-local YAML file drop
 
-**Status:** Release deployed and live browser-accepted; draft PR #23 pending readiness review
+**Status:** Complete; merged through PR #23 at `020d5e7`, with branch cleanup separately gated
 **Started:** 2026-09-15
 **Branch:** `codex/milestone-042-safe-yaml-drop`
 **Baseline:** `main` at `0f3d44e2abff204f0019ea6d97bb2ab4b1ffe198`
@@ -97,6 +97,7 @@ This milestone adds no network request, backend processing, telemetry, cookie, l
 - Deployment generation 14 completed with one available and Ready Pod `forge-yaml-workbench-68856b4c5d-jvtgx` on `forge-node-03`, zero restarts, and an exact configured/runtime OCI index match.
 - EndpointSlice `forge-yaml-workbench-bjzkq` reported ready endpoint `10.244.54.203:8080`; NodePort `30081` returned HTTP 200 for `/healthz` and `/` with the expected CSP, `nosniff`, frame, and referrer headers.
 - Operator live browser acceptance passed visible drop instructions and presentation, successful load and focus, dirty-source cancellation and confirmation, mode and tab preservation, Tree-search reset, unsupported and multiple-file rejection, misplaced-drop navigation prevention, invalid-YAML routing, keyboard Open file behavior, sample protection, and basename-preserving download behavior.
+- PR #23 was marked ready after all final workflows passed and merged into `main` at `020d5e796d586b12b9e5e2819cb898d0c51dcaf9`.
 
 ## Gated delivery workflow
 
@@ -107,6 +108,6 @@ This milestone adds no network request, backend processing, telemetry, cookie, l
 5. Deployment-manifest mutation — complete after separate approval and publication.
 6. Cluster deployment — complete after separate approval.
 7. Live browser acceptance — complete after separate approval.
-8. Pull-request readiness — not authorized.
-9. Merge — not authorized.
-10. Cleanup — not authorized.
+8. Pull-request readiness — complete after separate approval.
+9. Merge — complete through PR #23 at `020d5e7`.
+10. Cleanup — awaiting separate approval after the closeout record is integrated.

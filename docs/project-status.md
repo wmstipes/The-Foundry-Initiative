@@ -81,6 +81,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 039: browser-local Markdown reports released as immutable `0.7.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #18 at `1e0c525`
 - 040: Validation result filters released as immutable `0.8.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #20 at `6fa5092`
 - 041: browser-local YAML Tree search released as immutable `0.9.0`, deployed, accepted, merged through PR #22 at `0f3d44e`, and cleaned up
+- 042: safe browser-local YAML file drop released as immutable `0.10.0`, deployed, accepted, and merged through PR #23 at `020d5e7`
 
 ## Latest release milestone
 
@@ -89,7 +90,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Verification: 92 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository validation, whitespace checks, Windows validation, CI, AMD64/ARM64 builds, and source and live browser reviews passed
 - Publication and deployment: immutable AMD64/ARM64 `0.10.0` is live at OCI index `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`
 - Runtime acceptance: generation 14, one Ready Pod on `forge-node-03`, zero restarts, exact configured/runtime digest match, one ready endpoint at `10.244.54.203:8080`, fresh HTTP 200 responses, expected security headers, and the complete file-drop workflow passed
-- Completion record: release and acceptance evidence are being folded into draft PR #23; PR readiness, merge, and cleanup remain separately gated
+- Completion record: release and acceptance evidence merged through PR #23 at `020d5e7`; only post-merge branch cleanup remains separately gated
 
 ## Previous completed milestone
 
@@ -200,7 +201,7 @@ Tag `forge-yaml-workbench-v0.10.0` and its AMD64/ARM64 image were published from
 
 Deployment generation 14 completed with one available and Ready `0.10.0` Pod on `forge-node-03`, zero restarts, runtime ImageID matching the OCI index, one ready EndpointSlice endpoint at `10.244.54.203:8080`, and HTTP 200 health and page responses with the expected security headers. The complete live browser file-drop acceptance procedure passed.
 
-The next gate is PR readiness. PR #23 remains draft; merge and cleanup remain separately gated.
+Milestone 042 is complete and merged through PR #23 at `020d5e7`. The only remaining procedure is separately approved cleanup of the merged feature and closeout branches after this closeout record is integrated.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
