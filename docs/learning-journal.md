@@ -575,3 +575,23 @@ Source acceptance is complete for candidate `0.8.0`. Image publication, immutabl
 ### Next small step
 
 Prepare and review the exact Deployment-only `0.8.0` label and immutable-image diff. Mutating the tracked manifest requires a separate approval before any cluster deployment is considered.
+
+## 2026-09-15 — Milestone 040 deployment and live acceptance
+
+### What changed
+
+- After separate approval, staged the two `0.8.0` version labels and immutable OCI index in the Workbench Deployment and matching repository validator expectation.
+- Repository validation, server-side dry-run, and the exact live diff passed before deployment approval.
+- Applied only the approved Workbench Deployment and completed the rolling update successfully.
+- Verified one Ready Pod on `forge-node-03` with zero restarts and a runtime ImageID matching OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`.
+- Confirmed the EndpointSlice settled to the new Pod only and fresh `/healthz` and application requests through NodePort `30081` returned HTTP 200.
+- Confirmed the deployed Content Security Policy and `X-Content-Type-Options: nosniff` header.
+- Completed all nine live browser checks for filter counts, level isolation, empty-section behavior, complete-analysis indicators and reports, edit-time recomputation, reset boundaries, navigation, scrolling, guidance, and Copy YAML.
+
+### Trust boundary
+
+The release remains stateless and browser-local. No backend YAML processing, persistence, telemetry, Kubernetes API access, RBAC, ServiceAccount token, cluster credential, or automatic remediation was added.
+
+### Next small step
+
+Perform the final PR-readiness review. PR readiness and merge remain separate approval gates.

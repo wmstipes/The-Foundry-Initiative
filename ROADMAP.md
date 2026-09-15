@@ -1,12 +1,12 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-14
+**Last updated:** 2026-09-15
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-039 are complete; Milestone 040 is active. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 039's immutable `0.7.0` image remains live and browser-accepted while Milestone 040's browser-local Validation filters are source-accepted and published as an undeployed immutable `0.8.0` candidate.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-039 are complete; Milestone 040 is deployed and live-accepted with PR readiness and merge pending. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 040's browser-local Validation filters run as immutable Workbench `0.8.0`.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -256,13 +256,14 @@ See [Milestone 039](docs/milestones/milestone-039-browser-local-markdown-reports
 
 #### Milestone 040 — Validation result filters
 
-**Status:** `0.8.0` source accepted and immutable AMD64/ARM64 image published at OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`. Manifest mutation and all later gates remain; live Workbench remains `0.7.0`.
+**Status:** Immutable `0.8.0` is published, digest-pinned, deployed, runtime-verified, and live browser-accepted. PR readiness and merge remain separately gated.
 
 - Filter existing Validation entries by All, Errors, Warnings, Notes, or Valid with current counts.
 - Preserve section and result order, hide empty filtered sections, and distinguish filtered-empty results from the complete analysis.
 - Keep the tab badge, overall status, OWASP review profile, and Markdown reports based on the complete unfiltered analysis.
 - Preserve filters through edits while resetting them at inspection-mode and input-replacement boundaries.
 - Keep all filter state ephemeral and browser-local without adding storage, backend processing, cluster access, or credentials.
+- Deployed the approved Deployment-only update and verified one Ready Pod with zero restarts, a matching runtime ImageID, one ready endpoint, HTTP 200 health and page responses, strict security headers, and the complete live filter workflow.
 
 See [Milestone 040](docs/milestones/milestone-040-validation-result-filters.md).
 

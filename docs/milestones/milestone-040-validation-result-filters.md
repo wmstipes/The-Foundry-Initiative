@@ -1,6 +1,6 @@
 # Milestone 040 — Validation result filters
 
-**Status:** Immutable `0.8.0` published and verified; manifest mutation pending separate approval
+**Status:** Immutable `0.8.0` deployed, runtime-verified, and live browser-accepted; PR readiness and merge pending
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-040-validation-filters`
 **Baseline:** `main` at `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4`
@@ -64,7 +64,7 @@ The milestone adds no storage, cookies, telemetry, backend, network request, Kub
 - Added reset behavior at mode, sample/file-load, and clear boundaries while preserving the selected filter during edits.
 - Added DOM interaction coverage for level filtering, counts, empty states, OWASP separation, recomputation, reset behavior, focus, pressed state, and complete-report isolation.
 - Advanced application and lockfile candidate metadata to `0.8.0`.
-- Left the tracked Kubernetes Deployment and live immutable `0.7.0` runtime unchanged.
+- Staged and deployed the approved Kubernetes Deployment-only update with `0.8.0` labels and the immutable OCI index digest.
 
 ## Gated delivery workflow
 
@@ -72,9 +72,9 @@ The milestone adds no storage, cookies, telemetry, backend, network request, Kub
 2. Implementation approval — complete.
 3. Local automated verification, Windows validation, and browser source acceptance — complete.
 4. Branch and image publication — complete after separate approval.
-5. Deployment-manifest mutation — requires separate approval after an immutable digest is known.
-6. Cluster deployment — requires separate approval.
-7. Live browser acceptance — requires separate approval.
+5. Deployment-manifest mutation — complete after separate approval.
+6. Cluster deployment — complete after separate approval.
+7. Live browser acceptance — complete after separate approval.
 8. Pull-request readiness — requires separate approval.
 9. Merge — requires separate approval.
 
@@ -87,9 +87,9 @@ The milestone adds no storage, cookies, telemetry, backend, network request, Kub
 - Strict-CSP validation confirms the production JavaScript contains no eval or Function-constructor usage.
 - Dependency audit reports zero vulnerabilities.
 - Repository Kubernetes manifest validation and whitespace validation pass.
-- The tracked Workbench Deployment has no diff and remains pinned to accepted immutable `0.7.0`.
-- This workspace has no Docker client, so the non-publishing AMD64/ARM64 build remains pending for the established GitHub pull-request workflow.
-- The remote browser surface could not reach the workspace loopback server; operator browser review subsequently completed on Windows. No live-cluster browser acceptance was attempted.
+- The tracked Workbench Deployment and validator expectation are pinned to immutable `0.8.0` at OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`.
+- This workspace has no Docker client; the established GitHub pull-request workflow completed the non-publishing AMD64/ARM64 build successfully.
+- The remote browser surface could not reach the workspace loopback server; operator source and live-cluster browser reviews subsequently completed on Windows.
 - Draft PR #20 opened from remote source commit `82b291e`; Workbench CI run 137 passed.
 - Non-publishing AMD64/ARM64 Docker build run 139 passed without publishing an image.
 - Windows validation passed from a clean lockfile installation with all 74 tests green.
@@ -99,4 +99,8 @@ The milestone adds no storage, cookies, telemetry, backend, network request, Kub
 - Publication workflow run 141 (`34972448064`) completed successfully and published both target architectures.
 - The immutable OCI index is `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`.
 - Independent registry inspection confirmed Linux AMD64 manifest `sha256:dfbfc92e3d4a074d0a421cc3fdb7937f4288937af291aac71ec9a0dc3786d536` and Linux ARM64 manifest `sha256:2db1d88fe7357452f82256e81a4d56ef52d3ddc72bffe0f31524adab524ce615`; the remaining two OCI-index entries are BuildKit attestations.
-- The tracked Deployment and live cluster remain on accepted immutable `0.7.0`. Manifest mutation, deployment, live acceptance, PR readiness, and merge remain separately gated.
+- The reviewed Deployment-only diff contained only the two `0.8.0` version labels, immutable image update, last-applied annotation, and expected generation preview; repository validation and server-side dry-run passed.
+- The approved rollout completed successfully with one Ready Pod on `forge-node-03`, zero restarts, and a runtime ImageID matching the pinned OCI index digest.
+- The EndpointSlice settled to the new Pod only. Fresh `/healthz` and application requests through NodePort `30081` returned HTTP 200 with the expected Content Security Policy and `X-Content-Type-Options: nosniff`.
+- Live browser acceptance passed all nine checks for counted filters, level isolation, hidden empty sections, complete-analysis indicators, edit-time recomputation, reset boundaries, complete Markdown reports, finding navigation, scrolling, guidance, and Copy YAML.
+- PR readiness and merge remain separately gated.
