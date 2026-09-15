@@ -54,7 +54,7 @@ flowchart TD
 - Source: `apps/forge-yaml-workbench`
 - Manifests: `k8s/forge-yaml-workbench`
 - Namespace: `forge-tools`
-- Deployment: one stateless replica using accepted immutable release `0.9.0` with browser-local Tree search
+- Deployment: one stateless replica using accepted immutable release `0.10.0` with browser-local Tree search and safe one-file YAML drop
 - Access: private-lab NodePort `30081`
 - Runtime: unprivileged NGINX on container port `8080`
 - Processing: shared YAML parsing, formatting preview, line-diff generation, diagnostics, guarded local-file opening and drop handling, tree navigation and search, Markdown report generation, and Validation display filtering run entirely in the browser; local files are read through the browser File API without upload, Tree search and display filters do not change analysis or report contents, and Kubernetes-specific operational findings, the bundled `v1.36.4` schema validator, and the pinned OWASP Top 10:2025 review profile run only in Kubernetes mode
@@ -166,7 +166,7 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 
 Potential next architecture steps include:
 
-1. Complete the separately gated publication, manifest, deployment, and acceptance workflow for Milestone 042 candidate `0.10.0` after its browser-local YAML file-drop implementation is accepted.
+1. Complete the separately gated PR readiness, merge, and cleanup workflow for accepted Milestone 042 release `0.10.0`.
 2. Observe naturally occurring limited-alert behavior before designing notification delivery.
 3. Continue the demonstrated Prometheus and Grafana backup cadence.
 4. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.

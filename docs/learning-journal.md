@@ -769,3 +769,26 @@ Source acceptance is complete for candidate `0.10.0`. Release tag and image publ
 - Post-mutation verification passed all 92 Workbench tests, validator reproducibility, production build, strict-CSP scan, zero-vulnerability audit, repository manifest validation, all 51 supporting Python tests, and whitespace validation.
 - The live cluster remains on accepted immutable `0.9.0`; no server-side dry-run, cluster diff, apply, rollout, or live acceptance action occurred in this gate.
 - Publishing the manifest follow-up, reviewing deployment evidence, applying it, and accepting the live application remain separately gated.
+
+## 2026-09-15 — Milestone 042 deployment and live acceptance
+
+### Deployment evidence
+
+- Repository validation and server-side dry-run passed before deployment.
+- The reviewed live diff contained only generation 13 to 14, the Deployment and Pod-template version labels changing from `0.9.0` to `0.10.0`, and the image changing to immutable OCI index `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`.
+- After separate approval, applied only `k8s/forge-yaml-workbench/forge-yaml-workbench-deployment.yaml`.
+- Deployment generation 14 completed with one available and Ready Pod `forge-yaml-workbench-68856b4c5d-jvtgx` on `forge-node-03`, zero restarts, and an exact configured/runtime digest match.
+- EndpointSlice `forge-yaml-workbench-bjzkq` exposed one ready endpoint at `10.244.54.203:8080`.
+- NodePort `30081` returned HTTP 200 for `/healthz` and `/` with the expected CSP, `nosniff`, frame-denial, and referrer-policy headers.
+
+### Live browser acceptance
+
+- The deployed page identified release `0.10.0` and exposed visible, accessible file-drop instructions and presentation.
+- Successful drops loaded YAML, announced the basename, and focused the editor.
+- Dirty-source cancellation preserved YAML, mode, tab, and search state; confirmed replacement preserved mode and tab while resetting Tree search.
+- Unsupported and multiple-file drops were rejected without replacement, and misplaced drops did not navigate the browser.
+- Invalid YAML entered the established Validation path; Ctrl+O and Load sample retained the shared unsaved-change safeguard; downloads preserved the opened basename.
+
+### Gate state
+
+Immutable Workbench `0.10.0` is published, deployed, runtime-verified, and live browser-accepted. PR #23 remains draft; PR readiness, merge, and cleanup remain separately gated.

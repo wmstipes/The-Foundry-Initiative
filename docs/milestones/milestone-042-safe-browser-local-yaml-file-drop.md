@@ -1,6 +1,6 @@
 # Milestone 042 — Safe browser-local YAML file drop
 
-**Status:** Release published and immutable Deployment candidate prepared; cluster deployment not authorized
+**Status:** Release deployed and live browser-accepted; draft PR #23 pending readiness review
 **Started:** 2026-09-15
 **Branch:** `codex/milestone-042-safe-yaml-drop`
 **Baseline:** `main` at `0f3d44e2abff204f0019ea6d97bb2ab4b1ffe198`
@@ -91,8 +91,12 @@ This milestone adds no network request, backend processing, telemetry, cookie, l
 - Annotated tag `forge-yaml-workbench-v0.10.0` resolves to accepted source commit `ba97289c391cab7e7a33f13efc2ca39103065214`.
 - Docker Build run 154 passed the tagged publication path and published `wmstipes/signalforge-yaml-workbench:0.10.0` for AMD64 and ARM64.
 - The immutable OCI index is `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`; active platform manifests are AMD64 `sha256:c8223d013931e0c02a582f372b826cb827eed1d6f2ba887eac7661387ef03fa2` and ARM64 `sha256:a297014f6df7579c25bcaaa6bbea12bb39e398a36828d647228e5859e7b77869`.
-- After separate approval, the tracked Deployment version labels and image reference and the repository validator expectation were locally updated to immutable `0.10.0`. The live cluster remains unchanged at `0.9.0`.
+- After separate approval, the tracked Deployment version labels and image reference and the repository validator expectation were updated to immutable `0.10.0`.
 - Post-mutation verification passes all 92 Workbench tests, validator reproducibility, production build, strict-CSP scan, zero-vulnerability audit, repository manifest validation, all 51 supporting Python tests, and whitespace validation.
+- Server-side dry-run passed, and the reviewed live diff contained only generation 13 to 14, the two version-label changes, and the immutable image change.
+- Deployment generation 14 completed with one available and Ready Pod `forge-yaml-workbench-68856b4c5d-jvtgx` on `forge-node-03`, zero restarts, and an exact configured/runtime OCI index match.
+- EndpointSlice `forge-yaml-workbench-bjzkq` reported ready endpoint `10.244.54.203:8080`; NodePort `30081` returned HTTP 200 for `/healthz` and `/` with the expected CSP, `nosniff`, frame, and referrer headers.
+- Operator live browser acceptance passed visible drop instructions and presentation, successful load and focus, dirty-source cancellation and confirmation, mode and tab preservation, Tree-search reset, unsupported and multiple-file rejection, misplaced-drop navigation prevention, invalid-YAML routing, keyboard Open file behavior, sample protection, and basename-preserving download behavior.
 
 ## Gated delivery workflow
 
@@ -100,9 +104,9 @@ This milestone adds no network request, backend processing, telemetry, cookie, l
 2. Local implementation — complete on the feature branch.
 3. Local automated verification and source acceptance — complete, including clean Windows and operator browser review.
 4. Publication — complete after separate approvals for the remote source branch, draft PR #23, release tag, and AMD64/ARM64 image.
-5. Deployment-manifest mutation — local mutation complete after separate approval; publication and cluster deployment remain unapproved.
-6. Cluster deployment — not authorized.
-7. Live browser acceptance — not authorized.
+5. Deployment-manifest mutation — complete after separate approval and publication.
+6. Cluster deployment — complete after separate approval.
+7. Live browser acceptance — complete after separate approval.
 8. Pull-request readiness — not authorized.
 9. Merge — not authorized.
 10. Cleanup — not authorized.
