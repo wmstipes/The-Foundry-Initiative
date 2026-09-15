@@ -700,3 +700,40 @@ Review draft PR #22 for readiness. Marking it ready, merging it, and post-merge 
 ### Remaining procedure
 
 After separately approved merge, synchronize `main` and remove the local and remote Milestone 041 feature branch. That cleanup changes no project content.
+
+## 2026-09-15 — Milestone 041 merge and cleanup
+
+### Result
+
+- PR #22 merged into `main` at `0f3d44e2abff204f0019ea6d97bb2ab4b1ffe198` after separate approval.
+- The local and remote `codex/milestone-041-tree-search` branches were removed.
+- Milestone 041 is complete; immutable Workbench `0.9.0` remains deployed and accepted.
+
+## 2026-09-15 — Milestone 042 planning and local implementation: safe browser-local YAML file drop
+
+### What changed
+
+- Approved a bounded editor drop target for exactly one local `.yaml` or `.yml` file, with case-insensitive extension matching.
+- Added persistent visible instructions and a drop-ready overlay using text and a dashed boundary rather than color alone.
+- Added file-only drag detection, page-navigation prevention for misplaced drops, and deterministic cleanup for leave, drop, Escape, drag end, and window blur.
+- Routed accepted files through the existing input-replacement boundary and preserved the basename for later YAML and Markdown downloads.
+- Added one shared unsaved-change confirmation for dropped files, Open file, and Load sample.
+- Preserved all state after cancellation, rejection, or read failure; successful replacement preserves the mode and tab, resets Validation filtering and Tree search, invalidates prepared reports, and routes invalid YAML to existing parser diagnostics.
+- Advanced source metadata to candidate `0.10.0` without changing the tracked Deployment or live immutable `0.9.0` runtime.
+- Reconciled Milestone 041 merge and cleanup status and corrected the Kubernetes README's stale `0.8.0` image details.
+
+### Trust boundary
+
+The browser exposes only the chosen file basename and contents. The Workbench does not receive a filesystem path and adds no upload, network request, backend, telemetry, cookie, browser storage, Kubernetes API access, RBAC, credential, deployment control, or cluster mutation.
+
+### Current validation result
+
+- All 92 automated tests pass, including nine focused file-drop and state-boundary interactions.
+- Validator reproducibility, production build, strict-CSP scan, complete zero-vulnerability dependency audit, repository Kubernetes validation, 38 supporting Python tests, and whitespace validation pass.
+- The established production bundle-size advisory remains non-blocking.
+- This workspace has no Docker client; clean Windows validation, operator browser review, and the non-publishing AMD64/ARM64 build remain release-evidence items.
+- The tracked Workbench Deployment and live cluster remain unchanged at immutable `0.9.0`.
+
+### What remains gated
+
+Remote source publication, image publication, manifest mutation, deployment, live browser acceptance, PR readiness, merge, and cleanup remain separate approval gates.

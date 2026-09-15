@@ -19,6 +19,7 @@ let formatPreview = null;
 let formatPreviewReturnFocus = null;
 let reportPreview = null;
 let reportPreviewReturnFocus = null;
+let fileDragDepth = 0;
 
 app.innerHTML = [
   '<header class="topbar">',
@@ -38,9 +39,10 @@ app.innerHTML = [
   '    </div>',
   '  </section>',
   '  <section class="workspace">',
-  '    <div class="pane editor-pane">',
-  '      <div class="pane-heading"><div><span class="eyebrow">INPUT</span><h2>YAML editor</h2></div><span id="line-count" class="muted"></span></div>',
-  '      <textarea id="editor" spellcheck="false" aria-label="YAML editor"></textarea>',
+  '    <div id="editor-drop-zone" class="pane editor-pane">',
+  '      <div class="pane-heading"><div><span class="eyebrow">INPUT</span><h2>YAML editor</h2><p id="editor-drop-instructions" class="editor-drop-instructions">Drop one .yaml or .yml file, or use Open file.</p></div><span id="line-count" class="muted"></span></div>',
+  '      <p id="editor-drop-hint" class="editor-drop-hint"><span aria-hidden="true">&#8595;</span><strong>Drop one YAML file here</strong><small>or use Open file</small></p>',
+  '      <textarea id="editor" spellcheck="false" aria-label="YAML editor" aria-describedby="editor-drop-instructions"></textarea>',
   '    </div>',
   '    <div class="pane results-pane">',
   '      <div class="pane-heading"><div><span class="eyebrow">ANALYSIS</span><h2 id="report-title">Manifest report</h2></div><div id="status" class="status neutral"></div></div>',
@@ -69,6 +71,7 @@ app.innerHTML = [
 ].join("");
 
 const editor = document.querySelector("#editor");
+const editorDropZone = document.querySelector("#editor-drop-zone");
 editor.value = SAMPLE_YAML;
 
 function escapeHtml(value) {
@@ -374,6 +377,50 @@ function loadEditor(value, filename, message) {
   announce(message, "success");
 }
 
+function replacementApproved(cancelMessage) {
+  if (editor.value === cleanSnapshot) return true;
+  if (window.confirm("Discard your unsaved YAML changes?")) return true;
+  announce(cancelMessage);
+  return false;
+}
+
+function yamlFileEligible(file) {
+  return Boolean(file?.name && /\.ya?ml$/i.test(file.name));
+}
+
+async function openLocalFile(file, { source = "picker", focusEditor = false } = {}) {
+  const label = source === "drop" ? "Drop" : "Open file";
+  if (!file || !yamlFileEligible(file)) {
+    announce(label + " rejected — choose one .yaml or .yml file", "error");
+    return false;
+  }
+  if (!replacementApproved(label + " cancelled")) return false;
+
+  try {
+    const contents = await file.text();
+    loadEditor(contents, file.name, file.name + " opened");
+    if (focusEditor) editor.focus();
+    return true;
+  } catch {
+    announce("Could not read " + file.name + " — YAML was not changed", "error");
+    return false;
+  }
+}
+
+function eventContainsFiles(event) {
+  return Array.from(event.dataTransfer?.types || []).includes("Files");
+}
+
+function setDropReady(ready) {
+  editorDropZone.classList.toggle("drop-ready", ready);
+  editorDropZone.setAttribute("data-drop-ready", String(ready));
+}
+
+function clearFileDrag() {
+  fileDragDepth = 0;
+  setDropReady(false);
+}
+
 function summaryView(analysis) {
   if (analysis.errors.length) return messages("YAML could not be parsed", analysis.errors, "error");
   if (!analysis.documents.length) return '<div class="empty"><div>{ }</div><h3>Paste or open YAML</h3><p>The report updates as you type and supports multi-document files.</p></div>';
@@ -633,7 +680,10 @@ document.querySelectorAll(".mode").forEach((button) => button.addEventListener("
   render();
   announce((inspectionMode === "general" ? "General YAML" : "Kubernetes") + " mode selected", "success");
 }));
-document.querySelector("#sample").addEventListener("click", () => loadEditor(SAMPLE_YAML, "signalforge-sample.yaml", "Sample loaded"));
+document.querySelector("#sample").addEventListener("click", () => {
+  if (!replacementApproved("Load sample cancelled")) return;
+  loadEditor(SAMPLE_YAML, "signalforge-sample.yaml", "Sample loaded");
+});
 document.querySelector("#clear").addEventListener("click", () => {
   if (editor.value !== cleanSnapshot && !window.confirm("Discard your unsaved YAML changes?")) {
     announce("Clear cancelled");
@@ -652,9 +702,48 @@ document.querySelector("#clear").addEventListener("click", () => {
 document.querySelector("#upload").addEventListener("click", () => document.querySelector("#file-input").click());
 document.querySelector("#file-input").addEventListener("change", async (event) => {
   const [file] = event.target.files;
-  if (file) loadEditor(await file.text(), file.name, file.name + " opened");
+  if (file) await openLocalFile(file);
   event.target.value = "";
 });
+editorDropZone.addEventListener("dragenter", (event) => {
+  if (!eventContainsFiles(event)) return;
+  event.preventDefault();
+  fileDragDepth += 1;
+  setDropReady(true);
+});
+editorDropZone.addEventListener("dragover", (event) => {
+  if (!eventContainsFiles(event)) return;
+  event.preventDefault();
+  if (event.dataTransfer) event.dataTransfer.dropEffect = "copy";
+});
+editorDropZone.addEventListener("dragleave", (event) => {
+  if (!eventContainsFiles(event)) return;
+  fileDragDepth = Math.max(0, fileDragDepth - 1);
+  if (!fileDragDepth) setDropReady(false);
+});
+editorDropZone.addEventListener("drop", async (event) => {
+  if (!eventContainsFiles(event)) return;
+  event.preventDefault();
+  event.stopPropagation();
+  clearFileDrag();
+  const files = Array.from(event.dataTransfer?.files || []);
+  if (files.length !== 1) {
+    announce(files.length ? "Drop rejected — choose only one YAML file" : "Drop rejected — no file was provided", "error");
+    return;
+  }
+  await openLocalFile(files[0], { source: "drop", focusEditor: true });
+});
+document.addEventListener("dragover", (event) => {
+  if (eventContainsFiles(event)) event.preventDefault();
+});
+document.addEventListener("drop", (event) => {
+  if (!eventContainsFiles(event)) return;
+  event.preventDefault();
+  clearFileDrag();
+  announce("Drop ignored — drop one YAML file on the editor", "error");
+});
+document.addEventListener("dragend", clearFileDrag);
+window.addEventListener("blur", clearFileDrag);
 document.querySelector("#format").addEventListener("click", () => {
   const before = editor.value;
   if (!before.trim()) {
@@ -785,6 +874,12 @@ document.querySelector("#results").addEventListener("keydown", (event) => {
   }
 });
 document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && editorDropZone.classList.contains("drop-ready")) {
+    event.preventDefault();
+    clearFileDrag();
+    announce("File drop cancelled");
+    return;
+  }
   if (reportPreview && event.key === "Escape") {
     event.preventDefault();
     closeReportPreview("Report cancelled");

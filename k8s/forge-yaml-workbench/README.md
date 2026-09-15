@@ -13,18 +13,18 @@ These manifests define the deployed SignalForge browser-local Forge YAML Workben
 Tracked deployment release:
 
 ```text
-0.8.0
+0.9.0
 ```
 
 Immutable deployed image reference:
 
 ```text
-wmstipes/signalforge-yaml-workbench:0.8.0@sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3
+wmstipes/signalforge-yaml-workbench:0.9.0@sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581
 ```
 
-The published OCI index contains active `linux/amd64` manifest `sha256:dfbfc92e3d4a074d0a421cc3fdb7937f4288937af291aac71ec9a0dc3786d536` and `linux/arm64` manifest `sha256:2db1d88fe7357452f82256e81a4d56ef52d3ddc72bffe0f31524adab524ce615`. The additional unknown-platform entries are BuildKit attestation manifests linked to those images. No floating image tag is used.
+The published OCI index contains active `linux/amd64` manifest `sha256:4cd48baf0f913b944efa4206302d828107674f7ea7e20543972479d09866dc86` and `linux/arm64` manifest `sha256:e26f85a206a2b564928e285f34253b72b5c8890f99d2eb0af702bfcfdecc9d7b`. The additional unknown-platform entries are BuildKit attestation manifests linked to those images. No floating image tag is used.
 
-The tracked Deployment and live cluster use accepted immutable `0.8.0`. The Deployment-only rollout followed successful manifest validation, server-side dry-run, live diff review, and explicit approval.
+The tracked Deployment and live cluster use accepted immutable `0.9.0`. The Deployment-only rollout followed successful manifest validation, server-side dry-run, live diff review, and explicit approval.
 
 ## Security and data boundaries
 
@@ -64,4 +64,4 @@ kubectl rollout status deployment/forge-yaml-workbench -n forge-tools --timeout=
 kubectl get deployment,pods,service -n forge-tools -o wide
 ```
 
-The live `0.8.0` deployment has one available Ready replica on `forge-node-03` with zero restarts and a runtime ImageID matching OCI index digest `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`. NodePort `30081`, its single ready EndpointSlice endpoint, fresh HTTP 200 responses from `/healthz` and the application page, Content Security Policy, and `X-Content-Type-Options` passed runtime verification. Interactive browser acceptance confirmed counted Validation filters, result-level isolation, hidden empty sections, stable complete-analysis indicators and reports, edit-time recomputation, reset boundaries, finding navigation, scrolling, guidance, and Copy YAML.
+The live `0.9.0` deployment has one available Ready replica on `forge-node-03` with zero restarts and a runtime ImageID matching OCI index digest `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`. NodePort `30081`, its single ready EndpointSlice endpoint, fresh HTTP 200 responses from `/healthz` and the application page, Content Security Policy, and `X-Content-Type-Options` passed runtime verification. Interactive browser acceptance confirmed Tree search across keys, scalar values, and canonical paths; counted wrapping navigation; ancestor expansion; visual and active match states; keyboard and focus behavior; parser recovery; formatting and report isolation; and reset boundaries.

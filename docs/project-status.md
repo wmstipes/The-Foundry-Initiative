@@ -38,6 +38,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Acceptance: immutable `0.9.0` is deployed; configured and runtime digests, one Ready Pod on `forge-node-03` with zero restarts, one ready EndpointSlice endpoint, NodePort health and page responses, security headers, and the complete live Tree-search workflow passed
 - Validation filters: counted All, Errors, Warnings, Notes, and Valid views preserve the complete analysis for the tab badge, overall status, OWASP coverage, and Markdown reports
 - Tree search: Milestone 041 provides literal key, scalar-value, and canonical-path matching with deterministic counted navigation, automatic ancestor expansion, highlighting, accessible keyboard behavior, and explicit state boundaries
+- Next candidate: Milestone 042 local `0.10.0` implementation adds one-file YAML drag-and-drop, shared unsaved-change protection, and explicit state preservation; it is not published or deployed
 
 ## Milestone 038 closeout
 
@@ -79,6 +80,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 038: browser-local formatting preview released as `0.6.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #16 at `4fed28c`
 - 039: browser-local Markdown reports released as immutable `0.7.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #18 at `1e0c525`
 - 040: Validation result filters released as immutable `0.8.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #20 at `6fa5092`
+- 041: browser-local YAML Tree search released as immutable `0.9.0`, deployed, accepted, merged through PR #22 at `0f3d44e`, and cleaned up
 
 ## Latest release milestone
 
@@ -192,7 +194,9 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Milestone 041 release and closeout evidence are contained in PR #22. GitHub records its final disposition; after merge, feature-branch synchronization and deletion are the only remaining procedural cleanup, with no separate documentation PR planned.
+Milestone 042 local implementation is complete on `codex/milestone-042-safe-yaml-drop` with 92 automated tests, validator reproducibility, production build, strict-CSP validation, and a zero-vulnerability runtime audit passing. Candidate `0.10.0` adds a visible and accessible editor drop target for exactly one local YAML file, shared unsaved-change protection for drop, Open file, and Load sample, page-navigation prevention for misplaced file drops, and explicit state-reset and preservation boundaries.
+
+The next gate is publication review. No remote feature branch, tag, image, Kubernetes manifest change, cluster deployment, or live acceptance action has been authorized. Immutable `0.9.0` remains tracked and live.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 

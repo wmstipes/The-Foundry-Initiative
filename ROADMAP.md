@@ -269,7 +269,7 @@ See [Milestone 040](docs/milestones/milestone-040-validation-result-filters.md).
 
 #### Milestone 041 — Browser-local YAML tree search
 
-**Status:** Release complete and PR-ready. Immutable `0.9.0` was published, digest-pinned, deployed, runtime-verified, and live browser-accepted; repository integration is tracked by PR #22.
+**Status:** Complete. Immutable `0.9.0` was published, digest-pinned, deployed, runtime-verified, live browser-accepted, merged through PR #22 at `0f3d44e`, and cleaned up.
 
 - Search keys, scalar values, and canonical paths with case-insensitive literal matching.
 - Count matches once per node and navigate deterministically with wrapping Previous and Next actions.
@@ -281,7 +281,20 @@ See [Milestone 040](docs/milestones/milestone-040-validation-result-filters.md).
 
 See [Milestone 041](docs/milestones/milestone-041-browser-local-tree-search.md).
 
-- Later increments: drag-and-drop, display preferences, additional export formats, and bounded large-file processing.
+#### Milestone 042 — Safe browser-local YAML file drop
+
+**Status:** Local implementation and automated verification complete on `codex/milestone-042-safe-yaml-drop`; publication has not been authorized.
+
+- Accept one local `.yaml` or `.yml` file through a visible editor drop target.
+- Preserve keyboard-equivalent Open file behavior and announce drag, rejection, cancellation, success, and read-failure states.
+- Protect dropped-file, Open file, and sample replacement behind one unsaved-change confirmation boundary.
+- Preserve mode and active tab while resetting Validation filtering and Tree search and invalidating a prepared report after successful replacement.
+- Prevent browser navigation for misplaced file drops and preserve all source and derived state after rejection, cancellation, or read failure.
+- Keep file contents, basename, and transient drag state in browser memory without adding upload, persistence, telemetry, backend, Kubernetes API, credential, or cluster-mutation paths.
+
+See [Milestone 042](docs/milestones/milestone-042-safe-browser-local-yaml-file-drop.md).
+
+- Later increments: display preferences, additional export formats, and bounded large-file processing.
 
 ### Later outcomes in this phase
 

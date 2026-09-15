@@ -57,7 +57,7 @@ flowchart TD
 - Deployment: one stateless replica using accepted immutable release `0.9.0` with browser-local Tree search
 - Access: private-lab NodePort `30081`
 - Runtime: unprivileged NGINX on container port `8080`
-- Processing: shared YAML parsing, formatting preview, line-diff generation, diagnostics, file handling, tree navigation and search, Markdown report generation, and Validation display filtering run entirely in the browser; Tree search and display filters do not change analysis or report contents, while Kubernetes-specific operational findings, the bundled `v1.36.4` schema validator, and the pinned OWASP Top 10:2025 review profile run only in Kubernetes mode
+- Processing: shared YAML parsing, formatting preview, line-diff generation, diagnostics, guarded local-file opening and drop handling, tree navigation and search, Markdown report generation, and Validation display filtering run entirely in the browser; local files are read through the browser File API without upload, Tree search and display filters do not change analysis or report contents, and Kubernetes-specific operational findings, the bundled `v1.36.4` schema validator, and the pinned OWASP Top 10:2025 review profile run only in Kubernetes mode
 - Schema boundary: the Milestone 036 implementation supports 12 explicit core, apps, and batch GVKs; unsupported built-ins and unavailable CRD schemas receive non-validity result states. The published `0.4.1` correction uses build-time standalone validators so the strict CSP remains intact.
 - Security-review boundary: Milestone 037 labels OWASP categories as direct, partial, or cluster-context-required. Manifest-local signals are not compliance results and cannot establish effective RBAC, policy enforcement, network reachability, component vulnerability, authentication, audit, logging, or monitoring state.
 - Identity: no RBAC, Kubernetes API access, or mounted ServiceAccount token
@@ -166,7 +166,7 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 
 Potential next architecture steps include:
 
-1. Select the next bounded Workbench milestone after `0.9.0` release integration and feature-branch cleanup.
+1. Complete the separately gated publication, manifest, deployment, and acceptance workflow for Milestone 042 candidate `0.10.0` after its browser-local YAML file-drop implementation is accepted.
 2. Observe naturally occurring limited-alert behavior before designing notification delivery.
 3. Continue the demonstrated Prometheus and Grafana backup cadence.
 4. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.

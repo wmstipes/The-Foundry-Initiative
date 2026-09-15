@@ -2,7 +2,7 @@
 
 Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. It parses YAML locally in the browser and offers Kubernetes-specific and General YAML inspection modes.
 
-## Version 0.9.0 release scope
+## Version 0.10.0 candidate scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
@@ -25,6 +25,8 @@ Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. 
 - Filter Validation results by All, Errors, Warnings, Notes, or Valid without changing the underlying analysis.
 - Keep OWASP coverage, overall status, the tab badge, and Markdown reports independent of the selected display filter.
 - Count and navigate Tree matches with automatic ancestor expansion, visible match states, keyboard shortcuts, and polite screen-reader feedback.
+- Drop one local `.yaml` or `.yml` file onto a visible editor target without uploading it.
+- Confirm before dropped-file, Open file, or sample replacement discards unsaved changes.
 
 ## Milestone 033 usability improvements
 
@@ -164,6 +166,20 @@ The `0.9.0` release adds a Tree-tab search layer:
 - resets at mode, sample, file-load, and confirmed-clear boundaries
 
 The search index and interaction state remain in browser memory. Search does not alter Validation results, reports, YAML, or unsaved-state tracking and adds no persistence, backend, network access, Kubernetes access, credentials, or cluster mutation.
+
+## Milestone 042 safe browser-local YAML file drop
+
+The `0.10.0` candidate adds a bounded drag-and-drop input path:
+
+- a persistent editor hint and visible, non-color-only drop-ready presentation identify the target
+- exactly one local `.yaml` or `.yml` basename is accepted, case-insensitively
+- dropped-file, Open file, and sample replacement share the same unsaved-change confirmation
+- cancellation, rejection, or read failure preserves YAML and all derived interaction state
+- successful replacement preserves inspection mode and active tab, resets Validation filtering and Tree search, invalidates a prepared report, and focuses the editor after a drop
+- drops elsewhere are prevented from navigating the browser and are reported without changing YAML
+- Open file and Ctrl+O or Cmd+O remain complete keyboard-accessible alternatives
+
+The browser exposes only the file basename and contents. The Workbench does not receive a filesystem path or add upload, network, backend, storage, telemetry, Kubernetes API, credential, or cluster-mutation behavior.
 
 ## Local development
 
