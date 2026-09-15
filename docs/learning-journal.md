@@ -560,3 +560,18 @@ Complete visual browser review and the non-publishing multi-architecture build b
 ### Gate state
 
 Source acceptance is complete for candidate `0.8.0`. Image publication, immutable digest recording, tracked-manifest mutation, deployment, live-cluster acceptance, PR readiness, and merge remain separately gated. Accepted immutable `0.7.0` remains live.
+
+## 2026-09-15 — Milestone 040 image publication
+
+### What changed
+
+- Received explicit approval to publish Workbench `0.8.0` from accepted source commit `1d8a487ada5e053ca806e59195f0807d11564351`.
+- Created tag `forge-yaml-workbench-v0.8.0` at that exact commit.
+- Publication workflow run 141 (`34972448064`) built and pushed the AMD64/ARM64 image successfully.
+- Recorded immutable OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`.
+- Independently confirmed AMD64 manifest `sha256:dfbfc92e3d4a074d0a421cc3fdb7937f4288937af291aac71ec9a0dc3786d536` and ARM64 manifest `sha256:2db1d88fe7357452f82256e81a4d56ef52d3ddc72bffe0f31524adab524ce615`.
+- Left the tracked Deployment and live immutable `0.7.0` runtime unchanged.
+
+### Next small step
+
+Prepare and review the exact Deployment-only `0.8.0` label and immutable-image diff. Mutating the tracked manifest requires a separate approval before any cluster deployment is considered.

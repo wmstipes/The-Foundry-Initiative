@@ -37,6 +37,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
 - Acceptance: immutable `0.7.0` is deployed; configured and runtime digests, one Ready Pod with zero restarts, ready EndpointSlice, NodePort health and page responses, security headers, both YAML modes, formatting preview, Markdown report generation, visible Copy and Download feedback, cancellation, and unsaved-state preservation passed
 - Source candidate: Milestone 040 `0.8.0` adds browser-local Validation result filters; the Deployment manifest and live `0.7.0` runtime remain unchanged
+- Published candidate image: `wmstipes/signalforge-yaml-workbench:0.8.0@sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`; not yet staged or deployed
 
 ## Milestone 038 closeout
 
@@ -80,7 +81,7 @@ The project has moved from basic workload deployment into repeatable engineering
 
 ## Active milestone
 
-Milestone 040 implements presentation-only Validation result filters on `codex/milestone-040-validation-filters` from baseline `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4`. The `0.8.0` source candidate filters existing syntax, document-structure, operational, and schema entries by level while preserving the complete analysis for the tab badge, overall status, OWASP coverage, and Markdown reports. Filter state remains ephemeral and browser-local. All 74 local and Windows tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository manifest validation, whitespace checks, operator browser review, Workbench CI run 137, and non-publishing AMD64/ARM64 build run 139 pass. Draft PR #20 remains open. No image has been published, the tracked Deployment has not changed, and immutable `0.7.0` remains live.
+Milestone 040 implements presentation-only Validation result filters on `codex/milestone-040-validation-filters` from baseline `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4`. The `0.8.0` source candidate filters existing syntax, document-structure, operational, and schema entries by level while preserving the complete analysis for the tab badge, overall status, OWASP coverage, and Markdown reports. Filter state remains ephemeral and browser-local. All 74 local and Windows tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository manifest validation, whitespace checks, operator browser review, Workbench CI run 137, and non-publishing AMD64/ARM64 build run 139 pass. After explicit approval, publication run 141 built and pushed immutable AMD64/ARM64 `0.8.0` at OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`. Draft PR #20 remains open, the tracked Deployment has not changed, and immutable `0.7.0` remains live.
 
 ## Latest completed milestone
 
@@ -186,7 +187,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Consider the separately gated publication of the accepted Workbench `0.8.0` AMD64/ARM64 image. Manifest mutation and cluster deployment remain later approval gates.
+Review the exact Deployment-only `0.8.0` label and immutable-image mutation before separately authorizing any tracked-manifest change. The live cluster remains unchanged.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 

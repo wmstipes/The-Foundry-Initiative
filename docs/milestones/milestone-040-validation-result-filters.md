@@ -1,6 +1,6 @@
 # Milestone 040 — Validation result filters
 
-**Status:** `0.8.0` source accepted; image publication pending separate approval
+**Status:** Immutable `0.8.0` published and verified; manifest mutation pending separate approval
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-040-validation-filters`
 **Baseline:** `main` at `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4`
@@ -71,7 +71,7 @@ The milestone adds no storage, cookies, telemetry, backend, network request, Kub
 1. Planning approval — complete.
 2. Implementation approval — complete.
 3. Local automated verification, Windows validation, and browser source acceptance — complete.
-4. Branch and image publication — requires separate approval.
+4. Branch and image publication — complete after separate approval.
 5. Deployment-manifest mutation — requires separate approval after an immutable digest is known.
 6. Cluster deployment — requires separate approval.
 7. Live browser acceptance — requires separate approval.
@@ -94,4 +94,9 @@ The milestone adds no storage, cookies, telemetry, backend, network request, Kub
 - Non-publishing AMD64/ARM64 Docker build run 139 passed without publishing an image.
 - Windows validation passed from a clean lockfile installation with all 74 tests green.
 - Operator browser review accepted the counted filters, level isolation, empty-section behavior, OWASP separation, stable complete-analysis indicators, finding navigation, complete Markdown report behavior, edit-time recomputation, and reset boundaries.
-- Source acceptance is complete. Image publication, digest recording, manifest mutation, deployment, live-cluster acceptance, PR readiness, and merge remain separately gated.
+- Source acceptance completed before the separately approved image-publication step.
+- After explicit approval, tag `forge-yaml-workbench-v0.8.0` targeted accepted source commit `1d8a487ada5e053ca806e59195f0807d11564351`.
+- Publication workflow run 141 (`34972448064`) completed successfully and published both target architectures.
+- The immutable OCI index is `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`.
+- Independent registry inspection confirmed Linux AMD64 manifest `sha256:dfbfc92e3d4a074d0a421cc3fdb7937f4288937af291aac71ec9a0dc3786d536` and Linux ARM64 manifest `sha256:2db1d88fe7357452f82256e81a4d56ef52d3ddc72bffe0f31524adab524ce615`; the remaining two OCI-index entries are BuildKit attestations.
+- The tracked Deployment and live cluster remain on accepted immutable `0.7.0`. Manifest mutation, deployment, live acceptance, PR readiness, and merge remain separately gated.
