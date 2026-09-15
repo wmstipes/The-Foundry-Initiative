@@ -593,4 +593,187 @@ describe("Forge YAML Workbench browser interactions", () => {
     document.querySelector("#report-cancel").click();
   });
 
+  it("searches tree keys, scalar values, and canonical paths with counted visible matches", () => {
+    document.querySelector('[data-mode="general"]').click();
+    replaceEditor([
+      "metadata:",
+      "  name: Demo",
+      "enabled: true",
+      "containers:",
+      "  - image: example/app:1.0",
+      ""
+    ].join("\n"));
+    document.querySelector('[data-tab="tree"]').click();
+    const search = document.querySelector("#tree-search");
+
+    search.value = "name";
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(document.querySelectorAll('[data-tree-match="true"]')).toHaveLength(1);
+    expect(document.querySelector("#tree-search-status").textContent).toBe("1 match · 1 of 1 · $.metadata.name");
+    expect(document.querySelector('.tree-active-match').getAttribute("aria-current")).toBe("true");
+    expect([...document.querySelectorAll('.tree-active-match mark')].map((item) => item.textContent)).toContain("name");
+
+    document.querySelector("#tree-search").value = "DEMO";
+    document.querySelector("#tree-search").dispatchEvent(new Event("input", { bubbles: true }));
+    expect(document.querySelectorAll('[data-tree-match="true"]')).toHaveLength(1);
+    expect(document.querySelector('.tree-active-match .tree-value mark').textContent).toBe("Demo");
+
+    document.querySelector("#tree-search").value = "containers[0]";
+    document.querySelector("#tree-search").dispatchEvent(new Event("input", { bubbles: true }));
+    expect(document.querySelectorAll('[data-tree-match="true"]')).toHaveLength(2);
+    expect(document.querySelector("#tree-search-status").textContent).toContain("2 matches · 1 of 2");
+    expect(document.querySelector('.tree-active-match .tree-path').textContent).toBe("$.containers[0]");
+  });
+
+  it("navigates deterministically with wrapping, expands ancestors, and retains search focus", () => {
+    document.querySelector('[data-mode="general"]').click();
+    replaceEditor("outer:\n  inner:\n    first: target\n    second: target\n");
+    document.querySelector('[data-tab="tree"]').click();
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+      configurable: true,
+      value: scrollIntoView
+    });
+    const search = document.querySelector("#tree-search");
+    search.focus();
+    search.value = "target";
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+
+    expect(document.activeElement).toBe(document.querySelector("#tree-search"));
+    expect(document.querySelector('[data-tree-id="document-1:$.outer.inner"]').open).toBe(true);
+    expect(document.querySelector('.tree-active-match').dataset.treeId).toBe("document-1:$.outer.inner.first");
+    expect(scrollIntoView).toHaveBeenCalled();
+
+    document.querySelector("#tree-search-next").click();
+    expect(document.querySelector('.tree-active-match').dataset.treeId).toBe("document-1:$.outer.inner.second");
+    document.querySelector("#tree-search-next").click();
+    expect(document.querySelector('.tree-active-match').dataset.treeId).toBe("document-1:$.outer.inner.first");
+    document.querySelector("#tree-search-previous").click();
+    expect(document.querySelector('.tree-active-match').dataset.treeId).toBe("document-1:$.outer.inner.second");
+    document.querySelector("#tree-search-clear").click();
+    expect(document.querySelector('[data-tree-id="document-1:$.outer.inner"]').open).toBe(false);
+  });
+
+  it("supports Tree search keyboard shortcuts and screen-reader status without moving focus", () => {
+    document.querySelector('[data-mode="general"]').click();
+    replaceEditor("first: match\nsecond: match\n");
+    document.querySelector('[data-tab="tree"]').click();
+    const shortcut = new KeyboardEvent("keydown", {
+      key: "f", ctrlKey: true, bubbles: true, cancelable: true
+    });
+    document.dispatchEvent(shortcut);
+    expect(shortcut.defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(document.querySelector("#tree-search"));
+
+    const search = document.querySelector("#tree-search");
+    expect(search.getAttribute("aria-describedby")).toBe("tree-search-status");
+    expect(document.querySelector(".tree-search-region").getAttribute("role")).toBe("search");
+    expect(document.querySelector("#tree-search-status").getAttribute("aria-live")).toBe("polite");
+    search.value = "match";
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+    document.querySelector("#tree-search").dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Enter", bubbles: true, cancelable: true
+    }));
+    expect(document.activeElement).toBe(document.querySelector("#tree-search"));
+    expect(document.querySelector('.tree-active-match').dataset.treeId).toBe("document-1:$.second");
+    document.querySelector("#tree-search").dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Enter", shiftKey: true, bubbles: true, cancelable: true
+    }));
+    expect(document.querySelector('.tree-active-match').dataset.treeId).toBe("document-1:$.first");
+    document.querySelector("#tree-search").dispatchEvent(new KeyboardEvent("keydown", {
+      key: "Escape", bubbles: true, cancelable: true
+    }));
+    expect(document.querySelector("#tree-search").value).toBe("");
+    expect(document.querySelector("#tree-search-status").textContent).toBe("Enter a literal search term");
+    expect(document.querySelectorAll('[data-tree-match="true"]')).toHaveLength(0);
+    expect(document.querySelector('[data-tree-id="document-1:$.outer.inner"]')).toBeNull();
+  });
+
+  it("preserves and recomputes Tree search across edits, invalid YAML, tabs, and formatting", () => {
+    document.querySelector('[data-mode="general"]').click();
+    replaceEditor("first: match\nsecond: match\n");
+    document.querySelector('[data-tab="tree"]').click();
+    const search = document.querySelector("#tree-search");
+    search.value = "match";
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+    document.querySelector("#tree-search-next").click();
+    expect(document.querySelector('.tree-active-match').dataset.treeId).toBe("document-1:$.second");
+
+    replaceEditor("first: match\nsecond: match\nthird: other\n");
+    expect(document.querySelector("#tree-search").value).toBe("match");
+    expect(document.querySelector('.tree-active-match').dataset.treeId).toBe("document-1:$.second");
+    document.querySelector('[data-tab="summary"]').click();
+    document.querySelector('[data-tab="tree"]').click();
+    expect(document.querySelector("#tree-search").value).toBe("match");
+
+    replaceEditor("first: [\n");
+    expect(document.querySelector("#tree-search").value).toBe("match");
+    expect(document.querySelector("#tree-search-status").textContent).toBe("0 matches · no searchable tree");
+    replaceEditor("first: match\nthird: other\n");
+    expect(document.querySelector('.tree-active-match').dataset.treeId).toBe("document-1:$.first");
+
+    replaceEditor("first:  match\nthird: other\n");
+    document.querySelector("#format").click();
+    document.querySelector("#format-apply").click();
+    expect(document.querySelector("#tree-search").value).toBe("match");
+    expect(document.querySelectorAll('[data-tree-match="true"]')).toHaveLength(1);
+  });
+
+  it("resets Tree search only at approved loading, mode, and confirmed-clear boundaries", async () => {
+    document.querySelector('[data-mode="general"]').click();
+    replaceEditor("name: match\n");
+    document.querySelector('[data-tab="tree"]').click();
+    document.querySelector("#tree-search").value = "match";
+    document.querySelector("#tree-search").dispatchEvent(new Event("input", { bubbles: true }));
+
+    Object.defineProperty(window, "confirm", {
+      configurable: true,
+      value: vi.fn().mockReturnValue(false)
+    });
+    document.querySelector("#clear").click();
+    expect(document.querySelector("#tree-search").value).toBe("match");
+
+    document.querySelector('[data-mode="kubernetes"]').click();
+    document.querySelector('[data-tab="tree"]').click();
+    expect(document.querySelector("#tree-search").value).toBe("");
+    document.querySelector("#tree-search").value = "metadata";
+    document.querySelector("#tree-search").dispatchEvent(new Event("input", { bubbles: true }));
+    document.querySelector("#sample").click();
+    expect(document.querySelector("#tree-search").value).toBe("");
+
+    document.querySelector("#tree-search").value = "metadata";
+    document.querySelector("#tree-search").dispatchEvent(new Event("input", { bubbles: true }));
+    const input = document.querySelector("#file-input");
+    const file = new File(["name: opened\n"], "opened.yaml", { type: "application/yaml" });
+    Object.defineProperty(input, "files", { configurable: true, value: [file] });
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(document.querySelector("#tree-search").value).toBe("");
+
+    replaceEditor("name: changed\n");
+    document.querySelector("#tree-search").value = "name";
+    document.querySelector("#tree-search").dispatchEvent(new Event("input", { bubbles: true }));
+    window.confirm.mockReturnValue(true);
+    document.querySelector("#clear").click();
+    document.querySelector('[data-tab="tree"]').click();
+    expect(document.querySelector("#tree-search").value).toBe("");
+  });
+
+  it("keeps Tree search isolated from Validation filters and Markdown reports", () => {
+    replaceEditor("apiVersion: v1\nkind: Pod\nmetadata: {name: isolated}\nspec: {}\n");
+    document.querySelector('[data-tab="tree"]').click();
+    document.querySelector("#tree-search").value = "metadata";
+    document.querySelector("#tree-search").dispatchEvent(new Event("input", { bubbles: true }));
+    expect(document.querySelectorAll('[data-tree-match="true"]').length).toBeGreaterThan(0);
+
+    document.querySelector('[data-tab="validation"]').click();
+    document.querySelector('[data-validation-filter="warning"]').click();
+    document.querySelector("#generate-report").click();
+    expect(document.querySelector("#report-markdown").textContent).toContain("No containers found");
+    document.querySelector("#report-cancel").click();
+    document.querySelector('[data-tab="tree"]').click();
+    expect(document.querySelector("#tree-search").value).toBe("metadata");
+    expect(document.querySelectorAll('[data-tree-match="true"]').length).toBeGreaterThan(0);
+  });
+
 });

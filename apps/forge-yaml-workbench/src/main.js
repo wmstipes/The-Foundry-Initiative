@@ -4,12 +4,15 @@ import { SAMPLE_YAML } from "./sample.js";
 import { KUBERNETES_SCHEMA_VERSION } from "./schema-validation.js";
 import { OWASP_PROFILE_VERSION, OWASP_SOURCE_COMMIT } from "./owasp-profile.js";
 import { buildMarkdownReport } from "./report.js";
+import { buildTreeSearchIndex, childYamlPath, matchingTextRanges, searchTreeIndex } from "./tree-search.js";
 import "./styles.css";
 
 const app = document.querySelector("#app");
 let activeTab = "summary";
 let inspectionMode = "kubernetes";
 let validationFilter = "all";
+let treeSearchQuery = "";
+let treeActiveMatchId = null;
 let currentFilename = "signalforge-sample.yaml";
 let cleanSnapshot = SAMPLE_YAML;
 let formatPreview = null;
@@ -76,6 +79,16 @@ function escapeHtml(value) {
 
 function scalarText(value) {
   return value === null ? "null" : String(value);
+}
+
+function resetTreeSearch() {
+  treeSearchQuery = "";
+  treeActiveMatchId = null;
+}
+
+function highlightedText(value) {
+  return matchingTextRanges(value, treeSearchQuery).map(({ text, match }) =>
+    match ? "<mark>" + escapeHtml(text) + "</mark>" : escapeHtml(text)).join("");
 }
 
 function pills(items, emptyText = "None") {
@@ -353,6 +366,7 @@ async function copyText(value) {
 function loadEditor(value, filename, message) {
   invalidateReportPreview();
   validationFilter = "all";
+  resetTreeSearch();
   editor.value = value;
   currentFilename = normalizedFilename(filename);
   cleanSnapshot = value;
@@ -470,28 +484,83 @@ function validationView(analysis) {
   return controls + visibleResults + empty + owasp;
 }
 
-function treeNode(value, name = "root", depth = 0) {
+function treeSearchControls(matchCount, activeIndex, activePath, searchable) {
+  let status = "Enter a literal search term";
+  if (treeSearchQuery.trim()) {
+    if (!searchable) status = "0 matches · no searchable tree";
+    else if (!matchCount) status = "0 matches";
+    else status = matchCount + " match" + (matchCount === 1 ? "" : "es") + " · " +
+      (activeIndex + 1) + " of " + matchCount + " · " + activePath;
+  }
+  const navigationDisabled = !matchCount ? " disabled" : "";
+  const clearDisabled = treeSearchQuery ? "" : " disabled";
+  return [
+    '<section class="tree-search-region" role="search" aria-label="Search YAML tree">',
+    '  <label for="tree-search">Search keys, values, and paths</label>',
+    '  <div class="tree-search-controls">',
+    '    <input id="tree-search" type="search" value="' + escapeHtml(treeSearchQuery) + '" autocomplete="off" spellcheck="false" aria-describedby="tree-search-status" aria-keyshortcuts="Enter Shift+Enter Escape Control+F Meta+F" />',
+    '    <button id="tree-search-previous" class="quiet"' + navigationDisabled + '>Previous</button>',
+    '    <button id="tree-search-next" class="quiet"' + navigationDisabled + '>Next</button>',
+    '    <button id="tree-search-clear" class="quiet"' + clearDisabled + '>Clear</button>',
+    "  </div>",
+    '  <p id="tree-search-status" role="status" aria-live="polite" aria-atomic="true">' + escapeHtml(status) + "</p>",
+    "</section>"
+  ].join("");
+}
+
+function treeNode(value, matchIds, expandedIds, documentIndex, name = "root", path = "$", depth = 0) {
+  const id = `document-${documentIndex}:${path}`;
+  const matched = matchIds.has(id);
+  const active = matched && id === treeActiveMatchId;
+  const stateAttributes = ' data-tree-id="' + escapeHtml(id) + '"' +
+    (matched ? ' data-tree-match="true"' : "") + (active ? ' aria-current="true"' : "");
+  const classes = (matched ? " tree-match" : "") + (active ? " tree-active-match" : "");
+  const key = highlightedText(name);
+  const pathText = highlightedText(path);
+
   if (value === null || typeof value !== "object") {
-    return '<div class="tree-leaf"><span>' + escapeHtml(name) + "</span><code>" + escapeHtml(scalarText(value)) + "</code></div>";
+    return '<div class="tree-leaf' + classes + '"' + stateAttributes + '><span class="tree-key">' + key +
+      '</span><code class="tree-value">' + highlightedText(scalarText(value)) +
+      '</code><small class="tree-path">' + pathText + "</small></div>";
   }
 
   const entries = Object.entries(value);
-  return '<details class="tree-node" ' + (depth < 2 ? "open" : "") + '><summary><span>' +
-    escapeHtml(name) + "</span><em>" + (Array.isArray(value) ? "[" + entries.length + "]" : "{" + entries.length + "}") +
-    "</em></summary><div>" + entries.map(([key, item]) => treeNode(item, key, depth + 1)).join("") + "</div></details>";
+  const open = depth < 2 || expandedIds.has(id);
+  return '<details class="tree-node' + classes + '"' + stateAttributes + (open ? " open" : "") +
+    '><summary><span class="tree-key">' + key + "</span><em>" +
+    (Array.isArray(value) ? "[" + entries.length + "]" : "{" + entries.length + "}") +
+    '</em><small class="tree-path">' + pathText + "</small></summary><div>" +
+    entries.map(([childName, item]) => treeNode(item, matchIds, expandedIds, documentIndex,
+      childName, childYamlPath(path, childName, Array.isArray(value)), depth + 1)).join("") + "</div></details>";
 }
 
 function treeView(analysis) {
-  if (analysis.errors.length) return messages("YAML could not be parsed", analysis.errors, "error");
-  if (!analysis.documents.length) return '<div class="empty"><div>⌘</div><h3>No document tree yet</h3></div>';
-  return analysis.documents.map((document) => {
+  const index = buildTreeSearchIndex(analysis.documents);
+  const matches = searchTreeIndex(index, treeSearchQuery);
+  const matchIds = new Set(matches.map((record) => record.id));
+  const expandedIds = new Set(matches.flatMap((record) => record.ancestorIds));
+
+  if (matches.length) {
+    const preservedIndex = matches.findIndex((record) => record.id === treeActiveMatchId);
+    treeActiveMatchId = matches[preservedIndex === -1 ? 0 : preservedIndex].id;
+  }
+  const activeIndex = matches.findIndex((record) => record.id === treeActiveMatchId);
+  const activePath = activeIndex === -1 ? "" : matches[activeIndex].path;
+  const controls = treeSearchControls(matches.length, activeIndex, activePath, !analysis.errors.length && analysis.documents.length > 0);
+
+  if (analysis.errors.length) return controls + messages("YAML could not be parsed", analysis.errors, "error");
+  if (!analysis.documents.length) return controls + '<div class="empty"><div>⌘</div><h3>No document tree yet</h3></div>';
+  return controls + analysis.documents.map((document) => {
     const identity = analysis.mode === "kubernetes" ? document.kind + "/" + document.name : document.rootType;
     return '<article class="tree-card"><h3>Document ' + document.index + " · " + escapeHtml(identity) + "</h3>" +
-      treeNode(document.raw) + "</article>";
+      treeNode(document.raw, matchIds, expandedIds, document.index) + "</article>";
   }).join("");
 }
 
 function render() {
+  const focusedTreeControl = activeTab === "tree" && document.activeElement?.closest?.(".tree-search-region")
+    ? { id: document.activeElement.id, selectionStart: document.activeElement.selectionStart, selectionEnd: document.activeElement.selectionEnd }
+    : null;
   const source = editor.value;
   const analysis = analyzeYaml(source, inspectionMode);
   const schemaIssueCount = analysis.mode === "kubernetes" ? analysis.documents.reduce((total, document) =>
@@ -530,6 +599,16 @@ function render() {
 
   const views = { summary: summaryView, validation: validationView, tree: treeView };
   document.querySelector("#results").innerHTML = views[activeTab](analysis);
+  if (focusedTreeControl?.id) {
+    const replacement = document.querySelector("#" + focusedTreeControl.id);
+    replacement?.focus();
+    if (replacement?.setSelectionRange && focusedTreeControl.selectionStart !== null) {
+      replacement.setSelectionRange(focusedTreeControl.selectionStart, focusedTreeControl.selectionEnd);
+    }
+  }
+  if (activeTab === "tree" && treeSearchQuery.trim()) {
+    document.querySelector('.tree-active-match')?.scrollIntoView?.({ block: "nearest" });
+  }
 }
 
 editor.addEventListener("input", () => {
@@ -544,6 +623,7 @@ document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click",
 document.querySelectorAll(".mode").forEach((button) => button.addEventListener("click", () => {
   invalidateReportPreview();
   validationFilter = "all";
+  resetTreeSearch();
   inspectionMode = button.dataset.mode;
   document.querySelectorAll(".mode").forEach((item) => {
     const selected = item.dataset.mode === inspectionMode;
@@ -561,6 +641,7 @@ document.querySelector("#clear").addEventListener("click", () => {
   }
   invalidateReportPreview();
   validationFilter = "all";
+  resetTreeSearch();
   editor.value = "";
   currentFilename = "manifest.yaml";
   cleanSnapshot = "";
@@ -644,6 +725,25 @@ document.querySelector("#report-download").addEventListener("click", () => {
   announce(reportPreview.filename + " downloaded", "success");
 });
 document.querySelector("#results").addEventListener("click", async (event) => {
+  const treeAction = event.target.closest("#tree-search-previous, #tree-search-next, #tree-search-clear");
+  if (treeAction) {
+    if (treeAction.id === "tree-search-clear") {
+      resetTreeSearch();
+      render();
+      document.querySelector("#tree-search").focus();
+      return;
+    }
+    const analysis = analyzeYaml(editor.value, inspectionMode);
+    const matches = searchTreeIndex(buildTreeSearchIndex(analysis.documents), treeSearchQuery);
+    if (matches.length) {
+      const current = matches.findIndex((record) => record.id === treeActiveMatchId);
+      const delta = treeAction.id === "tree-search-next" ? 1 : -1;
+      const next = (Math.max(0, current) + delta + matches.length) % matches.length;
+      treeActiveMatchId = matches[next].id;
+      render();
+    }
+    return;
+  }
   const filter = event.target.closest("[data-validation-filter]");
   if (filter) {
     validationFilter = filter.dataset.validationFilter;
@@ -665,6 +765,24 @@ document.querySelector("#results").addEventListener("click", async (event) => {
   }
   const location = event.target.closest(".message-location, .message-path[data-line]");
   if (location) focusEditorLocation(location.dataset.line, location.dataset.column);
+});
+document.querySelector("#results").addEventListener("input", (event) => {
+  if (event.target.id !== "tree-search") return;
+  treeSearchQuery = event.target.value;
+  treeActiveMatchId = null;
+  render();
+});
+document.querySelector("#results").addEventListener("keydown", (event) => {
+  if (event.target.id !== "tree-search") return;
+  if (event.key === "Escape") {
+    event.preventDefault();
+    resetTreeSearch();
+    render();
+    document.querySelector("#tree-search").focus();
+  } else if (event.key === "Enter") {
+    event.preventDefault();
+    document.querySelector(event.shiftKey ? "#tree-search-previous" : "#tree-search-next").click();
+  }
 });
 document.addEventListener("keydown", (event) => {
   if (reportPreview && event.key === "Escape") {
@@ -706,7 +824,10 @@ document.addEventListener("keydown", (event) => {
     return;
   }
   if (!(event.ctrlKey || event.metaKey)) return;
-  if (event.key.toLowerCase() === "o") {
+  if (activeTab === "tree" && !event.shiftKey && event.key.toLowerCase() === "f") {
+    event.preventDefault();
+    document.querySelector("#tree-search")?.focus();
+  } else if (event.key.toLowerCase() === "o") {
     event.preventDefault();
     document.querySelector("#upload").click();
   } else if (event.key.toLowerCase() === "s") {

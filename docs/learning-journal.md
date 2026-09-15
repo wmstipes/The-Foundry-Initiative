@@ -609,3 +609,94 @@ Perform the final PR-readiness review. PR readiness and merge remain separate ap
 ### Next small step
 
 Merge this documentation-only closeout, remove the merged Milestone 040 branches, and select the next bounded increment from the deferred Workbench capabilities.
+
+## 2026-09-15 — Milestone 041 planning and implementation: browser-local YAML tree search
+
+### What changed
+
+- Verified clean `main` at `e1f48d94a3c88e3a459dedc5af3d9d6537940381` and confirmed both merged Milestone 040 remote branches were removed before implementation.
+- Approved a bounded Tree-tab search for keys, scalar values, and canonical YAML paths using case-insensitive literal matching.
+- Added deterministic document/depth-first indexing, one-node match counts, Previous and Next wrapping, automatic ancestor expansion, match and active-match presentation, and active-result scrolling.
+- Added Enter, Shift+Enter, Escape, and Tree-tab Ctrl+F or Cmd+F behavior while preserving native disclosure controls and search-control focus.
+- Preserved query recomputation across edits, temporary invalid YAML, formatting, and tab changes; reset it for mode changes, sample/file loading, and confirmed clearing.
+- Added helper and Happy DOM coverage for path construction, values and types, literal matching, ordering, navigation, expansion, highlighting, announcements, focus, parser recovery, formatting, and reset boundaries.
+- Advanced source metadata to candidate `0.9.0` without changing the tracked Deployment or live immutable `0.8.0` runtime.
+
+### Trust boundary
+
+Tree search consumes only the already parsed in-memory document values. It adds no replacement, regex, Validation-result search, persistence, backend, network access, Kubernetes API access, credentials, remediation, deployment control, or cluster mutation.
+
+### Current validation result
+
+- All 83 automated tests pass.
+- Validator reproducibility, production build, strict-CSP scan, zero-vulnerability audit, repository Kubernetes validation, 23 supporting Python tests, and whitespace validation pass.
+- The tracked Workbench Deployment and validator expectation remain unchanged at immutable `0.8.0`.
+- This workspace has no Docker client; the non-publishing multi-architecture build remains for the established GitHub workflow after publication approval.
+- The cloud browser cannot reach the workspace loopback server, so Windows and operator browser review remain explicit source-acceptance checks.
+
+### What remains gated
+
+Source publication, image publication, manifest mutation, deployment, live browser acceptance, PR readiness, merge, and cleanup remain separate approval gates.
+
+## 2026-09-15 — Milestone 041 source acceptance
+
+### Validation result
+
+- Published the accepted source tree through the connected GitHub integration because the workspace HTTPS remote had no Git credentials.
+- Verified all 14 uploaded blob SHAs and the assembled tree SHA against local commit `0fae4a6`; connector-authored commit `20800196d202f6a6b58c37dc73bb49ffe529a2d6` has the identical tree and approved `main` parent.
+- Opened draft PR #22 against `main`.
+- Workbench CI run 143 passed all source checks.
+- Non-publishing AMD64/ARM64 Docker build run 145 passed without pushing an image.
+- Windows validation passed from a clean lockfile installation with all 83 tests, validator reproducibility, production build, CSP scan, and zero-vulnerability audit green.
+- Operator browser review accepted literal key, value, and path matching; counts; navigation; expansion; highlighting; keyboard and accessibility behavior; edits and invalid-YAML recovery; formatting and report isolation; input-replacement resets; cancelled-clear preservation; and default-expansion restoration.
+
+### Gate state
+
+Source acceptance is complete for candidate `0.9.0`. Image publication, immutable digest recording, tracked-manifest mutation, deployment, live-cluster acceptance, PR readiness, merge, and cleanup remain separately gated. Accepted immutable `0.8.0` remains live.
+
+## 2026-09-15 — Milestone 041 image publication
+
+### What changed
+
+- Received explicit approval to publish Workbench `0.9.0` from accepted source commit `b2a946f9e39ab3f7e1a6bc35ad8bd62297902ca9`.
+- Created and pushed tag `forge-yaml-workbench-v0.9.0` at that exact commit.
+- Publication workflow run 147 (`35003003075`) built and pushed the AMD64/ARM64 image successfully.
+- Recorded immutable OCI index `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`.
+- Independently confirmed AMD64 manifest `sha256:4cd48baf0f913b944efa4206302d828107674f7ea7e20543972479d09866dc86` and ARM64 manifest `sha256:e26f85a206a2b564928e285f34253b72b5c8890f99d2eb0af702bfcfdecc9d7b`.
+- Left the tracked Deployment and live immutable `0.8.0` runtime unchanged.
+
+### Next small step
+
+Prepare and review the exact Deployment-only `0.9.0` label and immutable-image diff. Mutating the tracked manifest requires separate approval before cluster deployment is considered.
+
+## 2026-09-15 — Milestone 041 deployment and live acceptance
+
+### What changed
+
+- After separate approval, changed only the Workbench Deployment version labels and immutable image reference to `wmstipes/signalforge-yaml-workbench:0.9.0@sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581` and updated the repository validator expectation.
+- Repository validation passed, and the server dry-run completed. The non-fatal Server-Side Apply ownership warning reflected the existing client-side-managed last-applied annotation; the actual rollout retained client-side `kubectl apply`.
+- The reviewed live diff contained only generation 12 to 13, two version-label changes, and the immutable image change.
+- Deployment generation 13 completed with one available and Ready Pod on `forge-node-03`, zero restarts, and an exact configured/runtime OCI index match.
+- EndpointSlice `forge-yaml-workbench-bjzkq` reported ready endpoint `10.244.54.202:8080`. Private-lab NodePort `30081` returned HTTP 200 for `/healthz` and `/`, including the expected CSP, `nosniff`, frame, and referrer headers.
+- Operator live browser acceptance passed literal key, scalar-value, and canonical-path search; one-node counts; Previous/Next wrapping; ancestor expansion; match and active-match highlighting; keyboard, focus, and live-status behavior; edit and invalid-YAML recovery; formatting and report isolation; reset boundaries; cancelled-clear preservation; and default-expansion restoration.
+
+### Trust boundary
+
+The deployed search remains entirely browser-local and ephemeral. No YAML content is sent to a backend, and no telemetry, persistence, Kubernetes API access, RBAC, ServiceAccount token, credential, deployment control, automatic remediation, or cluster mutation capability was added to the application.
+
+### Next small step
+
+Review draft PR #22 for readiness. Marking it ready, merging it, and post-merge cleanup remain separate approval gates.
+
+## 2026-09-15 — Milestone 041 PR readiness and folded closeout
+
+### Result
+
+- Received separate approval for PR readiness and for folding substantive closeout documentation into PR #22.
+- Recorded the accepted immutable release, Deployment-only mutation, runtime evidence, HTTP and security-header checks, complete live browser workflow, trust boundary, and remaining repository procedure in the milestone record, roadmap, project status, and learning journal.
+- Confirmed the post-acceptance documentation commit passed Workbench CI run 147, Kubernetes Manifest Validation run 126, and non-publishing AMD64/ARM64 Docker Build run 150.
+- Kept merge as a separate approval gate. GitHub will retain the authoritative merge disposition, so no follow-up documentation PR is required.
+
+### Remaining procedure
+
+After separately approved merge, synchronize `main` and remove the local and remote Milestone 041 feature branch. That cleanup changes no project content.
