@@ -1,6 +1,6 @@
 # Forge YAML Workbench Kubernetes Manifests
 
-These manifests define the deployed SignalForge browser-local Forge YAML Workbench.
+These manifests define the tracked SignalForge browser-local Forge YAML Workbench deployment.
 
 ## Resources
 
@@ -13,18 +13,18 @@ These manifests define the deployed SignalForge browser-local Forge YAML Workben
 Tracked deployment release:
 
 ```text
-0.9.0
+0.10.0
 ```
 
-Immutable deployed image reference:
+Immutable tracked image reference:
 
 ```text
-wmstipes/signalforge-yaml-workbench:0.9.0@sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581
+wmstipes/signalforge-yaml-workbench:0.10.0@sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206
 ```
 
-The published OCI index contains active `linux/amd64` manifest `sha256:4cd48baf0f913b944efa4206302d828107674f7ea7e20543972479d09866dc86` and `linux/arm64` manifest `sha256:e26f85a206a2b564928e285f34253b72b5c8890f99d2eb0af702bfcfdecc9d7b`. The additional unknown-platform entries are BuildKit attestation manifests linked to those images. No floating image tag is used.
+The published OCI index contains active `linux/amd64` manifest `sha256:c8223d013931e0c02a582f372b826cb827eed1d6f2ba887eac7661387ef03fa2` and `linux/arm64` manifest `sha256:a297014f6df7579c25bcaaa6bbea12bb39e398a36828d647228e5859e7b77869`. The additional unknown-platform entries are BuildKit attestation manifests linked to those images. No floating image tag is used.
 
-The tracked Deployment and live cluster use accepted immutable `0.9.0`. The Deployment-only rollout followed successful manifest validation, server-side dry-run, live diff review, and explicit approval.
+The tracked Deployment is the immutable `0.10.0` deployment candidate. The live cluster remains on accepted immutable `0.9.0` until server-side dry-run and exact diff evidence are reviewed and cluster deployment is separately approved.
 
 ## Security and data boundaries
 

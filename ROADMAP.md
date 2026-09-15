@@ -283,7 +283,7 @@ See [Milestone 041](docs/milestones/milestone-041-browser-local-tree-search.md).
 
 #### Milestone 042 — Safe browser-local YAML file drop
 
-**Status:** Local implementation and automated verification complete on `codex/milestone-042-safe-yaml-drop`; publication has not been authorized.
+**Status:** Release published and Deployment candidate prepared in draft PR #23. Immutable `0.10.0` is verified for AMD64 and ARM64; cluster deployment is not authorized and live `0.9.0` is unchanged.
 
 - Accept one local `.yaml` or `.yml` file through a visible editor drop target.
 - Preserve keyboard-equivalent Open file behavior and announce drag, rejection, cancellation, success, and read-failure states.

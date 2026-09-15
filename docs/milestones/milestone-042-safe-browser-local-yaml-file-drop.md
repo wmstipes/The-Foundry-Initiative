@@ -1,6 +1,6 @@
 # Milestone 042 — Safe browser-local YAML file drop
 
-**Status:** Local implementation and automated verification complete; publication not authorized
+**Status:** Release published and immutable Deployment candidate prepared; cluster deployment not authorized
 **Started:** 2026-09-15
 **Branch:** `codex/milestone-042-safe-yaml-drop`
 **Baseline:** `main` at `0f3d44e2abff204f0019ea6d97bb2ab4b1ffe198`
@@ -84,15 +84,23 @@ This milestone adds no network request, backend processing, telemetry, cookie, l
 - The complete dependency audit reports zero vulnerabilities.
 - Repository Kubernetes validation and all 38 supporting Grafana and Prometheus Python tests pass.
 - Whitespace validation passes.
-- This workspace has no Docker client, so the non-publishing AMD64/ARM64 build remains for the established GitHub workflow after source-publication approval.
+- Clean Windows validation passes from a committed-lockfile installation: all 92 tests, validator reproducibility, production build, strict-CSP scan, and the complete zero-vulnerability audit.
+- Operator browser review passes the visible drop hint and overlay, successful load and focus, dirty-source cancellation and confirmation, unsupported and multiple-file rejection, misplaced-drop navigation prevention, keyboard Open file path, invalid-YAML routing, and shared replacement safeguards.
+- Draft PR #23 targets unchanged `main` baseline `0f3d44e` from connector-authored commit `ba97289c391cab7e7a33f13efc2ca39103065214`; remote tree `0c72ff7b8678914338c34e566b2acf02c8592b37` exactly matches the accepted local tree.
+- Workbench CI run 151, Kubernetes Manifest Validation run 130, and the non-publishing AMD64/ARM64 Docker Build run 153 pass. The guarded workflow skipped release preparation, registry login, and image publication.
+- Annotated tag `forge-yaml-workbench-v0.10.0` resolves to accepted source commit `ba97289c391cab7e7a33f13efc2ca39103065214`.
+- Docker Build run 154 passed the tagged publication path and published `wmstipes/signalforge-yaml-workbench:0.10.0` for AMD64 and ARM64.
+- The immutable OCI index is `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`; active platform manifests are AMD64 `sha256:c8223d013931e0c02a582f372b826cb827eed1d6f2ba887eac7661387ef03fa2` and ARM64 `sha256:a297014f6df7579c25bcaaa6bbea12bb39e398a36828d647228e5859e7b77869`.
+- After separate approval, the tracked Deployment version labels and image reference and the repository validator expectation were locally updated to immutable `0.10.0`. The live cluster remains unchanged at `0.9.0`.
+- Post-mutation verification passes all 92 Workbench tests, validator reproducibility, production build, strict-CSP scan, zero-vulnerability audit, repository manifest validation, all 51 supporting Python tests, and whitespace validation.
 
 ## Gated delivery workflow
 
 1. Planning approval — complete.
 2. Local implementation — complete on the feature branch.
-3. Local automated verification — complete; clean-Windows and operator browser evidence remain to be finalized before release consideration.
-4. Publication — awaiting separate approval; no remote branch, tag, or image has been published.
-5. Deployment-manifest mutation — not authorized; the tracked manifest remains immutable `0.9.0`.
+3. Local automated verification and source acceptance — complete, including clean Windows and operator browser review.
+4. Publication — complete after separate approvals for the remote source branch, draft PR #23, release tag, and AMD64/ARM64 image.
+5. Deployment-manifest mutation — local mutation complete after separate approval; publication and cluster deployment remain unapproved.
 6. Cluster deployment — not authorized.
 7. Live browser acceptance — not authorized.
 8. Pull-request readiness — not authorized.

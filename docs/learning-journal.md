@@ -737,3 +737,35 @@ The browser exposes only the chosen file basename and contents. The Workbench do
 ### What remains gated
 
 Remote source publication, image publication, manifest mutation, deployment, live browser acceptance, PR readiness, merge, and cleanup remain separate approval gates.
+
+## 2026-09-15 — Milestone 042 source acceptance
+
+### Validation result
+
+- Published `codex/milestone-042-safe-yaml-drop` after explicit approval and opened draft PR #23 against unchanged `main` baseline `0f3d44e2abff204f0019ea6d97bb2ab4b1ffe198`.
+- Verified connector-authored commit `ba97289c391cab7e7a33f13efc2ca39103065214` has tree `0c72ff7b8678914338c34e566b2acf02c8592b37`, exactly matching the accepted local source tree.
+- Workbench CI run 151 and Kubernetes Manifest Validation run 130 passed.
+- Non-publishing AMD64/ARM64 Docker Build run 153 passed; release preparation, Docker Hub login, and publishing were skipped.
+- Clean Windows validation passed all 92 tests, validator reproducibility, production build, strict-CSP validation, and the complete zero-vulnerability dependency audit.
+- Operator browser review passed visible target instructions and presentation, successful loading and focus, dirty-source cancellation and confirmation, unsupported and multiple-file rejection, misplaced-drop navigation prevention, Open file and keyboard behavior, invalid-YAML routing, and shared replacement safeguards.
+
+### Gate state
+
+Source acceptance is complete for candidate `0.10.0`. Release tag and image publication, manifest mutation, deployment, live-cluster acceptance, PR readiness, merge, and cleanup remain separately gated. Accepted immutable `0.9.0` remains tracked and live.
+
+## 2026-09-15 — Milestone 042 release publication and manifest candidate
+
+### Release evidence
+
+- Received explicit approval to publish Workbench `0.10.0` from accepted source commit `ba97289c391cab7e7a33f13efc2ca39103065214`.
+- Created and pushed annotated tag `forge-yaml-workbench-v0.10.0` at that exact commit.
+- Docker Build run 154 completed successfully through the tagged publication path.
+- Published `wmstipes/signalforge-yaml-workbench:0.10.0` as immutable OCI index `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`.
+- Verified active AMD64 manifest `sha256:c8223d013931e0c02a582f372b826cb827eed1d6f2ba887eac7661387ef03fa2` and ARM64 manifest `sha256:a297014f6df7579c25bcaaa6bbea12bb39e398a36828d647228e5859e7b77869`.
+
+### Manifest boundary
+
+- After separate approval, changed only the tracked Workbench Deployment version labels and immutable image reference to `0.10.0` and updated the repository validator expectation.
+- Post-mutation verification passed all 92 Workbench tests, validator reproducibility, production build, strict-CSP scan, zero-vulnerability audit, repository manifest validation, all 51 supporting Python tests, and whitespace validation.
+- The live cluster remains on accepted immutable `0.9.0`; no server-side dry-run, cluster diff, apply, rollout, or live acceptance action occurred in this gate.
+- Publishing the manifest follow-up, reviewing deployment evidence, applying it, and accepting the live application remain separately gated.
