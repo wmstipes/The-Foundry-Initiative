@@ -792,3 +792,12 @@ Source acceptance is complete for candidate `0.10.0`. Release tag and image publ
 ### Gate state
 
 Immutable Workbench `0.10.0` is published, deployed, runtime-verified, and live browser-accepted. PR #23 remains draft; PR readiness, merge, and cleanup remain separately gated.
+
+## 2026-09-15 — Milestone 042 merge
+
+### Result
+
+- Marked PR #23 ready only after the accepted release, Deployment-only rollout, runtime evidence, live browser acceptance, closeout documentation, and all final workflows were complete.
+- Reconciled the PR description with the published OCI digest, generation-14 runtime, browser acceptance, trust boundary, and remaining procedural gates.
+- PR #23 merged into `main` at `020d5e796d586b12b9e5e2819cb898d0c51dcaf9` after separate approval.
+- Milestone 042 is complete; only integration of this post-merge status record and separately approved branch cleanup remain.

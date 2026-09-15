@@ -62,7 +62,7 @@ Forge YAML Workbench is a browser-based YAML inspector deployed in the restricte
 
 Milestone 036 recovered from the rejected `0.4.0` browser startup defect without weakening the strict CSP. Milestone 037 added the pinned OWASP Kubernetes Top 10:2025 profile and corrected finding navigation. Milestone 038 deployed the explicit formatting-preview workflow as immutable `0.6.0`, Milestone 039 deployed review-first Markdown reports as immutable `0.7.0`, and Milestone 040 deployed counted Validation filters as immutable `0.8.0`. Milestone 041 keeps its Tree search index and navigation state ephemeral and inside the same browser-only trust boundary.
 
-Milestone 042 adds one-file YAML drag-and-drop with visible and accessible target states, shared unsaved-change protection, deterministic state boundaries, and no upload or persistence path. Immutable `0.10.0` is published, digest-pinned, deployed, runtime-verified, and live browser-accepted; PR #23 remains draft pending its separate readiness gate.
+Milestone 042 adds one-file YAML drag-and-drop with visible and accessible target states, shared unsaved-change protection, deterministic state boundaries, and no upload or persistence path. Immutable `0.10.0` is published, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #23 at `020d5e7`.
 
 ## Repository map
 
