@@ -700,3 +700,95 @@ Review draft PR #22 for readiness. Marking it ready, merging it, and post-merge 
 ### Remaining procedure
 
 After separately approved merge, synchronize `main` and remove the local and remote Milestone 041 feature branch. That cleanup changes no project content.
+
+## 2026-09-15 — Milestone 041 merge and cleanup
+
+### Result
+
+- PR #22 merged into `main` at `0f3d44e2abff204f0019ea6d97bb2ab4b1ffe198` after separate approval.
+- The local and remote `codex/milestone-041-tree-search` branches were removed.
+- Milestone 041 is complete; immutable Workbench `0.9.0` remains deployed and accepted.
+
+## 2026-09-15 — Milestone 042 planning and local implementation: safe browser-local YAML file drop
+
+### What changed
+
+- Approved a bounded editor drop target for exactly one local `.yaml` or `.yml` file, with case-insensitive extension matching.
+- Added persistent visible instructions and a drop-ready overlay using text and a dashed boundary rather than color alone.
+- Added file-only drag detection, page-navigation prevention for misplaced drops, and deterministic cleanup for leave, drop, Escape, drag end, and window blur.
+- Routed accepted files through the existing input-replacement boundary and preserved the basename for later YAML and Markdown downloads.
+- Added one shared unsaved-change confirmation for dropped files, Open file, and Load sample.
+- Preserved all state after cancellation, rejection, or read failure; successful replacement preserves the mode and tab, resets Validation filtering and Tree search, invalidates prepared reports, and routes invalid YAML to existing parser diagnostics.
+- Advanced source metadata to candidate `0.10.0` without changing the tracked Deployment or live immutable `0.9.0` runtime.
+- Reconciled Milestone 041 merge and cleanup status and corrected the Kubernetes README's stale `0.8.0` image details.
+
+### Trust boundary
+
+The browser exposes only the chosen file basename and contents. The Workbench does not receive a filesystem path and adds no upload, network request, backend, telemetry, cookie, browser storage, Kubernetes API access, RBAC, credential, deployment control, or cluster mutation.
+
+### Current validation result
+
+- All 92 automated tests pass, including nine focused file-drop and state-boundary interactions.
+- Validator reproducibility, production build, strict-CSP scan, complete zero-vulnerability dependency audit, repository Kubernetes validation, 38 supporting Python tests, and whitespace validation pass.
+- The established production bundle-size advisory remains non-blocking.
+- This workspace has no Docker client; clean Windows validation, operator browser review, and the non-publishing AMD64/ARM64 build remain release-evidence items.
+- The tracked Workbench Deployment and live cluster remain unchanged at immutable `0.9.0`.
+
+### What remains gated
+
+Remote source publication, image publication, manifest mutation, deployment, live browser acceptance, PR readiness, merge, and cleanup remain separate approval gates.
+
+## 2026-09-15 — Milestone 042 source acceptance
+
+### Validation result
+
+- Published `codex/milestone-042-safe-yaml-drop` after explicit approval and opened draft PR #23 against unchanged `main` baseline `0f3d44e2abff204f0019ea6d97bb2ab4b1ffe198`.
+- Verified connector-authored commit `ba97289c391cab7e7a33f13efc2ca39103065214` has tree `0c72ff7b8678914338c34e566b2acf02c8592b37`, exactly matching the accepted local source tree.
+- Workbench CI run 151 and Kubernetes Manifest Validation run 130 passed.
+- Non-publishing AMD64/ARM64 Docker Build run 153 passed; release preparation, Docker Hub login, and publishing were skipped.
+- Clean Windows validation passed all 92 tests, validator reproducibility, production build, strict-CSP validation, and the complete zero-vulnerability dependency audit.
+- Operator browser review passed visible target instructions and presentation, successful loading and focus, dirty-source cancellation and confirmation, unsupported and multiple-file rejection, misplaced-drop navigation prevention, Open file and keyboard behavior, invalid-YAML routing, and shared replacement safeguards.
+
+### Gate state
+
+Source acceptance is complete for candidate `0.10.0`. Release tag and image publication, manifest mutation, deployment, live-cluster acceptance, PR readiness, merge, and cleanup remain separately gated. Accepted immutable `0.9.0` remains tracked and live.
+
+## 2026-09-15 — Milestone 042 release publication and manifest candidate
+
+### Release evidence
+
+- Received explicit approval to publish Workbench `0.10.0` from accepted source commit `ba97289c391cab7e7a33f13efc2ca39103065214`.
+- Created and pushed annotated tag `forge-yaml-workbench-v0.10.0` at that exact commit.
+- Docker Build run 154 completed successfully through the tagged publication path.
+- Published `wmstipes/signalforge-yaml-workbench:0.10.0` as immutable OCI index `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`.
+- Verified active AMD64 manifest `sha256:c8223d013931e0c02a582f372b826cb827eed1d6f2ba887eac7661387ef03fa2` and ARM64 manifest `sha256:a297014f6df7579c25bcaaa6bbea12bb39e398a36828d647228e5859e7b77869`.
+
+### Manifest boundary
+
+- After separate approval, changed only the tracked Workbench Deployment version labels and immutable image reference to `0.10.0` and updated the repository validator expectation.
+- Post-mutation verification passed all 92 Workbench tests, validator reproducibility, production build, strict-CSP scan, zero-vulnerability audit, repository manifest validation, all 51 supporting Python tests, and whitespace validation.
+- The live cluster remains on accepted immutable `0.9.0`; no server-side dry-run, cluster diff, apply, rollout, or live acceptance action occurred in this gate.
+- Publishing the manifest follow-up, reviewing deployment evidence, applying it, and accepting the live application remain separately gated.
+
+## 2026-09-15 — Milestone 042 deployment and live acceptance
+
+### Deployment evidence
+
+- Repository validation and server-side dry-run passed before deployment.
+- The reviewed live diff contained only generation 13 to 14, the Deployment and Pod-template version labels changing from `0.9.0` to `0.10.0`, and the image changing to immutable OCI index `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`.
+- After separate approval, applied only `k8s/forge-yaml-workbench/forge-yaml-workbench-deployment.yaml`.
+- Deployment generation 14 completed with one available and Ready Pod `forge-yaml-workbench-68856b4c5d-jvtgx` on `forge-node-03`, zero restarts, and an exact configured/runtime digest match.
+- EndpointSlice `forge-yaml-workbench-bjzkq` exposed one ready endpoint at `10.244.54.203:8080`.
+- NodePort `30081` returned HTTP 200 for `/healthz` and `/` with the expected CSP, `nosniff`, frame-denial, and referrer-policy headers.
+
+### Live browser acceptance
+
+- The deployed page identified release `0.10.0` and exposed visible, accessible file-drop instructions and presentation.
+- Successful drops loaded YAML, announced the basename, and focused the editor.
+- Dirty-source cancellation preserved YAML, mode, tab, and search state; confirmed replacement preserved mode and tab while resetting Tree search.
+- Unsupported and multiple-file drops were rejected without replacement, and misplaced drops did not navigate the browser.
+- Invalid YAML entered the established Validation path; Ctrl+O and Load sample retained the shared unsaved-change safeguard; downloads preserved the opened basename.
+
+### Gate state
+
+Immutable Workbench `0.10.0` is published, deployed, runtime-verified, and live browser-accepted. PR #23 remains draft; PR readiness, merge, and cleanup remain separately gated.

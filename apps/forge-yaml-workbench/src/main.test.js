@@ -11,15 +11,28 @@ beforeAll(async () => {
 });
 
 beforeEach(() => {
+  vi.restoreAllMocks();
+  Object.defineProperty(window, "confirm", {
+    configurable: true,
+    value: vi.fn().mockReturnValue(true)
+  });
   document.querySelector('[data-mode="kubernetes"]').click();
   document.querySelector('[data-tab="summary"]').click();
   document.querySelector("#sample").click();
-  vi.restoreAllMocks();
 });
 
 function replaceEditor(value) {
   editor.value = value;
   editor.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function dragEvent(type, files = [], types = ["Files"]) {
+  const event = new Event(type, { bubbles: true, cancelable: true });
+  Object.defineProperty(event, "dataTransfer", {
+    configurable: true,
+    value: { files, types, dropEffect: "none" }
+  });
+  return event;
 }
 
 describe("Forge YAML Workbench browser interactions", () => {
@@ -383,6 +396,163 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(document.querySelector("#action-status").textContent).toBe("opened.yml downloaded");
   });
 
+  it("shows an accessible file-drop target only for file drags", () => {
+    const zone = document.querySelector("#editor-drop-zone");
+    expect(editor.getAttribute("aria-describedby")).toBe("editor-drop-instructions");
+    expect(document.querySelector("#editor-drop-instructions").textContent).toContain(".yaml or .yml");
+
+    const textDrag = dragEvent("dragenter", [], ["text/plain"]);
+    zone.dispatchEvent(textDrag);
+    expect(textDrag.defaultPrevented).toBe(false);
+    expect(zone.classList.contains("drop-ready")).toBe(false);
+
+    const fileDrag = dragEvent("dragenter");
+    zone.dispatchEvent(fileDrag);
+    expect(fileDrag.defaultPrevented).toBe(true);
+    expect(zone.classList.contains("drop-ready")).toBe(true);
+    expect(document.querySelector(".editor-drop-hint").textContent).toContain("Drop one YAML file here");
+
+    zone.dispatchEvent(dragEvent("dragleave"));
+    expect(zone.classList.contains("drop-ready")).toBe(false);
+  });
+
+  it("clears transient drop presentation with Escape, drag end, and window blur", () => {
+    const zone = document.querySelector("#editor-drop-zone");
+    for (const cleanup of [
+      () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true })),
+      () => document.dispatchEvent(new Event("dragend", { bubbles: true })),
+      () => window.dispatchEvent(new Event("blur"))
+    ]) {
+      zone.dispatchEvent(dragEvent("dragenter"));
+      expect(zone.classList.contains("drop-ready")).toBe(true);
+      cleanup();
+      expect(zone.classList.contains("drop-ready")).toBe(false);
+    }
+  });
+
+  it("rejects missing, multiple, and unsupported dropped files without changing YAML", async () => {
+    const zone = document.querySelector("#editor-drop-zone");
+    const original = editor.value;
+
+    zone.dispatchEvent(dragEvent("drop", []));
+    expect(document.querySelector("#action-status").textContent).toContain("no file");
+    zone.dispatchEvent(dragEvent("drop", [
+      new File(["a: 1\n"], "one.yaml"),
+      new File(["b: 2\n"], "two.yml")
+    ]));
+    expect(document.querySelector("#action-status").textContent).toContain("only one");
+    zone.dispatchEvent(dragEvent("drop", [new File(["a: 1\n"], "notes.txt")]));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(editor.value).toBe(original);
+    expect(document.querySelector("#action-status").textContent).toContain(".yaml or .yml");
+  });
+
+  it("accepts YAML extensions case-insensitively and keeps file processing browser-local", async () => {
+    const zone = document.querySelector("#editor-drop-zone");
+    const fetchSpy = vi.spyOn(window, "fetch");
+    for (const name of ["DROPPED.YAML", "second.YmL"]) {
+      const source = `name: ${name}\n`;
+      zone.dispatchEvent(dragEvent("drop", [new File([source], name)]));
+      await vi.waitFor(() => expect(editor.value).toBe(source));
+      expect(document.activeElement).toBe(editor);
+      expect(document.querySelector("#action-status").textContent).toBe(name + " opened");
+    }
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("preserves every established state boundary when a dirty drop is cancelled", async () => {
+    document.querySelector('[data-mode="general"]').click();
+    replaceEditor("name: local-change\n");
+    document.querySelector('[data-tab="tree"]').click();
+    const search = document.querySelector("#tree-search");
+    search.value = "name";
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+    document.querySelector("#generate-report").click();
+    const report = document.querySelector("#report-markdown").textContent;
+    window.confirm.mockReturnValue(false);
+
+    document.querySelector("#editor-drop-zone").dispatchEvent(dragEvent("drop", [
+      new File(["replacement: true\n"], "replacement.yaml")
+    ]));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(editor.value).toBe("name: local-change\n");
+    expect(document.querySelector('[data-mode="general"]').getAttribute("aria-pressed")).toBe("true");
+    expect(document.querySelector('[data-tab="tree"]').classList.contains("active")).toBe(true);
+    expect(document.querySelector("#tree-search").value).toBe("name");
+    expect(document.querySelector("#report-preview").hidden).toBe(false);
+    expect(document.querySelector("#report-markdown").textContent).toBe(report);
+    expect(document.querySelector("#action-status").textContent).toBe("Drop cancelled");
+    document.querySelector("#report-cancel").click();
+  });
+
+  it("guards file picker and sample replacement with the same dirty-state confirmation", async () => {
+    replaceEditor("name: keep-me\n");
+    window.confirm.mockReturnValue(false);
+
+    document.querySelector("#sample").click();
+    expect(editor.value).toBe("name: keep-me\n");
+    expect(document.querySelector("#action-status").textContent).toBe("Load sample cancelled");
+
+    const input = document.querySelector("#file-input");
+    Object.defineProperty(input, "files", {
+      configurable: true,
+      value: [new File(["name: replacement\n"], "replacement.yaml")]
+    });
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(editor.value).toBe("name: keep-me\n");
+    expect(document.querySelector("#action-status").textContent).toBe("Open file cancelled");
+  });
+
+  it("preserves YAML and derived state when a dropped file cannot be read", async () => {
+    document.querySelector('[data-mode="general"]').click();
+    replaceEditor("name: original\n");
+    const unreadable = { name: "unreadable.yaml", text: vi.fn().mockRejectedValue(new Error("read failed")) };
+
+    document.querySelector("#editor-drop-zone").dispatchEvent(dragEvent("drop", [unreadable]));
+    await vi.waitFor(() => expect(document.querySelector("#action-status").textContent).toContain("Could not read"));
+
+    expect(editor.value).toBe("name: original\n");
+    expect(document.querySelector('[data-mode="general"]').getAttribute("aria-pressed")).toBe("true");
+    expect(document.querySelector("#action-status").classList.contains("error")).toBe(true);
+  });
+
+  it("preserves mode and tab but resets filters, Tree search, and prepared reports after replacement", async () => {
+    document.querySelector('[data-mode="general"]').click();
+    document.querySelector('[data-tab="tree"]').click();
+    const search = document.querySelector("#tree-search");
+    search.value = "metadata";
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+    document.querySelector('[data-tab="validation"]').click();
+    document.querySelector('[data-validation-filter="warning"]').click();
+    document.querySelector("#generate-report").click();
+
+    document.querySelector("#editor-drop-zone").dispatchEvent(dragEvent("drop", [
+      new File(["invalid: [\n"], "invalid.yml")
+    ]));
+    await vi.waitFor(() => expect(editor.value).toBe("invalid: [\n"));
+
+    expect(document.querySelector('[data-mode="general"]').getAttribute("aria-pressed")).toBe("true");
+    expect(document.querySelector('[data-tab="validation"]').classList.contains("active")).toBe(true);
+    expect(document.querySelector('[data-validation-filter="all"]').getAttribute("aria-pressed")).toBe("true");
+    document.querySelector('[data-tab="tree"]').click();
+    expect(document.querySelector("#tree-search").value).toBe("");
+    expect(document.querySelector("#report-preview").hidden).toBe(true);
+    expect(document.querySelector("#status").textContent).toContain("YAML error");
+  });
+
+  it("prevents page navigation for file drops outside the editor", () => {
+    const original = editor.value;
+    const outsideDrop = dragEvent("drop", [new File(["outside: true\n"], "outside.yaml")]);
+    document.querySelector(".results-pane").dispatchEvent(outsideDrop);
+
+    expect(outsideDrop.defaultPrevented).toBe(true);
+    expect(editor.value).toBe(original);
+    expect(document.querySelector("#action-status").textContent).toContain("drop one YAML file on the editor");
+  });
+
   it("renders operational YAML paths and suggested corrections", () => {
     replaceEditor("apiVersion: v1\nkind: Pod\nmetadata:\n  name: empty\nspec: {}\n");
     document.querySelector('[data-tab="validation"]').click();
@@ -738,6 +908,9 @@ describe("Forge YAML Workbench browser interactions", () => {
     expect(document.querySelector("#tree-search").value).toBe("");
     document.querySelector("#tree-search").value = "metadata";
     document.querySelector("#tree-search").dispatchEvent(new Event("input", { bubbles: true }));
+    document.querySelector("#sample").click();
+    expect(document.querySelector("#tree-search").value).toBe("metadata");
+    window.confirm.mockReturnValue(true);
     document.querySelector("#sample").click();
     expect(document.querySelector("#tree-search").value).toBe("");
 

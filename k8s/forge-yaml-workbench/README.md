@@ -1,6 +1,6 @@
 # Forge YAML Workbench Kubernetes Manifests
 
-These manifests define the deployed SignalForge browser-local Forge YAML Workbench.
+These manifests define the tracked SignalForge browser-local Forge YAML Workbench deployment.
 
 ## Resources
 
@@ -13,18 +13,18 @@ These manifests define the deployed SignalForge browser-local Forge YAML Workben
 Tracked deployment release:
 
 ```text
-0.8.0
+0.10.0
 ```
 
-Immutable deployed image reference:
+Immutable tracked image reference:
 
 ```text
-wmstipes/signalforge-yaml-workbench:0.8.0@sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3
+wmstipes/signalforge-yaml-workbench:0.10.0@sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206
 ```
 
-The published OCI index contains active `linux/amd64` manifest `sha256:dfbfc92e3d4a074d0a421cc3fdb7937f4288937af291aac71ec9a0dc3786d536` and `linux/arm64` manifest `sha256:2db1d88fe7357452f82256e81a4d56ef52d3ddc72bffe0f31524adab524ce615`. The additional unknown-platform entries are BuildKit attestation manifests linked to those images. No floating image tag is used.
+The published OCI index contains active `linux/amd64` manifest `sha256:c8223d013931e0c02a582f372b826cb827eed1d6f2ba887eac7661387ef03fa2` and `linux/arm64` manifest `sha256:a297014f6df7579c25bcaaa6bbea12bb39e398a36828d647228e5859e7b77869`. The additional unknown-platform entries are BuildKit attestation manifests linked to those images. No floating image tag is used.
 
-The tracked Deployment and live cluster use accepted immutable `0.8.0`. The Deployment-only rollout followed successful manifest validation, server-side dry-run, live diff review, and explicit approval.
+The tracked Deployment and live cluster use accepted immutable `0.10.0`. The Deployment-only rollout followed successful manifest validation, server-side dry-run, exact live diff review, and explicit approval.
 
 ## Security and data boundaries
 
@@ -64,4 +64,4 @@ kubectl rollout status deployment/forge-yaml-workbench -n forge-tools --timeout=
 kubectl get deployment,pods,service -n forge-tools -o wide
 ```
 
-The live `0.8.0` deployment has one available Ready replica on `forge-node-03` with zero restarts and a runtime ImageID matching OCI index digest `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`. NodePort `30081`, its single ready EndpointSlice endpoint, fresh HTTP 200 responses from `/healthz` and the application page, Content Security Policy, and `X-Content-Type-Options` passed runtime verification. Interactive browser acceptance confirmed counted Validation filters, result-level isolation, hidden empty sections, stable complete-analysis indicators and reports, edit-time recomputation, reset boundaries, finding navigation, scrolling, guidance, and Copy YAML.
+The live `0.10.0` Deployment generation 14 has one available Ready replica on `forge-node-03` with zero restarts and a runtime ImageID matching OCI index digest `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`. NodePort `30081`, its ready EndpointSlice endpoint `10.244.54.203:8080`, fresh HTTP 200 responses from `/healthz` and the application page, Content Security Policy, `X-Content-Type-Options`, `X-Frame-Options`, and `Referrer-Policy` passed runtime verification. Interactive browser acceptance confirmed the visible drop target, drag-ready presentation, successful loading and focus, dirty-source cancellation and confirmation, mode and tab preservation, Tree-search reset, extension and file-count rejection, misplaced-drop navigation prevention, invalid-YAML routing, keyboard Open file equivalence, sample protection, and basename-preserving download behavior.

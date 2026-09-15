@@ -1,6 +1,6 @@
 # Milestone 041 — Browser-local YAML tree search
 
-**Status:** Release accepted and PR-ready; repository integration is tracked by PR #22
+**Status:** Complete; merged through PR #22 at `0f3d44e` and cleaned up
 **Started:** 2026-09-15
 **Branch:** `codex/milestone-041-tree-search`
 **Baseline:** `main` at `e1f48d94a3c88e3a459dedc5af3d9d6537940381`
@@ -74,8 +74,8 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 6. Cluster deployment — complete after separate approval.
 7. Live browser acceptance — complete after separate approval.
 8. Pull-request readiness — complete after separate approval.
-9. Merge — separately approved through PR #22; GitHub records its disposition.
-10. Post-merge cleanup — feature-branch removal only; no separate documentation PR is planned.
+9. Merge — complete after separate approval through PR #22 at `0f3d44e`.
+10. Post-merge cleanup — complete; the local and remote feature branches were removed.
 
 ## Validation evidence
 
@@ -103,4 +103,4 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 - EndpointSlice `forge-yaml-workbench-bjzkq` reported ready endpoint `10.244.54.202:8080`; private-lab NodePort `30081` returned HTTP 200 for `/healthz` and `/` with the expected CSP and security headers.
 - Operator live browser acceptance passed key, scalar-value, and canonical-path matching; one-node counts; wrapping navigation; ancestor expansion; visible and active highlighting; keyboard, focus, and live-status behavior; edit and parser recovery; formatting and report isolation; reset boundaries; cancelled-clear preservation; and default-expansion restoration.
 - The post-acceptance documentation commit passed Workbench CI run 147, Kubernetes Manifest Validation run 126, and non-publishing AMD64/ARM64 Docker Build run 150.
-- Closeout evidence is folded into PR #22 so merging it requires no follow-up documentation PR; post-merge cleanup is limited to branch synchronization and deletion.
+- Closeout evidence was folded into PR #22, which merged at `0f3d44e`; the local and remote feature branches were then removed without a follow-up documentation PR.

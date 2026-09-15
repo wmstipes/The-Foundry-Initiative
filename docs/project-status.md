@@ -27,17 +27,18 @@ The project has moved from basic workload deployment into repeatable engineering
 - Namespace: `forge-tools`
 - Deployment: `forge-yaml-workbench`
 - Replicas: 1 available and Ready
-- Release: accepted `0.9.0` deployed
-- Image: `wmstipes/signalforge-yaml-workbench:0.9.0@sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`
+- Release: accepted `0.10.0` deployed
+- Image: `wmstipes/signalforge-yaml-workbench:0.10.0@sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`
 - Runtime ImageID: verified against the pinned OCI index digest
 - External lab access: NodePort `30081`
 - Data path: browser-local parsing and analysis; no server-side YAML persistence
 - Modes: Kubernetes inspection by default and explicit General YAML inspection for mapping, sequence, and scalar roots
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
-- Acceptance: immutable `0.9.0` is deployed; configured and runtime digests, one Ready Pod on `forge-node-03` with zero restarts, one ready EndpointSlice endpoint, NodePort health and page responses, security headers, and the complete live Tree-search workflow passed
+- Acceptance: immutable `0.10.0` is deployed; generation 14, configured and runtime digests, one Ready Pod on `forge-node-03` with zero restarts, one ready EndpointSlice endpoint, NodePort health and page responses, security headers, and the complete live file-drop workflow passed
 - Validation filters: counted All, Errors, Warnings, Notes, and Valid views preserve the complete analysis for the tab badge, overall status, OWASP coverage, and Markdown reports
 - Tree search: Milestone 041 provides literal key, scalar-value, and canonical-path matching with deterministic counted navigation, automatic ancestor expansion, highlighting, accessible keyboard behavior, and explicit state boundaries
+- File drop: Milestone 042 provides visible one-file YAML drag-and-drop, shared unsaved-change protection, explicit state preservation and reset boundaries, keyboard-equivalent opening, and browser-navigation prevention
 
 ## Milestone 038 closeout
 
@@ -79,15 +80,16 @@ The project has moved from basic workload deployment into repeatable engineering
 - 038: browser-local formatting preview released as `0.6.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #16 at `4fed28c`
 - 039: browser-local Markdown reports released as immutable `0.7.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #18 at `1e0c525`
 - 040: Validation result filters released as immutable `0.8.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #20 at `6fa5092`
+- 041: browser-local YAML Tree search released as immutable `0.9.0`, deployed, accepted, merged through PR #22 at `0f3d44e`, and cleaned up
 
 ## Latest release milestone
 
-- 041: deterministic browser-local Tree search across keys, scalar values, and canonical YAML paths with counted navigation, ancestor expansion, highlighting, keyboard support, and explicit state boundaries
-- Trust boundary: ephemeral browser-local presentation state; no backend, persistence, telemetry, cluster credentials, Kubernetes API access, replacement, regex, or automatic remediation
-- Verification: 83 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository validation, whitespace checks, Windows validation, CI, AMD64/ARM64 builds, and source and live browser reviews passed
-- Publication and deployment: immutable AMD64/ARM64 `0.9.0` is live at OCI index `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`
-- Runtime acceptance: one Ready Pod on `forge-node-03`, zero restarts, exact configured/runtime digest match, one ready endpoint, fresh HTTP 200 responses, expected security headers, and the complete Tree-search workflow passed
-- Completion record: release and closeout evidence are folded into PR #22; GitHub records repository integration, and no separate documentation PR is planned
+- 042: safe browser-local one-file YAML drop with visible and accessible target states, shared unsaved-change protection, deterministic state boundaries, and keyboard-equivalent opening
+- Trust boundary: browser-provided basename and contents remain in memory; no upload, backend, persistence, telemetry, cluster credentials, Kubernetes API access, or automatic remediation
+- Verification: 92 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository validation, whitespace checks, Windows validation, CI, AMD64/ARM64 builds, and source and live browser reviews passed
+- Publication and deployment: immutable AMD64/ARM64 `0.10.0` is live at OCI index `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`
+- Runtime acceptance: generation 14, one Ready Pod on `forge-node-03`, zero restarts, exact configured/runtime digest match, one ready endpoint at `10.244.54.203:8080`, fresh HTTP 200 responses, expected security headers, and the complete file-drop workflow passed
+- Completion record: release and acceptance evidence are being folded into draft PR #23; PR readiness, merge, and cleanup remain separately gated
 
 ## Previous completed milestone
 
@@ -192,7 +194,13 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Milestone 041 release and closeout evidence are contained in PR #22. GitHub records its final disposition; after merge, feature-branch synchronization and deletion are the only remaining procedural cleanup, with no separate documentation PR planned.
+Milestone 042 source is accepted in draft PR #23. Candidate `0.10.0` adds a visible and accessible editor drop target for exactly one local YAML file, shared unsaved-change protection for drop, Open file, and Load sample, page-navigation prevention for misplaced file drops, and explicit state-reset and preservation boundaries. All 92 tests, validator reproducibility, production build, strict-CSP validation, zero-vulnerability audit, clean Windows validation, operator browser review, repository validation, and the non-publishing AMD64/ARM64 build pass.
+
+Tag `forge-yaml-workbench-v0.10.0` and its AMD64/ARM64 image were published from accepted source commit `ba97289c391cab7e7a33f13efc2ca39103065214`. The verified OCI index is `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`. After separate approval, the tracked Deployment and validator were locally updated to that immutable image.
+
+Deployment generation 14 completed with one available and Ready `0.10.0` Pod on `forge-node-03`, zero restarts, runtime ImageID matching the OCI index, one ready EndpointSlice endpoint at `10.244.54.203:8080`, and HTTP 200 health and page responses with the expected security headers. The complete live browser file-drop acceptance procedure passed.
+
+The next gate is PR readiness. PR #23 remains draft; merge and cleanup remain separately gated.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
@@ -216,4 +224,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench `0.9.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`. Its runtime, Tree search, formatting preview, Markdown report workflow, Validation filters, OWASP profile, schema boundaries, General YAML isolation, strict headers, and corrected finding-link scrolling passed live acceptance. NodePort `30081` remains private-lab HTTP exposure.
+Forge YAML Workbench `0.10.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`. Its runtime, safe YAML file drop, Tree search, formatting preview, Markdown report workflow, Validation filters, OWASP profile, schema boundaries, General YAML isolation, strict headers, and corrected finding-link scrolling passed live acceptance. NodePort `30081` remains private-lab HTTP exposure.

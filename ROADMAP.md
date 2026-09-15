@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-040 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 041's browser-local YAML tree search runs as immutable Workbench `0.9.0`; its accepted release and closeout evidence are carried together by PR #22.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-041 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 042's safe browser-local YAML file drop runs as immutable Workbench `0.10.0`; PR #23 remains draft pending its separate readiness gate.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -269,7 +269,7 @@ See [Milestone 040](docs/milestones/milestone-040-validation-result-filters.md).
 
 #### Milestone 041 — Browser-local YAML tree search
 
-**Status:** Release complete and PR-ready. Immutable `0.9.0` was published, digest-pinned, deployed, runtime-verified, and live browser-accepted; repository integration is tracked by PR #22.
+**Status:** Complete. Immutable `0.9.0` was published, digest-pinned, deployed, runtime-verified, live browser-accepted, merged through PR #22 at `0f3d44e`, and cleaned up.
 
 - Search keys, scalar values, and canonical paths with case-insensitive literal matching.
 - Count matches once per node and navigate deterministically with wrapping Previous and Next actions.
@@ -281,7 +281,20 @@ See [Milestone 040](docs/milestones/milestone-040-validation-result-filters.md).
 
 See [Milestone 041](docs/milestones/milestone-041-browser-local-tree-search.md).
 
-- Later increments: drag-and-drop, display preferences, additional export formats, and bounded large-file processing.
+#### Milestone 042 — Safe browser-local YAML file drop
+
+**Status:** Release deployed and live browser-accepted. Immutable `0.10.0` is verified for AMD64 and ARM64, digest-pinned, and running as generation 14; PR #23 remains draft pending its separate readiness gate.
+
+- Accept one local `.yaml` or `.yml` file through a visible editor drop target.
+- Preserve keyboard-equivalent Open file behavior and announce drag, rejection, cancellation, success, and read-failure states.
+- Protect dropped-file, Open file, and sample replacement behind one unsaved-change confirmation boundary.
+- Preserve mode and active tab while resetting Validation filtering and Tree search and invalidating a prepared report after successful replacement.
+- Prevent browser navigation for misplaced file drops and preserve all source and derived state after rejection, cancellation, or read failure.
+- Keep file contents, basename, and transient drag state in browser memory without adding upload, persistence, telemetry, backend, Kubernetes API, credential, or cluster-mutation paths.
+
+See [Milestone 042](docs/milestones/milestone-042-safe-browser-local-yaml-file-drop.md).
+
+- Later increments: display preferences, additional export formats, and bounded large-file processing.
 
 ### Later outcomes in this phase
 
