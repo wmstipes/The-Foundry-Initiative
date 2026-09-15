@@ -1,9 +1,11 @@
 # Milestone 040 — Validation result filters
 
-**Status:** Immutable `0.8.0` deployed, runtime-verified, and live browser-accepted; PR readiness and merge pending
+**Status:** Complete. Immutable `0.8.0` deployed, runtime-verified, live browser-accepted, and merged through PR #20
 **Started:** 2026-09-14
+**Completed:** 2026-09-15
 **Branch:** `codex/milestone-040-validation-filters`
 **Baseline:** `main` at `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4`
+**Merge:** `6fa5092210633abde28335b76dcad1e085578789`
 
 ## Goal
 
@@ -75,8 +77,8 @@ The milestone adds no storage, cookies, telemetry, backend, network request, Kub
 5. Deployment-manifest mutation — complete after separate approval.
 6. Cluster deployment — complete after separate approval.
 7. Live browser acceptance — complete after separate approval.
-8. Pull-request readiness — requires separate approval.
-9. Merge — requires separate approval.
+8. Pull-request readiness — complete after separate approval.
+9. Merge — complete through PR #20 at `6fa5092`.
 
 ## Validation evidence
 
@@ -103,4 +105,5 @@ The milestone adds no storage, cookies, telemetry, backend, network request, Kub
 - The approved rollout completed successfully with one Ready Pod on `forge-node-03`, zero restarts, and a runtime ImageID matching the pinned OCI index digest.
 - The EndpointSlice settled to the new Pod only. Fresh `/healthz` and application requests through NodePort `30081` returned HTTP 200 with the expected Content Security Policy and `X-Content-Type-Options: nosniff`.
 - Live browser acceptance passed all nine checks for counted filters, level isolation, hidden empty sections, complete-analysis indicators, edit-time recomputation, reset boundaries, complete Markdown reports, finding navigation, scrolling, guidance, and Copy YAML.
-- PR readiness and merge remain separately gated.
+- PR readiness completed after all three head workflows passed. PR #20 merged into `main` at `6fa5092210633abde28335b76dcad1e085578789` on 2026-09-15.
+- Post-merge Workbench CI run 142, Kubernetes Manifest Validation run 124, and Restaurant API Docker Build run 57 passed on `main`.
