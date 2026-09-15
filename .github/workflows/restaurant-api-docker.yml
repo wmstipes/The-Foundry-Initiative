@@ -6,6 +6,8 @@ on:
       - main
     tags:
       - "v*.*.*"
+    paths:
+      - "apps/restaurant-api/**"
 
   workflow_dispatch:
 

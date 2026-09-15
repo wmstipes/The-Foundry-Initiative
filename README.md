@@ -64,6 +64,12 @@ Milestone 036 recovered from the rejected `0.4.0` browser startup defect without
 
 Milestone 042 adds one-file YAML drag-and-drop with visible and accessible target states, shared unsaved-change protection, deterministic state boundaries, and no upload or persistence path. Immutable `0.10.0` is published, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #23 at `020d5e7`.
 
+## Documentation front door
+
+The [GitHub Wiki](https://github.com/wmstipes/The-Foundry-Initiative/wiki) is a curated reader-facing navigation layer. Repository documentation remains authoritative; the Wiki intentionally points to the current project status, architecture, roadmap, runbooks, milestone evidence, and vision instead of copying them.
+
+The reviewed Wiki source lives in `docs/wiki`, and `scripts/validate-wiki-front-door.py` verifies its structure, links, stable-content boundary, and exact-copy publication contract.
+
 ## Repository map
 
 ```text
@@ -86,6 +92,7 @@ The-Foundry-Initiative/
     milestones/            Chronological implementation evidence
     observability/         PromQL baselines and observability guidance
     runbooks/              Operator procedures and recovery guidance
+    wiki/                  Repository-owned source for the curated Wiki front door
 
   src/                      Shared or earlier implementation code
   tests/                    Shared or earlier automated tests

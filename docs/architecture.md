@@ -140,6 +140,15 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 - `docs/milestones` preserves chronological implementation evidence.
 - `docs/observability` contains reusable metrics queries and guidance.
 - `docs/runbooks` contains operator procedures and recovery steps.
+- `docs/wiki` contains the reviewed source for the derivative GitHub Wiki Home and sidebar.
+
+## Documentation authority and publication
+
+The main repository is the authoritative documentation system. `ROADMAP.md` owns direction and sequencing, `docs/project-status.md` owns current live state, `docs/architecture.md` owns system design and constraints, `docs/milestones` owns chronological evidence, and `docs/runbooks` owns operator procedures.
+
+The GitHub Wiki is a separate Git repository and serves only as a curated front door. Its Home and sidebar are published as exact copies of the reviewed files under `docs/wiki`; they contain stable orientation and links rather than versions, live state, commands, recovery steps, or acceptance evidence. If the Wiki and repository ever disagree, the repository is authoritative.
+
+Routine Wiki changes begin in the main repository, pass offline structure and link validation, receive normal review, and require separate approval before the live Wiki is mutated. Direct browser edits are reserved for an explicitly approved recovery or rollback.
 
 ## Architectural principles
 
@@ -166,12 +175,11 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 
 Potential next architecture steps include:
 
-1. Evaluate a curated reader-facing documentation front door without duplicating the authoritative repository documentation.
-2. Observe naturally occurring limited-alert behavior before designing notification delivery.
-3. Continue the demonstrated Prometheus and Grafana backup cadence.
-4. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
-5. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
-6. Evolve the rules-based `/analyze` endpoint into the ForgeOps AI-assisted incident copilot.
+1. Observe naturally occurring limited-alert behavior before designing notification delivery.
+2. Continue the demonstrated Prometheus and Grafana backup cadence.
+3. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
+4. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
+5. Evolve the rules-based `/analyze` endpoint into the ForgeOps AI-assisted incident copilot.
 
 ## Decision records
 

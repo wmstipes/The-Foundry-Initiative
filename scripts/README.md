@@ -78,6 +78,15 @@ powershell -ExecutionPolicy Bypass -File .\scripts\test-metrics-server.ps1
 python .\scripts\validate-k8s-manifests.py
 ```
 
+## Wiki front-door validation (Milestone 043)
+
+```powershell
+python .\scripts\validate-wiki-front-door.py
+python -m unittest tests.test_wiki_front_door
+```
+
+The validator requires exactly `Home.md` and `_Sidebar.md` under `docs/wiki`, checks accessible heading structure and descriptive HTTPS links, resolves repository targets locally, rejects volatile operational content, and verifies the bounded Restaurant API image-publication trigger. After separately approved Wiki publication, pass the cloned Wiki directory with `--wiki-dir` to require a byte-for-byte match with the reviewed repository source.
+
 ## Limited alert validation and guarded activation (Milestone 030)
 
 ```powershell
