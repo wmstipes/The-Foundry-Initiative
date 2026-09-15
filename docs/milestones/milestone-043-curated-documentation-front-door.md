@@ -1,6 +1,6 @@
 # Milestone 043 — Curated documentation front door
 
-**Status:** Wiki publication, browser acceptance, and PR readiness complete; merge and cleanup remain separately gated
+**Status:** Complete; cleanup remains separately gated
 
 **Started:** 2026-09-15
 
@@ -105,6 +105,14 @@ GitHub does not evaluate path filters for tag pushes, so version-tag publication
 - All repository destinations referenced by the Wiki were confirmed through the connected GitHub API.
 - User browser acceptance confirmed correct visible rendering, all navigation destinations, keyboard navigation, readability at 200-percent zoom, and collaborator-only Wiki editing.
 
+## Merge evidence
+
+- PR #25 merged into `main` on 2026-09-15 at 22:10:27 UTC.
+- The merge commit is `c42614db59f8b42a3d5e90d0a9e4272f47ed8080`.
+- GitHub reported no workflow runs or commit statuses for the merge commit.
+- In particular, the Restaurant API Docker publication workflow did not run.
+- This is the first live confirmation that a documentation-only merge is skipped by the Milestone 043 path guardrail.
+
 ## Deterministic verification
 
 Local acceptance requires:
@@ -124,5 +132,5 @@ Publication acceptance additionally requires a draft PR with expected files and 
 3. Branch publication and draft PR — complete after explicit approval.
 4. Live Wiki mutation and browser accessibility review — complete after explicit approval at Wiki commit `0a945b4cac2ba1c781a55f9aa1a8c389426892e3`.
 5. Pull-request readiness — complete after explicit approval.
-6. Merge — not authorized.
+6. Merge — complete at `c42614db59f8b42a3d5e90d0a9e4272f47ed8080`.
 7. Cleanup — not authorized.
