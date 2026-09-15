@@ -1,6 +1,6 @@
 # Milestone 041 — Browser-local YAML tree search
 
-**Status:** Immutable `0.9.0` image published; deployment-manifest mutation pending separate approval
+**Status:** Immutable `0.9.0` deployed and live browser-accepted; pull-request readiness pending separate approval
 **Started:** 2026-09-15
 **Branch:** `codex/milestone-041-tree-search`
 **Baseline:** `main` at `e1f48d94a3c88e3a459dedc5af3d9d6537940381`
@@ -62,7 +62,7 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 - Added the Tree search region, counted status, navigation controls, ancestor expansion, match presentation, active state, and keyboard behavior.
 - Added helper and Happy DOM tests for matching, ordering, navigation, expansion, focus, announcements, editing, formatting, parser recovery, and reset boundaries.
 - Advanced application and lockfile candidate metadata to `0.9.0`.
-- Left the tracked Kubernetes Deployment and live immutable `0.8.0` runtime unchanged.
+- Updated only the tracked Deployment version labels and immutable image reference for the separately approved `0.9.0` rollout.
 
 ## Gated delivery workflow
 
@@ -70,9 +70,9 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 2. Local implementation approval — complete.
 3. Local automated verification, Windows validation, and browser source review — complete.
 4. Source and image publication — complete after separate approval.
-5. Deployment-manifest mutation — pending separate approval.
-6. Cluster deployment — pending separate approval.
-7. Live browser acceptance — pending separate approval.
+5. Deployment-manifest mutation — complete after separate approval.
+6. Cluster deployment — complete after separate approval.
+7. Live browser acceptance — complete after separate approval.
 8. Pull-request readiness — pending separate approval.
 9. Merge — pending separate approval.
 10. Post-merge cleanup — pending separate approval.
@@ -85,8 +85,8 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 - Strict-CSP validation confirms the production JavaScript contains no eval or Function-constructor usage.
 - Dependency audit reports zero vulnerabilities.
 - Repository Kubernetes validation, 23 supporting Python tests, and whitespace validation pass.
-- The tracked Workbench Deployment and repository validator remain unchanged at immutable `0.8.0`.
-- This workspace has no Docker client, so the non-publishing AMD64/ARM64 build remains for the established GitHub workflow after publication approval.
+- The tracked Workbench Deployment and repository validator pin immutable `0.9.0` at OCI index `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`.
+- The established GitHub workflow completed the non-publishing AMD64/ARM64 build successfully.
 - The cloud browser cannot reach the workspace loopback server (`ERR_BLOCKED_BY_CLIENT`), so visual browser review remains an explicit operator source-acceptance item.
 - Draft PR #22 opened from connector-authored commit `20800196d202f6a6b58c37dc73bb49ffe529a2d6`; its tree SHA exactly matches the locally accepted source tree.
 - Workbench CI run 143 passed.
@@ -98,4 +98,7 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 - Publication workflow run 147 (`35003003075`) completed successfully and published both target architectures.
 - The immutable OCI index is `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`.
 - Independent registry inspection confirmed Linux AMD64 manifest `sha256:4cd48baf0f913b944efa4206302d828107674f7ea7e20543972479d09866dc86` and Linux ARM64 manifest `sha256:e26f85a206a2b564928e285f34253b72b5c8890f99d2eb0af702bfcfdecc9d7b`.
-- The tracked Deployment and live immutable `0.8.0` runtime remain unchanged pending the separate manifest-mutation gate.
+- Repository validation and the approved Deployment-only live diff passed before rollout; the diff changed only generation, two version labels, and the immutable image reference.
+- Deployment generation 13 completed with one available and Ready Pod on `forge-node-03`, zero restarts, and runtime ImageID `docker.io/wmstipes/signalforge-yaml-workbench@sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`.
+- EndpointSlice `forge-yaml-workbench-bjzkq` reported ready endpoint `10.244.54.202:8080`; private-lab NodePort `30081` returned HTTP 200 for `/healthz` and `/` with the expected CSP and security headers.
+- Operator live browser acceptance passed key, scalar-value, and canonical-path matching; one-node counts; wrapping navigation; ancestor expansion; visible and active highlighting; keyboard, focus, and live-status behavior; edit and parser recovery; formatting and report isolation; reset boundaries; cancelled-clear preservation; and default-expansion restoration.

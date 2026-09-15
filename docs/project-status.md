@@ -27,17 +27,17 @@ The project has moved from basic workload deployment into repeatable engineering
 - Namespace: `forge-tools`
 - Deployment: `forge-yaml-workbench`
 - Replicas: 1 available and Ready
-- Release: accepted `0.8.0` deployed
-- Image: `wmstipes/signalforge-yaml-workbench:0.8.0@sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`
+- Release: accepted `0.9.0` deployed
+- Image: `wmstipes/signalforge-yaml-workbench:0.9.0@sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`
 - Runtime ImageID: verified against the pinned OCI index digest
 - External lab access: NodePort `30081`
 - Data path: browser-local parsing and analysis; no server-side YAML persistence
 - Modes: Kubernetes inspection by default and explicit General YAML inspection for mapping, sequence, and scalar roots
 - Kubernetes identity: no mounted ServiceAccount token and no RBAC access
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
-- Acceptance: immutable `0.8.0` is deployed; configured and runtime digests, one Ready Pod on `forge-node-03` with zero restarts, one ready EndpointSlice endpoint, NodePort health and page responses, security headers, and all nine live Validation-filter browser checks passed
+- Acceptance: immutable `0.9.0` is deployed; configured and runtime digests, one Ready Pod on `forge-node-03` with zero restarts, one ready EndpointSlice endpoint, NodePort health and page responses, security headers, and the complete live Tree-search workflow passed
 - Validation filters: counted All, Errors, Warnings, Notes, and Valid views preserve the complete analysis for the tab badge, overall status, OWASP coverage, and Markdown reports
-- Active source work: Milestone 041 `0.9.0` browser-local Tree search passed source acceptance and was published at OCI index `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`; the tracked Deployment and live runtime remain immutable `0.8.0`
+- Tree search: Milestone 041 provides literal key, scalar-value, and canonical-path matching with deterministic counted navigation, automatic ancestor expansion, highlighting, accessible keyboard behavior, and explicit state boundaries
 
 ## Milestone 038 closeout
 
@@ -193,7 +193,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the exact Deployment-only `0.9.0` label and immutable-image mutation before separately authorizing any tracked-manifest change. Deployment, live acceptance, PR readiness, merge, and cleanup remain later separate approval gates. The live cluster remains on immutable `0.8.0`.
+Review Milestone 041 and draft PR #22 for pull-request readiness. Merge and post-merge cleanup remain later separate approval gates.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
@@ -217,4 +217,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench `0.8.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`. Its runtime, formatting preview, Markdown report workflow, Validation filters, OWASP profile, schema boundaries, General YAML isolation, strict headers, and corrected finding-link scrolling passed live acceptance. NodePort `30081` remains private-lab HTTP exposure. Candidate `0.9.0` Tree search is not deployed.
+Forge YAML Workbench `0.9.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`. Its runtime, Tree search, formatting preview, Markdown report workflow, Validation filters, OWASP profile, schema boundaries, General YAML isolation, strict headers, and corrected finding-link scrolling passed live acceptance. NodePort `30081` remains private-lab HTTP exposure.

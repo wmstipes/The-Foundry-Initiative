@@ -668,3 +668,22 @@ Source acceptance is complete for candidate `0.9.0`. Image publication, immutabl
 ### Next small step
 
 Prepare and review the exact Deployment-only `0.9.0` label and immutable-image diff. Mutating the tracked manifest requires separate approval before cluster deployment is considered.
+
+## 2026-09-15 — Milestone 041 deployment and live acceptance
+
+### What changed
+
+- After separate approval, changed only the Workbench Deployment version labels and immutable image reference to `wmstipes/signalforge-yaml-workbench:0.9.0@sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581` and updated the repository validator expectation.
+- Repository validation passed, and the server dry-run completed. The non-fatal Server-Side Apply ownership warning reflected the existing client-side-managed last-applied annotation; the actual rollout retained client-side `kubectl apply`.
+- The reviewed live diff contained only generation 12 to 13, two version-label changes, and the immutable image change.
+- Deployment generation 13 completed with one available and Ready Pod on `forge-node-03`, zero restarts, and an exact configured/runtime OCI index match.
+- EndpointSlice `forge-yaml-workbench-bjzkq` reported ready endpoint `10.244.54.202:8080`. Private-lab NodePort `30081` returned HTTP 200 for `/healthz` and `/`, including the expected CSP, `nosniff`, frame, and referrer headers.
+- Operator live browser acceptance passed literal key, scalar-value, and canonical-path search; one-node counts; Previous/Next wrapping; ancestor expansion; match and active-match highlighting; keyboard, focus, and live-status behavior; edit and invalid-YAML recovery; formatting and report isolation; reset boundaries; cancelled-clear preservation; and default-expansion restoration.
+
+### Trust boundary
+
+The deployed search remains entirely browser-local and ephemeral. No YAML content is sent to a backend, and no telemetry, persistence, Kubernetes API access, RBAC, ServiceAccount token, credential, deployment control, automatic remediation, or cluster mutation capability was added to the application.
+
+### Next small step
+
+Review draft PR #22 for readiness. Marking it ready, merging it, and post-merge cleanup remain separate approval gates.
