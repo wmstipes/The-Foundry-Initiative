@@ -509,3 +509,89 @@ Repository validation and server-side dry-run passed. The live diff contained on
 ### Next small step
 
 PR #18 merged at `1e0c525`. Workbench CI run 136, Kubernetes Manifest Validation run 121, and Restaurant API Docker Build run 55 passed on `main`. Select the next bounded milestone while preserving the browser-local trust boundary and separate release gates.
+
+## 2026-09-14 — Milestone 040 planning: Validation result filters
+
+### What changed
+
+- Anchored the milestone to `main` commit `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4` after Milestone 039 cleanup.
+- Approved counted All, Errors, Warnings, Notes, and Valid filters for existing Validation entries.
+- Kept the tab badge, overall status, OWASP profile, and Markdown report based on the complete analysis.
+- Defined ephemeral filter state that persists across edits but resets at mode and input-replacement boundaries.
+- Preserved separate gates for implementation, publication, manifest mutation, deployment, live acceptance, PR readiness, and merge.
+
+### Why this matters
+
+The Validation view now combines syntax, document shape, deterministic operations, and schema results. A presentation-only filter makes larger reviews easier without expanding what the Workbench reads, stores, or claims to know.
+
+## 2026-09-14 — Milestone 040 implementation
+
+### What changed
+
+- Added counted Validation controls for All, Errors, Warnings, Notes, and Valid.
+- Hid empty filtered sections and added visible-versus-total and filtered-empty explanations.
+- Preserved result ordering, finding navigation, fix guidance, OWASP separation, complete status indicators, and complete Markdown reports.
+- Preserved the selected filter through YAML edits while resetting it for inspection-mode changes, sample or file loading, and clearing.
+- Added keyboard focus, pressed-state, live-feedback, recomputation, reset, empty-result, OWASP, and report-isolation DOM coverage.
+- Advanced source metadata to candidate `0.8.0` without changing the tracked Deployment or live immutable `0.7.0` runtime.
+
+### What remains gated
+
+Complete visual browser review and the non-publishing multi-architecture build before considering publication. Branch publication, image publication, manifest mutation, deployment, live browser acceptance, PR readiness, and merge remain separate approval gates.
+
+### Automated validation result
+
+- All 74 tests passed, including filtered finding navigation and Copy YAML behavior.
+- Validator reproducibility, production build, strict-CSP scan, zero-vulnerability audit, repository Kubernetes manifest validation, and whitespace validation passed.
+- The repository contains no Workbench Deployment diff; accepted immutable `0.7.0` remains the declared and live runtime.
+- Docker is unavailable in this workspace, leaving the non-publishing multi-architecture build for the established GitHub pull-request workflow.
+- The remote browser could not reach the workspace loopback server, so visual browser acceptance remains a later explicit gate rather than an inferred result.
+
+## 2026-09-15 — Milestone 040 source acceptance
+
+### Validation result
+
+- Draft PR #20 opened from remote source commit `82b291e`.
+- Workbench CI run 137 passed all source checks.
+- Non-publishing AMD64/ARM64 Docker build run 139 passed without pushing an image.
+- A clean Windows dependency installation and all 74 tests passed.
+- Operator browser review accepted filter counts, result-level isolation, empty-section behavior, OWASP separation, unchanged complete-analysis indicators, finding navigation, complete report behavior, recomputation during editing, and filter resets.
+
+### Gate state
+
+Source acceptance is complete for candidate `0.8.0`. Image publication, immutable digest recording, tracked-manifest mutation, deployment, live-cluster acceptance, PR readiness, and merge remain separately gated. Accepted immutable `0.7.0` remains live.
+
+## 2026-09-15 — Milestone 040 image publication
+
+### What changed
+
+- Received explicit approval to publish Workbench `0.8.0` from accepted source commit `1d8a487ada5e053ca806e59195f0807d11564351`.
+- Created tag `forge-yaml-workbench-v0.8.0` at that exact commit.
+- Publication workflow run 141 (`34972448064`) built and pushed the AMD64/ARM64 image successfully.
+- Recorded immutable OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`.
+- Independently confirmed AMD64 manifest `sha256:dfbfc92e3d4a074d0a421cc3fdb7937f4288937af291aac71ec9a0dc3786d536` and ARM64 manifest `sha256:2db1d88fe7357452f82256e81a4d56ef52d3ddc72bffe0f31524adab524ce615`.
+- Left the tracked Deployment and live immutable `0.7.0` runtime unchanged.
+
+### Next small step
+
+Prepare and review the exact Deployment-only `0.8.0` label and immutable-image diff. Mutating the tracked manifest requires a separate approval before any cluster deployment is considered.
+
+## 2026-09-15 — Milestone 040 deployment and live acceptance
+
+### What changed
+
+- After separate approval, staged the two `0.8.0` version labels and immutable OCI index in the Workbench Deployment and matching repository validator expectation.
+- Repository validation, server-side dry-run, and the exact live diff passed before deployment approval.
+- Applied only the approved Workbench Deployment and completed the rolling update successfully.
+- Verified one Ready Pod on `forge-node-03` with zero restarts and a runtime ImageID matching OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`.
+- Confirmed the EndpointSlice settled to the new Pod only and fresh `/healthz` and application requests through NodePort `30081` returned HTTP 200.
+- Confirmed the deployed Content Security Policy and `X-Content-Type-Options: nosniff` header.
+- Completed all nine live browser checks for filter counts, level isolation, empty-section behavior, complete-analysis indicators and reports, edit-time recomputation, reset boundaries, navigation, scrolling, guidance, and Copy YAML.
+
+### Trust boundary
+
+The release remains stateless and browser-local. No backend YAML processing, persistence, telemetry, Kubernetes API access, RBAC, ServiceAccount token, cluster credential, or automatic remediation was added.
+
+### Next small step
+
+Perform the final PR-readiness review. PR readiness and merge remain separate approval gates.
