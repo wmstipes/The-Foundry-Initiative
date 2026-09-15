@@ -801,3 +801,14 @@ Immutable Workbench `0.10.0` is published, deployed, runtime-verified, and live 
 - Reconciled the PR description with the published OCI digest, generation-14 runtime, browser acceptance, trust boundary, and remaining procedural gates.
 - PR #23 merged into `main` at `020d5e796d586b12b9e5e2819cb898d0c51dcaf9` after separate approval.
 - Milestone 042 is complete; only integration of this post-merge status record and separately approved branch cleanup remain.
+
+## 2026-09-15 — Milestone 043 planning and local implementation
+
+### Result
+
+- Audited the README, roadmap, architecture, project status, all milestone records, both runbooks, current workflows, and GitHub's documented Wiki behavior before selecting the increment.
+- Kept the repository authoritative and bounded the Wiki to a repository-owned Home and custom sidebar that route distinct readers to current repository documents.
+- Added a standard-library validator and seven focused tests for file scope, heading structure, descriptive same-repository links, local target existence, the authority notice, volatile-content rejection, exact Wiki-copy comparison, and the intended Restaurant image-workflow event matrix.
+- Corrected the Restaurant API Docker workflow candidate so documentation-only `main` pushes do not publish an image while application-source pushes, version tags, and manual dispatch remain enabled.
+- Reconciled the stale project-status next step and documented the authority, maintenance, accessibility, validation, and approval boundaries.
+- Local implementation is complete. No branch publication, draft PR, Wiki mutation, PR readiness transition, merge, or cleanup has been authorized.

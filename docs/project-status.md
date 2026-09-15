@@ -40,6 +40,17 @@ The project has moved from basic workload deployment into repeatable engineering
 - Tree search: Milestone 041 provides literal key, scalar-value, and canonical-path matching with deterministic counted navigation, automatic ancestor expansion, highlighting, accessible keyboard behavior, and explicit state boundaries
 - File drop: Milestone 042 provides visible one-file YAML drag-and-drop, shared unsaved-change protection, explicit state preservation and reset boundaries, keyboard-equivalent opening, and browser-navigation prevention
 
+## Current documentation front-door state
+
+- Milestone: 043, local implementation complete
+- Purpose: curated navigation for recruiters, technical reviewers, operators, and learners
+- Authority: repository documentation remains authoritative
+- Repository source: `docs/wiki/Home.md` and `docs/wiki/_Sidebar.md`
+- Validation: offline structure, link-target, stable-content, workflow-trigger, and exact-copy checks pass locally
+- Live Wiki: unchanged; mutation has not been authorized
+- Restaurant API image workflow: local candidate limits `main` branch pushes to `apps/restaurant-api/**` while preserving version-tag and manual dispatch paths
+- Remaining gates: publication, Wiki mutation, PR readiness, merge, and cleanup
+
 ## Milestone 038 closeout
 
 - Release: `0.6.0`
@@ -195,13 +206,9 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Milestone 042 source is accepted in draft PR #23. Candidate `0.10.0` adds a visible and accessible editor drop target for exactly one local YAML file, shared unsaved-change protection for drop, Open file, and Load sample, page-navigation prevention for misplaced file drops, and explicit state-reset and preservation boundaries. All 92 tests, validator reproducibility, production build, strict-CSP validation, zero-vulnerability audit, clean Windows validation, operator browser review, repository validation, and the non-publishing AMD64/ARM64 build pass.
+Review the local Milestone 043 source and verification evidence. If accepted, the next separately gated action is publication of `codex/milestone-043-documentation-front-door` and creation of a draft pull request. The live Wiki remains unchanged until its own approval gate.
 
-Tag `forge-yaml-workbench-v0.10.0` and its AMD64/ARM64 image were published from accepted source commit `ba97289c391cab7e7a33f13efc2ca39103065214`. The verified OCI index is `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`. After separate approval, the tracked Deployment and validator were locally updated to that immutable image.
-
-Deployment generation 14 completed with one available and Ready `0.10.0` Pod on `forge-node-03`, zero restarts, runtime ImageID matching the OCI index, one ready EndpointSlice endpoint at `10.244.54.203:8080`, and HTTP 200 health and page responses with the expected security headers. The complete live browser file-drop acceptance procedure passed.
-
-Milestone 042 is complete and merged through PR #23 at `020d5e7`. The only remaining procedure is separately approved cleanup of the merged feature and closeout branches after this closeout record is integrated.
+## Supporting completed work
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 

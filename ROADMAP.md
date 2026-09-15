@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-042 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 042's safe browser-local YAML file drop runs as immutable Workbench `0.10.0` and was merged through PR #23 at `020d5e7`.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-042 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 043 is implementing a repository-owned, reader-facing GitHub Wiki front door without transferring authority away from the repository documentation.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -294,7 +294,19 @@ See [Milestone 041](docs/milestones/milestone-041-browser-local-tree-search.md).
 
 See [Milestone 042](docs/milestones/milestone-042-safe-browser-local-yaml-file-drop.md).
 
-- Later increments: display preferences, additional export formats, and bounded large-file processing.
+- Workbench later increments: display preferences, additional export formats, and bounded large-file processing.
+
+#### Milestone 043 — Curated documentation front door
+
+**Status:** Local implementation complete; publication, Wiki mutation, PR readiness, merge, and cleanup remain separately gated.
+
+- Maintain a concise Wiki Home and custom sidebar as exact derivatives of reviewed source under `docs/wiki`.
+- Route recruiters, technical reviewers, operators, and learners to authoritative repository documents without copying volatile status, procedures, or evidence.
+- Validate Wiki structure, accessibility-oriented headings and link text, same-repository targets, stable-content boundaries, and byte-for-byte publication.
+- Restrict Restaurant API image publication on `main` to Restaurant API source changes while preserving version-tag and manual publication.
+- Keep the repository authoritative and collaborator-only Wiki editing intact.
+
+See [Milestone 043](docs/milestones/milestone-043-curated-documentation-front-door.md).
 
 ### Later outcomes in this phase
 
