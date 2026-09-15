@@ -609,3 +609,31 @@ Perform the final PR-readiness review. PR readiness and merge remain separate ap
 ### Next small step
 
 Merge this documentation-only closeout, remove the merged Milestone 040 branches, and select the next bounded increment from the deferred Workbench capabilities.
+
+## 2026-09-15 — Milestone 041 planning and implementation: browser-local YAML tree search
+
+### What changed
+
+- Verified clean `main` at `e1f48d94a3c88e3a459dedc5af3d9d6537940381` and confirmed both merged Milestone 040 remote branches were removed before implementation.
+- Approved a bounded Tree-tab search for keys, scalar values, and canonical YAML paths using case-insensitive literal matching.
+- Added deterministic document/depth-first indexing, one-node match counts, Previous and Next wrapping, automatic ancestor expansion, match and active-match presentation, and active-result scrolling.
+- Added Enter, Shift+Enter, Escape, and Tree-tab Ctrl+F or Cmd+F behavior while preserving native disclosure controls and search-control focus.
+- Preserved query recomputation across edits, temporary invalid YAML, formatting, and tab changes; reset it for mode changes, sample/file loading, and confirmed clearing.
+- Added helper and Happy DOM coverage for path construction, values and types, literal matching, ordering, navigation, expansion, highlighting, announcements, focus, parser recovery, formatting, and reset boundaries.
+- Advanced source metadata to candidate `0.9.0` without changing the tracked Deployment or live immutable `0.8.0` runtime.
+
+### Trust boundary
+
+Tree search consumes only the already parsed in-memory document values. It adds no replacement, regex, Validation-result search, persistence, backend, network access, Kubernetes API access, credentials, remediation, deployment control, or cluster mutation.
+
+### Current validation result
+
+- All 83 automated tests pass.
+- Validator reproducibility, production build, strict-CSP scan, zero-vulnerability audit, repository Kubernetes validation, 23 supporting Python tests, and whitespace validation pass.
+- The tracked Workbench Deployment and validator expectation remain unchanged at immutable `0.8.0`.
+- This workspace has no Docker client; the non-publishing multi-architecture build remains for the established GitHub workflow after publication approval.
+- The cloud browser cannot reach the workspace loopback server, so Windows and operator browser review remain explicit source-acceptance checks.
+
+### What remains gated
+
+Source publication, image publication, manifest mutation, deployment, live browser acceptance, PR readiness, merge, and cleanup remain separate approval gates.

@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-040 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 040's browser-local Validation filters run as immutable Workbench `0.8.0`.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-040 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 040's browser-local Validation filters run as immutable Workbench `0.8.0`; Milestone 041 is implementing browser-local YAML tree search as candidate `0.9.0`.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -267,7 +267,20 @@ See [Milestone 039](docs/milestones/milestone-039-browser-local-markdown-reports
 
 See [Milestone 040](docs/milestones/milestone-040-validation-result-filters.md).
 
-- Later increments: tree search, drag-and-drop, display preferences, additional export formats, and bounded large-file processing.
+#### Milestone 041 — Browser-local YAML tree search
+
+**Status:** Implementation in progress as candidate `0.9.0`; the live Deployment remains immutable `0.8.0`.
+
+- Search keys, scalar values, and canonical paths with case-insensitive literal matching.
+- Count matches once per node and navigate deterministically with wrapping Previous and Next actions.
+- Expand matching ancestors and distinguish all matches from the active match.
+- Preserve accessible keyboard, focus, disclosure, and live-status behavior.
+- Recompute through edits and formatting while resetting at explicit mode and input-replacement boundaries.
+- Keep search ephemeral and independent of analysis, Validation filters, reports, storage, backend processing, network access, credentials, and cluster state.
+
+See [Milestone 041](docs/milestones/milestone-041-browser-local-tree-search.md).
+
+- Later increments: drag-and-drop, display preferences, additional export formats, and bounded large-file processing.
 
 ### Later outcomes in this phase
 

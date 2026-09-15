@@ -54,10 +54,10 @@ flowchart TD
 - Source: `apps/forge-yaml-workbench`
 - Manifests: `k8s/forge-yaml-workbench`
 - Namespace: `forge-tools`
-- Deployment: one stateless replica using accepted immutable release `0.7.0`; `0.8.0` filter work remains an undeployed source candidate
+- Deployment: one stateless replica using accepted immutable release `0.8.0`; `0.9.0` Tree-search work remains an undeployed source candidate
 - Access: private-lab NodePort `30081`
 - Runtime: unprivileged NGINX on container port `8080`
-- Processing: shared YAML parsing, formatting preview, line-diff generation, diagnostics, file handling, tree navigation, Markdown report generation, and Validation display filtering run entirely in the browser; display filters do not change analysis or report contents, while Kubernetes-specific operational findings, the bundled `v1.36.4` schema validator, and the pinned OWASP Top 10:2025 review profile run only in Kubernetes mode
+- Processing: shared YAML parsing, formatting preview, line-diff generation, diagnostics, file handling, tree navigation and search, Markdown report generation, and Validation display filtering run entirely in the browser; Tree search and display filters do not change analysis or report contents, while Kubernetes-specific operational findings, the bundled `v1.36.4` schema validator, and the pinned OWASP Top 10:2025 review profile run only in Kubernetes mode
 - Schema boundary: the Milestone 036 implementation supports 12 explicit core, apps, and batch GVKs; unsupported built-ins and unavailable CRD schemas receive non-validity result states. The published `0.4.1` correction uses build-time standalone validators so the strict CSP remains intact.
 - Security-review boundary: Milestone 037 labels OWASP categories as direct, partial, or cluster-context-required. Manifest-local signals are not compliance results and cannot establish effective RBAC, policy enforcement, network reachability, component vulnerability, authentication, audit, logging, or monitoring state.
 - Identity: no RBAC, Kubernetes API access, or mounted ServiceAccount token

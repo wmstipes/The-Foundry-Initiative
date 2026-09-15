@@ -37,6 +37,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
 - Acceptance: immutable `0.8.0` is deployed; configured and runtime digests, one Ready Pod on `forge-node-03` with zero restarts, one ready EndpointSlice endpoint, NodePort health and page responses, security headers, and all nine live Validation-filter browser checks passed
 - Validation filters: counted All, Errors, Warnings, Notes, and Valid views preserve the complete analysis for the tab badge, overall status, OWASP coverage, and Markdown reports
+- Active source work: Milestone 041 candidate `0.9.0` adds ephemeral browser-local Tree search; the tracked Deployment and live runtime remain immutable `0.8.0`
 
 ## Milestone 038 closeout
 
@@ -192,7 +193,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the exact Deployment-only `0.8.0` label and immutable-image mutation before separately authorizing any tracked-manifest change. The live cluster remains unchanged.
+Complete local verification and browser source review for Milestone 041 candidate `0.9.0`. Source publication, image publication, tracked-manifest mutation, deployment, live acceptance, PR readiness, merge, and cleanup remain separate approval gates. The live cluster remains on immutable `0.8.0`.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
@@ -216,4 +217,4 @@ Prometheus and Grafana remain dependent on `forge-head` and its local NVMe durin
 
 Kubelet serving-certificate rotation can create new pending CSRs. Core Kubernetes does not automatically approve these serving requests, so an operator must validate the requester, signer, usages, subject, and SAN ownership before approval.
 
-Forge YAML Workbench `0.7.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`. Its runtime, formatting preview, Markdown report workflow, OWASP profile, schema boundaries, General YAML isolation, strict headers, and corrected finding-link scrolling passed live acceptance. NodePort `30081` remains private-lab HTTP exposure.
+Forge YAML Workbench `0.8.0` is deployed from the published AMD64/ARM64 OCI index at `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`. Its runtime, formatting preview, Markdown report workflow, Validation filters, OWASP profile, schema boundaries, General YAML isolation, strict headers, and corrected finding-link scrolling passed live acceptance. NodePort `30081` remains private-lab HTTP exposure. Candidate `0.9.0` Tree search is not deployed.

@@ -2,7 +2,7 @@
 
 Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. It parses YAML locally in the browser and offers Kubernetes-specific and General YAML inspection modes.
 
-## Version 0.8.0 candidate source scope
+## Version 0.9.0 candidate source scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
@@ -10,7 +10,7 @@ Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. 
 - Accept mapping, sequence, and scalar document roots in General YAML mode.
 - Summarize each General YAML document by root type and shape while suppressing Kubernetes-only operational findings.
 - Display resource identity, namespace, labels, selectors, replicas, Services, containers, images, tags or digests, ports, probes, resources, volumes, and ServiceAccount use.
-- Show an expandable object tree.
+- Show an expandable object tree with literal key, scalar-value, and canonical-path search.
 - Detect YAML parser errors and duplicate keys.
 - Validate an explicit set of Kubernetes resources against a browser-local schema bundle pinned to Kubernetes `v1.36.4`.
 - Present YAML syntax, deterministic operational findings, and schema-validation results as separate report sections.
@@ -24,6 +24,7 @@ Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. 
 - Keep the complete source YAML out of the report and preserve unsaved YAML state during report export.
 - Filter Validation results by All, Errors, Warnings, Notes, or Valid without changing the underlying analysis.
 - Keep OWASP coverage, overall status, the tab badge, and Markdown reports independent of the selected display filter.
+- Count and navigate Tree matches with automatic ancestor expansion, visible match states, keyboard shortcuts, and polite screen-reader feedback.
 
 ## Milestone 033 usability improvements
 
@@ -148,6 +149,21 @@ The `0.8.0` candidate adds a presentation-only filter layer to the Validation ta
 - the tab badge, overall status, and generated Markdown remain complete and unfiltered
 
 Filter state exists only in browser memory. It adds no persistence, network activity, backend, cluster access, credentials, analysis mutation, or new export boundary.
+
+## Milestone 041 browser-local YAML tree search
+
+The `0.9.0` candidate adds a Tree-tab search layer:
+
+- case-insensitive literal matching across keys, scalar values, and canonical YAML paths
+- one count per matching node in stable document and depth-first order
+- Previous and Next navigation with wrapping, plus explicit clearing
+- automatic ancestor expansion and distinct all-match and active-match presentation
+- Enter, Shift+Enter, Escape, and Tree-tab Ctrl+F or Cmd+F keyboard behavior
+- labelled controls, polite count and active-path announcements, and semantic active-result state
+- query recomputation through edits, parser recovery, formatting, and tab changes
+- resets at mode, sample, file-load, and confirmed-clear boundaries
+
+The search index and interaction state remain in browser memory. Search does not alter Validation results, reports, YAML, or unsaved-state tracking and adds no persistence, backend, network access, Kubernetes access, credentials, or cluster mutation.
 
 ## Local development
 
