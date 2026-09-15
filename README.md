@@ -58,7 +58,7 @@ The long-term goal is to evolve this service into **ForgeOps**, an AI-assisted K
 
 ## Forge YAML Workbench
 
-Forge YAML Workbench is a browser-based YAML inspector deployed in the restricted `forge-tools` namespace. Kubernetes inspection is the default, with an explicit General YAML mode for mappings, sequences, and scalars. Both modes share browser-local parsing, formatting, diagnostics, file handling, tree navigation, and review-first Markdown reports. Immutable release `0.8.0` is live; Milestone 041 develops `0.9.0` browser-local YAML tree search without changing analysis or reports. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
+Forge YAML Workbench is a browser-based YAML inspector deployed in the restricted `forge-tools` namespace. Kubernetes inspection is the default, with an explicit General YAML mode for mappings, sequences, and scalars. Both modes share browser-local parsing, formatting, diagnostics, file handling, searchable tree navigation, and review-first Markdown reports. Immutable release `0.9.0` is live with Milestone 041 browser-local YAML tree search. It has no Kubernetes API access or server-side storage and is available inside the private lab through NodePort `30081`.
 
 Milestone 036 recovered from the rejected `0.4.0` browser startup defect without weakening the strict CSP. Milestone 037 added the pinned OWASP Kubernetes Top 10:2025 profile and corrected finding navigation. Milestone 038 deployed the explicit formatting-preview workflow as immutable `0.6.0`, Milestone 039 deployed review-first Markdown reports as immutable `0.7.0`, and Milestone 040 deployed counted Validation filters as immutable `0.8.0`. Milestone 041 keeps its Tree search index and navigation state ephemeral and inside the same browser-only trust boundary.
 
@@ -121,7 +121,7 @@ Completed SignalForge milestones include:
 * secure Kubernetes Metrics Server deployed with all four nodes available through `kubectl top`
 * NVMe-backed Prometheus deployed with Pod-replacement persistence and isolated off-node backup/restore validation
 * Grafana dashboards and bounded Prometheus rule evaluation deployed and recovery-tested
-* Forge YAML Workbench `0.7.0` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks, General YAML mode, the pinned OWASP Kubernetes Top 10:2025 review profile, formatting preview, and review-first Markdown reports
+* Forge YAML Workbench `0.9.0` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks, General YAML mode, the pinned OWASP Kubernetes Top 10:2025 review profile, formatting preview, review-first Markdown reports, counted Validation filters, and browser-local Tree search
 
 ## Earlier utility: foundry-check
 

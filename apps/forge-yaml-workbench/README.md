@@ -2,7 +2,7 @@
 
 Forge YAML Workbench is a browser-based YAML inspector for the SignalForge lab. It parses YAML locally in the browser and offers Kubernetes-specific and General YAML inspection modes.
 
-## Version 0.9.0 candidate source scope
+## Version 0.9.0 release scope
 
 - Paste, edit, open, format, and download YAML.
 - Parse multi-document YAML files.
@@ -152,7 +152,7 @@ Filter state exists only in browser memory. It adds no persistence, network acti
 
 ## Milestone 041 browser-local YAML tree search
 
-The `0.9.0` candidate adds a Tree-tab search layer:
+The `0.9.0` release adds a Tree-tab search layer:
 
 - case-insensitive literal matching across keys, scalar values, and canonical YAML paths
 - one count per matching node in stable document and depth-first order
