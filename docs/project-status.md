@@ -77,12 +77,18 @@ The project has moved from basic workload deployment into repeatable engineering
 - 037: pinned OWASP Kubernetes Top 10:2025 review profile and corrected finding navigation released as `0.5.1`, deployed, browser-accepted, and squash-merged through PR #14 at `dd46a08`
 - 038: browser-local formatting preview released as `0.6.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #16 at `4fed28c`
 - 039: browser-local Markdown reports released as immutable `0.7.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #18 at `1e0c525`
-
-## Active milestone
-
-Milestone 040 implements presentation-only Validation result filters on `codex/milestone-040-validation-filters` from baseline `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4`. Workbench `0.8.0` filters existing syntax, document-structure, operational, and schema entries by level while preserving the complete analysis for the tab badge, overall status, OWASP coverage, and Markdown reports. Filter state remains ephemeral and browser-local. All 74 local and Windows tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository manifest validation, whitespace checks, operator browser review, Workbench CI run 137, and non-publishing AMD64/ARM64 build run 139 pass. Publication run 141 built and pushed immutable AMD64/ARM64 `0.8.0` at OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`. After separately approved manifest mutation, deployment, and live acceptance, the runtime is Ready and verified. Draft PR #20 remains open pending PR readiness and merge approval.
+- 040: Validation result filters released as immutable `0.8.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #20 at `6fa5092`
 
 ## Latest completed milestone
+
+- 040: counted Validation result filters with level isolation, empty-section handling, edit-time recomputation, reset boundaries, and complete-report isolation
+- Trust boundary: ephemeral browser-local presentation state; no backend, persistence, telemetry, cluster credentials, Kubernetes API access, or automatic remediation
+- Verification: 74 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository validation, whitespace checks, Windows validation, CI, AMD64/ARM64 build, and source and live browser reviews passed
+- Publication and deployment: immutable AMD64/ARM64 `0.8.0` is live at OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`
+- Runtime acceptance: one Ready Pod on `forge-node-03`, zero restarts, exact configured/runtime digest match, one ready endpoint, fresh HTTP 200 responses, expected security headers, and all nine filter checks passed
+- Completion: PR #20 merged at `6fa5092`
+
+## Previous completed milestone
 
 - 039: deterministic browser-local Markdown reports with review-first Copy and Download actions
 - Trust boundary: browser-local analysis and preview; clipboard and download remain explicit operator-controlled boundary crossings

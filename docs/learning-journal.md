@@ -595,3 +595,16 @@ The release remains stateless and browser-local. No backend YAML processing, per
 ### Next small step
 
 Perform the final PR-readiness review. PR readiness and merge remain separate approval gates.
+
+## 2026-09-15 — Milestone 040 merge closeout
+
+### What changed
+
+- Confirmed Workbench CI run 141, Kubernetes Manifest Validation run 123, and non-publishing AMD64/ARM64 Docker Build run 144 passed on the final pull-request head.
+- After separate approval, marked PR #20 ready for review with only merge remaining gated.
+- PR #20 merged into `main` at `6fa5092210633abde28335b76dcad1e085578789`.
+- Marked Milestone 040 complete with immutable Workbench `0.8.0` published, deployed, runtime-verified, and live browser-accepted.
+
+### Next small step
+
+Confirm the post-merge workflows, merge this documentation-only closeout, remove the merged Milestone 040 branches, and select the next bounded increment from the deferred Workbench capabilities.
