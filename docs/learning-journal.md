@@ -687,3 +687,16 @@ The deployed search remains entirely browser-local and ephemeral. No YAML conten
 ### Next small step
 
 Review draft PR #22 for readiness. Marking it ready, merging it, and post-merge cleanup remain separate approval gates.
+
+## 2026-09-15 — Milestone 041 PR readiness and folded closeout
+
+### Result
+
+- Received separate approval for PR readiness and for folding substantive closeout documentation into PR #22.
+- Recorded the accepted immutable release, Deployment-only mutation, runtime evidence, HTTP and security-header checks, complete live browser workflow, trust boundary, and remaining repository procedure in the milestone record, roadmap, project status, and learning journal.
+- Confirmed the post-acceptance documentation commit passed Workbench CI run 147, Kubernetes Manifest Validation run 126, and non-publishing AMD64/ARM64 Docker Build run 150.
+- Kept merge as a separate approval gate. GitHub will retain the authoritative merge disposition, so no follow-up documentation PR is required.
+
+### Remaining procedure
+
+After separately approved merge, synchronize `main` and remove the local and remote Milestone 041 feature branch. That cleanup changes no project content.

@@ -1,6 +1,6 @@
 # Milestone 041 — Browser-local YAML tree search
 
-**Status:** Immutable `0.9.0` deployed and live browser-accepted; pull-request readiness pending separate approval
+**Status:** Release accepted and PR-ready; repository integration is tracked by PR #22
 **Started:** 2026-09-15
 **Branch:** `codex/milestone-041-tree-search`
 **Baseline:** `main` at `e1f48d94a3c88e3a459dedc5af3d9d6537940381`
@@ -73,9 +73,9 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 5. Deployment-manifest mutation — complete after separate approval.
 6. Cluster deployment — complete after separate approval.
 7. Live browser acceptance — complete after separate approval.
-8. Pull-request readiness — pending separate approval.
-9. Merge — pending separate approval.
-10. Post-merge cleanup — pending separate approval.
+8. Pull-request readiness — complete after separate approval.
+9. Merge — separately approved through PR #22; GitHub records its disposition.
+10. Post-merge cleanup — feature-branch removal only; no separate documentation PR is planned.
 
 ## Validation evidence
 
@@ -102,3 +102,5 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 - Deployment generation 13 completed with one available and Ready Pod on `forge-node-03`, zero restarts, and runtime ImageID `docker.io/wmstipes/signalforge-yaml-workbench@sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`.
 - EndpointSlice `forge-yaml-workbench-bjzkq` reported ready endpoint `10.244.54.202:8080`; private-lab NodePort `30081` returned HTTP 200 for `/healthz` and `/` with the expected CSP and security headers.
 - Operator live browser acceptance passed key, scalar-value, and canonical-path matching; one-node counts; wrapping navigation; ancestor expansion; visible and active highlighting; keyboard, focus, and live-status behavior; edit and parser recovery; formatting and report isolation; reset boundaries; cancelled-clear preservation; and default-expansion restoration.
+- The post-acceptance documentation commit passed Workbench CI run 147, Kubernetes Manifest Validation run 126, and non-publishing AMD64/ARM64 Docker Build run 150.
+- Closeout evidence is folded into PR #22 so merging it requires no follow-up documentation PR; post-merge cleanup is limited to branch synchronization and deletion.

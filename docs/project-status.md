@@ -80,23 +80,22 @@ The project has moved from basic workload deployment into repeatable engineering
 - 039: browser-local Markdown reports released as immutable `0.7.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #18 at `1e0c525`
 - 040: Validation result filters released as immutable `0.8.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #20 at `6fa5092`
 
-## Latest completed milestone
+## Latest release milestone
+
+- 041: deterministic browser-local Tree search across keys, scalar values, and canonical YAML paths with counted navigation, ancestor expansion, highlighting, keyboard support, and explicit state boundaries
+- Trust boundary: ephemeral browser-local presentation state; no backend, persistence, telemetry, cluster credentials, Kubernetes API access, replacement, regex, or automatic remediation
+- Verification: 83 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository validation, whitespace checks, Windows validation, CI, AMD64/ARM64 builds, and source and live browser reviews passed
+- Publication and deployment: immutable AMD64/ARM64 `0.9.0` is live at OCI index `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`
+- Runtime acceptance: one Ready Pod on `forge-node-03`, zero restarts, exact configured/runtime digest match, one ready endpoint, fresh HTTP 200 responses, expected security headers, and the complete Tree-search workflow passed
+- Completion record: release and closeout evidence are folded into PR #22; GitHub records repository integration, and no separate documentation PR is planned
+
+## Previous completed milestone
 
 - 040: counted Validation result filters with level isolation, empty-section handling, edit-time recomputation, reset boundaries, and complete-report isolation
 - Trust boundary: ephemeral browser-local presentation state; no backend, persistence, telemetry, cluster credentials, Kubernetes API access, or automatic remediation
 - Verification: 74 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository validation, whitespace checks, Windows validation, CI, AMD64/ARM64 build, and source and live browser reviews passed
-- Publication and deployment: immutable AMD64/ARM64 `0.8.0` is live at OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`
-- Runtime acceptance: one Ready Pod on `forge-node-03`, zero restarts, exact configured/runtime digest match, one ready endpoint, fresh HTTP 200 responses, expected security headers, and all nine filter checks passed
+- Publication and deployment: immutable AMD64/ARM64 `0.8.0` was released at OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`
 - Completion: PR #20 merged at `6fa5092`; Workbench CI run 142, Kubernetes Manifest Validation run 124, and Restaurant API Docker Build run 57 passed on `main`
-
-## Previous completed milestone
-
-- 039: deterministic browser-local Markdown reports with review-first Copy and Download actions
-- Trust boundary: browser-local analysis and preview; clipboard and download remain explicit operator-controlled boundary crossings
-- Verification: 69 tests, validator reproducibility, production build, CSP scan, zero-vulnerability dependency audit, repository validation, whitespace checks, Windows build, and local browser interactions passed
-- Publication and deployment: immutable AMD64/ARM64 `0.7.0` is live at OCI index `sha256:f9f5939910382911b23e78609ea5690e617e2a446c3dd707da2c1c6852a8a6d2`
-- Runtime acceptance: one Ready Pod, zero restarts, exact configured/runtime digest match, ready EndpointSlice, fresh HTTP 200 responses, expected security headers, and all report browser checks passed
-- Completion: PR #18 merged at `1e0c525`; Workbench CI run 136, Kubernetes Manifest Validation run 121, and Restaurant API Docker Build run 55 passed on `main`
 
 ## Current observability state
 
@@ -193,7 +192,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review Milestone 041 and draft PR #22 for pull-request readiness. Merge and post-merge cleanup remain later separate approval gates.
+Milestone 041 release and closeout evidence are contained in PR #22. GitHub records its final disposition; after merge, feature-branch synchronization and deletion are the only remaining procedural cleanup, with no separate documentation PR planned.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
