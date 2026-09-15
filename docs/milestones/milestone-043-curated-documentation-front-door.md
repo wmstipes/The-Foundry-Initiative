@@ -1,6 +1,6 @@
 # Milestone 043 — Curated documentation front door
 
-**Status:** Wiki publication and browser acceptance complete; PR readiness, merge, and cleanup remain separately gated
+**Status:** Wiki publication, browser acceptance, and PR readiness complete; merge and cleanup remain separately gated
 
 **Started:** 2026-09-15
 
@@ -123,6 +123,6 @@ Publication acceptance additionally requires a draft PR with expected files and 
 2. Local implementation — complete after explicit approval.
 3. Branch publication and draft PR — complete after explicit approval.
 4. Live Wiki mutation and browser accessibility review — complete after explicit approval at Wiki commit `0a945b4cac2ba1c781a55f9aa1a8c389426892e3`.
-5. Pull-request readiness — not authorized.
+5. Pull-request readiness — complete after explicit approval.
 6. Merge — not authorized.
 7. Cleanup — not authorized.
