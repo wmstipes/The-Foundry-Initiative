@@ -86,7 +86,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Verification: 74 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository validation, whitespace checks, Windows validation, CI, AMD64/ARM64 build, and source and live browser reviews passed
 - Publication and deployment: immutable AMD64/ARM64 `0.8.0` is live at OCI index `sha256:faa604c336e2de459dee2b079ca0609c13e13f1d8ee030c5369e9c6657db64a3`
 - Runtime acceptance: one Ready Pod on `forge-node-03`, zero restarts, exact configured/runtime digest match, one ready endpoint, fresh HTTP 200 responses, expected security headers, and all nine filter checks passed
-- Completion: PR #20 merged at `6fa5092`
+- Completion: PR #20 merged at `6fa5092`; Workbench CI run 142, Kubernetes Manifest Validation run 124, and Restaurant API Docker Build run 57 passed on `main`
 
 ## Previous completed milestone
 
