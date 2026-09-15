@@ -37,7 +37,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Security: restricted namespace, non-root execution, RuntimeDefault seccomp, read-only root filesystem, and all capabilities dropped
 - Acceptance: immutable `0.8.0` is deployed; configured and runtime digests, one Ready Pod on `forge-node-03` with zero restarts, one ready EndpointSlice endpoint, NodePort health and page responses, security headers, and all nine live Validation-filter browser checks passed
 - Validation filters: counted All, Errors, Warnings, Notes, and Valid views preserve the complete analysis for the tab badge, overall status, OWASP coverage, and Markdown reports
-- Active source work: Milestone 041 candidate `0.9.0` adds ephemeral browser-local Tree search; the tracked Deployment and live runtime remain immutable `0.8.0`
+- Active source work: Milestone 041 candidate `0.9.0` browser-local Tree search passed local, CI, multi-architecture build, Windows, and browser source acceptance; the tracked Deployment and live runtime remain immutable `0.8.0`
 
 ## Milestone 038 closeout
 
@@ -193,7 +193,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete local verification and browser source review for Milestone 041 candidate `0.9.0`. Source publication, image publication, tracked-manifest mutation, deployment, live acceptance, PR readiness, merge, and cleanup remain separate approval gates. The live cluster remains on immutable `0.8.0`.
+Review and separately authorize image publication for source-accepted Milestone 041 candidate `0.9.0`. Tracked-manifest mutation, deployment, live acceptance, PR readiness, merge, and cleanup remain later separate approval gates. The live cluster remains on immutable `0.8.0`.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 

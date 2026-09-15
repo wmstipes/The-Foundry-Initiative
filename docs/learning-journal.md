@@ -637,3 +637,19 @@ Tree search consumes only the already parsed in-memory document values. It adds 
 ### What remains gated
 
 Source publication, image publication, manifest mutation, deployment, live browser acceptance, PR readiness, merge, and cleanup remain separate approval gates.
+
+## 2026-09-15 — Milestone 041 source acceptance
+
+### Validation result
+
+- Published the accepted source tree through the connected GitHub integration because the workspace HTTPS remote had no Git credentials.
+- Verified all 14 uploaded blob SHAs and the assembled tree SHA against local commit `0fae4a6`; connector-authored commit `20800196d202f6a6b58c37dc73bb49ffe529a2d6` has the identical tree and approved `main` parent.
+- Opened draft PR #22 against `main`.
+- Workbench CI run 143 passed all source checks.
+- Non-publishing AMD64/ARM64 Docker build run 145 passed without pushing an image.
+- Windows validation passed from a clean lockfile installation with all 83 tests, validator reproducibility, production build, CSP scan, and zero-vulnerability audit green.
+- Operator browser review accepted literal key, value, and path matching; counts; navigation; expansion; highlighting; keyboard and accessibility behavior; edits and invalid-YAML recovery; formatting and report isolation; input-replacement resets; cancelled-clear preservation; and default-expansion restoration.
+
+### Gate state
+
+Source acceptance is complete for candidate `0.9.0`. Image publication, immutable digest recording, tracked-manifest mutation, deployment, live-cluster acceptance, PR readiness, merge, and cleanup remain separately gated. Accepted immutable `0.8.0` remains live.

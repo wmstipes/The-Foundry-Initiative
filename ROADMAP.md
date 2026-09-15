@@ -269,7 +269,7 @@ See [Milestone 040](docs/milestones/milestone-040-validation-result-filters.md).
 
 #### Milestone 041 — Browser-local YAML tree search
 
-**Status:** Implementation in progress as candidate `0.9.0`; the live Deployment remains immutable `0.8.0`.
+**Status:** Candidate `0.9.0` passed source acceptance in draft PR #22; image publication remains separately gated and the live Deployment remains immutable `0.8.0`.
 
 - Search keys, scalar values, and canonical paths with case-insensitive literal matching.
 - Count matches once per node and navigate deterministically with wrapping Previous and Next actions.

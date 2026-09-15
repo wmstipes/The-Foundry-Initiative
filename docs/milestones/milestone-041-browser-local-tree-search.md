@@ -1,6 +1,6 @@
 # Milestone 041 — Browser-local YAML tree search
 
-**Status:** Implementation complete; source acceptance pending
+**Status:** Source accepted; image publication pending separate approval
 **Started:** 2026-09-15
 **Branch:** `codex/milestone-041-tree-search`
 **Baseline:** `main` at `e1f48d94a3c88e3a459dedc5af3d9d6537940381`
@@ -68,8 +68,8 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 
 1. Planning approval — complete.
 2. Local implementation approval — complete.
-3. Local automated verification — complete; visual and Windows source review pending.
-4. Source publication and image publication — pending separate approval.
+3. Local automated verification, Windows validation, and browser source review — complete.
+4. Source publication — complete through draft PR #22; image publication pending separate approval.
 5. Deployment-manifest mutation — pending separate approval.
 6. Cluster deployment — pending separate approval.
 7. Live browser acceptance — pending separate approval.
@@ -88,3 +88,9 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 - The tracked Workbench Deployment and repository validator remain unchanged at immutable `0.8.0`.
 - This workspace has no Docker client, so the non-publishing AMD64/ARM64 build remains for the established GitHub workflow after publication approval.
 - The cloud browser cannot reach the workspace loopback server (`ERR_BLOCKED_BY_CLIENT`), so visual browser review remains an explicit operator source-acceptance item.
+- Draft PR #22 opened from connector-authored commit `20800196d202f6a6b58c37dc73bb49ffe529a2d6`; its tree SHA exactly matches the locally accepted source tree.
+- Workbench CI run 143 passed.
+- Non-publishing AMD64/ARM64 Docker build run 145 passed without publishing an image.
+- Windows validation passed from a clean lockfile installation with all 83 tests, validator reproducibility, production build, CSP scan, and zero-vulnerability audit green.
+- Operator browser review passed key, scalar-value, and path matching; counts; wrapping navigation; ancestor expansion; visible and active highlights; keyboard and focus behavior; live status; edit and parser recovery; formatting and report isolation; reset boundaries; and default-expansion restoration.
+- Source acceptance is complete. No release tag or image has been published, and immutable `0.8.0` remains the tracked and live deployment.
