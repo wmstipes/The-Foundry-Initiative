@@ -653,3 +653,18 @@ Source publication, image publication, manifest mutation, deployment, live brows
 ### Gate state
 
 Source acceptance is complete for candidate `0.9.0`. Image publication, immutable digest recording, tracked-manifest mutation, deployment, live-cluster acceptance, PR readiness, merge, and cleanup remain separately gated. Accepted immutable `0.8.0` remains live.
+
+## 2026-09-15 — Milestone 041 image publication
+
+### What changed
+
+- Received explicit approval to publish Workbench `0.9.0` from accepted source commit `b2a946f9e39ab3f7e1a6bc35ad8bd62297902ca9`.
+- Created and pushed tag `forge-yaml-workbench-v0.9.0` at that exact commit.
+- Publication workflow run 147 (`35003003075`) built and pushed the AMD64/ARM64 image successfully.
+- Recorded immutable OCI index `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`.
+- Independently confirmed AMD64 manifest `sha256:4cd48baf0f913b944efa4206302d828107674f7ea7e20543972479d09866dc86` and ARM64 manifest `sha256:e26f85a206a2b564928e285f34253b72b5c8890f99d2eb0af702bfcfdecc9d7b`.
+- Left the tracked Deployment and live immutable `0.8.0` runtime unchanged.
+
+### Next small step
+
+Prepare and review the exact Deployment-only `0.9.0` label and immutable-image diff. Mutating the tracked manifest requires separate approval before cluster deployment is considered.

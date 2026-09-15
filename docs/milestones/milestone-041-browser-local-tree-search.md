@@ -1,6 +1,6 @@
 # Milestone 041 — Browser-local YAML tree search
 
-**Status:** Source accepted; image publication pending separate approval
+**Status:** Immutable `0.9.0` image published; deployment-manifest mutation pending separate approval
 **Started:** 2026-09-15
 **Branch:** `codex/milestone-041-tree-search`
 **Baseline:** `main` at `e1f48d94a3c88e3a459dedc5af3d9d6537940381`
@@ -69,7 +69,7 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 1. Planning approval — complete.
 2. Local implementation approval — complete.
 3. Local automated verification, Windows validation, and browser source review — complete.
-4. Source publication — complete through draft PR #22; image publication pending separate approval.
+4. Source and image publication — complete after separate approval.
 5. Deployment-manifest mutation — pending separate approval.
 6. Cluster deployment — pending separate approval.
 7. Live browser acceptance — pending separate approval.
@@ -93,4 +93,9 @@ The milestone adds no storage, cookie, telemetry, backend processing, network re
 - Non-publishing AMD64/ARM64 Docker build run 145 passed without publishing an image.
 - Windows validation passed from a clean lockfile installation with all 83 tests, validator reproducibility, production build, CSP scan, and zero-vulnerability audit green.
 - Operator browser review passed key, scalar-value, and path matching; counts; wrapping navigation; ancestor expansion; visible and active highlights; keyboard and focus behavior; live status; edit and parser recovery; formatting and report isolation; reset boundaries; and default-expansion restoration.
-- Source acceptance is complete. No release tag or image has been published, and immutable `0.8.0` remains the tracked and live deployment.
+- Source acceptance completed before the separately approved tag and image publication; immutable `0.8.0` remained the tracked and live deployment throughout that gate.
+- After explicit approval, tag `forge-yaml-workbench-v0.9.0` targeted accepted source commit `b2a946f9e39ab3f7e1a6bc35ad8bd62297902ca9`.
+- Publication workflow run 147 (`35003003075`) completed successfully and published both target architectures.
+- The immutable OCI index is `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`.
+- Independent registry inspection confirmed Linux AMD64 manifest `sha256:4cd48baf0f913b944efa4206302d828107674f7ea7e20543972479d09866dc86` and Linux ARM64 manifest `sha256:e26f85a206a2b564928e285f34253b72b5c8890f99d2eb0af702bfcfdecc9d7b`.
+- The tracked Deployment and live immutable `0.8.0` runtime remain unchanged pending the separate manifest-mutation gate.

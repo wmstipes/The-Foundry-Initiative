@@ -269,7 +269,7 @@ See [Milestone 040](docs/milestones/milestone-040-validation-result-filters.md).
 
 #### Milestone 041 — Browser-local YAML tree search
 
-**Status:** Candidate `0.9.0` passed source acceptance in draft PR #22; image publication remains separately gated and the live Deployment remains immutable `0.8.0`.
+**Status:** Candidate `0.9.0` passed source acceptance and was published at immutable OCI index `sha256:9e46b6477cdfebd7a930da6fa608e35a0a428171431a7c73bea043f77aea8581`; the live Deployment remains immutable `0.8.0` pending separate manifest approval.
 
 - Search keys, scalar values, and canonical paths with case-insensitive literal matching.
 - Count matches once per node and navigate deterministically with wrapping Previous and Next actions.
