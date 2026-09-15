@@ -546,3 +546,17 @@ Complete visual browser review and the non-publishing multi-architecture build b
 - The repository contains no Workbench Deployment diff; accepted immutable `0.7.0` remains the declared and live runtime.
 - Docker is unavailable in this workspace, leaving the non-publishing multi-architecture build for the established GitHub pull-request workflow.
 - The remote browser could not reach the workspace loopback server, so visual browser acceptance remains a later explicit gate rather than an inferred result.
+
+## 2026-09-15 — Milestone 040 source acceptance
+
+### Validation result
+
+- Draft PR #20 opened from remote source commit `82b291e`.
+- Workbench CI run 137 passed all source checks.
+- Non-publishing AMD64/ARM64 Docker build run 139 passed without pushing an image.
+- A clean Windows dependency installation and all 74 tests passed.
+- Operator browser review accepted filter counts, result-level isolation, empty-section behavior, OWASP separation, unchanged complete-analysis indicators, finding navigation, complete report behavior, recomputation during editing, and filter resets.
+
+### Gate state
+
+Source acceptance is complete for candidate `0.8.0`. Image publication, immutable digest recording, tracked-manifest mutation, deployment, live-cluster acceptance, PR readiness, and merge remain separately gated. Accepted immutable `0.7.0` remains live.

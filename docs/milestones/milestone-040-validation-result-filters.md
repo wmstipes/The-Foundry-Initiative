@@ -1,6 +1,6 @@
 # Milestone 040 — Validation result filters
 
-**Status:** Source candidate implemented; automated local validation complete
+**Status:** `0.8.0` source accepted; image publication pending separate approval
 **Started:** 2026-09-14
 **Branch:** `codex/milestone-040-validation-filters`
 **Baseline:** `main` at `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4`
@@ -70,7 +70,7 @@ The milestone adds no storage, cookies, telemetry, backend, network request, Kub
 
 1. Planning approval — complete.
 2. Implementation approval — complete.
-3. Local automated verification and source review — complete; local visual review awaits an accessible browser surface.
+3. Local automated verification, Windows validation, and browser source acceptance — complete.
 4. Branch and image publication — requires separate approval.
 5. Deployment-manifest mutation — requires separate approval after an immutable digest is known.
 6. Cluster deployment — requires separate approval.
@@ -89,4 +89,9 @@ The milestone adds no storage, cookies, telemetry, backend, network request, Kub
 - Repository Kubernetes manifest validation and whitespace validation pass.
 - The tracked Workbench Deployment has no diff and remains pinned to accepted immutable `0.7.0`.
 - This workspace has no Docker client, so the non-publishing AMD64/ARM64 build remains pending for the established GitHub pull-request workflow.
-- The remote browser surface cannot reach the workspace loopback server, so visual browser acceptance remains pending; no live-cluster browser acceptance was attempted.
+- The remote browser surface could not reach the workspace loopback server; operator browser review subsequently completed on Windows. No live-cluster browser acceptance was attempted.
+- Draft PR #20 opened from remote source commit `82b291e`; Workbench CI run 137 passed.
+- Non-publishing AMD64/ARM64 Docker build run 139 passed without publishing an image.
+- Windows validation passed from a clean lockfile installation with all 74 tests green.
+- Operator browser review accepted the counted filters, level isolation, empty-section behavior, OWASP separation, stable complete-analysis indicators, finding navigation, complete Markdown report behavior, edit-time recomputation, and reset boundaries.
+- Source acceptance is complete. Image publication, digest recording, manifest mutation, deployment, live-cluster acceptance, PR readiness, and merge remain separately gated.

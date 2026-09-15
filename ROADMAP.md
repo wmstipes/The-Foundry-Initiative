@@ -256,7 +256,7 @@ See [Milestone 039](docs/milestones/milestone-039-browser-local-markdown-reports
 
 #### Milestone 040 — Validation result filters
 
-**Status:** `0.8.0` source candidate implemented with automated local validation complete. Visual, non-publishing multi-architecture, publication, deployment, and live-acceptance gates remain; live Workbench remains `0.7.0`.
+**Status:** `0.8.0` source accepted. All 74 tests, browser review, Workbench CI run 137, and non-publishing AMD64/ARM64 build run 139 passed. Image publication and all later gates remain; live Workbench remains `0.7.0`.
 
 - Filter existing Validation entries by All, Errors, Warnings, Notes, or Valid with current counts.
 - Preserve section and result order, hide empty filtered sections, and distinguish filtered-empty results from the complete analysis.

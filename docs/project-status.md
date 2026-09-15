@@ -80,7 +80,7 @@ The project has moved from basic workload deployment into repeatable engineering
 
 ## Active milestone
 
-Milestone 040 implements presentation-only Validation result filters on `codex/milestone-040-validation-filters` from baseline `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4`. The `0.8.0` source candidate filters existing syntax, document-structure, operational, and schema entries by level while preserving the complete analysis for the tab badge, overall status, OWASP coverage, and Markdown reports. Filter state remains ephemeral and browser-local. All 74 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository manifest validation, and whitespace checks pass. Visual browser review and the non-publishing AMD64/ARM64 build remain pending because this workspace's remote browser cannot reach loopback and Docker is unavailable. No branch or image has been published, the tracked Deployment has not changed, and immutable `0.7.0` remains live.
+Milestone 040 implements presentation-only Validation result filters on `codex/milestone-040-validation-filters` from baseline `1a3a4ecf05f9bda5a8c6419267e80d22aa5c76c4`. The `0.8.0` source candidate filters existing syntax, document-structure, operational, and schema entries by level while preserving the complete analysis for the tab badge, overall status, OWASP coverage, and Markdown reports. Filter state remains ephemeral and browser-local. All 74 local and Windows tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository manifest validation, whitespace checks, operator browser review, Workbench CI run 137, and non-publishing AMD64/ARM64 build run 139 pass. Draft PR #20 remains open. No image has been published, the tracked Deployment has not changed, and immutable `0.7.0` remains live.
 
 ## Latest completed milestone
 
@@ -186,7 +186,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete Milestone 040 visual browser review and the non-publishing AMD64/ARM64 build before considering the separately gated publication step.
+Consider the separately gated publication of the accepted Workbench `0.8.0` AMD64/ARM64 image. Manifest mutation and cluster deployment remain later approval gates.
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
 
