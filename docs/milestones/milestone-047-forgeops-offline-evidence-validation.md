@@ -1,10 +1,12 @@
 # Milestone 047 — ForgeOps deterministic offline evidence validation
 
-**Status:** Local implementation, draft PR publication, and CI complete; PR readiness and later gates remain separately gated
+**Status:** Complete. Implementation, publication, final-head CI, PR readiness, and merge completed through PR #33 at `a92b4b8`; closeout is recorded and branch cleanup remains separately gated
 
 **Started:** 2026-09-16
 
-**Branch:** `codex/milestone-047-forgeops-evidence-validation`
+**Implementation branch:** `codex/milestone-047-forgeops-evidence-validation`
+
+**Closeout branch:** `codex/milestone-047-closeout`
 
 **Baseline:** `main` at `66bae40d7d0a6d706db47db54a0335de1d93a22f`
 
@@ -141,14 +143,17 @@ It also corrects the README ForgeOps renderer summary, the stale Workbench `0.5.
 
 ## Publication evidence
 
-- Draft PR: #33.
+- Pull request: #33.
 - Published branch: `codex/milestone-047-forgeops-evidence-validation`.
 - Reviewed local commit: `bab4f3cb93d591729614927de57a7791cb856452`.
 - Published remote commit: `e848bed96a57cb62ab6fad6289a9310f52758ca0`.
 - Exact matching local and published tree: `e0e078a3bb7c87970ec070a951b5e3779c12b5a2`.
 - The GitHub repository connector was used because this runtime's HTTPS Git client had no credential helper.
-- ForgeOps CI run `35155205132` and Kubernetes Manifest Validation run `35155205187` completed successfully on published documentation head `bdbe35deae629e1af5451a7a51966464eb6cea6e`.
-- The PR remains draft. PR readiness, merge, closeout, and cleanup remain separately gated.
+- Final published head: `21c2bbaa0448027406a295380f17a88a5cf06885`.
+- Final accepted tree: `81fc5e9d9740c6d964fed34adcc00ec58f05395b`.
+- Final-head ForgeOps CI run `35155377618` and Kubernetes Manifest Validation run `35155377675` completed successfully.
+- PR #33 was marked ready after separate approval and merged at `a92b4b8e8593d0bffd0af1c7db800a16efd84663` after a separate merge approval.
+- The merge commit resolves to the exact accepted tree `81fc5e9d9740c6d964fed34adcc00ec58f05395b`.
 
 ## Deterministic local acceptance
 
@@ -177,10 +182,10 @@ Future diagnoses and recommendations must remain separate from evidence, cite th
 1. Planning — approved.
 2. Local implementation — approved and complete.
 3. Publication and draft PR — approved and complete through draft PR #33.
-4. Package or image release — not applicable and not authorized.
-5. Deployment — not applicable and not authorized.
-6. Live acceptance — not applicable; acceptance is offline.
-7. Pull-request readiness — not authorized.
-8. Merge — not authorized.
-9. Closeout — not authorized.
+4. Package or image release — explicitly closed as not applicable; no distribution or image was published.
+5. Deployment — explicitly closed as not applicable; no deployable artifact or manifest changed.
+6. Live acceptance — explicitly closed as not applicable; deterministic acceptance is offline.
+7. Pull-request readiness — approved and complete for PR #33.
+8. Merge — approved and complete through PR #33 at `a92b4b8`.
+9. Closeout — approved and recorded on `codex/milestone-047-closeout`.
 10. Branch cleanup — not authorized.

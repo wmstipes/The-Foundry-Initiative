@@ -1078,3 +1078,22 @@ Review the complete local diff and offline installation evidence. Publication an
 ### Next small step
 
 Review draft PR #33 for readiness. PR readiness remains a separate approval gate.
+
+## 2026-09-16 — Milestone 047 readiness, merge, and closeout
+
+### Result
+
+- Explicitly closed package/image release, deployment, and live acceptance as not applicable. Version `0.4.0` remains repository-local metadata, the milestone has no deployable artifact or manifest change, and its acceptance boundary is intentionally offline.
+- Marked PR #33 ready only after the local suite, installed CLI checks, exact-tree comparison, final-head ForgeOps CI run `35155377618`, and final-head Kubernetes Manifest Validation run `35155377675` passed.
+- Merged final PR head `21c2bbaa0448027406a295380f17a88a5cf06885` through PR #33 at `a92b4b8e8593d0bffd0af1c7db800a16efd84663` after separate approval.
+- Confirmed the reviewed local tree, final published head, and merge commit resolve to exact tree `81fc5e9d9740c6d964fed34adcc00ec58f05395b`.
+- No package or image was released, no cluster or application endpoint was accessed, and no deployment, Wiki, persistent-state, or cluster mutation occurred.
+- Prepared the documentation-only closeout on `codex/milestone-047-closeout`; branch cleanup remains Gate 10 and is not authorized.
+
+### Lesson
+
+An offline capability still benefits from explicit release, deployment, and live-acceptance dispositions. Recording why each gate is not applicable is stronger evidence than silently skipping it, especially when repository-local package metadata advances.
+
+### Next small step
+
+Complete the closeout record, then remove the Milestone 047 implementation and closeout branches only after separate Gate 10 approval. Select the next ForgeOps increment in a new planning pass.
