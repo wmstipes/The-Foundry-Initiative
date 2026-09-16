@@ -57,7 +57,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Milestone: 044, design complete and merged through PR #27 at `c467468`
 - Goal: define a separate local, read-only SignalForge health snapshot before implementation
 - Target evidence: expected nodes, five named Deployments and their Pods, allowlisted EndpointSlices, Metrics APIService availability, and explicitly configured application endpoints
-- Output contract: one normalized `forgeops.snapshot/v1alpha1` model with equivalent terminal and Markdown views
+- Output contract: one normalized `forgeops.snapshot/v1alpha1` model with equivalent terminal, Markdown, and locally implemented JSON views
 - Safety boundary: explicit kubeconfig and context, closed read-command allowlist, bounded output, redaction, no broad discovery, no sensitive objects, and no mutation
 - Failure boundary: incomplete required evidence remains `UNKNOWN` and returns an incomplete-collection exit code rather than implying health
 - Publication: branch `codex/milestone-044-forgeops-snapshot-design` contained design commit `c0cbfab` and live-evidence reconciliation commit `f42bc75`; the published and locally reviewed head trees matched exactly at `4a445e26`
@@ -67,15 +67,25 @@ The project has moved from basic workload deployment into repeatable engineering
 - Checks: the operator confirmed all Actions shown in GitHub were green; the connected GitHub API exposed no workflow-run or commit-status records for either the head or merge commit
 - Closeout and cleanup: closeout PR #28 merged at `aa178b0`; both Milestone 044 branches were removed locally and remotely
 - Milestone 045: deterministic `forgeops snapshot` implementation complete and merged through PR #29 at `3e9851d`
-- Implementation: fixed SignalForge constants, deny-by-default kubectl and HTTP runners, selected-field normalization, deterministic evaluation, and terminal or Markdown rendering
+- Implementation: fixed SignalForge constants, deny-by-default kubectl and HTTP runners, selected-field normalization, deterministic evaluation, and terminal, Markdown, or JSON rendering
 - Test boundary: synthetic fixtures only; no test invokes kubectl or contacts a network
-- Local package metadata: `0.2.0`, preserving `foundry-check` and adding `forgeops`
+- Local package metadata: Milestone 045 introduced `0.2.0`; Milestone 046 locally advances it to `0.3.0` for the JSON output contract while preserving `foundry-check`
 - Publication: PR #29 branch head `377b843`; reviewed branch and merge trees matched exactly at `c879d164e726a20c418e48eb931731102e61d51e`
 - CI: ForgeOps CI runs `35128781478` and `35129577800` passed before merge; post-merge push run `35129953752` passed on `main`
 - Live acceptance: exact published commit and tree verified; 33 checks passed with no warnings, failures, or unknowns and exit code `0`
 - Runtime impact: approved read-only Kubernetes and five explicit HTTP requests only; no image, manifest, deployment, package registry, Wiki, or cluster mutation
 - Merge: PR #29 was marked ready after separate approval and merged into `main` at `3e9851da0351e1e01f90c5e38b534e5bbade929d` on 2026-09-16; branch head `377b8439ded59b5f6c48b2bf6b848a991ba2f079` is an ancestor of the merge commit
-- Remaining Milestone 045 gates: closeout publication and branch cleanup
+- Closeout and cleanup: closeout PR #30 merged at `f714d25`; all Milestone 045 branches were removed locally and remotely
+- Milestone 046: local deterministic JSON evidence contract implemented on `codex/milestone-046-forgeops-json-evidence`
+- JSON boundary: evaluated checks only, fixed key and check order, explicit summary and limitations, no raw response serialization, and no collection-authority change
+- Local validation: 33 offline ForgeOps tests pass, including the fixed golden JSON contract, mixed-status precedence, renderer parity, offline CLI rendering, CLI selection, and redaction
+- Publication: draft PR #31 opened from published commit `2f49025`; published tree `0f4ac04483b36615a5848cd940b8457203d40c5a` exactly matched reviewed local commit `e097b78`
+- CI: ForgeOps CI run `35136846722` completed successfully on the published documentation follow-up
+- Live acceptance: exact published commit `2b8d106` and tree `dd8e51a` verified; package `0.3.0` installed; schema and field order parsed; all 33 checks passed with five explicit HTTP checks, verified redaction, overall `PASS`, and exit code `0`
+- Acceptance artifact: collected at `2026-09-16T19:00:51Z` with SHA-256 `8d4d67f585a4c6b1e8f3cedb4a08f5583b06a9ab6e6b82697db62435f356dc16`
+- Live safety: the accepted command used only the existing bounded Kubernetes reads and five explicit HTTP GETs; no cluster mutation occurred
+- PR readiness: PR #31 was marked ready only after offline validation, successful CI, exact-tree verification, and read-only live JSON acceptance passed; merge remains separately gated
+- Runtime impact: none during local implementation; no package registry, image, manifest, deployment, Wiki, network, or cluster action
 
 ## Milestone 038 closeout
 
@@ -233,7 +243,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Publish and merge the Milestone 045 closeout record through its own approval gates, then perform separately approved branch cleanup. Planning the next bounded ForgeOps increment remains a distinct future decision.
+Review ready PR #31 for the separate merge decision. Merge has not been authorized.
 
 ## Supporting completed work
 

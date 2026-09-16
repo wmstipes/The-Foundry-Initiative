@@ -12,8 +12,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from forgeops.collect import Collector  # noqa: E402
 from forgeops.constants import EXPECTED_CONTEXT  # noqa: E402
 from forgeops.evaluate import evaluate  # noqa: E402
-from forgeops.models import Status  # noqa: E402
-from forgeops.render import render_markdown, render_text  # noqa: E402
+from forgeops.models import CheckResult, EvaluatedSnapshot, Status  # noqa: E402
+from forgeops.render import render_json, render_markdown, render_text  # noqa: E402
 from forgeops.runners import HttpResponse, Operation, RunnerFailure  # noqa: E402
 
 
@@ -233,15 +233,77 @@ class ForgeOpsSnapshotTests(unittest.TestCase):
         _, _, snapshot = self.collect(include_http=True)
         terminal = StringIO()
         markdown = StringIO()
+        json_output = StringIO()
         render_text(snapshot, terminal)
         render_markdown(snapshot, markdown)
+        render_json(snapshot, json_output)
+        payload = json.loads(json_output.getvalue())
         for check in snapshot.checks:
             self.assertIn(check.check_id, terminal.getvalue())
             self.assertIn(check.check_id, markdown.getvalue())
-        combined = terminal.getvalue() + markdown.getvalue()
+        self.assertEqual(
+            [check.check_id for check in snapshot.checks],
+            [check["id"] for check in payload["checks"]],
+        )
+        self.assertEqual(
+            [check.status.value for check in snapshot.checks],
+            [check["status"] for check in payload["checks"]],
+        )
+        self.assertEqual(snapshot.exit_code, payload["summary"]["exitCode"])
+        self.assertEqual(snapshot.overall_status.value, payload["summary"]["overallStatus"])
+        combined = terminal.getvalue() + markdown.getvalue() + json_output.getvalue()
         self.assertNotIn("192.0.2.10", combined)
         self.assertNotIn("/explicit/config", combined)
         self.assertIn("not continuous monitoring", markdown.getvalue())
+
+    def test_json_renderer_matches_golden_contract(self) -> None:
+        snapshot = EvaluatedSnapshot(
+            schema="forgeops.snapshot/v1alpha1",
+            collected_at_utc="2026-09-16T18:00:00Z",
+            context=EXPECTED_CONTEXT,
+            checks=(
+                CheckResult(
+                    "node.forge-head", Status.PASS, "Node is Ready",
+                    "kubectl get nodes -o json", "2026-09-16T18:00:00Z",
+                    "Ready=True", "Ready=True",
+                ),
+                CheckResult(
+                    "metrics-api-service", Status.UNKNOWN,
+                    "Metrics APIService evidence is incomplete",
+                    "APIService v1beta1.metrics.k8s.io", "2026-09-16T18:00:00Z",
+                    error_category="timeout",
+                ),
+            ),
+        )
+        first = StringIO()
+        second = StringIO()
+        render_json(snapshot, first)
+        render_json(snapshot, second)
+        expected = (FIXTURES / "evaluated-json-golden.json").read_text(encoding="utf-8")
+        self.assertEqual(expected, first.getvalue())
+        self.assertEqual(first.getvalue(), second.getvalue())
+        payload = json.loads(first.getvalue())
+        self.assertNotIn("expected", payload["checks"][1])
+        self.assertNotIn("observed", payload["checks"][1])
+
+    def test_json_summary_preserves_warn_fail_and_unknown_precedence(self) -> None:
+        fixture = deepcopy(self.fixture)
+        pods = fixture["pods"]["forge-restaurant/restaurant-api"]["items"]
+        pods[0]["status"]["containerStatuses"][0]["restartCount"] = 1
+        pods[1]["status"]["phase"] = "Pending"
+        fixture["nodes"]["items"] = [
+            node for node in fixture["nodes"]["items"]
+            if node["metadata"]["name"] != "forge-node-02"
+        ]
+        _, _, snapshot = self.collect(fixture)
+        output = StringIO()
+        render_json(snapshot, output)
+        payload = json.loads(output.getvalue())
+        self.assertGreater(payload["summary"]["warn"], 0)
+        self.assertGreater(payload["summary"]["fail"], 0)
+        self.assertGreater(payload["summary"]["unknown"], 0)
+        self.assertEqual("UNKNOWN", payload["summary"]["overallStatus"])
+        self.assertEqual(2, payload["summary"]["exitCode"])
 
 
 if __name__ == "__main__":

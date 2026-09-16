@@ -144,21 +144,21 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 
 ## ForgeOps snapshot boundary
 
-Milestone 045 implements the Milestone 044 contract as a separate local Python command with no in-cluster workload or identity. It requires an explicit kubeconfig and exact context, invokes only a closed set of read operations, reduces raw responses to accepted fields, applies deterministic checks, and renders equivalent terminal and Markdown views.
+Milestone 045 implements the Milestone 044 contract as a separate local Python command with no in-cluster workload or identity. It requires an explicit kubeconfig and exact context, invokes only a closed set of read operations, reduces raw responses to accepted fields, applies deterministic checks, and renders equivalent terminal and Markdown views. Milestone 046 adds a deterministic JSON view of that same evaluated model without adding collection authority.
 
 The first contract is deliberately SignalForge-specific. It covers the four expected nodes; the Restaurant API, Prometheus, Grafana, Forge YAML Workbench, and Metrics Server Deployments and Pods; allowlisted EndpointSlices; Metrics APIService availability; and optional GET requests to explicitly configured Restaurant API and Workbench endpoints. Missing or incomplete evidence remains `UNKNOWN` and prevents a healthy overall result.
 
-The boundary excludes broad discovery, Events, logs, Secrets, ConfigMaps, RBAC contents, arbitrary API paths, port-forwarding, temporary Pods, AI reasoning, remediation, and every cluster mutation. In particular, it does not reuse the existing mutating smoke-test path. Collection, normalization, deterministic evaluation, and rendering are separate and covered by synthetic offline fixtures. The local command has not contacted the live cluster during implementation; that remains a separate acceptance gate.
+The boundary excludes broad discovery, Events, logs, Secrets, ConfigMaps, RBAC contents, arbitrary API paths, port-forwarding, temporary Pods, AI reasoning, remediation, and every cluster mutation. In particular, it does not reuse the existing mutating smoke-test path. Collection, normalization, deterministic evaluation, and rendering are separate and covered by synthetic offline fixtures. Milestone 045 live acceptance passed against the original snapshot implementation, and Milestone 046 live acceptance passed against the exact published JSON implementation without changing the collection boundary.
 
 ```mermaid
 flowchart LR
     Operator["Operator inputs"] --> Collector["Closed read collector"]
     Collector --> Normalize["Selected evidence"]
     Normalize --> Evaluate["Deterministic checks"]
-    Evaluate --> Render["Terminal or Markdown"]
+    Evaluate --> Render["Terminal, Markdown, or JSON"]
 ```
 
-`src/forgeops/constants.py` owns the fixed SignalForge identities and limits. `runners.py` owns the deny-by-default process and network boundaries. `collect.py` owns collection and selected-field normalization, `evaluate.py` owns status semantics, and `render.py` owns presentation. A future reasoning layer may consume this evidence but must not expand collection or mutation authority implicitly.
+`src/forgeops/constants.py` owns the fixed SignalForge identities and limits. `runners.py` owns the deny-by-default process and network boundaries. `collect.py` owns collection and selected-field normalization, `evaluate.py` owns status semantics, and `render.py` owns presentation. The JSON renderer serializes only `EvaluatedSnapshot`; it cannot invoke subprocesses, contact a network, read a file, or recover discarded raw fields. A future reasoning layer may consume this evidence but must not expand collection or mutation authority implicitly.
 
 ## Documentation authority and publication
 
@@ -197,7 +197,7 @@ Potential next architecture steps include:
 2. Continue the demonstrated Prometheus and Grafana backup cadence.
 3. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
 4. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
-5. Validate the implemented ForgeOps snapshot against the separately approved live read-only baseline before adding incident reasoning or recommendations.
+5. Use the accepted deterministic ForgeOps JSON artifact as the bounded input contract when separately planning comparison, replay, incident reasoning, or recommendations.
 
 ## Decision records
 

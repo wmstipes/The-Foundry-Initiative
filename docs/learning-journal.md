@@ -912,6 +912,55 @@ The safest place to constrain an operational collector is before subprocess exec
 
 Review the complete local diff and offline validation evidence. Publish the branch and open a draft PR only after separate approval.
 
+## 2026-09-16 — Milestone 046 publication and draft PR
+
+### Result
+
+- Published `codex/milestone-046-forgeops-json-evidence` through the authorized GitHub repository connector after the runtime's HTTPS Git client had no credential helper.
+- Remote commit `2f49025698b5a54b2d863adba4b2192e0a88579f` has tree `0f4ac04483b36615a5848cd940b8457203d40c5a`, exactly matching reviewed local commit `e097b78a358bd10f23c36e2f1706bfdc3445737c`.
+- Opened draft PR #31 against `main` with the trust boundary, validation evidence, and remaining approval gates stated explicitly.
+- ForgeOps CI run `35136846722` completed successfully after the publication-evidence follow-up.
+- No package or image was released, no cluster was accessed, and no deployment, Wiki, readiness, or merge action occurred.
+
+### Next small step
+
+Review the successful CI evidence and prepare the separately gated read-only live JSON acceptance. PR readiness remains a later independent approval gate.
+
+## 2026-09-16 — Milestone 046 read-only live JSON acceptance
+
+### Result
+
+- Verified remote commit `2b8d10648b56b58f060d18cf8bdc39c5af6f8caf` and tree `dd8e51a455fe2a2f635470f75a35916eb660d5ed` before execution in a detached temporary worktree.
+- Installed the repository-local `foundry-check` distribution at version `0.3.0` and invoked `python -m forgeops snapshot --format json`.
+- Used the exact `kubernetes-admin@kubernetes` context, the unchanged bounded Kubernetes operation allowlist, and five explicit Restaurant API and Workbench HTTP endpoints.
+- Parsed schema `forgeops.snapshot/v1alpha1` with the exact top-level field order, 33 unique checks, five ordered HTTP checks, and only allowed check fields.
+- Observed 33 `PASS`, zero `WARN`, zero `FAIL`, zero `UNKNOWN`, overall `PASS`, and process and reported exit code `0`.
+- Verified that the JSON omitted the kubeconfig path, explicit base URLs, addresses, and tested credential markers.
+- Independently re-parsed the attached artifact, recorded collection time `2026-09-16T19:00:51Z`, and calculated SHA-256 `8d4d67f585a4c6b1e8f3cedb4a08f5583b06a9ab6e6b82697db62435f356dc16`.
+- No package registry, image, tag, manifest, deployment, temporary Pod, port-forward, workload change, or cluster mutation occurred.
+
+### Lesson
+
+The JSON contract preserves the useful operator evidence from Milestone 045 while making its structure independently parseable and reviewable. Verifying both the process exit code and the serialized exit code closes a subtle automation gap, while exact commit/tree checks tie the live evidence to reviewed source.
+
+### Next small step
+
+Review draft PR #31 for readiness. Readiness and merge remain separate approval gates.
+
+## 2026-09-16 — Milestone 046 PR readiness
+
+### Result
+
+- Reverified ready-candidate head `683fa512bb8306eb941801fc63c622121005a7c6` and exact local/remote tree `c39419f52848bad74cc852190681c7e1b6a12a7b`.
+- Confirmed PR #31 was open, draft, mergeable, and based on `f714d2567bce35ee90f4a5ff9ab0edd5fe9194ef` before the transition.
+- Confirmed final pre-readiness ForgeOps CI run `35138426733` succeeded.
+- Marked PR #31 ready only after the offline, package-install, exact-tree, CI, read-only live JSON, artifact-integrity, and no-mutation evidence passed.
+- Did not merge, close, release, deploy, or clean up the branch.
+
+### Next small step
+
+Review ready PR #31 for the separately approved merge decision.
+
 ## 2026-09-16 — Milestone 045 publication, CI, and read-only live acceptance
 
 ### Result
@@ -952,4 +1001,25 @@ Separating collection, evaluation, live acceptance, readiness, and merge created
 
 ### Next small step
 
-Publish and merge this closeout record, complete separately approved branch cleanup, and then plan the next bounded ForgeOps increment through its own approval gate.
+PR #30 merged the closeout record at `f714d2567bce35ee90f4a5ff9ab0edd5fe9194ef`, and all Milestone 045 branches were removed locally and remotely. Plan the next bounded ForgeOps increment through its own approval gate.
+
+## 2026-09-16 — Milestone 046 local implementation: deterministic JSON evidence contract
+
+### Result
+
+- Reconciled Phase 6 documentation with the completed Milestone 045 closeout and branch cleanup.
+- Selected a machine-readable JSON evidence artifact over new data sources, deterministic recommendations, snapshot comparison, or AI reasoning because it adds the smallest useful integration boundary without expanding trust.
+- Added `--format json` as a third view of the existing evaluated `forgeops.snapshot/v1alpha1` model.
+- Included fixed scope and redaction statements, summary counts, overall status, exit code, ordered checks, and the point-in-time limitation.
+- Kept optional check details explicit while omitting the collector's raw Kubernetes and HTTP responses.
+- Added a fixed golden JSON artifact, repeat-render byte equality, mixed WARN/FAIL/UNKNOWN precedence, renderer parity, redaction, and CLI-format coverage.
+- Advanced only the local package metadata to `0.3.0`; no registry publication, image, tag, manifest, deployment, Wiki, network, or cluster action occurred.
+- All 33 focused ForgeOps tests and `git diff --check` pass; the complete repository suite passes 91 tests.
+
+### Lesson
+
+A stable machine-readable boundary should follow deterministic evaluation rather than bypass it. Serializing `EvaluatedSnapshot` preserves the reviewed collection and interpretation limits while giving later comparison, replay, or reasoning work a bounded input contract. Deterministic serialization means the same evaluated model produces the same bytes; it does not imply that separately collected live snapshots have identical timestamps or observations.
+
+### Next small step
+
+Review the complete local diff and offline validation evidence. Publish the branch and open a draft PR only after separate approval.

@@ -28,7 +28,7 @@ forgeops snapshot --help
 foundry-check --help
 ~~~
 
-The editable install exposes both repository commands. Milestone 045 does not publish a package to a registry.
+The editable install exposes both repository commands. Milestones 045 and 046 do not publish a package to a registry.
 
 ## Identify the explicit kubeconfig
 
@@ -85,6 +85,21 @@ forgeops snapshot `
 ~~~
 
 A redirected report is durable evidence. Review it before sharing. The renderer omits kubeconfig paths and contents, credentials, node and Pod addresses, HTTP headers, complete objects, labels, annotations, environment data, and volumes.
+
+## Render deterministic JSON
+
+JSON contains the same ordered evaluated checks, statuses, summary, overall result, and exit-code semantics as terminal and Markdown output:
+
+~~~powershell
+forgeops snapshot `
+  --kubeconfig $env:KUBECONFIG `
+  --context kubernetes-admin@kubernetes `
+  --format json > forgeops-snapshot.json
+~~~
+
+The artifact identifies schema `forgeops.snapshot/v1alpha1` and includes the collection time, requested context, scope, redaction statement, summary, checks, and limitations. Optional `expected`, `observed`, and `errorCategory` fields appear only when applicable. It does not contain the collector's raw responses or restore fields discarded during normalization.
+
+Serialization is deterministic for the same evaluated snapshot. Independent live runs are not byte-identical evidence because their collection timestamps and observed state can differ. Review a redirected JSON artifact before sharing it and retain it only according to the operator's chosen local evidence-handling practice.
 
 ## Interpret results
 
