@@ -107,6 +107,8 @@ The project has moved from basic workload deployment into repeatable engineering
 - Comparison safety: two explicit files only, each bounded by the existing 1 MiB validator; no kubeconfig, kubectl, HTTP, network, collection, retention, replay, diagnosis, recommendation, AI reasoning, or mutation
 - Local validation: all 57 focused ForgeOps tests and all 115 repository tests pass; isolated installation and all four installed command entry checks pass
 - Local package metadata: Milestone 048 advances the repository-local distribution to `0.5.0`; no distribution is published
+- Publication: draft PR #35 opened from remote commit `40d461f746b27a27e0b42ccb4510ae2459c246fe`; its tree `3e88f927201f2799ff13f9a9291fcee822bfeba5` exactly matches reviewed local implementation commit `01e69896cefbd415c6b60e74683d7b2e2116493f`
+- CI: ForgeOps CI run `35160149810` completed successfully on the published implementation tree
 
 ## Milestone 038 closeout
 
@@ -264,7 +266,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the Milestone 048 local implementation and offline evidence. Publication and draft PR creation remain a separate approval gate.
+Review draft PR #35 for the explicit Gates 4–6 dispositions and later PR-readiness decision.
 
 ## Supporting completed work
 

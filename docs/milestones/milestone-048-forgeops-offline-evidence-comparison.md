@@ -1,6 +1,6 @@
 # Milestone 048 — ForgeOps deterministic offline evidence comparison
 
-**Status:** Local implementation and offline validation complete; publication and later gates remain separately gated
+**Status:** Local implementation, draft PR publication, and CI complete; PR readiness and later gates remain separately gated
 
 **Started:** 2026-09-16
 
@@ -116,6 +116,17 @@ Milestone 048 first records the Gate 10 facts left intentionally pending when Mi
 - No ServiceAccount, RBAC, Service, configuration, or persistent-state change.
 - No deployment, rollout, restart, live acceptance, or Wiki change.
 
+## Publication evidence
+
+- Draft PR: #35.
+- Published branch: `codex/milestone-048-forgeops-evidence-comparison`.
+- Reviewed local implementation commit: `01e69896cefbd415c6b60e74683d7b2e2116493f`.
+- Published remote implementation commit: `40d461f746b27a27e0b42ccb4510ae2459c246fe`.
+- Exact matching local and published tree: `3e88f927201f2799ff13f9a9291fcee822bfeba5`.
+- The GitHub repository connector was used because this runtime's HTTPS Git client has no credential helper.
+- ForgeOps CI run `35160149810` completed successfully on the published implementation tree.
+- The PR remains draft. Release, deployment, live acceptance, readiness, merge, closeout, and cleanup remain separately gated.
+
 ## Deterministic local acceptance
 
 1. The branch begins at exact baseline `2ebaa902f56f6b143009c4e630ba95f4a03759d8`.
@@ -143,7 +154,7 @@ Future explanations must distinguish observed changes from inferred causes, cite
 
 1. Planning — approved.
 2. Local implementation — approved and complete.
-3. Publication and draft PR — not authorized.
+3. Publication and draft PR — approved and complete through draft PR #35.
 4. Package or image release — not applicable and not authorized.
 5. Deployment — not applicable and not authorized.
 6. Live acceptance — not applicable; acceptance is offline.
