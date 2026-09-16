@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-043 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. Milestone 044 is defining the first bounded, read-only ForgeOps health-snapshot contract before implementation.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-043 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. Milestone 044 has defined and live-feasibility-tested the first bounded, read-only ForgeOps health-snapshot contract before implementation.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -336,7 +336,7 @@ Evolve the rules-based `/analyze` endpoint into a grounded Kubernetes incident c
 
 ### Milestone 044 — Read-only health snapshot design
 
-**Status:** Local implementation complete; publication remains separately gated.
+**Status:** Design published in draft PR #27; separately approved read-only live feasibility acceptance passed. PR readiness remains gated.
 
 - Define a separate local ForgeOps command rather than extending the mixed read/write `forge.ps1` dispatcher.
 - Require an explicit kubeconfig and exact context before any collection.
@@ -345,6 +345,7 @@ Evolve the rules-based `/analyze` endpoint into a grounded Kubernetes incident c
 - Fail closed on context mismatch or incomplete required evidence and preserve `UNKNOWN` instead of assuming health.
 - Exclude logs, Events, Secrets, ConfigMaps, broad discovery, cluster mutation, remediation, AI reasoning, and deployment.
 - Define offline fixture coverage, command allowlisting, redaction, timeouts, exit codes, and a separately approved read-only feasibility check.
+- Confirm the contract against the live four-node, five-Deployment SignalForge baseline and five allowlisted HTTP endpoints without mutation or restricted-data access.
 
 See [Milestone 044](docs/milestones/milestone-044-forgeops-read-only-health-snapshot-design.md).
 

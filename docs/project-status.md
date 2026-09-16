@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 is now defining the bounded read-only evidence contract that must precede ForgeOps implementation and AI-assisted reasoning.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 has defined, published, and live-feasibility-tested the bounded read-only evidence contract that must precede ForgeOps implementation and AI-assisted reasoning.
 
 ## Current application
 
@@ -54,14 +54,16 @@ The project has moved from basic workload deployment into repeatable engineering
 
 ## Current ForgeOps planning state
 
-- Milestone: 044, local design implementation complete
+- Milestone: 044, design published in draft PR #27 and live feasibility accepted
 - Goal: define a separate local, read-only SignalForge health snapshot before implementation
 - Target evidence: expected nodes, five named Deployments and their Pods, allowlisted EndpointSlices, Metrics APIService availability, and explicitly configured application endpoints
 - Output contract: one normalized `forgeops.snapshot/v1alpha1` model with equivalent terminal and Markdown views
 - Safety boundary: explicit kubeconfig and context, closed read-command allowlist, bounded output, redaction, no broad discovery, no sensitive objects, and no mutation
 - Failure boundary: incomplete required evidence remains `UNKNOWN` and returns an incomplete-collection exit code rather than implying health
-- Runtime impact: none; there is no command implementation, image, manifest, deployment, Wiki mutation, or cluster access in this milestone
-- Remaining gates: publication, read-only live feasibility acceptance, PR readiness, merge, closeout, and cleanup
+- Publication: branch `codex/milestone-044-forgeops-snapshot-design` at `c0cbfab`, with the published and locally reviewed tree matching exactly at `f542f306`; draft PR #27 remains open
+- Live feasibility: exact context validation passed; four expected nodes were Ready; all five Deployments met desired, updated, ready, and available replica counts; seven selected Pods were Running and Ready with zero restarts; all expected EndpointSlice endpoints were ready; Metrics APIService was available; and all five bounded HTTP checks passed
+- Runtime impact: read-only Kubernetes and HTTP feasibility queries only; there is no collector implementation, image, manifest, deployment, rollout, restart, Wiki mutation, or cluster mutation in this milestone
+- Remaining gates: PR readiness, merge, closeout, and cleanup
 
 ## Milestone 038 closeout
 
@@ -219,7 +221,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the local Milestone 044 design and offline verification evidence. If accepted, the next separately gated action is publication of `codex/milestone-044-forgeops-snapshot-design` and creation of a draft pull request. No live feasibility command may run until its own approval gate.
+Review the reconciled Milestone 044 design, offline verification, publication, and read-only live-feasibility evidence. If accepted, the next separately gated action is marking draft PR #27 ready for review. Merge, closeout, and cleanup remain independently gated.
 
 ## Supporting completed work
 

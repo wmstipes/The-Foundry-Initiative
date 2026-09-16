@@ -1,6 +1,6 @@
 # Milestone 044 — ForgeOps read-only health snapshot design
 
-**Status:** Local implementation complete; publication remains separately gated
+**Status:** Design published in draft PR #27; read-only live feasibility acceptance passed; PR readiness remains separately gated
 
 **Started:** 2026-09-16
 
@@ -223,6 +223,41 @@ Live feasibility is a separate approval gate after local design review and befor
 
 Live acceptance will not run the future collector, create a Pod, read logs, inspect Secrets or ConfigMaps, start a port-forward, publish a report, or mutate a resource. Any unavailable field or permission changes the design rather than prompting broader discovery.
 
+Live feasibility was separately approved and completed on 2026-09-16.
+
+### Publication evidence
+
+- Published branch: `codex/milestone-044-forgeops-snapshot-design`.
+- Published commit: `c0cbfabaf9af3f37d43586985fec51bfc3a21f20`.
+- Draft pull request: #27.
+- The published and locally reviewed trees matched exactly at `f542f306b209231da101f1a8f79d3aa1688bb787`.
+- GitHub reported no workflow runs or commit statuses for the documentation-only head commit at publication review time.
+
+### Kubernetes evidence
+
+- The operator supplied one explicit kubeconfig and the exact context resolved as `kubernetes-admin@kubernetes` before resource collection.
+- Client `v1.36.1` queried server `v1.36.4`.
+- `forge-head`, `forge-node-01`, `forge-node-02`, and `forge-node-03` each had exactly one Ready condition with status `True`.
+- All five allowlisted Deployments matched expected desired, updated, ready, and available replica counts: Restaurant API 3; Prometheus, Grafana, Workbench, and Metrics Server 1 each.
+- All seven selected Pods were Running and container-ready with zero restarts and no waiting or terminated reason.
+- The three Restaurant API Pods reported one consistent runtime image digest; configured and runtime evidence was present for every selected workload.
+- Restaurant API had three ready EndpointSlice endpoints. Prometheus, Grafana, and Workbench each had one. None was not-ready or unknown.
+- `v1beta1.metrics.k8s.io` had exactly one Available condition with status `True` and reason `Passed`.
+
+### HTTP evidence
+
+- The operator explicitly provided both base URLs; no address was discovered from cluster data.
+- Redirect following was disabled, each request had a five-second timeout, and each body was limited to 64 KiB.
+- Restaurant API `/version`, `/health`, `/ready`, and `/status` returned HTTP 200 with the expected release `0.7.0`, health, readiness, service, district, open-state, and enabled-analysis fields.
+- Workbench `/healthz` returned HTTP 200 with the exact body `ok`.
+- All five endpoint checks passed.
+
+### Fail-closed preflight evidence
+
+An initial operator attempt assumed a default Windows kubeconfig path that did not exist. Context and resource collection therefore remained incomplete and was classified as `UNKNOWN`, equivalent to exit code `2`; its empty follow-on displays were excluded from health evidence. The corrected acceptance resolved exactly one existing operator-configured `KUBECONFIG` file, verified the target context, and ran the collection atomically. No cluster resource changed during either attempt.
+
+The accepted combined Kubernetes and HTTP result is `PASS`, equivalent to exit code `0` under this contract.
+
 ## Release and deployment impact
 
 - No package or application version changes.
@@ -255,10 +290,10 @@ Rollback is documentation-only: revert the focused planning change or revise thi
 
 1. Planning — approved.
 2. Local implementation — approved; documentation-only implementation complete.
-3. Branch publication and draft PR — not authorized.
+3. Branch publication and draft PR — approved and complete in draft PR #27 at `c0cbfab`.
 4. Image release — not applicable; no image action is authorized.
 5. Deployment — not applicable; no cluster mutation is authorized.
-6. Read-only live feasibility acceptance — not authorized.
+6. Read-only live feasibility acceptance — approved and passed on 2026-09-16.
 7. Pull-request readiness — not authorized.
 8. Merge — not authorized.
 9. Closeout — not authorized.

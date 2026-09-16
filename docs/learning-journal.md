@@ -844,8 +844,24 @@ A reader-facing documentation layer can improve navigation without becoming a se
 
 - Milestone 044 changes documentation only.
 - No collector code, workflow, package version, image, Kubernetes manifest, runbook command, Wiki source, live Wiki, or cluster resource changes.
-- No live cluster or HTTP request is authorized during this gate.
+- Branch publication and draft PR creation completed after separate approval at commit `c0cbfab`; the published and reviewed local trees matched exactly at `f542f306`.
+- Separately approved live feasibility used only the fixed read-command allowlist and five explicit HTTP GETs. It did not create a Pod, read logs, inspect Secrets or ConfigMaps, start a port-forward, publish a report, or mutate a resource.
+
+### Live feasibility result
+
+- The exact `kubernetes-admin@kubernetes` context resolved from one explicit operator-configured kubeconfig.
+- All four expected nodes were Ready with one `Ready` condition each.
+- Restaurant API, Prometheus, Grafana, Forge YAML Workbench, and Metrics Server met their expected desired, updated, ready, and available replica counts.
+- Seven selected Pods were Running and Ready with zero restarts; the three Restaurant API replicas reported one consistent runtime image digest.
+- Restaurant API exposed three ready endpoints; Prometheus, Grafana, and Workbench exposed one each; no selected endpoint was not-ready or unknown.
+- `v1beta1.metrics.k8s.io` had one available condition with status `True`.
+- Restaurant API `/version`, `/health`, `/ready`, and `/status` plus Workbench `/healthz` returned HTTP 200 and their expected bounded fields or body without redirects.
+- The combined result corresponds to exit code `0`: required evidence was complete and every evaluated expectation passed.
+
+### Lesson
+
+The first manual preflight correctly stopped before collection when an assumed default Windows kubeconfig path did not exist. Because commands pasted individually continue after each terminating error, later empty displays were cascade artifacts rather than health evidence. Resolving the already configured `KUBECONFIG` entry, requiring an exact context match, and running the acceptance commands as one atomic block produced the valid result. The future collector must preserve that fail-closed behavior without depending on a platform-specific default path.
 
 ### Next small step
 
-Review the local design and offline verification evidence. Branch publication and a draft PR require separate approval. Read-only live feasibility acceptance remains a later, independent gate.
+Review the reconciled design, offline verification, publication, and live-feasibility evidence. Marking draft PR #27 ready for review requires separate approval; merge, closeout, and cleanup remain later independent gates.
