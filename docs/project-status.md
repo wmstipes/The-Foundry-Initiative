@@ -2,13 +2,13 @@
 
 **Last updated:** 2026-09-16
 
-**Current phase:** Operational visibility and ForgeOps collection-boundary planning
+**Current phase:** Operational visibility and ForgeOps implementation planning
 
 ## Summary
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 has defined, published, and live-feasibility-tested the bounded read-only evidence contract that must precede ForgeOps implementation and AI-assisted reasoning.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined, published, live-feasibility-tested, and merged the bounded read-only evidence contract that must precede ForgeOps implementation and AI-assisted reasoning.
 
 ## Current application
 
@@ -54,16 +54,18 @@ The project has moved from basic workload deployment into repeatable engineering
 
 ## Current ForgeOps planning state
 
-- Milestone: 044, design published in draft PR #27 and live feasibility accepted
+- Milestone: 044, design complete and merged through PR #27 at `c467468`
 - Goal: define a separate local, read-only SignalForge health snapshot before implementation
 - Target evidence: expected nodes, five named Deployments and their Pods, allowlisted EndpointSlices, Metrics APIService availability, and explicitly configured application endpoints
 - Output contract: one normalized `forgeops.snapshot/v1alpha1` model with equivalent terminal and Markdown views
 - Safety boundary: explicit kubeconfig and context, closed read-command allowlist, bounded output, redaction, no broad discovery, no sensitive objects, and no mutation
 - Failure boundary: incomplete required evidence remains `UNKNOWN` and returns an incomplete-collection exit code rather than implying health
-- Publication: branch `codex/milestone-044-forgeops-snapshot-design` at `c0cbfab`, with the published and locally reviewed tree matching exactly at `f542f306`; draft PR #27 remains open
+- Publication: branch `codex/milestone-044-forgeops-snapshot-design` contained design commit `c0cbfab` and live-evidence reconciliation commit `f42bc75`; the published and locally reviewed head trees matched exactly at `4a445e26`
 - Live feasibility: exact context validation passed; four expected nodes were Ready; all five Deployments met desired, updated, ready, and available replica counts; seven selected Pods were Running and Ready with zero restarts; all expected EndpointSlice endpoints were ready; Metrics APIService was available; and all five bounded HTTP checks passed
 - Runtime impact: read-only Kubernetes and HTTP feasibility queries only; there is no collector implementation, image, manifest, deployment, rollout, restart, Wiki mutation, or cluster mutation in this milestone
-- Remaining gates: PR readiness, merge, closeout, and cleanup
+- Merge: PR #27 was marked ready after separate approval and merged into `main` at `c467468f8afa349af92f6af1601283449248c8a4` on 2026-09-16; the merge tree exactly matched the reviewed branch tree
+- Checks: the operator confirmed all Actions shown in GitHub were green; the connected GitHub API exposed no workflow-run or commit-status records for either the head or merge commit
+- Remaining gates: closeout publication and branch cleanup
 
 ## Milestone 038 closeout
 
@@ -221,7 +223,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the reconciled Milestone 044 design, offline verification, publication, and read-only live-feasibility evidence. If accepted, the next separately gated action is marking draft PR #27 ready for review. Merge, closeout, and cleanup remain independently gated.
+Publish and merge the Milestone 044 closeout record through its own approval gates, then perform separately approved branch cleanup. Planning Milestone 045—the implementation of the accepted read-only snapshot contract—remains a distinct future decision.
 
 ## Supporting completed work
 

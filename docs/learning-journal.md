@@ -864,4 +864,22 @@ The first manual preflight correctly stopped before collection when an assumed d
 
 ### Next small step
 
-Review the reconciled design, offline verification, publication, and live-feasibility evidence. Marking draft PR #27 ready for review requires separate approval; merge, closeout, and cleanup remain later independent gates.
+Proceed through separately gated PR readiness and merge, then record the final merge evidence before cleanup.
+
+## 2026-09-16 — Milestone 044 merge and closeout
+
+### Result
+
+- Marked PR #27 ready only after offline validation, exact local/remote tree comparison, and separately approved read-only live feasibility passed.
+- PR #27 merged into `main` at `c467468f8afa349af92f6af1601283449248c8a4` on 2026-09-16 at 10:57:27 EDT.
+- Confirmed the merge contains branch head `f42bc7520c3bce572a651415306776841e6dd6a6` and that both resolve to tree `4a445e26526c207e1e766b1d42c5adf23b647bfc`.
+- The operator confirmed all Actions displayed by GitHub were green. The connected GitHub API exposed no workflow-run or commit-status records for the head or merge commit, so no run identifiers or unsupported status claims are recorded.
+- Milestone 044 is complete as a design milestone. It introduced no collector code, package, image, workflow, manifest, deployment, Wiki change, or cluster mutation.
+
+### Lesson
+
+Evidence sources can disagree in visibility without disagreeing on outcome. The operator-visible GitHub checks were green, while the connected API returned no associated run or status records. Recording both observations preserves provenance instead of manufacturing missing identifiers.
+
+### Next small step
+
+Publish and merge this closeout record, complete separately approved branch cleanup, and then plan Milestone 045 as the implementation of the accepted collector contract.
