@@ -933,4 +933,23 @@ Comparing the published commit and tree before live execution closes the gap bet
 
 ### Next small step
 
-Review draft PR #29 for readiness. Marking it ready and merging it remain separate approval gates.
+Proceed through separately gated PR readiness and merge, then record the final merge evidence before cleanup.
+
+## 2026-09-16 — Milestone 045 merge and closeout
+
+### Result
+
+- Marked PR #29 ready only after offline validation, two successful pre-merge ForgeOps CI runs, exact local/remote tree comparison, and separately approved read-only live acceptance passed.
+- PR #29 merged into `main` at `3e9851da0351e1e01f90c5e38b534e5bbade929d` on 2026-09-16 at 13:43:27 EDT.
+- Confirmed branch head `377b8439ded59b5f6c48b2bf6b848a991ba2f079` is an ancestor of the merge and that both resolve to tree `c879d164e726a20c418e48eb931731102e61d51e`.
+- ForgeOps CI push run `35129953752` completed successfully on the merge commit.
+- Milestone 045 is complete as the first implemented ForgeOps collector: all 33 live checks passed without broad discovery, restricted-data access, remediation, or mutation.
+- No package registry, image, tag, manifest, deployment, Wiki, or cluster resource changed.
+
+### Lesson
+
+Separating collection, evaluation, live acceptance, readiness, and merge created an auditable chain from reviewed source to runtime evidence. Exact tree comparison and post-merge CI make the accepted implementation traceable without treating the successful point-in-time snapshot as continuous monitoring.
+
+### Next small step
+
+Publish and merge this closeout record, complete separately approved branch cleanup, and then plan the next bounded ForgeOps increment through its own approval gate.

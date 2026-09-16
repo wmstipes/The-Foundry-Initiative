@@ -1,6 +1,6 @@
 # Milestone 045 — ForgeOps deterministic read-only snapshot
 
-**Status:** Implementation, publication, CI, and read-only live acceptance complete; PR readiness, merge, closeout, and cleanup remain separately gated
+**Status:** Complete; implementation, publication, CI, read-only live acceptance, PR readiness, and merge passed; closeout publication and cleanup remain separately gated
 
 **Started:** 2026-09-16
 
@@ -136,12 +136,13 @@ Rollback is a normal source revert of the focused implementation commit. Because
 
 ## Publication and CI evidence
 
-- Draft PR: #29.
+- Pull request: #29.
 - Published branch: `codex/milestone-045-forgeops-snapshot`.
-- Published commit: `4ae5ddedde9ce51efab94adf0f4f94b25829ac7b`.
-- Published tree: `0561e2ddc1c54af6fd12d840828fb820d4ad6893`, exactly matching the locally reviewed tree at commit `b15329b08a27df1ff27fa48ba0707a5ba6a60d5f`.
-- ForgeOps CI run `35128781478` completed successfully as run number 1.
-- The PR remained draft, clean, and mergeable after CI; no readiness or merge action occurred.
+- Implementation commit: `4ae5ddedde9ce51efab94adf0f4f94b25829ac7b`.
+- Implementation tree: `0561e2ddc1c54af6fd12d840828fb820d4ad6893`, exactly matching the locally reviewed tree at commit `b15329b08a27df1ff27fa48ba0707a5ba6a60d5f`.
+- Live-evidence reconciliation branch head: `377b8439ded59b5f6c48b2bf6b848a991ba2f079`.
+- Reviewed branch-head tree: `c879d164e726a20c418e48eb931731102e61d51e`.
+- ForgeOps CI runs `35128781478` and `35129577800` completed successfully before merge.
 
 ## Read-only live acceptance
 
@@ -162,6 +163,15 @@ The deterministic summary was `33 PASS, 0 WARN, 0 FAIL, 0 UNKNOWN`, overall `PAS
 
 The acceptance used only the implemented read-operation allowlist and five explicit HTTP GETs. It did not read logs, Events, Secrets, ConfigMaps, broad namespace state, or arbitrary API paths; create a temporary Pod; start a port-forward; change a workload; or mutate the cluster.
 
+## Merge evidence
+
+- PR #29 was marked ready only after separate approval and the offline, CI, exact-tree, and read-only live-acceptance evidence passed.
+- PR #29 merged into `main` at `3e9851da0351e1e01f90c5e38b534e5bbade929d` on 2026-09-16 at 13:43:27 EDT.
+- The merge tree is `c879d164e726a20c418e48eb931731102e61d51e`, exactly matching the reviewed branch-head tree.
+- Branch head `377b8439ded59b5f6c48b2bf6b848a991ba2f079` is an ancestor of the merge commit.
+- ForgeOps CI push run `35129953752` completed successfully on the merge commit.
+- No package, image, tag, manifest, deployment, Wiki, or cluster resource changed as part of readiness or merge.
+
 ## Gated delivery workflow
 
 1. Planning — approved.
@@ -170,7 +180,7 @@ The acceptance used only the implemented read-operation allowlist and five expli
 4. Package or image release — not applicable and not authorized.
 5. Deployment — not applicable and not authorized.
 6. Read-only live acceptance — approved and passed with 33 checks and exit code `0`.
-7. Pull-request readiness — not authorized.
-8. Merge — not authorized.
-9. Closeout — not authorized.
+7. Pull-request readiness — approved and complete.
+8. Merge — complete at `3e9851da0351e1e01f90c5e38b534e5bbade929d`.
+9. Closeout — approved; this local record remains separately gated for publication and merge.
 10. Cleanup — not authorized.
