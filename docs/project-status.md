@@ -95,6 +95,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Offline safety: no kubeconfig, kubectl, HTTP, network, collection, artifact rewrite, persistence, comparison, recommendation, AI reasoning, or mutation
 - Local validation: 48 focused ForgeOps tests and all 106 repository tests pass
 - Publication: remote commit `e848bed` has exact tree `e0e078a3bb7c87970ec070a951b5e3779c12b5a2`, matching reviewed local commit `bab4f3c`
+- CI: ForgeOps CI run `35155205132` and Kubernetes Manifest Validation run `35155205187` completed successfully on published documentation head `bdbe35d`
 - Local package metadata: `0.4.0`; no registry package, image, tag, manifest, deployment, live acceptance, or Wiki change
 
 ## Milestone 038 closeout

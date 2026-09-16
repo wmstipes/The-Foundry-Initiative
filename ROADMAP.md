@@ -380,7 +380,7 @@ See [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contrac
 
 ### Milestone 047 — Deterministic offline evidence validation
 
-**Status:** Local implementation and draft PR #33 publication complete; CI and later gates remain separate.
+**Status:** Local implementation, draft PR #33 publication, and CI complete; PR readiness and later gates remain separate.
 
 - Add `forgeops evidence validate --input <explicit-file>` as a separate offline consumer of the Milestone 046 JSON artifact.
 - Read only one explicitly selected regular file, enforce a 1 MiB limit, and require UTF-8 JSON without duplicate keys or non-standard numeric constants.

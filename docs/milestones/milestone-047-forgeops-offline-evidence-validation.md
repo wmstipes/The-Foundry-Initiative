@@ -1,6 +1,6 @@
 # Milestone 047 — ForgeOps deterministic offline evidence validation
 
-**Status:** Local implementation and draft PR publication complete; CI and later gates remain separately gated
+**Status:** Local implementation, draft PR publication, and CI complete; PR readiness and later gates remain separately gated
 
 **Started:** 2026-09-16
 
@@ -147,7 +147,8 @@ It also corrects the README ForgeOps renderer summary, the stale Workbench `0.5.
 - Published remote commit: `e848bed96a57cb62ab6fad6289a9310f52758ca0`.
 - Exact matching local and published tree: `e0e078a3bb7c87970ec070a951b5e3779c12b5a2`.
 - The GitHub repository connector was used because this runtime's HTTPS Git client had no credential helper.
-- The PR remains draft. CI review, PR readiness, merge, closeout, and cleanup remain separately gated.
+- ForgeOps CI run `35155205132` and Kubernetes Manifest Validation run `35155205187` completed successfully on published documentation head `bdbe35deae629e1af5451a7a51966464eb6cea6e`.
+- The PR remains draft. PR readiness, merge, closeout, and cleanup remain separately gated.
 
 ## Deterministic local acceptance
 
