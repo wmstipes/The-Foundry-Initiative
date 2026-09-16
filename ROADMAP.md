@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-046 are complete and merged; cleanup remains pending only for Milestone 046. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, and a deterministic JSON evidence contract. Milestone 046 changed no collection or mutation authority.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-046 are complete, merged, closed, and cleaned up. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, and a deterministic JSON evidence contract. Milestone 047 is the immediate next step and adds only an offline compatibility gate for an explicitly selected saved artifact.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -366,7 +366,7 @@ See [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-on
 
 ### Milestone 046 — Deterministic JSON evidence contract
 
-**Status:** Complete. Implementation, publication, CI, read-only live JSON acceptance, PR readiness, and merge completed through PR #31 at `4715628`; closeout publication and cleanup remain separately gated.
+**Status:** Complete. Implementation PR #31 merged at `4715628`; closeout PR #32 merged at `66bae40`; Gate 10 cleanup removed both Milestone 046 branches locally and remotely.
 
 - Add `--format json` without adding a new command or collection path.
 - Serialize only the evaluated, redacted `forgeops.snapshot/v1alpha1` model rather than raw Kubernetes or HTTP responses.
@@ -377,6 +377,21 @@ See [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-on
 - Confirm the exact published tree against SignalForge with 33 passing JSON checks, five explicit HTTP checks, verified redaction, and exit code `0` without cluster mutation.
 
 See [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md).
+
+### Milestone 047 — Deterministic offline evidence validation
+
+**Status:** Local implementation complete; publication remains separately gated.
+
+- Add `forgeops evidence validate --input <explicit-file>` as a separate offline consumer of the Milestone 046 JSON artifact.
+- Read only one explicitly selected regular file, enforce a 1 MiB limit, and require UTF-8 JSON without duplicate keys or non-standard numeric constants.
+- Validate the exact supported schema, ordered fields, value types, timestamps, unique check identifiers, limitations, and summary semantics.
+- Recalculate counts, overall-status precedence, and contained exit code rather than trusting serialized summary values.
+- Return validator success for a valid `WARN`, `FAIL`, or `UNKNOWN` artifact without describing the contained cluster state as healthy.
+- Keep artifact validation separate from collection: no kubeconfig, kubectl, HTTP, network, discovery, storage, recommendation, AI, or mutation authority.
+- Exclude comparison, replay, history, repair, signing, runbook mapping, diagnosis, recommendation, and AI reasoning.
+- Preserve the validated in-memory representation as the future input seam for separately planned comparison or reasoning.
+
+See [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-validation.md).
 
 Potential outcomes:
 

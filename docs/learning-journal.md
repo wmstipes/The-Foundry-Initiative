@@ -1041,3 +1041,25 @@ Closing the milestone with an exact tree comparison preserves traceability even 
 ### Next small step
 
 Merge the closeout PR, then remove the two Milestone 046 branches only after separate cleanup approval. Plan the next bounded ForgeOps increment independently.
+
+## 2026-09-16 — Milestone 047 local implementation: deterministic offline evidence validation
+
+### Result
+
+- Reconciled Milestone 046 closeout PR #32 at `66bae40d7d0a6d706db47db54a0335de1d93a22f`, completed Gate 10, both deleted Milestone 046 branches, full closure, and Milestone 047 as the immediate next step.
+- Selected strict offline evidence validation before comparison, replay, runbook mapping, or AI reasoning so every future consumer can share one fail-closed input boundary.
+- Added `forgeops evidence validate --input <explicit-file>` for one operator-selected regular file with a 1 MiB limit.
+- Rejects non-UTF-8 or malformed JSON, duplicate keys, non-standard numeric constants, unsupported schemas, field drift, invalid timestamps, duplicate check identifiers, and summaries that disagree with their checks.
+- Recalculates counts, status precedence, and contained exit code into an immutable `ValidatedEvidence` result.
+- Keeps contract validity distinct from health: the golden `UNKNOWN` artifact validates successfully while retaining contained exit code `2`.
+- Proved that the validator constructs no kubectl, HTTP, or collection runner and does not rewrite, retain, compare, diagnose, recommend, or mutate.
+- Synchronized local package metadata at `0.4.0` and corrected the stale README renderer summary and Workbench version in `k8s/README.md`.
+- All 48 focused ForgeOps tests and all 106 repository tests pass.
+
+### Lesson
+
+A machine-readable artifact is not yet a safe integration boundary until consumers reject duplicate keys, unsupported schema versions, structural drift, and self-contradictory summaries. Validation success must remain separate from the health state inside the artifact; otherwise a valid failure report can be mistaken for a passing cluster.
+
+### Next small step
+
+Review the complete local diff and offline installation evidence. Publication and draft PR creation remain a separate approval gate.

@@ -6,20 +6,8 @@ from collections import Counter
 import json
 from typing import TextIO
 
+from .constants import LIMITATION_DESCRIPTION, REDACTION_DESCRIPTION, SCOPE_DESCRIPTION
 from .models import CheckResult, EvaluatedSnapshot, Status
-
-
-SCOPE_DESCRIPTION = (
-    "fixed SignalForge nodes, workloads, routing, Metrics APIService, "
-    "and explicitly configured HTTP endpoints"
-)
-REDACTION_DESCRIPTION = (
-    "credentials, kubeconfig paths, addresses, headers, and complete objects omitted"
-)
-LIMITATION_DESCRIPTION = (
-    "This is a bounded point-in-time observation, not continuous monitoring, "
-    "a compliance assessment, or a complete statement of cluster health."
-)
 
 
 def _summary(snapshot: EvaluatedSnapshot) -> Counter[Status]:

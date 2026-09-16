@@ -1,6 +1,6 @@
 # Milestone 046 — ForgeOps deterministic JSON evidence contract
 
-**Status:** Complete. Local implementation, offline validation, publication, CI, read-only live acceptance, PR readiness, and merge completed through PR #31 at `4715628`; closeout publication and branch cleanup remain separately gated
+**Status:** Complete; implementation, publication, CI, read-only live acceptance, PR readiness, merge, closeout, and branch cleanup passed
 
 **Started:** 2026-09-16
 
@@ -129,7 +129,9 @@ The attached acceptance artifact independently re-parsed successfully and has SH
 - The implementation head and merge commit both resolve to exact tree `3dc1bade0004ce2a901cdab8bf48d564787acb79`.
 - The operator confirmed that all Actions displayed by GitHub were green after merge. The connected GitHub API exposed no workflow-run or commit-status records for the merge commit, so no unsupported run identifier is recorded.
 - The merge and this documentation-only closeout introduced no package or image release, deployment, Kubernetes access, workload restart, persistent-state change, Wiki mutation, or cluster mutation.
-- Branch cleanup remains a separate approval gate after the closeout PR merges.
+- Closeout PR #32 merged into `main` at `66bae40d7d0a6d706db47db54a0335de1d93a22f`.
+- After separate Gate 10 approval, both `codex/milestone-046-forgeops-json-evidence` and `codex/milestone-046-closeout` were deleted locally and remotely.
+- Milestone 046 is fully closed. Milestone 047 is the immediate next step.
 
 ## Documentation
 
@@ -161,5 +163,5 @@ The artifact establishes a one-way interface from bounded collection through det
 6. Live acceptance — approved and passed with 33 checks, verified redaction, and exit code `0`.
 7. Pull-request readiness — approved and complete for PR #31.
 8. Merge — approved and complete through PR #31 at `4715628`.
-9. Closeout — approved and in progress on `codex/milestone-046-closeout`.
-10. Branch cleanup — not authorized.
+9. Closeout — complete through PR #32 at `66bae40d7d0a6d706db47db54a0335de1d93a22f`.
+10. Branch cleanup — complete; both Milestone 046 branches were removed locally and remotely.

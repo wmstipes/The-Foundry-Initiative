@@ -10,6 +10,17 @@ COLLECTION_TIMEOUT_SECONDS = 90
 KUBECTL_OUTPUT_LIMIT = 2 * 1024 * 1024
 HTTP_BODY_LIMIT = 64 * 1024
 ERROR_TEXT_LIMIT = 2 * 1024
+SCOPE_DESCRIPTION = (
+    "fixed SignalForge nodes, workloads, routing, Metrics APIService, "
+    "and explicitly configured HTTP endpoints"
+)
+REDACTION_DESCRIPTION = (
+    "credentials, kubeconfig paths, addresses, headers, and complete objects omitted"
+)
+LIMITATION_DESCRIPTION = (
+    "This is a bounded point-in-time observation, not continuous monitoring, "
+    "a compliance assessment, or a complete statement of cluster health."
+)
 
 EXPECTED_NODES = (
     "forge-head",

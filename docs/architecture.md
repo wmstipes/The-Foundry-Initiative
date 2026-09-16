@@ -151,14 +151,20 @@ The first contract is deliberately SignalForge-specific. It covers the four expe
 The boundary excludes broad discovery, Events, logs, Secrets, ConfigMaps, RBAC contents, arbitrary API paths, port-forwarding, temporary Pods, AI reasoning, remediation, and every cluster mutation. In particular, it does not reuse the existing mutating smoke-test path. Collection, normalization, deterministic evaluation, and rendering are separate and covered by synthetic offline fixtures. Milestone 045 live acceptance passed against the original snapshot implementation, and Milestone 046 live acceptance passed against the exact published JSON implementation without changing the collection boundary.
 
 ```mermaid
-flowchart LR
+flowchart TD
     Operator["Operator inputs"] --> Collector["Closed read collector"]
     Collector --> Normalize["Selected evidence"]
     Normalize --> Evaluate["Deterministic checks"]
     Evaluate --> Render["Terminal, Markdown, or JSON"]
+    Render --> Artifact["Operator-saved JSON artifact"]
+    Artifact --> Validator["Offline contract validator"]
 ```
 
-`src/forgeops/constants.py` owns the fixed SignalForge identities and limits. `runners.py` owns the deny-by-default process and network boundaries. `collect.py` owns collection and selected-field normalization, `evaluate.py` owns status semantics, and `render.py` owns presentation. The JSON renderer serializes only `EvaluatedSnapshot`; it cannot invoke subprocesses, contact a network, read a file, or recover discarded raw fields. A future reasoning layer may consume this evidence but must not expand collection or mutation authority implicitly.
+`src/forgeops/constants.py` owns the fixed SignalForge identities and limits. `runners.py` owns the deny-by-default process and network boundaries. `collect.py` owns collection and selected-field normalization, `evaluate.py` owns status semantics, and `render.py` owns presentation. The JSON renderer serializes only `EvaluatedSnapshot`; it cannot invoke subprocesses, contact a network, read a file, or recover discarded raw fields.
+
+`evidence.py` is a separate offline consumer. It reads at most 1 MiB from one explicit regular file, rejects malformed or duplicate-key JSON, validates the exact `forgeops.snapshot/v1alpha1` contract, and recalculates summary semantics before returning an immutable validated representation. It does not call the collector, invoke kubectl, contact a network, repair or rewrite the artifact, or treat validation success as a healthy cluster result. Contract validation does not establish provenance, authenticity, or the absence of sensitive text in arbitrary string values; operators must still review artifacts before sharing them.
+
+A future comparison or reasoning layer may consume only this validated evidence seam. It must not receive collection credentials, expand the allowlist, reinterpret missing evidence as healthy, acquire storage authority, or gain mutation authority implicitly.
 
 ## Documentation authority and publication
 
@@ -197,7 +203,7 @@ Potential next architecture steps include:
 2. Continue the demonstrated Prometheus and Grafana backup cadence.
 3. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
 4. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
-5. Use the accepted deterministic ForgeOps JSON artifact as the bounded input contract when separately planning comparison, replay, incident reasoning, or recommendations.
+5. Use only a contract-validated ForgeOps JSON artifact as the bounded input when separately planning comparison, replay, incident reasoning, or recommendations.
 
 ## Decision records
 
