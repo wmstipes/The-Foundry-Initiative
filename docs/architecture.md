@@ -142,6 +142,14 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 - `docs/runbooks` contains operator procedures and recovery steps.
 - `docs/wiki` contains the reviewed source for the derivative GitHub Wiki Home and sidebar.
 
+## Planned ForgeOps snapshot boundary
+
+Milestone 044 defines, but does not implement, the first ForgeOps collection layer. The planned component is a separate local command with no in-cluster workload or identity. It requires an explicit kubeconfig and exact context, invokes only a closed set of read operations, normalizes the returned evidence, and renders equivalent terminal and Markdown views.
+
+The first contract is deliberately SignalForge-specific. It covers the four expected nodes; the Restaurant API, Prometheus, Grafana, Forge YAML Workbench, and Metrics Server Deployments and Pods; allowlisted EndpointSlices; Metrics APIService availability; and optional GET requests to explicitly configured Restaurant API and Workbench endpoints. Missing or incomplete evidence remains `UNKNOWN` and prevents a healthy overall result.
+
+The boundary excludes broad discovery, Events, logs, Secrets, ConfigMaps, RBAC contents, arbitrary API paths, port-forwarding, temporary Pods, AI reasoning, remediation, and every cluster mutation. In particular, it does not reuse the existing mutating smoke-test path. Collection, normalization, deterministic evaluation, and rendering remain separate so a later implementation can be tested entirely from offline fixtures before any separately approved read-only live acceptance.
+
 ## Documentation authority and publication
 
 The main repository is the authoritative documentation system. `ROADMAP.md` owns direction and sequencing, `docs/project-status.md` owns current live state, `docs/architecture.md` owns system design and constraints, `docs/milestones` owns chronological evidence, and `docs/runbooks` owns operator procedures.
@@ -179,7 +187,7 @@ Potential next architecture steps include:
 2. Continue the demonstrated Prometheus and Grafana backup cadence.
 3. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
 4. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
-5. Evolve the rules-based `/analyze` endpoint into the ForgeOps AI-assisted incident copilot.
+5. Implement the reviewed ForgeOps read-only snapshot contract before adding incident reasoning or recommendations.
 
 ## Decision records
 

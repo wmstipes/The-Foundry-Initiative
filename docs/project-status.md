@@ -1,14 +1,14 @@
 # Project Status
 
-**Last updated:** 2026-09-15
+**Last updated:** 2026-09-16
 
-**Current phase:** Operational visibility and durable monitoring
+**Current phase:** Operational visibility and ForgeOps collection-boundary planning
 
 ## Summary
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 has defined, published, and live-feasibility-tested the bounded read-only evidence contract that must precede ForgeOps implementation and AI-assisted reasoning.
 
 ## Current application
 
@@ -42,14 +42,28 @@ The project has moved from basic workload deployment into repeatable engineering
 
 ## Current documentation front-door state
 
-- Milestone: 043, local implementation complete
+- Milestone: 043, complete and cleaned up
 - Purpose: curated navigation for recruiters, technical reviewers, operators, and learners
 - Authority: repository documentation remains authoritative
 - Repository source: `docs/wiki/Home.md` and `docs/wiki/_Sidebar.md`
-- Validation: offline structure, link-target, stable-content, workflow-trigger, and exact-copy checks pass locally
-- Live Wiki: unchanged; mutation has not been authorized
-- Restaurant API image workflow: local candidate limits `main` branch pushes to `apps/restaurant-api/**` while preserving version-tag and manual dispatch paths
-- Remaining gates: publication, Wiki mutation, PR readiness, merge, and cleanup
+- Validation: offline structure, link-target, stable-content, workflow-trigger, exact-copy, and browser checks passed
+- Live Wiki: published and accepted at `0a945b4cac2ba1c781a55f9aa1a8c389426892e3`
+- Repository merge: PR #25 merged at `c42614db59f8b42a3d5e90d0a9e4272f47ed8080`; closeout PR #26 merged at `90c4b369516881943ed3c00d1070f7c70b5fc7ae`
+- Restaurant API image workflow: documentation-only `main` pushes now skip publication, while Restaurant API source changes, version tags, and manual dispatch remain enabled
+- Cleanup: all `codex/milestone-*` branches were removed locally and remotely; the intentionally preserved older remote branches are unchanged
+
+## Current ForgeOps planning state
+
+- Milestone: 044, design published in draft PR #27 and live feasibility accepted
+- Goal: define a separate local, read-only SignalForge health snapshot before implementation
+- Target evidence: expected nodes, five named Deployments and their Pods, allowlisted EndpointSlices, Metrics APIService availability, and explicitly configured application endpoints
+- Output contract: one normalized `forgeops.snapshot/v1alpha1` model with equivalent terminal and Markdown views
+- Safety boundary: explicit kubeconfig and context, closed read-command allowlist, bounded output, redaction, no broad discovery, no sensitive objects, and no mutation
+- Failure boundary: incomplete required evidence remains `UNKNOWN` and returns an incomplete-collection exit code rather than implying health
+- Publication: branch `codex/milestone-044-forgeops-snapshot-design` at `c0cbfab`, with the published and locally reviewed tree matching exactly at `f542f306`; draft PR #27 remains open
+- Live feasibility: exact context validation passed; four expected nodes were Ready; all five Deployments met desired, updated, ready, and available replica counts; seven selected Pods were Running and Ready with zero restarts; all expected EndpointSlice endpoints were ready; Metrics APIService was available; and all five bounded HTTP checks passed
+- Runtime impact: read-only Kubernetes and HTTP feasibility queries only; there is no collector implementation, image, manifest, deployment, rollout, restart, Wiki mutation, or cluster mutation in this milestone
+- Remaining gates: PR readiness, merge, closeout, and cleanup
 
 ## Milestone 038 closeout
 
@@ -93,6 +107,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - 040: Validation result filters released as immutable `0.8.0`, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #20 at `6fa5092`
 - 041: browser-local YAML Tree search released as immutable `0.9.0`, deployed, accepted, merged through PR #22 at `0f3d44e`, and cleaned up
 - 042: safe browser-local YAML file drop released as immutable `0.10.0`, deployed, accepted, and merged through PR #23 at `020d5e7`
+- 043: curated repository-owned GitHub Wiki front door published, browser-accepted, merged, and cleaned up; documentation-only Restaurant API image publication is suppressed
 
 ## Latest release milestone
 
@@ -101,7 +116,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Verification: 92 tests, validator reproducibility, production build, CSP scan, zero-vulnerability audit, repository validation, whitespace checks, Windows validation, CI, AMD64/ARM64 builds, and source and live browser reviews passed
 - Publication and deployment: immutable AMD64/ARM64 `0.10.0` is live at OCI index `sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206`
 - Runtime acceptance: generation 14, one Ready Pod on `forge-node-03`, zero restarts, exact configured/runtime digest match, one ready endpoint at `10.244.54.203:8080`, fresh HTTP 200 responses, expected security headers, and the complete file-drop workflow passed
-- Completion record: release and acceptance evidence merged through PR #23 at `020d5e7`; only post-merge branch cleanup remains separately gated
+- Completion record: release and acceptance evidence merged through PR #23 at `020d5e7`; post-merge branch cleanup is complete
 
 ## Previous completed milestone
 
@@ -206,7 +221,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the local Milestone 043 source and verification evidence. If accepted, the next separately gated action is publication of `codex/milestone-043-documentation-front-door` and creation of a draft pull request. The live Wiki remains unchanged until its own approval gate.
+Review the reconciled Milestone 044 design, offline verification, publication, and read-only live-feasibility evidence. If accepted, the next separately gated action is marking draft PR #27 ready for review. Merge, closeout, and cleanup remain independently gated.
 
 ## Supporting completed work
 

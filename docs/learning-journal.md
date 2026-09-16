@@ -812,3 +812,56 @@ Immutable Workbench `0.10.0` is published, deployed, runtime-verified, and live 
 - Corrected the Restaurant API Docker workflow candidate so documentation-only `main` pushes do not publish an image while application-source pushes, version tags, and manual dispatch remain enabled.
 - Reconciled the stale project-status next step and documented the authority, maintenance, accessibility, validation, and approval boundaries.
 - Local implementation is complete. No branch publication, draft PR, Wiki mutation, PR readiness transition, merge, or cleanup has been authorized.
+
+## 2026-09-15 — Milestone 043 publication, acceptance, merge, and cleanup
+
+### Result
+
+- Published the reviewed Home and sidebar as exact copies at Wiki commit `0a945b4cac2ba1c781a55f9aa1a8c389426892e3`.
+- Browser acceptance passed visible rendering, all destinations, keyboard navigation, readability at 200-percent zoom, and collaborator-only editing.
+- PR #25 merged at `c42614db59f8b42a3d5e90d0a9e4272f47ed8080`; the documentation-only merge did not trigger the Restaurant API image workflow.
+- PR #26 merged the closeout evidence at `90c4b369516881943ed3c00d1070f7c70b5fc7ae`.
+- After separate approval, all `codex/milestone-*` branches were removed locally and remotely. The older `feature/foundry-check-cli` and `feature/project-status` remote branches remain intentionally preserved.
+
+### Lesson
+
+A reader-facing documentation layer can improve navigation without becoming a second source of truth when its content is deliberately stable, repository-owned, validated, and published through an exact-copy contract.
+
+## 2026-09-16 — Milestone 044 planning and local implementation: ForgeOps read-only health snapshot design
+
+### Result
+
+- Reconciled the roadmap's first ForgeOps outcome with the actual operator tools, application state, workflows, and runbooks.
+- Confirmed that `forge.ps1 status` is unstructured and shares a dispatcher with mutating commands, while `forge.ps1 smoke` creates and deletes a temporary Pod.
+- Selected a separate future local collector instead of extending that mixed read/write command boundary.
+- Defined explicit kubeconfig and context targeting, fixed SignalForge resource identities, stable ordering, `PASS`/`WARN`/`FAIL`/`UNKNOWN` semantics, exit codes, timeouts, redaction, and fail-closed incomplete-collection behavior.
+- Limited the first contract to the four expected nodes; five named Deployments and their Pods; allowlisted EndpointSlices; Metrics APIService availability; and explicitly configured Restaurant API and Workbench GET endpoints.
+- Excluded logs, Events, Secrets, ConfigMaps, broad discovery, temporary Pods, port-forwarding, arbitrary API paths, AI reasoning, remediation, and all mutation.
+- Defined offline fixture tests and a deny-by-default command-runner test before any future implementation can receive read-only live acceptance.
+- Reconciled Milestone 043 publication, merge, closeout, and cleanup status across current documentation.
+
+### Current validation boundary
+
+- Milestone 044 changes documentation only.
+- No collector code, workflow, package version, image, Kubernetes manifest, runbook command, Wiki source, live Wiki, or cluster resource changes.
+- Branch publication and draft PR creation completed after separate approval at commit `c0cbfab`; the published and reviewed local trees matched exactly at `f542f306`.
+- Separately approved live feasibility used only the fixed read-command allowlist and five explicit HTTP GETs. It did not create a Pod, read logs, inspect Secrets or ConfigMaps, start a port-forward, publish a report, or mutate a resource.
+
+### Live feasibility result
+
+- The exact `kubernetes-admin@kubernetes` context resolved from one explicit operator-configured kubeconfig.
+- All four expected nodes were Ready with one `Ready` condition each.
+- Restaurant API, Prometheus, Grafana, Forge YAML Workbench, and Metrics Server met their expected desired, updated, ready, and available replica counts.
+- Seven selected Pods were Running and Ready with zero restarts; the three Restaurant API replicas reported one consistent runtime image digest.
+- Restaurant API exposed three ready endpoints; Prometheus, Grafana, and Workbench exposed one each; no selected endpoint was not-ready or unknown.
+- `v1beta1.metrics.k8s.io` had one available condition with status `True`.
+- Restaurant API `/version`, `/health`, `/ready`, and `/status` plus Workbench `/healthz` returned HTTP 200 and their expected bounded fields or body without redirects.
+- The combined result corresponds to exit code `0`: required evidence was complete and every evaluated expectation passed.
+
+### Lesson
+
+The first manual preflight correctly stopped before collection when an assumed default Windows kubeconfig path did not exist. Because commands pasted individually continue after each terminating error, later empty displays were cascade artifacts rather than health evidence. Resolving the already configured `KUBECONFIG` entry, requiring an exact context match, and running the acceptance commands as one atomic block produced the valid result. The future collector must preserve that fail-closed behavior without depending on a platform-specific default path.
+
+### Next small step
+
+Review the reconciled design, offline verification, publication, and live-feasibility evidence. Marking draft PR #27 ready for review requires separate approval; merge, closeout, and cleanup remain later independent gates.
