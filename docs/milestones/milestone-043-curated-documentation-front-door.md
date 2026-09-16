@@ -1,6 +1,6 @@
 # Milestone 043 — Curated documentation front door
 
-**Status:** Complete; cleanup remains separately gated
+**Status:** Complete and cleaned up
 
 **Started:** 2026-09-15
 
@@ -113,6 +113,13 @@ GitHub does not evaluate path filters for tag pushes, so version-tag publication
 - In particular, the Restaurant API Docker publication workflow did not run.
 - This is the first live confirmation that a documentation-only merge is skipped by the Milestone 043 path guardrail.
 
+## Cleanup evidence
+
+- The merged Milestone 043 implementation and closeout branches were removed locally and remotely after separate approval.
+- All other `codex/milestone-*` branches were also removed locally and remotely.
+- The older remote branches `feature/foundry-check-cli` and `feature/project-status` remain intentionally preserved.
+- Clean `main` is at closeout commit `90c4b369516881943ed3c00d1070f7c70b5fc7ae`.
+
 ## Deterministic verification
 
 Local acceptance requires:
@@ -133,4 +140,4 @@ Publication acceptance additionally requires a draft PR with expected files and 
 4. Live Wiki mutation and browser accessibility review — complete after explicit approval at Wiki commit `0a945b4cac2ba1c781a55f9aa1a8c389426892e3`.
 5. Pull-request readiness — complete after explicit approval.
 6. Merge — complete at `c42614db59f8b42a3d5e90d0a9e4272f47ed8080`.
-7. Cleanup — not authorized.
+7. Cleanup — complete after explicit approval.

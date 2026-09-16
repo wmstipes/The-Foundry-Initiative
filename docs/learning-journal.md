@@ -812,3 +812,40 @@ Immutable Workbench `0.10.0` is published, deployed, runtime-verified, and live 
 - Corrected the Restaurant API Docker workflow candidate so documentation-only `main` pushes do not publish an image while application-source pushes, version tags, and manual dispatch remain enabled.
 - Reconciled the stale project-status next step and documented the authority, maintenance, accessibility, validation, and approval boundaries.
 - Local implementation is complete. No branch publication, draft PR, Wiki mutation, PR readiness transition, merge, or cleanup has been authorized.
+
+## 2026-09-15 — Milestone 043 publication, acceptance, merge, and cleanup
+
+### Result
+
+- Published the reviewed Home and sidebar as exact copies at Wiki commit `0a945b4cac2ba1c781a55f9aa1a8c389426892e3`.
+- Browser acceptance passed visible rendering, all destinations, keyboard navigation, readability at 200-percent zoom, and collaborator-only editing.
+- PR #25 merged at `c42614db59f8b42a3d5e90d0a9e4272f47ed8080`; the documentation-only merge did not trigger the Restaurant API image workflow.
+- PR #26 merged the closeout evidence at `90c4b369516881943ed3c00d1070f7c70b5fc7ae`.
+- After separate approval, all `codex/milestone-*` branches were removed locally and remotely. The older `feature/foundry-check-cli` and `feature/project-status` remote branches remain intentionally preserved.
+
+### Lesson
+
+A reader-facing documentation layer can improve navigation without becoming a second source of truth when its content is deliberately stable, repository-owned, validated, and published through an exact-copy contract.
+
+## 2026-09-16 — Milestone 044 planning and local implementation: ForgeOps read-only health snapshot design
+
+### Result
+
+- Reconciled the roadmap's first ForgeOps outcome with the actual operator tools, application state, workflows, and runbooks.
+- Confirmed that `forge.ps1 status` is unstructured and shares a dispatcher with mutating commands, while `forge.ps1 smoke` creates and deletes a temporary Pod.
+- Selected a separate future local collector instead of extending that mixed read/write command boundary.
+- Defined explicit kubeconfig and context targeting, fixed SignalForge resource identities, stable ordering, `PASS`/`WARN`/`FAIL`/`UNKNOWN` semantics, exit codes, timeouts, redaction, and fail-closed incomplete-collection behavior.
+- Limited the first contract to the four expected nodes; five named Deployments and their Pods; allowlisted EndpointSlices; Metrics APIService availability; and explicitly configured Restaurant API and Workbench GET endpoints.
+- Excluded logs, Events, Secrets, ConfigMaps, broad discovery, temporary Pods, port-forwarding, arbitrary API paths, AI reasoning, remediation, and all mutation.
+- Defined offline fixture tests and a deny-by-default command-runner test before any future implementation can receive read-only live acceptance.
+- Reconciled Milestone 043 publication, merge, closeout, and cleanup status across current documentation.
+
+### Current validation boundary
+
+- Milestone 044 changes documentation only.
+- No collector code, workflow, package version, image, Kubernetes manifest, runbook command, Wiki source, live Wiki, or cluster resource changes.
+- No live cluster or HTTP request is authorized during this gate.
+
+### Next small step
+
+Review the local design and offline verification evidence. Branch publication and a draft PR require separate approval. Read-only live feasibility acceptance remains a later, independent gate.

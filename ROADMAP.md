@@ -1,12 +1,12 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-15
+**Last updated:** 2026-09-16
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-042 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. Milestone 043 is implementing a repository-owned, reader-facing GitHub Wiki front door without transferring authority away from the repository documentation.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-043 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. Milestone 044 is defining the first bounded, read-only ForgeOps health-snapshot contract before implementation.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -283,7 +283,7 @@ See [Milestone 041](docs/milestones/milestone-041-browser-local-tree-search.md).
 
 #### Milestone 042 — Safe browser-local YAML file drop
 
-**Status:** Complete. Immutable `0.10.0` is verified for AMD64 and ARM64, digest-pinned, deployed as generation 14, live browser-accepted, and merged through PR #23 at `020d5e7`; branch cleanup remains separately gated.
+**Status:** Complete. Immutable `0.10.0` is verified for AMD64 and ARM64, digest-pinned, deployed as generation 14, live browser-accepted, merged through PR #23 at `020d5e7`, and cleaned up.
 
 - Accept one local `.yaml` or `.yml` file through a visible editor drop target.
 - Preserve keyboard-equivalent Open file behavior and announce drag, rejection, cancellation, success, and read-failure states.
@@ -298,7 +298,7 @@ See [Milestone 042](docs/milestones/milestone-042-safe-browser-local-yaml-file-d
 
 #### Milestone 043 — Curated documentation front door
 
-**Status:** Local implementation complete; publication, Wiki mutation, PR readiness, merge, and cleanup remain separately gated.
+**Status:** Complete. The Wiki is live at commit `0a945b4`; browser acceptance, merge, closeout, and branch cleanup are complete.
 
 - Maintain a concise Wiki Home and custom sidebar as exact derivatives of reviewed source under `docs/wiki`.
 - Route recruiters, technical reviewers, operators, and learners to authoritative repository documents without copying volatile status, procedures, or evidence.
@@ -330,9 +330,23 @@ Each telemetry layer should answer a specific operational question before it is 
 
 ## Phase 6 — ForgeOps AI-assisted operations
 
-**Status:** Planned
+**Status:** In progress — collection-boundary planning
 
 Evolve the rules-based `/analyze` endpoint into a grounded Kubernetes incident copilot.
+
+### Milestone 044 — Read-only health snapshot design
+
+**Status:** Local implementation complete; publication remains separately gated.
+
+- Define a separate local ForgeOps command rather than extending the mixed read/write `forge.ps1` dispatcher.
+- Require an explicit kubeconfig and exact context before any collection.
+- Limit collection to named SignalForge nodes, workloads, EndpointSlices, Metrics APIService availability, and explicitly configured application endpoints.
+- Normalize evidence before rendering stable terminal and Markdown results.
+- Fail closed on context mismatch or incomplete required evidence and preserve `UNKNOWN` instead of assuming health.
+- Exclude logs, Events, Secrets, ConfigMaps, broad discovery, cluster mutation, remediation, AI reasoning, and deployment.
+- Define offline fixture coverage, command allowlisting, redaction, timeouts, exit codes, and a separately approved read-only feasibility check.
+
+See [Milestone 044](docs/milestones/milestone-044-forgeops-read-only-health-snapshot-design.md).
 
 Potential outcomes:
 
