@@ -109,6 +109,11 @@ The project has moved from basic workload deployment into repeatable engineering
 - Local package metadata: Milestone 048 advances the repository-local distribution to `0.5.0`; no distribution is published
 - Publication: draft PR #35 opened from remote commit `40d461f746b27a27e0b42ccb4510ae2459c246fe`; its tree `3e88f927201f2799ff13f9a9291fcee822bfeba5` exactly matches reviewed local implementation commit `01e69896cefbd415c6b60e74683d7b2e2116493f`
 - CI: ForgeOps CI run `35160149810` completed successfully on the published implementation tree
+- Final publication: head `002b48ec55c6dd2cd4c8cfece0d45a2ec36f5658` and reviewed local publication commit `94e6e8fc212e888479b9fb9d482329bf1a682a7d` resolve to tree `72c23057a43b485759072e0f5876495b73124b2c`; final-head ForgeOps CI run `35160350679` passed
+- PR readiness and merge: PR #35 was marked ready after separate approval and merged at `ad05786e1d94660d75e1724e4e8db6d3af7dc088`
+- Merge integrity: the final published head and merge commit resolve to exact accepted tree `72c23057a43b485759072e0f5876495b73124b2c`
+- Post-merge checks: the operator confirmed all Actions displayed by GitHub were green
+- Gate disposition: package/image release, deployment, and live acceptance were explicitly closed as not applicable; no cluster or endpoint access occurred
 
 ## Milestone 038 closeout
 
@@ -266,7 +271,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review draft PR #35 for the explicit Gates 4–6 dispositions and later PR-readiness decision.
+Complete Milestone 048 branch cleanup only after separate Gate 10 approval, then select the next bounded ForgeOps increment in a new planning pass.
 
 ## Supporting completed work
 

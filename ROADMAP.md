@@ -395,7 +395,7 @@ See [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-vali
 
 ### Milestone 048 — Deterministic offline evidence comparison
 
-**Status:** Local implementation, draft PR #35 publication, and CI complete; PR readiness and later gates remain separate.
+**Status:** Complete. Implementation, publication, CI, PR readiness, and merge completed through PR #35 at `ad05786`; package release, deployment, and live acceptance were explicitly closed as not applicable. Closeout is recorded here; branch cleanup remains separately gated.
 
 - Add `forgeops evidence compare --before <file> --after <file>` as a second consumer of the Milestone 047 validation seam.
 - Validate both explicitly selected artifacts before producing any comparison output.
