@@ -1023,3 +1023,21 @@ A stable machine-readable boundary should follow deterministic evaluation rather
 ### Next small step
 
 Review the complete local diff and offline validation evidence. Publish the branch and open a draft PR only after separate approval.
+
+## 2026-09-16 — Milestone 046 merge and closeout
+
+### Result
+
+- PR #31 implementation head `103bc2f1c00bdb5ae96b5dec7e6967df90860134` merged into `main` at `4715628c8ef1f498bd545e8be47393be9b310c59` after separate approval.
+- Confirmed the implementation head and merge commit both resolve to exact tree `3dc1bade0004ce2a901cdab8bf48d564787acb79`.
+- The operator confirmed all Actions displayed by GitHub were green. The connected GitHub API exposed no workflow-run or commit-status records for the merge commit, so the record does not invent a run identifier.
+- Milestone 046 is complete as a deterministic JSON evidence-contract increment. It added no source of cluster evidence, raw-response output, package or image release, deployment, AI reasoning, recommendation, or mutation authority.
+- Prepared the documentation-only closeout on `codex/milestone-046-closeout`; branch cleanup remains separately gated.
+
+### Lesson
+
+Closing the milestone with an exact tree comparison preserves traceability even when a connector cannot enumerate the post-merge push run. Operator-observed CI state and API-observable evidence should remain clearly distinguished.
+
+### Next small step
+
+Merge the closeout PR, then remove the two Milestone 046 branches only after separate cleanup approval. Plan the next bounded ForgeOps increment independently.

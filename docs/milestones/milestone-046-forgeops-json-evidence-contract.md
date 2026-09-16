@@ -1,10 +1,12 @@
 # Milestone 046 — ForgeOps deterministic JSON evidence contract
 
-**Status:** Local implementation, offline validation, publication, CI, read-only live acceptance, and PR readiness complete; merge and later gates remain separately gated
+**Status:** Complete. Local implementation, offline validation, publication, CI, read-only live acceptance, PR readiness, and merge completed through PR #31 at `4715628`; closeout publication and branch cleanup remain separately gated
 
 **Started:** 2026-09-16
 
-**Branch:** `codex/milestone-046-forgeops-json-evidence`
+**Implementation branch:** `codex/milestone-046-forgeops-json-evidence`
+
+**Closeout branch:** `codex/milestone-046-closeout`
 
 ## Goal
 
@@ -88,7 +90,7 @@ The repository-local Python distribution version becomes `0.3.0`. No package is 
 - Exact matching local and published tree: `0f4ac04483b36615a5848cd940b8457203d40c5a`.
 - The GitHub repository connector was used because this runtime's HTTPS Git client had no credential helper.
 - ForgeOps CI run `35136846722` completed successfully after the publication-evidence follow-up.
-- The PR remains draft; live acceptance, readiness, merge, closeout, and cleanup are not authorized.
+- At this publication stage, the PR remained draft; live acceptance, readiness, merge, closeout, and cleanup had not yet been authorized.
 
 ## Acceptance plan
 
@@ -119,7 +121,15 @@ The attached acceptance artifact independently re-parsed successfully and has SH
 - Confirmed final pre-readiness ForgeOps CI run `35138426733` completed successfully.
 - Confirmed PR #31 was open, draft, mergeable, and based on the accepted `f714d2567bce35ee90f4a5ff9ab0edd5fe9194ef` baseline.
 - Marked PR #31 ready only after separate approval and the offline, installation, exact-tree, CI, read-only live acceptance, artifact-integrity, and no-mutation evidence passed.
-- PR #31 remains open and unmerged; merge is a separate gate.
+- PR #31 remained open and unmerged at the readiness gate; merge stayed separately gated.
+
+## Merge and closeout evidence
+
+- PR #31 implementation head `103bc2f1c00bdb5ae96b5dec7e6967df90860134` merged into `main` at `4715628c8ef1f498bd545e8be47393be9b310c59` on 2026-09-16.
+- The implementation head and merge commit both resolve to exact tree `3dc1bade0004ce2a901cdab8bf48d564787acb79`.
+- The operator confirmed that all Actions displayed by GitHub were green after merge. The connected GitHub API exposed no workflow-run or commit-status records for the merge commit, so no unsupported run identifier is recorded.
+- The merge and this documentation-only closeout introduced no package or image release, deployment, Kubernetes access, workload restart, persistent-state change, Wiki mutation, or cluster mutation.
+- Branch cleanup remains a separate approval gate after the closeout PR merges.
 
 ## Documentation
 
@@ -150,6 +160,6 @@ The artifact establishes a one-way interface from bounded collection through det
 5. Deployment — not applicable and not authorized.
 6. Live acceptance — approved and passed with 33 checks, verified redaction, and exit code `0`.
 7. Pull-request readiness — approved and complete for PR #31.
-8. Merge — not authorized.
-9. Closeout — not authorized.
+8. Merge — approved and complete through PR #31 at `4715628`.
+9. Closeout — approved and in progress on `codex/milestone-046-closeout`.
 10. Branch cleanup — not authorized.
