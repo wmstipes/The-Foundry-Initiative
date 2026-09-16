@@ -1,6 +1,6 @@
 # Milestone 046 — ForgeOps deterministic JSON evidence contract
 
-**Status:** Local implementation and offline validation complete; publication and later gates remain separately gated
+**Status:** Local implementation, offline validation, publication, and draft PR complete; CI and later gates remain separately gated
 
 **Started:** 2026-09-16
 
@@ -79,6 +79,16 @@ Local validation result: 33 ForgeOps tests and all 91 repository tests passed, a
 
 The repository-local Python distribution version becomes `0.3.0`. No package is published to a registry, and no image or tag is built. There are no Kubernetes manifests, ServiceAccounts, RBAC objects, workloads, configuration changes, rollouts, restarts, or persistent-state changes.
 
+## Publication evidence
+
+- Draft PR: #31.
+- Published branch: `codex/milestone-046-forgeops-json-evidence`.
+- Reviewed local commit: `e097b78a358bd10f23c36e2f1706bfdc3445737c`.
+- Published remote commit: `2f49025698b5a54b2d863adba4b2192e0a88579f`.
+- Exact matching local and published tree: `0f4ac04483b36615a5848cd940b8457203d40c5a`.
+- The GitHub repository connector was used because this runtime's HTTPS Git client had no credential helper.
+- The PR remains draft; live acceptance, readiness, merge, closeout, and cleanup are not authorized.
+
 ## Acceptance plan
 
 After publication is separately approved, CI must install the exact branch, pass the complete offline ForgeOps suite, and expose JSON in both command entry points. A later separately approved live acceptance may run the exact published commit against the existing bounded SignalForge target, redirect JSON to an operator-selected local file, parse it, confirm the expected schema and 33-check healthy baseline, and search it for prohibited data. That acceptance must use only the existing read allowlist and five explicit HTTP GETs and must not mutate the cluster.
@@ -107,7 +117,7 @@ The artifact establishes a one-way interface from bounded collection through det
 
 1. Planning — approved.
 2. Local implementation — approved and complete.
-3. Publication and draft PR — not authorized.
+3. Publication and draft PR — approved and complete through draft PR #31.
 4. Package or image release — not applicable and not authorized.
 5. Deployment — not applicable and not authorized.
 6. Live acceptance — not authorized.

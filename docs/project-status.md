@@ -79,6 +79,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Milestone 046: local deterministic JSON evidence contract implemented on `codex/milestone-046-forgeops-json-evidence`
 - JSON boundary: evaluated checks only, fixed key and check order, explicit summary and limitations, no raw response serialization, and no collection-authority change
 - Local validation: 33 offline ForgeOps tests pass, including the fixed golden JSON contract, mixed-status precedence, renderer parity, offline CLI rendering, CLI selection, and redaction
+- Publication: draft PR #31 opened from published commit `2f49025`; published tree `0f4ac04483b36615a5848cd940b8457203d40c5a` exactly matched reviewed local commit `e097b78`
 - Runtime impact: none during local implementation; no package registry, image, manifest, deployment, Wiki, network, or cluster action
 
 ## Milestone 038 closeout
@@ -237,7 +238,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the complete Milestone 046 local diff and offline validation evidence. Publication and a draft PR require separate approval.
+Review draft PR #31 and its CI evidence. Live acceptance remains a later independent approval gate; PR readiness is not yet authorized.
 
 ## Supporting completed work
 
