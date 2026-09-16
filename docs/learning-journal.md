@@ -882,4 +882,55 @@ Evidence sources can disagree in visibility without disagreeing on outcome. The 
 
 ### Next small step
 
-Publish and merge this closeout record, complete separately approved branch cleanup, and then plan Milestone 045 as the implementation of the accepted collector contract.
+Milestone 044 closeout merged through PR #28 at `aa178b0a4f63a4680d9f47063aec817807b9771e`, and both milestone branches were removed locally and remotely. Proceed with the separately approved Milestone 045 implementation of the accepted collector contract.
+
+## 2026-09-16 — Milestone 045 local implementation: deterministic read-only snapshot
+
+### Result
+
+- Implemented a separate `forgeops snapshot` Python command while preserving the earlier `foundry-check` utility.
+- Encoded the four Nodes, five Deployments and Pod selectors, four Services, Metrics APIService, and five optional HTTP paths as fixed constants rather than user-selectable resources.
+- Added a deny-by-default kubectl runner that uses argument arrays with `shell=False`, explicit kubeconfig and context arguments, ten-second calls, and two-MiB output limits.
+- Added a no-redirect HTTP runner for explicit operator URLs with five-second calls, 64-KiB bodies, and credential-bearing URL rejection.
+- Reduced Kubernetes and HTTP responses to accepted fields before deterministic evaluation or rendering.
+- Implemented stable `PASS`, `WARN`, `FAIL`, and `UNKNOWN` checks with exit codes `0`, `1`, and fail-closed `2`.
+- Added equivalent terminal and Markdown renderers that state their scope and redaction boundary without claiming continuous monitoring or complete cluster health.
+- Added synthetic healthy and failure fixtures, focused offline tests, and a dedicated CI workflow with no cluster credentials or live access.
+- Added the ForgeOps operator runbook and reconciled Milestone 044 closeout and cleanup status.
+
+### Validation boundary
+
+- Local implementation runs entirely from synthetic fixtures; no kubectl command, HTTP endpoint, cluster resource, Wiki, registry, image, or deployment was contacted or changed.
+- Package metadata advances locally from `0.1.0` to `0.2.0` to expose the second command; no distribution is published.
+- Publication, read-only live acceptance, PR readiness, merge, closeout, and cleanup remain separate gates.
+
+### Lesson
+
+The safest place to constrain an operational collector is before subprocess execution: typed operations and fixed target mappings make unsupported commands unrepresentable, while selected-field normalization keeps complete API objects out of later evaluation and reports.
+
+### Next small step
+
+Review the complete local diff and offline validation evidence. Publish the branch and open a draft PR only after separate approval.
+
+## 2026-09-16 — Milestone 045 publication, CI, and read-only live acceptance
+
+### Result
+
+- Published draft PR #29 at remote commit `4ae5ddedde9ce51efab94adf0f4f94b25829ac7b`.
+- Confirmed its tree `0561e2ddc1c54af6fd12d840828fb820d4ad6893` exactly matched the locally reviewed implementation tree.
+- ForgeOps CI run `35128781478` completed successfully.
+- The operator ran the published commit from a detached temporary worktree after verifying both commit and tree.
+- The command resolved the exact `kubernetes-admin@kubernetes` context, collected the fixed Kubernetes scope, and queried only the five explicit application endpoints.
+- All four Nodes were Ready; all five Deployments and seven selected Pods matched replica, readiness, restart, configured-image, and applicable runtime-digest expectations.
+- All four routing checks and the Metrics APIService check passed.
+- Restaurant API `/version`, `/health`, `/ready`, and `/status` plus Workbench `/healthz` matched their fixed HTTP expectations.
+- The final summary was 33 `PASS`, zero `WARN`, zero `FAIL`, zero `UNKNOWN`, overall `PASS`, and exit code `0`.
+- No log, Event, Secret, ConfigMap, broad discovery, temporary Pod, port-forward, remediation, deployment, or cluster mutation occurred.
+
+### Lesson
+
+Comparing the published commit and tree before live execution closes the gap between reviewed source and operator evidence. The first real collector run also demonstrated that selected-field normalization can remain useful without exposing complete API objects or credentials.
+
+### Next small step
+
+Review draft PR #29 for readiness. Marking it ready and merging it remain separate approval gates.

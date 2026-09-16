@@ -1,0 +1,39 @@
+{
+  "version": {
+    "clientVersion": {"gitVersion": "v1.36.1"},
+    "serverVersion": {"gitVersion": "v1.36.4"}
+  },
+  "nodes": {
+    "items": [
+      {"metadata": {"name": "forge-node-03"}, "status": {"conditions": [{"type": "Ready", "status": "True", "reason": "KubeletReady"}]}},
+      {"metadata": {"name": "forge-head"}, "status": {"conditions": [{"type": "Ready", "status": "True", "reason": "KubeletReady"}]}},
+      {"metadata": {"name": "forge-node-01"}, "status": {"conditions": [{"type": "Ready", "status": "True", "reason": "KubeletReady"}]}},
+      {"metadata": {"name": "forge-node-02"}, "status": {"conditions": [{"type": "Ready", "status": "True", "reason": "KubeletReady"}]}}
+    ]
+  },
+  "deployments": {
+    "forge-restaurant/restaurant-api": {"metadata": {"namespace": "forge-restaurant", "name": "restaurant-api"}, "spec": {"replicas": 3, "template": {"spec": {"containers": [{"image": "wmstipes/signalforge-restaurant-api:0.7.0"}]}}}, "status": {"updatedReplicas": 3, "readyReplicas": 3, "availableReplicas": 3}},
+    "forge-observability/prometheus": {"metadata": {"namespace": "forge-observability", "name": "prometheus"}, "spec": {"replicas": 1, "template": {"spec": {"containers": [{"image": "prom/prometheus:v3.13.2"}]}}}, "status": {"updatedReplicas": 1, "readyReplicas": 1, "availableReplicas": 1}},
+    "forge-observability/grafana": {"metadata": {"namespace": "forge-observability", "name": "grafana"}, "spec": {"replicas": 1, "template": {"spec": {"containers": [{"image": "grafana/grafana:13.2.1@sha256:f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283"}]}}}, "status": {"updatedReplicas": 1, "readyReplicas": 1, "availableReplicas": 1}},
+    "forge-tools/forge-yaml-workbench": {"metadata": {"namespace": "forge-tools", "name": "forge-yaml-workbench"}, "spec": {"replicas": 1, "template": {"spec": {"containers": [{"image": "wmstipes/signalforge-yaml-workbench:0.10.0@sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206"}]}}}, "status": {"updatedReplicas": 1, "readyReplicas": 1, "availableReplicas": 1}},
+    "kube-system/metrics-server": {"metadata": {"namespace": "kube-system", "name": "metrics-server"}, "spec": {"replicas": 1, "template": {"spec": {"containers": [{"image": "registry.k8s.io/metrics-server/metrics-server:v0.9.0"}]}}}, "status": {"updatedReplicas": 1, "readyReplicas": 1, "availableReplicas": 1}}
+  },
+  "pods": {
+    "forge-restaurant/restaurant-api": {"items": [
+      {"metadata": {"name": "restaurant-api-c"}, "spec": {"nodeName": "forge-node-03", "containers": [{"image": "wmstipes/signalforge-restaurant-api:0.7.0"}]}, "status": {"phase": "Running", "containerStatuses": [{"ready": true, "restartCount": 0, "imageID": "docker.io/wmstipes/signalforge-restaurant-api@sha256:restaurant"}]}},
+      {"metadata": {"name": "restaurant-api-a"}, "spec": {"nodeName": "forge-node-01", "containers": [{"image": "wmstipes/signalforge-restaurant-api:0.7.0"}]}, "status": {"phase": "Running", "containerStatuses": [{"ready": true, "restartCount": 0, "imageID": "docker.io/wmstipes/signalforge-restaurant-api@sha256:restaurant"}]}},
+      {"metadata": {"name": "restaurant-api-b"}, "spec": {"nodeName": "forge-node-02", "containers": [{"image": "wmstipes/signalforge-restaurant-api:0.7.0"}]}, "status": {"phase": "Running", "containerStatuses": [{"ready": true, "restartCount": 0, "imageID": "docker.io/wmstipes/signalforge-restaurant-api@sha256:restaurant"}]}}
+    ]},
+    "forge-observability/prometheus": {"items": [{"metadata": {"name": "prometheus-a"}, "spec": {"nodeName": "forge-head", "containers": [{"image": "prom/prometheus:v3.13.2"}]}, "status": {"phase": "Running", "containerStatuses": [{"ready": true, "restartCount": 0, "imageID": "docker.io/prom/prometheus@sha256:prometheus"}]}}]},
+    "forge-observability/grafana": {"items": [{"metadata": {"name": "grafana-a"}, "spec": {"nodeName": "forge-head", "containers": [{"image": "grafana/grafana:13.2.1@sha256:f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283"}]}, "status": {"phase": "Running", "containerStatuses": [{"ready": true, "restartCount": 0, "imageID": "docker.io/grafana/grafana@sha256:f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283"}]}}]},
+    "forge-tools/forge-yaml-workbench": {"items": [{"metadata": {"name": "workbench-a"}, "spec": {"nodeName": "forge-node-03", "containers": [{"image": "wmstipes/signalforge-yaml-workbench:0.10.0@sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206"}]}, "status": {"phase": "Running", "containerStatuses": [{"ready": true, "restartCount": 0, "imageID": "docker.io/wmstipes/signalforge-yaml-workbench@sha256:2afd73f4da3aa9862aabd0f532194da92bf37dbd196b03d9abfa1079f86e0206"}]}}]},
+    "kube-system/metrics-server": {"items": [{"metadata": {"name": "metrics-server-a"}, "spec": {"nodeName": "forge-node-01", "containers": [{"image": "registry.k8s.io/metrics-server/metrics-server:v0.9.0"}]}, "status": {"phase": "Running", "containerStatuses": [{"ready": true, "restartCount": 0, "imageID": "registry.k8s.io/metrics-server/metrics-server@sha256:metrics"}]}}]}
+  },
+  "routing": {
+    "forge-restaurant/restaurant-api": {"items": [{"endpoints": [{"conditions": {"ready": true}}, {"conditions": {"ready": true}}, {"conditions": {"ready": true}}]}]},
+    "forge-observability/prometheus": {"items": [{"endpoints": [{"conditions": {"ready": true}}]}]},
+    "forge-observability/grafana": {"items": [{"endpoints": [{"conditions": {"ready": true}}]}]},
+    "forge-tools/forge-yaml-workbench": {"items": [{"endpoints": [{"conditions": {"ready": true}}]}]}
+  },
+  "metrics": {"status": {"conditions": [{"type": "Available", "status": "True", "reason": "Passed"}]}}
+}

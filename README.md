@@ -64,6 +64,21 @@ Milestone 036 recovered from the rejected `0.4.0` browser startup defect without
 
 Milestone 042 adds one-file YAML drag-and-drop with visible and accessible target states, shared unsaved-change protection, deterministic state boundaries, and no upload or persistence path. Immutable `0.10.0` is published, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #23 at `020d5e7`.
 
+## ForgeOps snapshot
+
+ForgeOps now has a local deterministic snapshot command. It checks a fixed allowlist of SignalForge Nodes, Deployments, selected Pods, EndpointSlices, and Metrics APIService availability. Optional Restaurant API and Workbench checks run only against explicit operator-provided URLs.
+
+~~~powershell
+python -m pip install -e .
+forgeops snapshot `
+  --kubeconfig $env:KUBECONFIG `
+  --context kubernetes-admin@kubernetes
+~~~
+
+Add `--format markdown` for a reviewable report, or provide `--restaurant-url` and `--workbench-url` to include the five accepted application endpoints. The command uses only bounded read operations, never falls back to an ambient kubeconfig or context, does not read sensitive Kubernetes objects, and cannot mutate the cluster. `UNKNOWN` evidence fails closed with exit code `2`.
+
+See the [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md) and [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md).
+
 ## Documentation front door
 
 The [GitHub Wiki](https://github.com/wmstipes/The-Foundry-Initiative/wiki) is a curated reader-facing navigation layer. Repository documentation remains authoritative; the Wiki intentionally points to the current project status, architecture, roadmap, runbooks, milestone evidence, and vision instead of copying them.
@@ -94,8 +109,8 @@ The-Foundry-Initiative/
     runbooks/              Operator procedures and recovery guidance
     wiki/                  Repository-owned source for the curated Wiki front door
 
-  src/                      Shared or earlier implementation code
-  tests/                    Shared or earlier automated tests
+  src/                      foundry-check and ForgeOps Python packages
+  tests/                    Shared automated tests and offline ForgeOps fixtures
   experiments/              Prototypes and exploratory work
 
   ROADMAP.md                Project goals and future phases
@@ -131,6 +146,7 @@ Completed SignalForge milestones include:
 * NVMe-backed Prometheus deployed with Pod-replacement persistence and isolated off-node backup/restore validation
 * Grafana dashboards and bounded Prometheus rule evaluation deployed and recovery-tested
 * Forge YAML Workbench `0.10.0` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks, General YAML mode, the pinned OWASP Kubernetes Top 10:2025 review profile, formatting preview, review-first Markdown reports, counted Validation filters, browser-local Tree search, and safe one-file YAML drop
+* deterministic ForgeOps read-only snapshot implemented with offline fixtures, stable terminal and Markdown output, and a deny-by-default command runner
 
 ## Earlier utility: foundry-check
 
