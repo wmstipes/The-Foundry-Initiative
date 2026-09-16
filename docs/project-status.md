@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, Milestone 046 added a deterministic JSON evidence view without expanding collection or mutation authority, and Milestone 047 added a merged offline compatibility gate for saved evidence before future consumers are introduced.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, Milestone 046 added a deterministic JSON evidence view, Milestone 047 added strict offline validation, and Milestone 048 now locally compares two validated artifacts without expanding collection or mutation authority.
 
 ## Current application
 
@@ -99,6 +99,16 @@ The project has moved from basic workload deployment into repeatable engineering
 - Merge integrity: merge commit `a92b4b8e8593d0bffd0af1c7db800a16efd84663` resolves to the same accepted tree `81fc5e9d9740c6d964fed34adcc00ec58f05395b`
 - Gate disposition: package/image release, deployment, and live acceptance were explicitly closed as not applicable; acceptance was intentionally offline
 - Local package metadata: `0.4.0`; no registry package, image, tag, manifest, deployment, cluster access, live acceptance, or Wiki change
+- Milestone 047 closeout and cleanup: closeout PR #34 merged at `2ebaa902f56f6b143009c4e630ba95f4a03759d8`; Gate 10 completed and both Milestone 047 branches were removed locally and remotely
+- Milestone 048: deterministic offline evidence comparison is locally implemented on `codex/milestone-048-forgeops-evidence-comparison`
+- Comparison interface: `forgeops evidence compare --before <file> --after <file>` validates both artifacts before comparing them
+- Comparison semantics: checks are matched by ID; additions, removals, status transitions, and same-status evidence changes are reported in stable order while collection timestamps are ignored as differences
+- Comparison exits: `0` equivalent, `1` different, and `2` invalid input or chronology; exit `1` is not a contained-health result
+- Comparison safety: two explicit files only, each bounded by the existing 1 MiB validator; no kubeconfig, kubectl, HTTP, network, collection, retention, replay, diagnosis, recommendation, AI reasoning, or mutation
+- Local validation: all 57 focused ForgeOps tests and all 115 repository tests pass; isolated installation and all four installed command entry checks pass
+- Local package metadata: Milestone 048 advances the repository-local distribution to `0.5.0`; no distribution is published
+- Publication: draft PR #35 opened from remote commit `40d461f746b27a27e0b42ccb4510ae2459c246fe`; its tree `3e88f927201f2799ff13f9a9291fcee822bfeba5` exactly matches reviewed local implementation commit `01e69896cefbd415c6b60e74683d7b2e2116493f`
+- CI: ForgeOps CI run `35160149810` completed successfully on the published implementation tree
 
 ## Milestone 038 closeout
 
@@ -256,7 +266,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete Milestone 047 branch cleanup only after separate Gate 10 approval, then select the next bounded ForgeOps increment in a new planning pass.
+Review draft PR #35 for the explicit Gates 4–6 dispositions and later PR-readiness decision.
 
 ## Supporting completed work
 

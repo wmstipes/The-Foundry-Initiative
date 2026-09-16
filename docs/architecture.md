@@ -166,6 +166,10 @@ flowchart TD
 
 A future comparison or reasoning layer may consume only this validated evidence seam. It must not receive collection credentials, expand the allowlist, reinterpret missing evidence as healthy, acquire storage authority, or gain mutation authority implicitly.
 
+`comparison.py` is the first consumer of that seam. It accepts two `ValidatedEvidence` values, rejects reversed chronology, matches checks by identifier, and returns an immutable set of additions, removals, status transitions, and same-status evidence changes. Collection timestamps are displayed but excluded from change classification. The comparison layer does not reopen files, invoke collection, retain artifacts, infer causes, map runbooks, recommend actions, or serialize a new comparison contract. Exit code `1` means valid artifacts differ; it is not a health or severity result.
+
+The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → deterministic offline comparison → optional future reasoning. Later reasoning may consume validated evidence or the immutable comparison model, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
+
 ## Documentation authority and publication
 
 The main repository is the authoritative documentation system. `ROADMAP.md` owns direction and sequencing, `docs/project-status.md` owns current live state, `docs/architecture.md` owns system design and constraints, `docs/milestones` owns chronological evidence, and `docs/runbooks` owns operator procedures.
