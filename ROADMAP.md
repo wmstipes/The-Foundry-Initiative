@@ -366,7 +366,7 @@ See [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-on
 
 ### Milestone 046 — Deterministic JSON evidence contract
 
-**Status:** Local implementation, offline validation, publication, draft PR #31, and CI complete; live acceptance and later gates remain separately gated.
+**Status:** Local implementation, offline validation, publication, draft PR #31, CI, and read-only live JSON acceptance complete; PR readiness and later gates remain separately gated.
 
 - Add `--format json` without adding a new command or collection path.
 - Serialize only the evaluated, redacted `forgeops.snapshot/v1alpha1` model rather than raw Kubernetes or HTTP responses.
@@ -374,6 +374,7 @@ See [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-on
 - Prove deterministic serialization with a fixed golden artifact and cover mixed-status precedence, semantic parity, and redaction offline.
 - Retain the exact kubeconfig, context, resource, endpoint, timeout, size, and no-mutation boundaries from Milestone 045.
 - Exclude replay, comparison, history, signing, new telemetry, recommendations, AI reasoning, package publication, deployment, and cluster mutation.
+- Confirm the exact published tree against SignalForge with 33 passing JSON checks, five explicit HTTP checks, verified redaction, and exit code `0` without cluster mutation.
 
 See [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md).
 

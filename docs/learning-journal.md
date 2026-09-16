@@ -926,6 +926,27 @@ Review the complete local diff and offline validation evidence. Publish the bran
 
 Review the successful CI evidence and prepare the separately gated read-only live JSON acceptance. PR readiness remains a later independent approval gate.
 
+## 2026-09-16 — Milestone 046 read-only live JSON acceptance
+
+### Result
+
+- Verified remote commit `2b8d10648b56b58f060d18cf8bdc39c5af6f8caf` and tree `dd8e51a455fe2a2f635470f75a35916eb660d5ed` before execution in a detached temporary worktree.
+- Installed the repository-local `foundry-check` distribution at version `0.3.0` and invoked `python -m forgeops snapshot --format json`.
+- Used the exact `kubernetes-admin@kubernetes` context, the unchanged bounded Kubernetes operation allowlist, and five explicit Restaurant API and Workbench HTTP endpoints.
+- Parsed schema `forgeops.snapshot/v1alpha1` with the exact top-level field order, 33 unique checks, five ordered HTTP checks, and only allowed check fields.
+- Observed 33 `PASS`, zero `WARN`, zero `FAIL`, zero `UNKNOWN`, overall `PASS`, and process and reported exit code `0`.
+- Verified that the JSON omitted the kubeconfig path, explicit base URLs, addresses, and tested credential markers.
+- Independently re-parsed the attached artifact, recorded collection time `2026-09-16T19:00:51Z`, and calculated SHA-256 `8d4d67f585a4c6b1e8f3cedb4a08f5583b06a9ab6e6b82697db62435f356dc16`.
+- No package registry, image, tag, manifest, deployment, temporary Pod, port-forward, workload change, or cluster mutation occurred.
+
+### Lesson
+
+The JSON contract preserves the useful operator evidence from Milestone 045 while making its structure independently parseable and reviewable. Verifying both the process exit code and the serialized exit code closes a subtle automation gap, while exact commit/tree checks tie the live evidence to reviewed source.
+
+### Next small step
+
+Review draft PR #31 for readiness. Readiness and merge remain separate approval gates.
+
 ## 2026-09-16 — Milestone 045 publication, CI, and read-only live acceptance
 
 ### Result

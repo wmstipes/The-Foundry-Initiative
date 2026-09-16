@@ -81,6 +81,9 @@ The project has moved from basic workload deployment into repeatable engineering
 - Local validation: 33 offline ForgeOps tests pass, including the fixed golden JSON contract, mixed-status precedence, renderer parity, offline CLI rendering, CLI selection, and redaction
 - Publication: draft PR #31 opened from published commit `2f49025`; published tree `0f4ac04483b36615a5848cd940b8457203d40c5a` exactly matched reviewed local commit `e097b78`
 - CI: ForgeOps CI run `35136846722` completed successfully on the published documentation follow-up
+- Live acceptance: exact published commit `2b8d106` and tree `dd8e51a` verified; package `0.3.0` installed; schema and field order parsed; all 33 checks passed with five explicit HTTP checks, verified redaction, overall `PASS`, and exit code `0`
+- Acceptance artifact: collected at `2026-09-16T19:00:51Z` with SHA-256 `8d4d67f585a4c6b1e8f3cedb4a08f5583b06a9ab6e6b82697db62435f356dc16`
+- Live safety: the accepted command used only the existing bounded Kubernetes reads and five explicit HTTP GETs; no cluster mutation occurred
 - Runtime impact: none during local implementation; no package registry, image, manifest, deployment, Wiki, network, or cluster action
 
 ## Milestone 038 closeout
@@ -239,7 +242,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the successful PR #31 CI evidence and prepare the separately gated read-only live JSON acceptance. PR readiness is not yet authorized.
+Review draft PR #31 for readiness using the successful offline, CI, exact-tree, and read-only live JSON evidence. Marking the PR ready remains separately gated and is not yet authorized.
 
 ## Supporting completed work
 

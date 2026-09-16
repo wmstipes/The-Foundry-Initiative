@@ -1,6 +1,6 @@
 # Milestone 046 — ForgeOps deterministic JSON evidence contract
 
-**Status:** Local implementation, offline validation, publication, draft PR, and CI complete; live acceptance and later gates remain separately gated
+**Status:** Local implementation, offline validation, publication, draft PR, CI, and read-only live acceptance complete; PR readiness and later gates remain separately gated
 
 **Started:** 2026-09-16
 
@@ -94,6 +94,25 @@ The repository-local Python distribution version becomes `0.3.0`. No package is 
 
 After publication is separately approved, CI must install the exact branch, pass the complete offline ForgeOps suite, and expose JSON in both command entry points. A later separately approved live acceptance may run the exact published commit against the existing bounded SignalForge target, redirect JSON to an operator-selected local file, parse it, confirm the expected schema and 33-check healthy baseline, and search it for prohibited data. That acceptance must use only the existing read allowlist and five explicit HTTP GETs and must not mutate the cluster.
 
+## Read-only live acceptance evidence
+
+The separately approved operator acceptance ran from a detached temporary worktree after verifying:
+
+- published commit `2b8d10648b56b58f060d18cf8bdc39c5af6f8caf`;
+- published tree `dd8e51a455fe2a2f635470f75a35916eb660d5ed`; and
+- installed repository-local package version `0.3.0`.
+
+The artifact collected at `2026-09-16T19:00:51Z` reported:
+
+- schema `forgeops.snapshot/v1alpha1` and the exact reviewed top-level field order;
+- 33 unique checks with 33 `PASS`, zero `WARN`, zero `FAIL`, and zero `UNKNOWN`;
+- overall `PASS`, serialized exit code `0`, and process exit code `0`;
+- five ordered HTTP checks covering the four Restaurant API endpoints and Workbench `/healthz`;
+- only the allowed per-check fields; and
+- no kubeconfig path, explicit base URL, address, or tested credential marker.
+
+The attached acceptance artifact independently re-parsed successfully and has SHA-256 `8d4d67f585a4c6b1e8f3cedb4a08f5583b06a9ab6e6b82697db62435f356dc16`. Collection used only the unchanged bounded read allowlist and five explicit HTTP GETs. It did not release a package or image; read logs, Events, Secrets, ConfigMaps, or broad namespace state; create a temporary Pod; start a port-forward; deploy; change a workload; or mutate the cluster.
+
 ## Documentation
 
 - README: JSON invocation and renderer parity.
@@ -121,7 +140,7 @@ The artifact establishes a one-way interface from bounded collection through det
 3. Publication and draft PR — approved and complete through draft PR #31.
 4. Package or image release — not applicable and not authorized.
 5. Deployment — not applicable and not authorized.
-6. Live acceptance — not authorized.
+6. Live acceptance — approved and passed with 33 checks, verified redaction, and exit code `0`.
 7. Pull-request readiness — not authorized.
 8. Merge — not authorized.
 9. Closeout — not authorized.
