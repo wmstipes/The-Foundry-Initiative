@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-045 are complete, merged, documented, and cleaned up. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures and a deny-by-default runner. Milestone 046 locally adds a deterministic JSON evidence contract without changing collection authority; publication and all later gates remain separate.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-046 are complete and merged; cleanup remains pending only for Milestone 046. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, and a deterministic JSON evidence contract. Milestone 046 changed no collection or mutation authority.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -366,7 +366,7 @@ See [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-on
 
 ### Milestone 046 — Deterministic JSON evidence contract
 
-**Status:** Local implementation, offline validation, publication, CI, read-only live JSON acceptance, and PR #31 readiness complete; merge and later gates remain separately gated.
+**Status:** Complete. Implementation, publication, CI, read-only live JSON acceptance, PR readiness, and merge completed through PR #31 at `4715628`; closeout publication and cleanup remain separately gated.
 
 - Add `--format json` without adding a new command or collection path.
 - Serialize only the evaluated, redacted `forgeops.snapshot/v1alpha1` model rather than raw Kubernetes or HTTP responses.

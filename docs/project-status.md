@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented, live-validated, and merged that contract with deterministic evaluation, offline tests, successful CI, and a passing read-only snapshot.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, and Milestone 046 added a merged deterministic JSON evidence view without expanding collection or mutation authority.
 
 ## Current application
 
@@ -69,14 +69,14 @@ The project has moved from basic workload deployment into repeatable engineering
 - Milestone 045: deterministic `forgeops snapshot` implementation complete and merged through PR #29 at `3e9851d`
 - Implementation: fixed SignalForge constants, deny-by-default kubectl and HTTP runners, selected-field normalization, deterministic evaluation, and terminal, Markdown, or JSON rendering
 - Test boundary: synthetic fixtures only; no test invokes kubectl or contacts a network
-- Local package metadata: Milestone 045 introduced `0.2.0`; Milestone 046 locally advances it to `0.3.0` for the JSON output contract while preserving `foundry-check`
+- Local package metadata: Milestone 045 introduced `0.2.0`; Milestone 046 advanced it to `0.3.0` for the JSON output contract while preserving `foundry-check`
 - Publication: PR #29 branch head `377b843`; reviewed branch and merge trees matched exactly at `c879d164e726a20c418e48eb931731102e61d51e`
 - CI: ForgeOps CI runs `35128781478` and `35129577800` passed before merge; post-merge push run `35129953752` passed on `main`
 - Live acceptance: exact published commit and tree verified; 33 checks passed with no warnings, failures, or unknowns and exit code `0`
 - Runtime impact: approved read-only Kubernetes and five explicit HTTP requests only; no image, manifest, deployment, package registry, Wiki, or cluster mutation
 - Merge: PR #29 was marked ready after separate approval and merged into `main` at `3e9851da0351e1e01f90c5e38b534e5bbade929d` on 2026-09-16; branch head `377b8439ded59b5f6c48b2bf6b848a991ba2f079` is an ancestor of the merge commit
 - Closeout and cleanup: closeout PR #30 merged at `f714d25`; all Milestone 045 branches were removed locally and remotely
-- Milestone 046: local deterministic JSON evidence contract implemented on `codex/milestone-046-forgeops-json-evidence`
+- Milestone 046: deterministic JSON evidence contract complete and merged through PR #31 at `4715628`
 - JSON boundary: evaluated checks only, fixed key and check order, explicit summary and limitations, no raw response serialization, and no collection-authority change
 - Local validation: 33 offline ForgeOps tests pass, including the fixed golden JSON contract, mixed-status precedence, renderer parity, offline CLI rendering, CLI selection, and redaction
 - Publication: draft PR #31 opened from published commit `2f49025`; published tree `0f4ac04483b36615a5848cd940b8457203d40c5a` exactly matched reviewed local commit `e097b78`
@@ -84,7 +84,10 @@ The project has moved from basic workload deployment into repeatable engineering
 - Live acceptance: exact published commit `2b8d106` and tree `dd8e51a` verified; package `0.3.0` installed; schema and field order parsed; all 33 checks passed with five explicit HTTP checks, verified redaction, overall `PASS`, and exit code `0`
 - Acceptance artifact: collected at `2026-09-16T19:00:51Z` with SHA-256 `8d4d67f585a4c6b1e8f3cedb4a08f5583b06a9ab6e6b82697db62435f356dc16`
 - Live safety: the accepted command used only the existing bounded Kubernetes reads and five explicit HTTP GETs; no cluster mutation occurred
-- PR readiness: PR #31 was marked ready only after offline validation, successful CI, exact-tree verification, and read-only live JSON acceptance passed; merge remains separately gated
+- PR readiness and merge: PR #31 was marked ready only after offline validation, successful CI, exact-tree verification, and read-only live JSON acceptance passed; implementation head `103bc2f` merged at `4715628c8ef1f498bd545e8be47393be9b310c59`
+- Merge integrity: implementation head and merge commit both resolve to tree `3dc1bade0004ce2a901cdab8bf48d564787acb79`
+- Post-merge checks: the operator confirmed all Actions displayed by GitHub were green; the connected GitHub API exposed no workflow-run or commit-status records for the merge commit
+- Closeout: final merge evidence is recorded on `codex/milestone-046-closeout`; branch cleanup remains a separate approval gate
 - Runtime impact: none during local implementation; no package registry, image, manifest, deployment, Wiki, network, or cluster action
 
 ## Milestone 038 closeout
@@ -243,7 +246,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review ready PR #31 for the separate merge decision. Merge has not been authorized.
+Review and merge the Milestone 046 closeout PR, then request separate approval before deleting either Milestone 046 branch.
 
 ## Supporting completed work
 
