@@ -2,13 +2,13 @@
 
 **Last updated:** 2026-09-16
 
-**Current phase:** Operational visibility and ForgeOps deterministic snapshot baseline
+**Current phase:** Operational visibility and ForgeOps deterministic evidence boundary
 
 ## Summary
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, and Milestone 046 added a merged deterministic JSON evidence view without expanding collection or mutation authority.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, Milestone 046 added a deterministic JSON evidence view without expanding collection or mutation authority, and Milestone 047 now provides a locally implemented offline compatibility gate for saved evidence before future consumers are introduced.
 
 ## Current application
 
@@ -87,8 +87,16 @@ The project has moved from basic workload deployment into repeatable engineering
 - PR readiness and merge: PR #31 was marked ready only after offline validation, successful CI, exact-tree verification, and read-only live JSON acceptance passed; implementation head `103bc2f` merged at `4715628c8ef1f498bd545e8be47393be9b310c59`
 - Merge integrity: implementation head and merge commit both resolve to tree `3dc1bade0004ce2a901cdab8bf48d564787acb79`
 - Post-merge checks: the operator confirmed all Actions displayed by GitHub were green; the connected GitHub API exposed no workflow-run or commit-status records for the merge commit
-- Closeout: final merge evidence is recorded on `codex/milestone-046-closeout`; branch cleanup remains a separate approval gate
+- Closeout and cleanup: closeout PR #32 merged at `66bae40`; Gate 10 completed and both Milestone 046 branches were removed locally and remotely
 - Runtime impact: none during local implementation; no package registry, image, manifest, deployment, Wiki, network, or cluster action
+- Milestone 047: deterministic offline evidence validation is implemented and published in draft PR #33 from `codex/milestone-047-forgeops-evidence-validation`
+- Interface: `forgeops evidence validate --input <explicit-file>` reads one explicit regular file and returns validator success independently from the artifact's contained health result
+- Validation boundary: 1 MiB, UTF-8 JSON, duplicate-key rejection, exact `forgeops.snapshot/v1alpha1` fields and values, timestamp and unique-check validation, and recalculated summary counts, overall status, and contained exit code
+- Offline safety: no kubeconfig, kubectl, HTTP, network, collection, artifact rewrite, persistence, comparison, recommendation, AI reasoning, or mutation
+- Local validation: 48 focused ForgeOps tests and all 106 repository tests pass
+- Publication: remote commit `e848bed` has exact tree `e0e078a3bb7c87970ec070a951b5e3779c12b5a2`, matching reviewed local commit `bab4f3c`
+- CI: ForgeOps CI run `35155205132` and Kubernetes Manifest Validation run `35155205187` completed successfully on published documentation head `bdbe35d`
+- Local package metadata: `0.4.0`; no registry package, image, tag, manifest, deployment, live acceptance, or Wiki change
 
 ## Milestone 038 closeout
 

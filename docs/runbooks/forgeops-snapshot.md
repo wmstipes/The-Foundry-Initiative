@@ -101,6 +101,27 @@ The artifact identifies schema `forgeops.snapshot/v1alpha1` and includes the col
 
 Serialization is deterministic for the same evaluated snapshot. Independent live runs are not byte-identical evidence because their collection timestamps and observed state can differ. Review a redirected JSON artifact before sharing it and retain it only according to the operator's chosen local evidence-handling practice.
 
+## Validate a saved JSON artifact offline
+
+Validate one explicitly selected regular file before passing it to a later consumer:
+
+~~~powershell
+forgeops evidence validate `
+  --input .\forgeops-snapshot.json
+~~~
+
+The validator reads no more than 1 MiB and requires UTF-8 JSON without duplicate keys or non-standard numeric constants. It accepts only schema `forgeops.snapshot/v1alpha1` with the reviewed ordered fields, value types, UTC timestamps, unique check identifiers, scope, redaction statement, limitations, and internally consistent summary.
+
+A successful result is concise and separates contract validity from contained health:
+
+~~~text
+VALID forgeops.snapshot/v1alpha1 checks=33 containedOverall=PASS containedExit=0
+~~~
+
+A valid artifact containing `WARN`, `FAIL`, or `UNKNOWN` also returns validator exit code `0` while reporting that contained status and exit code. Validator exit code `2` means that the input was unreadable, oversized, malformed, unsupported, or inconsistent. The validator never repairs or rewrites the file.
+
+Validation is offline. It does not read or search for a kubeconfig, invoke kubectl, make an HTTP request, discover another file, contact a network service, or mutate the cluster. Passing validation establishes contract compatibility and internal consistency only; it does not prove artifact provenance, cryptographic authenticity, cluster health, or the absence of sensitive text in arbitrary string values. Review the artifact before sharing it.
+
 ## Interpret results
 
 | Status | Meaning |

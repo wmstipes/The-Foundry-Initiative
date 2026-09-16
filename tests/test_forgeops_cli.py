@@ -15,6 +15,14 @@ from forgeops.models import CheckResult, Evidence, EvaluatedSnapshot, RawSnapsho
 
 
 class ForgeOpsCliTests(unittest.TestCase):
+    def test_evidence_validation_command_is_explicitly_supported(self) -> None:
+        args = build_parser().parse_args([
+            "evidence", "validate", "--input", "snapshot.json",
+        ])
+        self.assertEqual("evidence", args.command)
+        self.assertEqual("validate", args.evidence_command)
+        self.assertEqual("snapshot.json", args.input)
+
     def test_json_output_format_is_explicitly_supported(self) -> None:
         args = build_parser().parse_args([
             "snapshot", "--kubeconfig", "fixture",

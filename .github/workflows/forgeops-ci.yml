@@ -49,3 +49,5 @@ jobs:
         run: |
           foundry-check --help
           forgeops snapshot --help
+          forgeops evidence validate --help
+          forgeops evidence validate --input tests/fixtures/forgeops/evaluated-json-golden.json

@@ -77,7 +77,15 @@ forgeops snapshot `
 
 Add `--format markdown` for a reviewable report or `--format json` for a deterministic machine-readable evidence artifact. Provide `--restaurant-url` and `--workbench-url` to include the five accepted application endpoints. All three renderers derive from the same evaluated snapshot and preserve the same ordered checks, status semantics, summary, and exit code. The command uses only bounded read operations, never falls back to an ambient kubeconfig or context, does not read sensitive Kubernetes objects, and cannot mutate the cluster. `UNKNOWN` evidence fails closed with exit code `2`.
 
-See the [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md), and [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md).
+Validate one explicitly selected saved artifact offline before passing it to another consumer:
+
+~~~powershell
+forgeops evidence validate --input .\forgeops-snapshot.json
+~~~
+
+Validation checks the supported schema, field order and types, timestamps, unique check identifiers, and summary consistency without invoking kubectl, making an HTTP request, or changing the artifact. Validation success means that the contract is valid, not that the contained health result is `PASS`.
+
+See the [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md), [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md), and [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-validation.md).
 
 ## Documentation front door
 
@@ -146,7 +154,7 @@ Completed SignalForge milestones include:
 * NVMe-backed Prometheus deployed with Pod-replacement persistence and isolated off-node backup/restore validation
 * Grafana dashboards and bounded Prometheus rule evaluation deployed and recovery-tested
 * Forge YAML Workbench `0.10.0` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks, General YAML mode, the pinned OWASP Kubernetes Top 10:2025 review profile, formatting preview, review-first Markdown reports, counted Validation filters, browser-local Tree search, and safe one-file YAML drop
-* deterministic ForgeOps read-only snapshot implemented with offline fixtures, stable terminal and Markdown output, and a deny-by-default command runner
+* deterministic ForgeOps read-only snapshot implemented with offline fixtures, stable terminal, Markdown, and JSON output, a deny-by-default command runner, and strict offline evidence validation
 
 ## Earlier utility: foundry-check
 

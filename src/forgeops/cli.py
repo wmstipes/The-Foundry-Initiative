@@ -9,6 +9,7 @@ from typing import Sequence
 
 from .collect import Collector, validate_kubeconfig
 from .constants import EXPECTED_CONTEXT
+from .evidence import EvidenceValidationError, load_evidence_file
 from .evaluate import evaluate
 from .render import render_json, render_markdown, render_text
 from .runners import HttpRunner, KubectlRunner, RunnerFailure
@@ -17,7 +18,7 @@ from .runners import HttpRunner, KubectlRunner, RunnerFailure
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="forgeops",
-        description="Collect a bounded, read-only SignalForge health snapshot.",
+        description="Collect or validate bounded SignalForge health evidence.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
     snapshot = subparsers.add_parser("snapshot", help="collect the SignalForge snapshot")
@@ -29,6 +30,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--format", choices=("text", "markdown", "json"), default="text",
         dest="output_format", help="output format (default: text)",
     )
+    evidence = subparsers.add_parser(
+        "evidence", help="operate on an explicitly supplied offline evidence artifact",
+    )
+    evidence_commands = evidence.add_subparsers(dest="evidence_command", required=True)
+    validate = evidence_commands.add_parser(
+        "validate", help="validate a ForgeOps JSON evidence artifact",
+    )
+    validate.add_argument("--input", required=True, help="explicit local evidence file")
     return parser
 
 
@@ -39,6 +48,18 @@ def _fail(message: str) -> int:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.command == "evidence" and args.evidence_command == "validate":
+        try:
+            evidence = load_evidence_file(args.input)
+        except EvidenceValidationError as exc:
+            return _fail(f"evidence invalid: {exc.code}: {exc.summary}")
+        snapshot = evidence.snapshot
+        sys.stdout.write(
+            f"VALID {snapshot.schema} checks={len(snapshot.checks)} "
+            f"containedOverall={snapshot.overall_status.value} "
+            f"containedExit={snapshot.exit_code}\n"
+        )
+        return 0
     if args.command != "snapshot":
         return _fail("unsupported command")
     if args.context != EXPECTED_CONTEXT:
