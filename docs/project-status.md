@@ -84,6 +84,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Live acceptance: exact published commit `2b8d106` and tree `dd8e51a` verified; package `0.3.0` installed; schema and field order parsed; all 33 checks passed with five explicit HTTP checks, verified redaction, overall `PASS`, and exit code `0`
 - Acceptance artifact: collected at `2026-09-16T19:00:51Z` with SHA-256 `8d4d67f585a4c6b1e8f3cedb4a08f5583b06a9ab6e6b82697db62435f356dc16`
 - Live safety: the accepted command used only the existing bounded Kubernetes reads and five explicit HTTP GETs; no cluster mutation occurred
+- PR readiness: PR #31 was marked ready only after offline validation, successful CI, exact-tree verification, and read-only live JSON acceptance passed; merge remains separately gated
 - Runtime impact: none during local implementation; no package registry, image, manifest, deployment, Wiki, network, or cluster action
 
 ## Milestone 038 closeout
@@ -242,7 +243,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review draft PR #31 for readiness using the successful offline, CI, exact-tree, and read-only live JSON evidence. Marking the PR ready remains separately gated and is not yet authorized.
+Review ready PR #31 for the separate merge decision. Merge has not been authorized.
 
 ## Supporting completed work
 

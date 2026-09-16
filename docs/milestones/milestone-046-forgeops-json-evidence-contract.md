@@ -1,6 +1,6 @@
 # Milestone 046 — ForgeOps deterministic JSON evidence contract
 
-**Status:** Local implementation, offline validation, publication, draft PR, CI, and read-only live acceptance complete; PR readiness and later gates remain separately gated
+**Status:** Local implementation, offline validation, publication, CI, read-only live acceptance, and PR readiness complete; merge and later gates remain separately gated
 
 **Started:** 2026-09-16
 
@@ -113,6 +113,14 @@ The artifact collected at `2026-09-16T19:00:51Z` reported:
 
 The attached acceptance artifact independently re-parsed successfully and has SHA-256 `8d4d67f585a4c6b1e8f3cedb4a08f5583b06a9ab6e6b82697db62435f356dc16`. Collection used only the unchanged bounded read allowlist and five explicit HTTP GETs. It did not release a package or image; read logs, Events, Secrets, ConfigMaps, or broad namespace state; create a temporary Pod; start a port-forward; deploy; change a workload; or mutate the cluster.
 
+## PR readiness evidence
+
+- Reverified published head `683fa512bb8306eb941801fc63c622121005a7c6` and exact local/remote tree `c39419f52848bad74cc852190681c7e1b6a12a7b` before readiness.
+- Confirmed final pre-readiness ForgeOps CI run `35138426733` completed successfully.
+- Confirmed PR #31 was open, draft, mergeable, and based on the accepted `f714d2567bce35ee90f4a5ff9ab0edd5fe9194ef` baseline.
+- Marked PR #31 ready only after separate approval and the offline, installation, exact-tree, CI, read-only live acceptance, artifact-integrity, and no-mutation evidence passed.
+- PR #31 remains open and unmerged; merge is a separate gate.
+
 ## Documentation
 
 - README: JSON invocation and renderer parity.
@@ -141,7 +149,7 @@ The artifact establishes a one-way interface from bounded collection through det
 4. Package or image release — not applicable and not authorized.
 5. Deployment — not applicable and not authorized.
 6. Live acceptance — approved and passed with 33 checks, verified redaction, and exit code `0`.
-7. Pull-request readiness — not authorized.
+7. Pull-request readiness — approved and complete for PR #31.
 8. Merge — not authorized.
 9. Closeout — not authorized.
 10. Branch cleanup — not authorized.

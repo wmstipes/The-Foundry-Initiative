@@ -947,6 +947,20 @@ The JSON contract preserves the useful operator evidence from Milestone 045 whil
 
 Review draft PR #31 for readiness. Readiness and merge remain separate approval gates.
 
+## 2026-09-16 — Milestone 046 PR readiness
+
+### Result
+
+- Reverified ready-candidate head `683fa512bb8306eb941801fc63c622121005a7c6` and exact local/remote tree `c39419f52848bad74cc852190681c7e1b6a12a7b`.
+- Confirmed PR #31 was open, draft, mergeable, and based on `f714d2567bce35ee90f4a5ff9ab0edd5fe9194ef` before the transition.
+- Confirmed final pre-readiness ForgeOps CI run `35138426733` succeeded.
+- Marked PR #31 ready only after the offline, package-install, exact-tree, CI, read-only live JSON, artifact-integrity, and no-mutation evidence passed.
+- Did not merge, close, release, deploy, or clean up the branch.
+
+### Next small step
+
+Review ready PR #31 for the separately approved merge decision.
+
 ## 2026-09-16 — Milestone 045 publication, CI, and read-only live acceptance
 
 ### Result
