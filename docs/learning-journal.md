@@ -1097,3 +1097,25 @@ An offline capability still benefits from explicit release, deployment, and live
 ### Next small step
 
 Complete the closeout record, then remove the Milestone 047 implementation and closeout branches only after separate Gate 10 approval. Select the next ForgeOps increment in a new planning pass.
+
+## 2026-09-16 — Milestone 047 cleanup and Milestone 048 local implementation
+
+### Result
+
+- Milestone 047 closeout PR #34 merged at `2ebaa902f56f6b143009c4e630ba95f4a03759d8` with exact closeout tree `0e18f3e12291c59dbdedbfe746245b6c1ff38683`.
+- Gate 10 completed: both Milestone 047 branches were deleted locally and remotely, both checkouts were clean at the closeout merge, and only `main`, `feature/foundry-check-cli`, and `feature/project-status` remained.
+- Selected deterministic offline comparison as the smallest next increment because it gives operators a direct answer to “what changed?” while reusing the validated evidence seam.
+- Added `forgeops evidence compare --before <file> --after <file>` with no collection or network path.
+- Added immutable comparison and delta models for additions, removals, status transitions, and same-status evidence changes.
+- Excluded collection timestamps from change classification while displaying both timestamps and rejecting reversed chronology.
+- Defined comparison exit codes independently from contained health: `0` equivalent, `1` different, and `2` invalid input or chronology.
+- All 57 focused ForgeOps tests and all 115 repository tests pass; Kubernetes manifest validation, isolated package installation, installed command checks, and whitespace validation also pass.
+- Advanced only repository-local package metadata to `0.5.0`; no registry distribution, image, manifest, deployment, cluster access, live acceptance, or Wiki change occurred.
+
+### Lesson
+
+Comparison semantics need the same boundary discipline as collection. Ignoring timestamps prevents every new snapshot from appearing changed, while field-level deltas preserve useful operational differences without inferring why they occurred. A diff exit code must remain distinct from the health state embedded in either artifact.
+
+### Next small step
+
+Review the complete Milestone 048 local diff and offline validation evidence. Publish the branch and open a draft PR only after separate Gate 3 approval.

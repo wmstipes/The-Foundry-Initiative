@@ -120,6 +120,26 @@ VALID forgeops.snapshot/v1alpha1 checks=33 containedOverall=PASS containedExit=0
 
 A valid artifact containing `WARN`, `FAIL`, or `UNKNOWN` also returns validator exit code `0` while reporting that contained status and exit code. Validator exit code `2` means that the input was unreadable, oversized, malformed, unsupported, or inconsistent. The validator never repairs or rewrites the file.
 
+## Compare two saved artifacts offline
+
+~~~powershell
+forgeops evidence compare `
+  --before .\forgeops-snapshot-before.json `
+  --after .\forgeops-snapshot-after.json
+~~~
+
+Both files must independently pass the strict validator before any comparison is printed. The command reports check additions, removals, status transitions, and changes to the validated observation, source, expected, observed, or error-category fields. Results are ordered by check identifier. Collection timestamps are shown for operator context but are not classified as evidence changes.
+
+Comparison exit codes are separate from the health status inside either artifact:
+
+| Exit | Meaning |
+| --- | --- |
+| `0` | Both artifacts are valid and operationally equivalent after timestamps are ignored. |
+| `1` | Both artifacts are valid and one or more checks differ. |
+| `2` | An artifact is invalid, unavailable, or out of chronological order. |
+
+An `after` timestamp may equal the `before` timestamp but must not be earlier. A reported change is not a diagnosis, causal claim, severity score, or recommendation. The command does not retain, rewrite, or copy either artifact and does not invoke kubectl, HTTP, or another network path.
+
 Validation is offline. It does not read or search for a kubeconfig, invoke kubectl, make an HTTP request, discover another file, contact a network service, or mutate the cluster. Passing validation establishes contract compatibility and internal consistency only; it does not prove artifact provenance, cryptographic authenticity, cluster health, or the absence of sensitive text in arbitrary string values. Review the artifact before sharing it.
 
 ## Interpret results

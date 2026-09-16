@@ -1,6 +1,6 @@
 # Milestone 047 — ForgeOps deterministic offline evidence validation
 
-**Status:** Complete. Implementation, publication, final-head CI, PR readiness, and merge completed through PR #33 at `a92b4b8`; closeout is recorded and branch cleanup remains separately gated
+**Status:** Complete. Implementation PR #33 merged at `a92b4b8`; closeout PR #34 merged at `2ebaa90`; Gate 10 cleanup removed both Milestone 047 branches locally and remotely
 
 **Started:** 2026-09-16
 
@@ -188,4 +188,13 @@ Future diagnoses and recommendations must remain separate from evidence, cite th
 7. Pull-request readiness — approved and complete for PR #33.
 8. Merge — approved and complete through PR #33 at `a92b4b8`.
 9. Closeout — approved and recorded on `codex/milestone-047-closeout`.
-10. Branch cleanup — not authorized.
+10. Branch cleanup — approved and complete; both Milestone 047 branches were deleted locally and remotely.
+
+## Closeout and cleanup evidence
+
+- Documentation-only closeout PR #34 merged at `2ebaa902f56f6b143009c4e630ba95f4a03759d8`.
+- The reviewed local closeout, published closeout, and merged closeout resolve to exact tree `0e18f3e12291c59dbdedbfe746245b6c1ff38683`.
+- Gate 10 removed `codex/milestone-047-forgeops-evidence-validation` and `codex/milestone-047-closeout` locally and remotely.
+- The Windows and Codex checkouts were clean and synchronized at the closeout merge.
+- Only `main`, `feature/foundry-check-cli`, and `feature/project-status` remain intentionally retained.
+- Milestone 047 is fully closed. Milestone 048 is the immediate next step.

@@ -8,6 +8,11 @@ import sys
 from typing import Sequence
 
 from .collect import Collector, validate_kubeconfig
+from .comparison import (
+    EvidenceComparisonError,
+    compare_evidence,
+    render_comparison_text,
+)
 from .constants import EXPECTED_CONTEXT
 from .evidence import EvidenceValidationError, load_evidence_file
 from .evaluate import evaluate
@@ -38,6 +43,11 @@ def build_parser() -> argparse.ArgumentParser:
         "validate", help="validate a ForgeOps JSON evidence artifact",
     )
     validate.add_argument("--input", required=True, help="explicit local evidence file")
+    compare = evidence_commands.add_parser(
+        "compare", help="compare two validated ForgeOps evidence artifacts",
+    )
+    compare.add_argument("--before", required=True, help="explicit earlier evidence file")
+    compare.add_argument("--after", required=True, help="explicit later evidence file")
     return parser
 
 
@@ -60,6 +70,21 @@ def main(argv: Sequence[str] | None = None) -> int:
             f"containedExit={snapshot.exit_code}\n"
         )
         return 0
+    if args.command == "evidence" and args.evidence_command == "compare":
+        try:
+            before = load_evidence_file(args.before)
+        except EvidenceValidationError as exc:
+            return _fail(f"before evidence invalid: {exc.code}: {exc.summary}")
+        try:
+            after = load_evidence_file(args.after)
+        except EvidenceValidationError as exc:
+            return _fail(f"after evidence invalid: {exc.code}: {exc.summary}")
+        try:
+            comparison = compare_evidence(before, after)
+        except EvidenceComparisonError as exc:
+            return _fail(f"comparison invalid: {exc.code}: {exc.summary}")
+        render_comparison_text(comparison, sys.stdout)
+        return comparison.exit_code
     if args.command != "snapshot":
         return _fail("unsupported command")
     if args.context != EXPECTED_CONTEXT:
