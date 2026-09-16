@@ -2,13 +2,13 @@
 
 **Last updated:** 2026-09-16
 
-**Current phase:** Operational visibility and ForgeOps snapshot implementation
+**Current phase:** Operational visibility and ForgeOps deterministic snapshot baseline
 
 ## Summary
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implements that contract with deterministic evaluation, offline tests, successful CI, and a separately approved passing live snapshot.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented, live-validated, and merged that contract with deterministic evaluation, offline tests, successful CI, and a passing read-only snapshot.
 
 ## Current application
 
@@ -66,15 +66,16 @@ The project has moved from basic workload deployment into repeatable engineering
 - Merge: PR #27 was marked ready after separate approval and merged into `main` at `c467468f8afa349af92f6af1601283449248c8a4` on 2026-09-16; the merge tree exactly matched the reviewed branch tree
 - Checks: the operator confirmed all Actions shown in GitHub were green; the connected GitHub API exposed no workflow-run or commit-status records for either the head or merge commit
 - Closeout and cleanup: closeout PR #28 merged at `aa178b0`; both Milestone 044 branches were removed locally and remotely
-- Milestone 045: local `forgeops snapshot` implementation complete on `codex/milestone-045-forgeops-snapshot`
+- Milestone 045: deterministic `forgeops snapshot` implementation complete and merged through PR #29 at `3e9851d`
 - Implementation: fixed SignalForge constants, deny-by-default kubectl and HTTP runners, selected-field normalization, deterministic evaluation, and terminal or Markdown rendering
 - Test boundary: synthetic fixtures only; no test invokes kubectl or contacts a network
 - Local package metadata: `0.2.0`, preserving `foundry-check` and adding `forgeops`
-- Publication: draft PR #29 at remote commit `4ae5dde`; published tree `0561e2dd` exactly matched the locally reviewed tree
-- CI: ForgeOps CI run `35128781478` completed successfully
+- Publication: PR #29 branch head `377b843`; reviewed branch and merge trees matched exactly at `c879d164e726a20c418e48eb931731102e61d51e`
+- CI: ForgeOps CI runs `35128781478` and `35129577800` passed before merge; post-merge push run `35129953752` passed on `main`
 - Live acceptance: exact published commit and tree verified; 33 checks passed with no warnings, failures, or unknowns and exit code `0`
 - Runtime impact: approved read-only Kubernetes and five explicit HTTP requests only; no image, manifest, deployment, package registry, Wiki, or cluster mutation
-- Remaining Milestone 045 gates: PR readiness, merge, closeout, and cleanup
+- Merge: PR #29 was marked ready after separate approval and merged into `main` at `3e9851da0351e1e01f90c5e38b534e5bbade929d` on 2026-09-16; branch head `377b8439ded59b5f6c48b2bf6b848a991ba2f079` is an ancestor of the merge commit
+- Remaining Milestone 045 gates: closeout publication and branch cleanup
 
 ## Milestone 038 closeout
 
@@ -232,7 +233,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review draft PR #29 and its offline, CI, exact-tree, and live-acceptance evidence for the separate PR-readiness decision. Merge remains a later independent gate.
+Publish and merge the Milestone 045 closeout record through its own approval gates, then perform separately approved branch cleanup. Planning the next bounded ForgeOps increment remains a distinct future decision.
 
 ## Supporting completed work
 
