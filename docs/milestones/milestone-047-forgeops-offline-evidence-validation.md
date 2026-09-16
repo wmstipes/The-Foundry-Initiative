@@ -1,6 +1,6 @@
 # Milestone 047 — ForgeOps deterministic offline evidence validation
 
-**Status:** Local implementation complete; publication remains separately gated
+**Status:** Local implementation and draft PR publication complete; CI and later gates remain separately gated
 
 **Started:** 2026-09-16
 
@@ -139,6 +139,16 @@ It also corrects the README ForgeOps renderer summary, the stale Workbench `0.5.
 - No deployment, rollout, restart, or live acceptance.
 - No Wiki source or live Wiki change.
 
+## Publication evidence
+
+- Draft PR: #33.
+- Published branch: `codex/milestone-047-forgeops-evidence-validation`.
+- Reviewed local commit: `bab4f3cb93d591729614927de57a7791cb856452`.
+- Published remote commit: `e848bed96a57cb62ab6fad6289a9310f52758ca0`.
+- Exact matching local and published tree: `e0e078a3bb7c87970ec070a951b5e3779c12b5a2`.
+- The GitHub repository connector was used because this runtime's HTTPS Git client had no credential helper.
+- The PR remains draft. CI review, PR readiness, merge, closeout, and cleanup remain separately gated.
+
 ## Deterministic local acceptance
 
 1. The branch begins at exact baseline `66bae40d7d0a6d706db47db54a0335de1d93a22f`.
@@ -165,7 +175,7 @@ Future diagnoses and recommendations must remain separate from evidence, cite th
 
 1. Planning — approved.
 2. Local implementation — approved and complete.
-3. Publication and draft PR — not authorized.
+3. Publication and draft PR — approved and complete through draft PR #33.
 4. Package or image release — not applicable and not authorized.
 5. Deployment — not applicable and not authorized.
 6. Live acceptance — not applicable; acceptance is offline.

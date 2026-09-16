@@ -89,11 +89,12 @@ The project has moved from basic workload deployment into repeatable engineering
 - Post-merge checks: the operator confirmed all Actions displayed by GitHub were green; the connected GitHub API exposed no workflow-run or commit-status records for the merge commit
 - Closeout and cleanup: closeout PR #32 merged at `66bae40`; Gate 10 completed and both Milestone 046 branches were removed locally and remotely
 - Runtime impact: none during local implementation; no package registry, image, manifest, deployment, Wiki, network, or cluster action
-- Milestone 047: deterministic offline evidence validation is locally implemented on `codex/milestone-047-forgeops-evidence-validation`; publication remains separately gated
+- Milestone 047: deterministic offline evidence validation is implemented and published in draft PR #33 from `codex/milestone-047-forgeops-evidence-validation`
 - Interface: `forgeops evidence validate --input <explicit-file>` reads one explicit regular file and returns validator success independently from the artifact's contained health result
 - Validation boundary: 1 MiB, UTF-8 JSON, duplicate-key rejection, exact `forgeops.snapshot/v1alpha1` fields and values, timestamp and unique-check validation, and recalculated summary counts, overall status, and contained exit code
 - Offline safety: no kubeconfig, kubectl, HTTP, network, collection, artifact rewrite, persistence, comparison, recommendation, AI reasoning, or mutation
 - Local validation: 48 focused ForgeOps tests and all 106 repository tests pass
+- Publication: remote commit `e848bed` has exact tree `e0e078a3bb7c87970ec070a951b5e3779c12b5a2`, matching reviewed local commit `bab4f3c`
 - Local package metadata: `0.4.0`; no registry package, image, tag, manifest, deployment, live acceptance, or Wiki change
 
 ## Milestone 038 closeout
