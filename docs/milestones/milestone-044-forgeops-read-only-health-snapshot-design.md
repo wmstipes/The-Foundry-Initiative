@@ -1,6 +1,6 @@
 # Milestone 044 — ForgeOps read-only health snapshot design
 
-**Status:** Design published in draft PR #27; read-only live feasibility acceptance passed; PR readiness remains separately gated
+**Status:** Complete; design, publication, read-only live feasibility, PR readiness, and merge passed; closeout publication and cleanup remain separately gated
 
 **Started:** 2026-09-16
 
@@ -228,9 +228,10 @@ Live feasibility was separately approved and completed on 2026-09-16.
 ### Publication evidence
 
 - Published branch: `codex/milestone-044-forgeops-snapshot-design`.
-- Published commit: `c0cbfabaf9af3f37d43586985fec51bfc3a21f20`.
-- Draft pull request: #27.
-- The published and locally reviewed trees matched exactly at `f542f306b209231da101f1a8f79d3aa1688bb787`.
+- Design commit: `c0cbfabaf9af3f37d43586985fec51bfc3a21f20`.
+- Live-evidence reconciliation commit: `f42bc7520c3bce572a651415306776841e6dd6a6`.
+- Pull request: #27.
+- The published and locally reviewed head trees matched exactly at `4a445e26526c207e1e766b1d42c5adf23b647bfc`.
 - GitHub reported no workflow runs or commit statuses for the documentation-only head commit at publication review time.
 
 ### Kubernetes evidence
@@ -257,6 +258,15 @@ Live feasibility was separately approved and completed on 2026-09-16.
 An initial operator attempt assumed a default Windows kubeconfig path that did not exist. Context and resource collection therefore remained incomplete and was classified as `UNKNOWN`, equivalent to exit code `2`; its empty follow-on displays were excluded from health evidence. The corrected acceptance resolved exactly one existing operator-configured `KUBECONFIG` file, verified the target context, and ran the collection atomically. No cluster resource changed during either attempt.
 
 The accepted combined Kubernetes and HTTP result is `PASS`, equivalent to exit code `0` under this contract.
+
+### Merge evidence
+
+- PR #27 was marked ready only after separate approval and all documented offline and live acceptance evidence passed.
+- PR #27 merged into `main` at `c467468f8afa349af92f6af1601283449248c8a4` on 2026-09-16 at 10:57:27 EDT.
+- The merged tree is `4a445e26526c207e1e766b1d42c5adf23b647bfc`, exactly matching the reviewed branch-head tree.
+- The branch-head commit `f42bc7520c3bce572a651415306776841e6dd6a6` is an ancestor of the merge commit.
+- The operator confirmed all Actions displayed by GitHub were green.
+- The connected GitHub API exposed no workflow-run or commit-status records for the head or merge commit; therefore this record does not invent run identifiers or more specific check results.
 
 ## Release and deployment impact
 
@@ -294,7 +304,7 @@ Rollback is documentation-only: revert the focused planning change or revise thi
 4. Image release — not applicable; no image action is authorized.
 5. Deployment — not applicable; no cluster mutation is authorized.
 6. Read-only live feasibility acceptance — approved and passed on 2026-09-16.
-7. Pull-request readiness — not authorized.
-8. Merge — not authorized.
-9. Closeout — not authorized.
+7. Pull-request readiness — approved and complete.
+8. Merge — complete at `c467468f8afa349af92f6af1601283449248c8a4`.
+9. Closeout — approved; this local record remains separately gated for publication and merge.
 10. Cleanup — not authorized.
