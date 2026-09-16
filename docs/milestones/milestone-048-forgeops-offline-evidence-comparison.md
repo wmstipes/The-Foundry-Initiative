@@ -1,10 +1,12 @@
 # Milestone 048 — ForgeOps deterministic offline evidence comparison
 
-**Status:** Local implementation, draft PR publication, and CI complete; PR readiness and later gates remain separately gated
+**Status:** Complete. Implementation, publication, CI, PR readiness, and merge completed through PR #35 at `ad05786`; closeout is recorded and branch cleanup remains separately gated
 
 **Started:** 2026-09-16
 
-**Branch:** `codex/milestone-048-forgeops-evidence-comparison`
+**Implementation branch:** `codex/milestone-048-forgeops-evidence-comparison`
+
+**Closeout branch:** `codex/milestone-048-closeout`
 
 **Baseline:** `main` at `2ebaa902f56f6b143009c4e630ba95f4a03759d8`
 
@@ -125,7 +127,11 @@ Milestone 048 first records the Gate 10 facts left intentionally pending when Mi
 - Exact matching local and published tree: `3e88f927201f2799ff13f9a9291fcee822bfeba5`.
 - The GitHub repository connector was used because this runtime's HTTPS Git client has no credential helper.
 - ForgeOps CI run `35160149810` completed successfully on the published implementation tree.
-- The PR remains draft. Release, deployment, live acceptance, readiness, merge, closeout, and cleanup remain separately gated.
+- Final published head `002b48ec55c6dd2cd4c8cfece0d45a2ec36f5658` and reviewed local publication commit `94e6e8fc212e888479b9fb9d482329bf1a682a7d` resolve to tree `72c23057a43b485759072e0f5876495b73124b2c`.
+- Final-head ForgeOps CI run `35160350679` completed successfully.
+- PR #35 was marked ready after separate approval and merged at `ad05786e1d94660d75e1724e4e8db6d3af7dc088` after separate merge approval.
+- The merge commit resolves to exact accepted tree `72c23057a43b485759072e0f5876495b73124b2c`.
+- The operator confirmed all post-merge Actions displayed by GitHub were green.
 
 ## Deterministic local acceptance
 
@@ -155,10 +161,10 @@ Future explanations must distinguish observed changes from inferred causes, cite
 1. Planning — approved.
 2. Local implementation — approved and complete.
 3. Publication and draft PR — approved and complete through draft PR #35.
-4. Package or image release — not applicable and not authorized.
-5. Deployment — not applicable and not authorized.
-6. Live acceptance — not applicable; acceptance is offline.
-7. Pull-request readiness — not authorized.
-8. Merge — not authorized.
-9. Closeout — not authorized.
+4. Package or image release — explicitly closed as not applicable; no distribution or image was published.
+5. Deployment — explicitly closed as not applicable; no deployable artifact or manifest changed.
+6. Live acceptance — explicitly closed as not applicable; deterministic acceptance is offline.
+7. Pull-request readiness — approved and complete for PR #35.
+8. Merge — approved and complete through PR #35 at `ad05786`.
+9. Closeout — approved and recorded on `codex/milestone-048-closeout`.
 10. Branch cleanup — not authorized.

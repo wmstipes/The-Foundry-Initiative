@@ -1133,3 +1133,23 @@ Review the complete Milestone 048 local diff and offline validation evidence. Pu
 ### Next small step
 
 Explicitly dispose of Gates 4–6, then review draft PR #35 for readiness. Readiness remains a separate approval gate.
+
+## 2026-09-16 — Milestone 048 readiness, merge, and closeout
+
+### Result
+
+- Explicitly closed package/image release, deployment, and live acceptance as not applicable. Version `0.5.0` remains repository-local metadata, the milestone has no deployable artifact or manifest change, and its acceptance boundary is intentionally offline.
+- Marked PR #35 ready only after the local suite, isolated installation, exact-tree comparison, and final-head ForgeOps CI run `35160350679` passed.
+- PR #35 final head `002b48ec55c6dd2cd4c8cfece0d45a2ec36f5658` merged into `main` at `ad05786e1d94660d75e1724e4e8db6d3af7dc088` after separate approval.
+- Confirmed the reviewed local publication, final published head, and merge commit resolve to exact tree `72c23057a43b485759072e0f5876495b73124b2c`.
+- The operator confirmed all post-merge Actions displayed by GitHub were green.
+- No package or image was released, no cluster or application endpoint was accessed, and no deployment, Wiki, persistent-state, or cluster mutation occurred.
+- Prepared the documentation-only closeout on `codex/milestone-048-closeout`; branch cleanup remains Gate 10 and is not authorized.
+
+### Lesson
+
+Deterministic comparison adds operational value without expanding authority when validity, chronology, difference semantics, and process exit codes remain explicit. Exact tree matching connects the locally accepted comparison behavior to both publication and merge evidence.
+
+### Next small step
+
+Complete the closeout record, then remove the Milestone 048 implementation and closeout branches only after separate Gate 10 approval. Select the next ForgeOps increment in a new planning pass.
