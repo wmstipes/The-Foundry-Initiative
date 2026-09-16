@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "foundry-check"
-version = "0.1.0"
-description = "Evaluate whether a local repository has a reasonable project foundation."
+version = "0.2.0"
+description = "Local Foundry checks and deterministic SignalForge health snapshots."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
@@ -15,6 +15,7 @@ dependencies = []
 
 [project.scripts]
 foundry-check = "foundry_check.cli:main"
+forgeops = "forgeops.cli:main"
 
 [tool.setuptools]
 package-dir = { "" = "src" }

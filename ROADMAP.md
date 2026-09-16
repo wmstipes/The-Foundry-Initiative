@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-044 are complete. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. Milestone 044 defined, live-feasibility-tested, and merged the first bounded, read-only ForgeOps health-snapshot contract before implementation.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-044 are complete; Milestone 045 is locally implemented and awaiting later delivery gates. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps now implements the accepted bounded, read-only snapshot contract with offline fixtures and a deny-by-default runner; live execution remains separately gated.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -330,7 +330,7 @@ Each telemetry layer should answer a specific operational question before it is 
 
 ## Phase 6 — ForgeOps AI-assisted operations
 
-**Status:** In progress — implementation planning
+**Status:** In progress — deterministic snapshot implementation
 
 Evolve the rules-based `/analyze` endpoint into a grounded Kubernetes incident copilot.
 
@@ -349,7 +349,19 @@ Evolve the rules-based `/analyze` endpoint into a grounded Kubernetes incident c
 
 See [Milestone 044](docs/milestones/milestone-044-forgeops-read-only-health-snapshot-design.md).
 
-The next candidate increment is Milestone 045: implement the accepted collector contract with offline fixtures and a deny-by-default command runner. Its plan and implementation require separate approval.
+### Milestone 045 — Deterministic read-only snapshot
+
+**Status:** Local implementation complete; publication and live acceptance remain gated.
+
+- Implement the accepted local `forgeops snapshot` interface.
+- Preserve exact kubeconfig and context preflight and fail closed before collection.
+- Reduce responses to selected evidence before deterministic evaluation.
+- Render equivalent terminal and Markdown checks with stable ordering and exit codes.
+- Enforce fixed target mappings, bounded subprocess and HTTP behavior, redaction, and no mutation.
+- Cover the healthy baseline and failure boundaries with synthetic offline fixtures and dedicated CI.
+- Preserve `foundry-check` and avoid any package registry, image, manifest, deployment, or Wiki change.
+
+See [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md) and the [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md).
 
 Potential outcomes:
 

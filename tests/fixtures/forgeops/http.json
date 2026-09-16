@@ -1,0 +1,7 @@
+{
+  "restaurant-api/version": {"app": "restaurant-api", "version": "0.7.0"},
+  "restaurant-api/health": {"status": "healthy"},
+  "restaurant-api/ready": {"status": "ready", "service": "restaurant-api"},
+  "restaurant-api/status": {"status": "open", "district": "SignalForge Restaurant District", "version": "0.7.0", "analyze_enabled": true},
+  "forge-yaml-workbench/healthz": "ok"
+}

@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-15
+**Last updated:** 2026-09-16
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -142,13 +142,23 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 - `docs/runbooks` contains operator procedures and recovery steps.
 - `docs/wiki` contains the reviewed source for the derivative GitHub Wiki Home and sidebar.
 
-## Planned ForgeOps snapshot boundary
+## ForgeOps snapshot boundary
 
-Milestone 044 defines, but does not implement, the first ForgeOps collection layer. The planned component is a separate local command with no in-cluster workload or identity. It requires an explicit kubeconfig and exact context, invokes only a closed set of read operations, normalizes the returned evidence, and renders equivalent terminal and Markdown views.
+Milestone 045 implements the Milestone 044 contract as a separate local Python command with no in-cluster workload or identity. It requires an explicit kubeconfig and exact context, invokes only a closed set of read operations, reduces raw responses to accepted fields, applies deterministic checks, and renders equivalent terminal and Markdown views.
 
 The first contract is deliberately SignalForge-specific. It covers the four expected nodes; the Restaurant API, Prometheus, Grafana, Forge YAML Workbench, and Metrics Server Deployments and Pods; allowlisted EndpointSlices; Metrics APIService availability; and optional GET requests to explicitly configured Restaurant API and Workbench endpoints. Missing or incomplete evidence remains `UNKNOWN` and prevents a healthy overall result.
 
-The boundary excludes broad discovery, Events, logs, Secrets, ConfigMaps, RBAC contents, arbitrary API paths, port-forwarding, temporary Pods, AI reasoning, remediation, and every cluster mutation. In particular, it does not reuse the existing mutating smoke-test path. Collection, normalization, deterministic evaluation, and rendering remain separate so a later implementation can be tested entirely from offline fixtures before any separately approved read-only live acceptance.
+The boundary excludes broad discovery, Events, logs, Secrets, ConfigMaps, RBAC contents, arbitrary API paths, port-forwarding, temporary Pods, AI reasoning, remediation, and every cluster mutation. In particular, it does not reuse the existing mutating smoke-test path. Collection, normalization, deterministic evaluation, and rendering are separate and covered by synthetic offline fixtures. The local command has not contacted the live cluster during implementation; that remains a separate acceptance gate.
+
+```mermaid
+flowchart LR
+    Operator["Operator inputs"] --> Collector["Closed read collector"]
+    Collector --> Normalize["Selected evidence"]
+    Normalize --> Evaluate["Deterministic checks"]
+    Evaluate --> Render["Terminal or Markdown"]
+```
+
+`src/forgeops/constants.py` owns the fixed SignalForge identities and limits. `runners.py` owns the deny-by-default process and network boundaries. `collect.py` owns collection and selected-field normalization, `evaluate.py` owns status semantics, and `render.py` owns presentation. A future reasoning layer may consume this evidence but must not expand collection or mutation authority implicitly.
 
 ## Documentation authority and publication
 
@@ -187,7 +197,7 @@ Potential next architecture steps include:
 2. Continue the demonstrated Prometheus and Grafana backup cadence.
 3. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
 4. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
-5. Implement the reviewed ForgeOps read-only snapshot contract before adding incident reasoning or recommendations.
+5. Validate the implemented ForgeOps snapshot against the separately approved live read-only baseline before adding incident reasoning or recommendations.
 
 ## Decision records
 

@@ -2,13 +2,13 @@
 
 **Last updated:** 2026-09-16
 
-**Current phase:** Operational visibility and ForgeOps implementation planning
+**Current phase:** Operational visibility and ForgeOps snapshot implementation
 
 ## Summary
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined, published, live-feasibility-tested, and merged the bounded read-only evidence contract that must precede ForgeOps implementation and AI-assisted reasoning.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 now implements that contract locally with deterministic evaluation and offline tests; publication and live execution remain separately gated.
 
 ## Current application
 
@@ -52,7 +52,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Restaurant API image workflow: documentation-only `main` pushes now skip publication, while Restaurant API source changes, version tags, and manual dispatch remain enabled
 - Cleanup: all `codex/milestone-*` branches were removed locally and remotely; the intentionally preserved older remote branches are unchanged
 
-## Current ForgeOps planning state
+## Current ForgeOps state
 
 - Milestone: 044, design complete and merged through PR #27 at `c467468`
 - Goal: define a separate local, read-only SignalForge health snapshot before implementation
@@ -65,7 +65,13 @@ The project has moved from basic workload deployment into repeatable engineering
 - Runtime impact: read-only Kubernetes and HTTP feasibility queries only; there is no collector implementation, image, manifest, deployment, rollout, restart, Wiki mutation, or cluster mutation in this milestone
 - Merge: PR #27 was marked ready after separate approval and merged into `main` at `c467468f8afa349af92f6af1601283449248c8a4` on 2026-09-16; the merge tree exactly matched the reviewed branch tree
 - Checks: the operator confirmed all Actions shown in GitHub were green; the connected GitHub API exposed no workflow-run or commit-status records for either the head or merge commit
-- Remaining gates: closeout publication and branch cleanup
+- Closeout and cleanup: closeout PR #28 merged at `aa178b0`; both Milestone 044 branches were removed locally and remotely
+- Milestone 045: local `forgeops snapshot` implementation complete on `codex/milestone-045-forgeops-snapshot`
+- Implementation: fixed SignalForge constants, deny-by-default kubectl and HTTP runners, selected-field normalization, deterministic evaluation, and terminal or Markdown rendering
+- Test boundary: synthetic fixtures only; no test invokes kubectl or contacts a network
+- Local package metadata: `0.2.0`, preserving `foundry-check` and adding `forgeops`
+- Runtime impact: no live cluster or endpoint access, image, manifest, deployment, package registry, or Wiki change during local implementation
+- Remaining Milestone 045 gates: publication, read-only live acceptance, PR readiness, merge, closeout, and cleanup
 
 ## Milestone 038 closeout
 
@@ -223,7 +229,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Publish and merge the Milestone 044 closeout record through its own approval gates, then perform separately approved branch cleanup. Planning Milestone 045—the implementation of the accepted read-only snapshot contract—remains a distinct future decision.
+Review the local Milestone 045 implementation and offline evidence. Branch publication and draft PR creation require separate approval; live read-only acceptance remains a later independent gate.
 
 ## Supporting completed work
 

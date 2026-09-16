@@ -882,4 +882,32 @@ Evidence sources can disagree in visibility without disagreeing on outcome. The 
 
 ### Next small step
 
-Publish and merge this closeout record, complete separately approved branch cleanup, and then plan Milestone 045 as the implementation of the accepted collector contract.
+Milestone 044 closeout merged through PR #28 at `aa178b0a4f63a4680d9f47063aec817807b9771e`, and both milestone branches were removed locally and remotely. Proceed with the separately approved Milestone 045 implementation of the accepted collector contract.
+
+## 2026-09-16 — Milestone 045 local implementation: deterministic read-only snapshot
+
+### Result
+
+- Implemented a separate `forgeops snapshot` Python command while preserving the earlier `foundry-check` utility.
+- Encoded the four Nodes, five Deployments and Pod selectors, four Services, Metrics APIService, and five optional HTTP paths as fixed constants rather than user-selectable resources.
+- Added a deny-by-default kubectl runner that uses argument arrays with `shell=False`, explicit kubeconfig and context arguments, ten-second calls, and two-MiB output limits.
+- Added a no-redirect HTTP runner for explicit operator URLs with five-second calls, 64-KiB bodies, and credential-bearing URL rejection.
+- Reduced Kubernetes and HTTP responses to accepted fields before deterministic evaluation or rendering.
+- Implemented stable `PASS`, `WARN`, `FAIL`, and `UNKNOWN` checks with exit codes `0`, `1`, and fail-closed `2`.
+- Added equivalent terminal and Markdown renderers that state their scope and redaction boundary without claiming continuous monitoring or complete cluster health.
+- Added synthetic healthy and failure fixtures, focused offline tests, and a dedicated CI workflow with no cluster credentials or live access.
+- Added the ForgeOps operator runbook and reconciled Milestone 044 closeout and cleanup status.
+
+### Validation boundary
+
+- Local implementation runs entirely from synthetic fixtures; no kubectl command, HTTP endpoint, cluster resource, Wiki, registry, image, or deployment was contacted or changed.
+- Package metadata advances locally from `0.1.0` to `0.2.0` to expose the second command; no distribution is published.
+- Publication, read-only live acceptance, PR readiness, merge, closeout, and cleanup remain separate gates.
+
+### Lesson
+
+The safest place to constrain an operational collector is before subprocess execution: typed operations and fixed target mappings make unsupported commands unrepresentable, while selected-field normalization keeps complete API objects out of later evaluation and reports.
+
+### Next small step
+
+Review the complete local diff and offline validation evidence. Publish the branch and open a draft PR only after separate approval.

@@ -1,6 +1,6 @@
 # Milestone 044 — ForgeOps read-only health snapshot design
 
-**Status:** Complete; design, publication, read-only live feasibility, PR readiness, and merge passed; closeout publication and cleanup remain separately gated
+**Status:** Complete; design, publication, read-only live feasibility, merge, closeout, and branch cleanup passed
 
 **Started:** 2026-09-16
 
@@ -306,5 +306,5 @@ Rollback is documentation-only: revert the focused planning change or revise thi
 6. Read-only live feasibility acceptance — approved and passed on 2026-09-16.
 7. Pull-request readiness — approved and complete.
 8. Merge — complete at `c467468f8afa349af92f6af1601283449248c8a4`.
-9. Closeout — approved; this local record remains separately gated for publication and merge.
-10. Cleanup — not authorized.
+9. Closeout — complete through PR #28 at `aa178b0a4f63a4680d9f47063aec817807b9771e`.
+10. Cleanup — complete; both Milestone 044 branches were removed locally and remotely.
