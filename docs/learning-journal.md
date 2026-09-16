@@ -911,3 +911,26 @@ The safest place to constrain an operational collector is before subprocess exec
 ### Next small step
 
 Review the complete local diff and offline validation evidence. Publish the branch and open a draft PR only after separate approval.
+
+## 2026-09-16 — Milestone 045 publication, CI, and read-only live acceptance
+
+### Result
+
+- Published draft PR #29 at remote commit `4ae5ddedde9ce51efab94adf0f4f94b25829ac7b`.
+- Confirmed its tree `0561e2ddc1c54af6fd12d840828fb820d4ad6893` exactly matched the locally reviewed implementation tree.
+- ForgeOps CI run `35128781478` completed successfully.
+- The operator ran the published commit from a detached temporary worktree after verifying both commit and tree.
+- The command resolved the exact `kubernetes-admin@kubernetes` context, collected the fixed Kubernetes scope, and queried only the five explicit application endpoints.
+- All four Nodes were Ready; all five Deployments and seven selected Pods matched replica, readiness, restart, configured-image, and applicable runtime-digest expectations.
+- All four routing checks and the Metrics APIService check passed.
+- Restaurant API `/version`, `/health`, `/ready`, and `/status` plus Workbench `/healthz` matched their fixed HTTP expectations.
+- The final summary was 33 `PASS`, zero `WARN`, zero `FAIL`, zero `UNKNOWN`, overall `PASS`, and exit code `0`.
+- No log, Event, Secret, ConfigMap, broad discovery, temporary Pod, port-forward, remediation, deployment, or cluster mutation occurred.
+
+### Lesson
+
+Comparing the published commit and tree before live execution closes the gap between reviewed source and operator evidence. The first real collector run also demonstrated that selected-field normalization can remain useful without exposing complete API objects or credentials.
+
+### Next small step
+
+Review draft PR #29 for readiness. Marking it ready and merging it remain separate approval gates.

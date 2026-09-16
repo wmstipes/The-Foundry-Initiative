@@ -1,6 +1,6 @@
 # Milestone 045 — ForgeOps deterministic read-only snapshot
 
-**Status:** Local implementation complete; publication, live acceptance, PR readiness, merge, closeout, and cleanup remain separately gated
+**Status:** Implementation, publication, CI, and read-only live acceptance complete; PR readiness, merge, closeout, and cleanup remain separately gated
 
 **Started:** 2026-09-16
 
@@ -134,14 +134,42 @@ Rollback is a normal source revert of the focused implementation commit. Because
 8. All repository tests, package installation checks, applicable validators, and whitespace validation pass.
 9. No live Kubernetes or HTTP request occurs before separate approval.
 
+## Publication and CI evidence
+
+- Draft PR: #29.
+- Published branch: `codex/milestone-045-forgeops-snapshot`.
+- Published commit: `4ae5ddedde9ce51efab94adf0f4f94b25829ac7b`.
+- Published tree: `0561e2ddc1c54af6fd12d840828fb820d4ad6893`, exactly matching the locally reviewed tree at commit `b15329b08a27df1ff27fa48ba0707a5ba6a60d5f`.
+- ForgeOps CI run `35128781478` completed successfully as run number 1.
+- The PR remained draft, clean, and mergeable after CI; no readiness or merge action occurred.
+
+## Read-only live acceptance
+
+Read-only live acceptance was separately approved and passed on 2026-09-16. The operator ran the exact published commit from a detached temporary worktree, confirmed the published commit and tree before execution, and supplied one explicit kubeconfig, the exact `kubernetes-admin@kubernetes` context, and the two previously reviewed application base URLs.
+
+The snapshot collected at `2026-09-16T17:36:52Z` reported:
+
+- Kubernetes client `v1.36.1` and server `v1.36.4`.
+- All four expected Nodes with exactly matching Ready evidence.
+- All five Deployments with expected desired, updated, ready, and available replicas and exact configured images.
+- Seven selected Pods across five workload selectors, all Running and container-ready with zero restarts.
+- Exact configured-image matches for every Pod and runtime digest matches for both digest-pinned workloads.
+- Three ready Restaurant API endpoints plus one each for Prometheus, Grafana, and Workbench, with no not-ready or unknown endpoints.
+- One Available Metrics APIService condition.
+- HTTP 200 and exact bounded fields for Restaurant API `/version`, `/health`, `/ready`, and `/status`, plus exact `ok` for Workbench `/healthz`.
+
+The deterministic summary was `33 PASS, 0 WARN, 0 FAIL, 0 UNKNOWN`, overall `PASS`, exit code `0`. The command displayed its scope and redaction boundary and did not expose the kubeconfig path, credentials, addresses, headers, complete objects, or unrecognized HTTP fields.
+
+The acceptance used only the implemented read-operation allowlist and five explicit HTTP GETs. It did not read logs, Events, Secrets, ConfigMaps, broad namespace state, or arbitrary API paths; create a temporary Pod; start a port-forward; change a workload; or mutate the cluster.
+
 ## Gated delivery workflow
 
 1. Planning — approved.
 2. Local implementation — approved and complete.
-3. Branch publication and draft PR — not authorized.
+3. Branch publication and draft PR — approved and complete through draft PR #29.
 4. Package or image release — not applicable and not authorized.
 5. Deployment — not applicable and not authorized.
-6. Read-only live acceptance — not authorized.
+6. Read-only live acceptance — approved and passed with 33 checks and exit code `0`.
 7. Pull-request readiness — not authorized.
 8. Merge — not authorized.
 9. Closeout — not authorized.

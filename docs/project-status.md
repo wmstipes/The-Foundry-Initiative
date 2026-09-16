@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 now implements that contract locally with deterministic evaluation and offline tests; publication and live execution remain separately gated.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implements that contract with deterministic evaluation, offline tests, successful CI, and a separately approved passing live snapshot.
 
 ## Current application
 
@@ -70,8 +70,11 @@ The project has moved from basic workload deployment into repeatable engineering
 - Implementation: fixed SignalForge constants, deny-by-default kubectl and HTTP runners, selected-field normalization, deterministic evaluation, and terminal or Markdown rendering
 - Test boundary: synthetic fixtures only; no test invokes kubectl or contacts a network
 - Local package metadata: `0.2.0`, preserving `foundry-check` and adding `forgeops`
-- Runtime impact: no live cluster or endpoint access, image, manifest, deployment, package registry, or Wiki change during local implementation
-- Remaining Milestone 045 gates: publication, read-only live acceptance, PR readiness, merge, closeout, and cleanup
+- Publication: draft PR #29 at remote commit `4ae5dde`; published tree `0561e2dd` exactly matched the locally reviewed tree
+- CI: ForgeOps CI run `35128781478` completed successfully
+- Live acceptance: exact published commit and tree verified; 33 checks passed with no warnings, failures, or unknowns and exit code `0`
+- Runtime impact: approved read-only Kubernetes and five explicit HTTP requests only; no image, manifest, deployment, package registry, Wiki, or cluster mutation
+- Remaining Milestone 045 gates: PR readiness, merge, closeout, and cleanup
 
 ## Milestone 038 closeout
 
@@ -229,7 +232,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the local Milestone 045 implementation and offline evidence. Branch publication and draft PR creation require separate approval; live read-only acceptance remains a later independent gate.
+Review draft PR #29 and its offline, CI, exact-tree, and live-acceptance evidence for the separate PR-readiness decision. Merge remains a later independent gate.
 
 ## Supporting completed work
 
