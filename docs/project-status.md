@@ -80,6 +80,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - JSON boundary: evaluated checks only, fixed key and check order, explicit summary and limitations, no raw response serialization, and no collection-authority change
 - Local validation: 33 offline ForgeOps tests pass, including the fixed golden JSON contract, mixed-status precedence, renderer parity, offline CLI rendering, CLI selection, and redaction
 - Publication: draft PR #31 opened from published commit `2f49025`; published tree `0f4ac04483b36615a5848cd940b8457203d40c5a` exactly matched reviewed local commit `e097b78`
+- CI: ForgeOps CI run `35136846722` completed successfully on the published documentation follow-up
 - Runtime impact: none during local implementation; no package registry, image, manifest, deployment, Wiki, network, or cluster action
 
 ## Milestone 038 closeout
@@ -238,7 +239,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review draft PR #31 and its CI evidence. Live acceptance remains a later independent approval gate; PR readiness is not yet authorized.
+Review the successful PR #31 CI evidence and prepare the separately gated read-only live JSON acceptance. PR readiness is not yet authorized.
 
 ## Supporting completed work
 

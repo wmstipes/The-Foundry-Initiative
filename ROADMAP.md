@@ -366,7 +366,7 @@ See [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-on
 
 ### Milestone 046 — Deterministic JSON evidence contract
 
-**Status:** Local implementation, offline validation, publication, and draft PR #31 complete; CI and later gates remain separately gated.
+**Status:** Local implementation, offline validation, publication, draft PR #31, and CI complete; live acceptance and later gates remain separately gated.
 
 - Add `--format json` without adding a new command or collection path.
 - Serialize only the evaluated, redacted `forgeops.snapshot/v1alpha1` model rather than raw Kubernetes or HTTP responses.

@@ -1,6 +1,6 @@
 # Milestone 046 — ForgeOps deterministic JSON evidence contract
 
-**Status:** Local implementation, offline validation, publication, and draft PR complete; CI and later gates remain separately gated
+**Status:** Local implementation, offline validation, publication, draft PR, and CI complete; live acceptance and later gates remain separately gated
 
 **Started:** 2026-09-16
 
@@ -87,6 +87,7 @@ The repository-local Python distribution version becomes `0.3.0`. No package is 
 - Published remote commit: `2f49025698b5a54b2d863adba4b2192e0a88579f`.
 - Exact matching local and published tree: `0f4ac04483b36615a5848cd940b8457203d40c5a`.
 - The GitHub repository connector was used because this runtime's HTTPS Git client had no credential helper.
+- ForgeOps CI run `35136846722` completed successfully after the publication-evidence follow-up.
 - The PR remains draft; live acceptance, readiness, merge, closeout, and cleanup are not authorized.
 
 ## Acceptance plan

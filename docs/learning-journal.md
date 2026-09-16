@@ -919,11 +919,12 @@ Review the complete local diff and offline validation evidence. Publish the bran
 - Published `codex/milestone-046-forgeops-json-evidence` through the authorized GitHub repository connector after the runtime's HTTPS Git client had no credential helper.
 - Remote commit `2f49025698b5a54b2d863adba4b2192e0a88579f` has tree `0f4ac04483b36615a5848cd940b8457203d40c5a`, exactly matching reviewed local commit `e097b78a358bd10f23c36e2f1706bfdc3445737c`.
 - Opened draft PR #31 against `main` with the trust boundary, validation evidence, and remaining approval gates stated explicitly.
+- ForgeOps CI run `35136846722` completed successfully after the publication-evidence follow-up.
 - No package or image was released, no cluster was accessed, and no deployment, Wiki, readiness, or merge action occurred.
 
 ### Next small step
 
-Verify the documentation follow-up tree and inspect PR #31 CI. Live acceptance and PR readiness remain separate future approval gates.
+Review the successful CI evidence and prepare the separately gated read-only live JSON acceptance. PR readiness remains a later independent approval gate.
 
 ## 2026-09-16 — Milestone 045 publication, CI, and read-only live acceptance
 
