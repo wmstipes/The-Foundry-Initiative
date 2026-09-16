@@ -1,6 +1,6 @@
 # Milestone 045 — ForgeOps deterministic read-only snapshot
 
-**Status:** Complete; implementation, publication, CI, read-only live acceptance, PR readiness, and merge passed; closeout publication and cleanup remain separately gated
+**Status:** Complete; implementation, publication, CI, read-only live acceptance, PR readiness, merge, closeout, and cleanup passed
 
 **Started:** 2026-09-16
 
@@ -172,6 +172,12 @@ The acceptance used only the implemented read-operation allowlist and five expli
 - ForgeOps CI push run `35129953752` completed successfully on the merge commit.
 - No package, image, tag, manifest, deployment, Wiki, or cluster resource changed as part of readiness or merge.
 
+## Closeout and cleanup evidence
+
+- Closeout PR #30 merged into `main` at `f714d2567bce35ee90f4a5ff9ab0edd5fe9194ef`.
+- The implementation and closeout branches were removed locally and remotely after separate approval.
+- Only the intentionally preserved remote branches `feature/foundry-check-cli` and `feature/project-status` remained.
+
 ## Gated delivery workflow
 
 1. Planning — approved.
@@ -182,5 +188,5 @@ The acceptance used only the implemented read-operation allowlist and five expli
 6. Read-only live acceptance — approved and passed with 33 checks and exit code `0`.
 7. Pull-request readiness — approved and complete.
 8. Merge — complete at `3e9851da0351e1e01f90c5e38b534e5bbade929d`.
-9. Closeout — approved; this local record remains separately gated for publication and merge.
-10. Cleanup — not authorized.
+9. Closeout — complete through PR #30 at `f714d2567bce35ee90f4a5ff9ab0edd5fe9194ef`.
+10. Cleanup — complete; both Milestone 045 branches were removed locally and remotely.

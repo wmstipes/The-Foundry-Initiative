@@ -952,4 +952,25 @@ Separating collection, evaluation, live acceptance, readiness, and merge created
 
 ### Next small step
 
-Publish and merge this closeout record, complete separately approved branch cleanup, and then plan the next bounded ForgeOps increment through its own approval gate.
+PR #30 merged the closeout record at `f714d2567bce35ee90f4a5ff9ab0edd5fe9194ef`, and all Milestone 045 branches were removed locally and remotely. Plan the next bounded ForgeOps increment through its own approval gate.
+
+## 2026-09-16 — Milestone 046 local implementation: deterministic JSON evidence contract
+
+### Result
+
+- Reconciled Phase 6 documentation with the completed Milestone 045 closeout and branch cleanup.
+- Selected a machine-readable JSON evidence artifact over new data sources, deterministic recommendations, snapshot comparison, or AI reasoning because it adds the smallest useful integration boundary without expanding trust.
+- Added `--format json` as a third view of the existing evaluated `forgeops.snapshot/v1alpha1` model.
+- Included fixed scope and redaction statements, summary counts, overall status, exit code, ordered checks, and the point-in-time limitation.
+- Kept optional check details explicit while omitting the collector's raw Kubernetes and HTTP responses.
+- Added a fixed golden JSON artifact, repeat-render byte equality, mixed WARN/FAIL/UNKNOWN precedence, renderer parity, redaction, and CLI-format coverage.
+- Advanced only the local package metadata to `0.3.0`; no registry publication, image, tag, manifest, deployment, Wiki, network, or cluster action occurred.
+- All 33 focused ForgeOps tests and `git diff --check` pass; the complete repository suite passes 91 tests.
+
+### Lesson
+
+A stable machine-readable boundary should follow deterministic evaluation rather than bypass it. Serializing `EvaluatedSnapshot` preserves the reviewed collection and interpretation limits while giving later comparison, replay, or reasoning work a bounded input contract. Deterministic serialization means the same evaluated model produces the same bytes; it does not imply that separately collected live snapshots have identical timestamps or observations.
+
+### Next small step
+
+Review the complete local diff and offline validation evidence. Publish the branch and open a draft PR only after separate approval.

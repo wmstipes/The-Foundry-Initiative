@@ -75,9 +75,9 @@ forgeops snapshot `
   --context kubernetes-admin@kubernetes
 ~~~
 
-Add `--format markdown` for a reviewable report, or provide `--restaurant-url` and `--workbench-url` to include the five accepted application endpoints. The command uses only bounded read operations, never falls back to an ambient kubeconfig or context, does not read sensitive Kubernetes objects, and cannot mutate the cluster. `UNKNOWN` evidence fails closed with exit code `2`.
+Add `--format markdown` for a reviewable report or `--format json` for a deterministic machine-readable evidence artifact. Provide `--restaurant-url` and `--workbench-url` to include the five accepted application endpoints. All three renderers derive from the same evaluated snapshot and preserve the same ordered checks, status semantics, summary, and exit code. The command uses only bounded read operations, never falls back to an ambient kubeconfig or context, does not read sensitive Kubernetes objects, and cannot mutate the cluster. `UNKNOWN` evidence fails closed with exit code `2`.
 
-See the [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md) and [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md).
+See the [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md), and [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md).
 
 ## Documentation front door
 

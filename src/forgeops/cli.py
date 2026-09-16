@@ -10,7 +10,7 @@ from typing import Sequence
 from .collect import Collector, validate_kubeconfig
 from .constants import EXPECTED_CONTEXT
 from .evaluate import evaluate
-from .render import render_markdown, render_text
+from .render import render_json, render_markdown, render_text
 from .runners import HttpRunner, KubectlRunner, RunnerFailure
 
 
@@ -26,7 +26,7 @@ def build_parser() -> argparse.ArgumentParser:
     snapshot.add_argument("--restaurant-url", help="explicit Restaurant API base URL")
     snapshot.add_argument("--workbench-url", help="explicit Workbench base URL")
     snapshot.add_argument(
-        "--format", choices=("text", "markdown"), default="text",
+        "--format", choices=("text", "markdown", "json"), default="text",
         dest="output_format", help="output format (default: text)",
     )
     return parser
@@ -58,6 +58,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         snapshot = evaluate(raw)
         if args.output_format == "markdown":
             render_markdown(snapshot, sys.stdout)
+        elif args.output_format == "json":
+            render_json(snapshot, sys.stdout)
         else:
             render_text(snapshot, sys.stdout)
         return snapshot.exit_code
