@@ -1419,3 +1419,26 @@ replaced together.
 
 Complete full repository and isolated-install acceptance, then publish the exact
 reviewed Milestone 052 tree under the already approved Gate 3.
+
+## 2026-09-17 — Milestone 052 publication, merge, and closeout preparation
+
+### Result
+
+- Published remote implementation commit
+  `912468e566086a5234339ac09b3f98dddc53b4a2` with exact accepted tree
+  `eeb97ba2a7442353116cef90f9d77df180b02c48`.
+- Verified that the published tree exactly matches accepted local commit
+  `181a8d762925f2620595f03ad927424cd5f06ac1`.
+- Opened draft PR #43 and confirmed ForgeOps CI run `35288211586` passed.
+- Marked PR #43 ready and merged it at
+  `b4f42c24cb3afd3b4420716038d508a9f60712c3` under the pre-approved gates.
+- Verified the merge commit preserves exact accepted tree
+  `eeb97ba2a7442353116cef90f9d77df180b02c48`.
+- Closed package/image release, deployment, and live acceptance as not
+  applicable without registry, cluster, endpoint, persistent-state, or Wiki
+  action.
+
+### Next small step
+
+Merge this documentation-only closeout, complete branch cleanup, synchronize
+clean `main`, and then begin Milestone 053 bounded offline scenario replay.

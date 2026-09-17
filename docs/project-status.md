@@ -159,7 +159,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - PR readiness and merge: PR #41 was marked ready under Gate 7 and merged under Gate 8 at `e5e2a0898480e7722295e8df5e35eb25d4829848`
 - Merge integrity: the implementation merge commit resolves to exact accepted tree `652d01fdb7933e037b0097170610ea8480164588`
 - Closeout and cleanup: PR #42 merged at `fd8187697dc472e2d3c39f2202636412a551b728`; both Milestone 051 branches were deleted locally and remotely, and clean `main` was synchronized at that commit
-- Milestone 052: deterministic exact-byte evidence integrity records are implemented locally on `codex/milestone-052-forgeops-evidence-integrity`
+- Milestone 052: deterministic exact-byte evidence integrity records are implemented and merged through PR #43
 - Interface: `forgeops evidence integrity create --input <file>` and `forgeops evidence integrity verify --input <file> --record <file>`
 - Integrity contract: strict `forgeops.integrity/v1alpha1` JSON with evidence schema, collection timestamp, context, SHA-256 digest, byte length, and explicit limitations
 - Verification semantics: exit `0` match, `1` mismatch, and `2` invalid/unreadable evidence or record; these are separate from contained health, validation, and comparison exits
@@ -167,6 +167,11 @@ The project has moved from basic workload deployment into repeatable engineering
 - Authority boundary: explicit local bounded files only; no kubeconfig, kubectl, HTTP, network, collection, retention automation, replay, diagnosis, recommendation, AI reasoning, or mutation
 - Package metadata: repository-local version advances to `0.8.0`; no distribution is published
 - Local validation: all 87 focused ForgeOps tests and all 145 repository tests pass; isolated non-editable `0.8.0` installation, installed command entries, source launcher, Python compilation, manifest validation, and whitespace validation pass
+- Publication: remote implementation commit `912468e566086a5234339ac09b3f98dddc53b4a2` resolves to tree `eeb97ba2a7442353116cef90f9d77df180b02c48`, exactly matching accepted local commit `181a8d762925f2620595f03ad927424cd5f06ac1`
+- CI: ForgeOps CI run `35288211586` completed successfully on the exact published tree
+- PR readiness and merge: draft PR #43 was marked ready after CI and exact-tree verification, then merged at `b4f42c24cb3afd3b4420716038d508a9f60712c3`
+- Merge integrity: the merge commit resolves to exact accepted tree `eeb97ba2a7442353116cef90f9d77df180b02c48`
+- Gate disposition: package/image release, deployment, and live acceptance were closed as not applicable; no registry, image, release tag, cluster, endpoint, persistent-state, or Wiki action occurred
 
 ## Milestone 038 closeout
 
@@ -324,8 +329,9 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete Milestone 052 deterministic offline acceptance, publication, merge,
-closeout, and cleanup before beginning bounded scenario replay in Milestone 053.
+Merge the Milestone 052 documentation-only closeout, remove both Milestone 052
+branches locally and remotely, and synchronize clean `main` before beginning
+bounded scenario replay in Milestone 053.
 
 ## Supporting completed work
 
