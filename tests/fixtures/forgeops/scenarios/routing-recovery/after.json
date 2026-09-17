@@ -1,0 +1,29 @@
+{
+  "schema": "forgeops.snapshot/v1alpha1",
+  "collectedAtUtc": "2026-09-17T15:45:00Z",
+  "context": "kubernetes-admin@kubernetes",
+  "scope": "fixed SignalForge nodes, workloads, routing, Metrics APIService, and explicitly configured HTTP endpoints",
+  "redaction": "credentials, kubeconfig paths, addresses, headers, and complete objects omitted",
+  "summary": {
+    "pass": 1,
+    "warn": 0,
+    "fail": 0,
+    "unknown": 0,
+    "overallStatus": "PASS",
+    "exitCode": 0
+  },
+  "checks": [
+    {
+      "id": "routing.forge-restaurant.synthetic-service",
+      "status": "PASS",
+      "observation": "Synthetic Service routing matches",
+      "source": "synthetic EndpointSlice evidence",
+      "collectedAtUtc": "2026-09-17T15:45:00Z",
+      "expected": "ready=3, notReady=0, unknown=0",
+      "observed": "slices=1, ready=3, notReady=0, unknown=0"
+    }
+  ],
+  "limitations": [
+    "This is a bounded point-in-time observation, not continuous monitoring, a compliance assessment, or a complete statement of cluster health."
+  ]
+}

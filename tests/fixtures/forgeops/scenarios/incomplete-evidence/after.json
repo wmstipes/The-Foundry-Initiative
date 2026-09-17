@@ -1,0 +1,28 @@
+{
+  "schema": "forgeops.snapshot/v1alpha1",
+  "collectedAtUtc": "2026-09-17T15:35:00Z",
+  "context": "kubernetes-admin@kubernetes",
+  "scope": "fixed SignalForge nodes, workloads, routing, Metrics APIService, and explicitly configured HTTP endpoints",
+  "redaction": "credentials, kubeconfig paths, addresses, headers, and complete objects omitted",
+  "summary": {
+    "pass": 0,
+    "warn": 0,
+    "fail": 0,
+    "unknown": 1,
+    "overallStatus": "UNKNOWN",
+    "exitCode": 2
+  },
+  "checks": [
+    {
+      "id": "metrics-api-service",
+      "status": "UNKNOWN",
+      "observation": "Synthetic Metrics APIService evidence is incomplete",
+      "source": "synthetic APIService evidence",
+      "collectedAtUtc": "2026-09-17T15:35:00Z",
+      "errorCategory": "timeout"
+    }
+  ],
+  "limitations": [
+    "This is a bounded point-in-time observation, not continuous monitoring, a compliance assessment, or a complete statement of cluster health."
+  ]
+}

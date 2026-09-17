@@ -157,6 +157,32 @@ The JSON does not include either artifact path, observation text, expected or ob
 
 Validation and comparison are offline. They do not read or search for a kubeconfig, invoke kubectl, make an HTTP request, discover another file, contact a network service, or mutate the cluster. Passing validation establishes contract compatibility and internal consistency only; it does not prove artifact provenance, cryptographic authenticity, cluster health, or the absence of sensitive text in arbitrary string values. Review the artifact before sharing it.
 
+## Exercise the synthetic scenario corpus
+
+Milestone 050 provides five focused examples under
+`tests/fixtures/forgeops/scenarios`. They demonstrate timestamp-only stability, a
+Pod-restart warning, a routing regression, incomplete evidence, and recovery. Each
+directory contains `before.json`, `after.json`, and the exact
+`expected-comparison.json`.
+
+From one scenario directory:
+
+~~~powershell
+forgeops evidence validate --input .\before.json
+forgeops evidence validate --input .\after.json
+forgeops evidence compare --before .\before.json --after .\after.json
+forgeops evidence compare `
+  --before .\before.json `
+  --after .\after.json `
+  --format json
+~~~
+
+These are deliberately isolated synthetic checks, not captured SignalForge evidence
+or complete snapshots. Their overall status applies only to the focused artifact. A
+recovery still returns comparison exit `1` because the valid artifacts differ; that
+exit is not a failed recovery or severity judgment. The corpus adds no scenario
+runner, collection path, retention, diagnosis, recommendation, or mutation behavior.
+
 ## Interpret results
 
 | Status | Meaning |
