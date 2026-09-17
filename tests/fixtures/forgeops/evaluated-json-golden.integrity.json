@@ -1,0 +1,12 @@
+{
+  "schema": "forgeops.integrity/v1alpha1",
+  "evidenceSchema": "forgeops.snapshot/v1alpha1",
+  "collectedAtUtc": "2026-09-16T18:00:00Z",
+  "context": "kubernetes-admin@kubernetes",
+  "algorithm": "sha256",
+  "digest": "215dc926b4c8ec51f9616c6be08fc98f11f83d493f5d6635b17a87752d1803cd",
+  "byteLength": 1209,
+  "limitations": [
+    "This SHA-256 record detects exact byte differences only when compared with a separately retained trusted record; it does not establish authorship, authenticity, or chain of custody."
+  ]
+}

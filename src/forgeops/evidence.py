@@ -53,6 +53,14 @@ class ValidatedEvidence:
     limitations: tuple[str, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class EvidenceArtifact:
+    """Exact artifact bytes paired with their contract-validated representation."""
+
+    raw: bytes
+    evidence: ValidatedEvidence
+
+
 def _fail(code: str, summary: str) -> None:
     raise EvidenceValidationError(code, summary)
 
@@ -210,8 +218,8 @@ def parse_evidence_json(raw: bytes) -> ValidatedEvidence:
     )
 
 
-def load_evidence_file(path_text: str) -> ValidatedEvidence:
-    """Read exactly one operator-selected regular file and validate its contract."""
+def load_evidence_artifact(path_text: str) -> EvidenceArtifact:
+    """Read one selected regular file once and retain its exact validated bytes."""
 
     try:
         path = Path(path_text).expanduser().resolve(strict=True)
@@ -223,4 +231,10 @@ def load_evidence_file(path_text: str) -> ValidatedEvidence:
         raise
     except OSError:
         _fail("input-unavailable", "evidence input is not an accessible regular file")
-    return parse_evidence_json(raw)
+    return EvidenceArtifact(raw=raw, evidence=parse_evidence_json(raw))
+
+
+def load_evidence_file(path_text: str) -> ValidatedEvidence:
+    """Read exactly one operator-selected regular file and validate its contract."""
+
+    return load_evidence_artifact(path_text).evidence

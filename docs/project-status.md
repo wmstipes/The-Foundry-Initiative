@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, Milestone 046 added a deterministic JSON evidence view, Milestone 047 added strict offline validation, Milestone 048 added deterministic offline comparison, Milestone 049 added a deterministic JSON comparison contract, and Milestone 050 added a bounded synthetic scenario corpus without expanding collection or mutation authority. Milestone 051 locally implements and validates explicit ForgeOps execution identity and supported local execution modes.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 locally implements exact-byte evidence integrity records without claiming authenticity or chain of custody.
 
 ## Current application
 
@@ -158,7 +158,15 @@ The project has moved from basic workload deployment into repeatable engineering
 - Final publication: head `4e5e7334448fb734fdc7e1f869d7215c8855c4cc` resolves to accepted tree `652d01fdb7933e037b0097170610ea8480164588`; final-head ForgeOps CI run `35265922723` passed
 - PR readiness and merge: PR #41 was marked ready under Gate 7 and merged under Gate 8 at `e5e2a0898480e7722295e8df5e35eb25d4829848`
 - Merge integrity: the implementation merge commit resolves to exact accepted tree `652d01fdb7933e037b0097170610ea8480164588`
-- Closeout: documentation-only branch `codex/milestone-051-closeout` records readiness, merge, integrity, and final gate state
+- Closeout and cleanup: PR #42 merged at `fd8187697dc472e2d3c39f2202636412a551b728`; both Milestone 051 branches were deleted locally and remotely, and clean `main` was synchronized at that commit
+- Milestone 052: deterministic exact-byte evidence integrity records are implemented locally on `codex/milestone-052-forgeops-evidence-integrity`
+- Interface: `forgeops evidence integrity create --input <file>` and `forgeops evidence integrity verify --input <file> --record <file>`
+- Integrity contract: strict `forgeops.integrity/v1alpha1` JSON with evidence schema, collection timestamp, context, SHA-256 digest, byte length, and explicit limitations
+- Verification semantics: exit `0` match, `1` mismatch, and `2` invalid/unreadable evidence or record; these are separate from contained health, validation, and comparison exits
+- Trust boundary: exact-byte change detection relative to a separately retained trusted record; no authorship, authenticity, signature, attestation, trusted time, or chain-of-custody claim
+- Authority boundary: explicit local bounded files only; no kubeconfig, kubectl, HTTP, network, collection, retention automation, replay, diagnosis, recommendation, AI reasoning, or mutation
+- Package metadata: repository-local version advances to `0.8.0`; no distribution is published
+- Local validation: all 87 focused ForgeOps tests and all 145 repository tests pass; isolated non-editable `0.8.0` installation, installed command entries, source launcher, Python compilation, manifest validation, and whitespace validation pass
 
 ## Milestone 038 closeout
 
@@ -316,7 +324,8 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Merge the Milestone 051 documentation-only closeout, then complete the approved branch cleanup and synchronize clean `main`.
+Complete Milestone 052 deterministic offline acceptance, publication, merge,
+closeout, and cleanup before beginning bounded scenario replay in Milestone 053.
 
 ## Supporting completed work
 

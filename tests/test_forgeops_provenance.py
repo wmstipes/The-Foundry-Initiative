@@ -40,16 +40,16 @@ class ForgeOpsProvenanceTests(unittest.TestCase):
     def test_normal_install_reports_matching_identity(self) -> None:
         with mock.patch(
             "forgeops.provenance.metadata.distribution",
-            return_value=FakeDistribution("0.7.0"),
+            return_value=FakeDistribution("0.8.0"),
         ):
             result = inspect_execution_provenance(
                 module_path=Path("/installed/forgeops/provenance.py"),
-                module_version="0.7.0",
+                module_version="0.8.0",
                 environ={},
                 python_executable="/venv/python",
             )
         self.assertEqual(DISTRIBUTION_NAME, result.distribution_name)
-        self.assertEqual("0.7.0", result.distribution_version)
+        self.assertEqual("0.8.0", result.distribution_version)
         self.assertIsNone(result.source_project_version)
         self.assertEqual("installed", result.execution_mode)
         self.assertEqual("/venv/python", result.python_executable)
@@ -63,7 +63,7 @@ class ForgeOpsProvenanceTests(unittest.TestCase):
         ):
             result = inspect_execution_provenance(
                 module_path=Path("/installed/forgeops/provenance.py"),
-                module_version="0.7.0",
+                module_version="0.8.0",
                 environ={},
             )
         self.assertEqual("ERROR", result.status)
@@ -82,11 +82,11 @@ class ForgeOpsProvenanceTests(unittest.TestCase):
             }
             with mock.patch(
                 "forgeops.provenance.metadata.distribution",
-                return_value=FakeDistribution("0.7.0", direct_url),
+                return_value=FakeDistribution("0.8.0", direct_url),
             ):
                 result = inspect_execution_provenance(
                     module_path=module,
-                    module_version="0.7.0",
+                    module_version="0.8.0",
                     environ={},
                 )
         self.assertEqual("editable", result.execution_mode)
@@ -103,11 +103,11 @@ class ForgeOpsProvenanceTests(unittest.TestCase):
             }
         with mock.patch(
             "forgeops.provenance.metadata.distribution",
-            return_value=FakeDistribution("0.7.0", direct_url),
+            return_value=FakeDistribution("0.8.0", direct_url),
         ):
             result = inspect_execution_provenance(
                 module_path=Path("/installed/forgeops/provenance.py"),
-                module_version="0.7.0",
+                module_version="0.8.0",
                 environ={},
             )
         self.assertEqual("ERROR", result.status)
@@ -119,11 +119,11 @@ class ForgeOpsProvenanceTests(unittest.TestCase):
         }
         with mock.patch(
             "forgeops.provenance.metadata.distribution",
-            return_value=FakeDistribution("0.7.0", direct_url),
+            return_value=FakeDistribution("0.8.0", direct_url),
         ):
             result = inspect_execution_provenance(
                 module_path=Path("/installed/forgeops/provenance.py"),
-                module_version="0.7.0",
+                module_version="0.8.0",
                 environ={},
             )
         self.assertEqual("https://example.test/repository", result.install_source)
@@ -137,18 +137,18 @@ class ForgeOpsProvenanceTests(unittest.TestCase):
             module.parent.mkdir(parents=True)
             module.write_text("fixture", encoding="utf-8")
             (root / "pyproject.toml").write_text(
-                '[project]\nname = "foundry-check"\nversion = "0.7.0"\n',
+                '[project]\nname = "foundry-check"\nversion = "0.8.0"\n',
                 encoding="utf-8",
             )
             result = inspect_execution_provenance(
                 module_path=module,
-                module_version="0.7.0",
+                module_version="0.8.0",
                 environ={"FORGEOPS_SOURCE_ROOT": str(root)},
                 python_executable="python",
             )
         self.assertEqual("source", result.execution_mode)
         self.assertIsNone(result.distribution_version)
-        self.assertEqual("0.7.0", result.source_project_version)
+        self.assertEqual("0.8.0", result.source_project_version)
         self.assertEqual("OK", result.status)
         self.assertEqual(0, result.exit_code)
 
@@ -164,7 +164,7 @@ class ForgeOpsProvenanceTests(unittest.TestCase):
             )
             result = inspect_execution_provenance(
                 module_path=module,
-                module_version="0.7.0",
+                module_version="0.8.0",
                 environ={"FORGEOPS_SOURCE_ROOT": str(root)},
             )
         self.assertEqual("ERROR", result.status)
@@ -173,9 +173,9 @@ class ForgeOpsProvenanceTests(unittest.TestCase):
     def test_renderer_includes_identity_and_findings(self) -> None:
         provenance = ExecutionProvenance(
             distribution_name="foundry-check",
-            distribution_version="0.7.0",
+            distribution_version="0.8.0",
             source_project_version=None,
-            module_version="0.7.0",
+            module_version="0.8.0",
             module_path="C:\\repo\\src\\forgeops\\provenance.py",
             python_executable="C:\\repo\\.venv\\Scripts\\python.exe",
             execution_mode="source",
@@ -187,7 +187,7 @@ class ForgeOpsProvenanceTests(unittest.TestCase):
         render_execution_provenance(provenance, output)
         rendered = output.getvalue()
         self.assertIn("status: WARN", rendered)
-        self.assertIn("moduleVersion: 0.7.0", rendered)
+        self.assertIn("moduleVersion: 0.8.0", rendered)
         self.assertIn("sourceProjectVersion: unavailable", rendered)
         self.assertIn("executionMode: source", rendered)
         self.assertIn("- review this installation", rendered)
@@ -195,9 +195,9 @@ class ForgeOpsProvenanceTests(unittest.TestCase):
     def test_cli_renders_provenance_without_collection(self) -> None:
         provenance = ExecutionProvenance(
             distribution_name="foundry-check",
-            distribution_version="0.7.0",
+            distribution_version="0.8.0",
             source_project_version=None,
-            module_version="0.7.0",
+            module_version="0.8.0",
             module_path="module",
             python_executable="python",
             execution_mode="installed",

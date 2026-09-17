@@ -1385,3 +1385,37 @@ exact diff before separately approving Gate 7 readiness.
 
 Publish and merge the closeout record, then delete both Milestone 051 branches
 locally and remotely and synchronize clean `main`.
+
+## 2026-09-17 — Milestone 052 planning and local implementation
+
+### Result
+
+- Reconciled Milestone 051 as fully merged, synchronized, and cleaned up at
+  `fd8187697dc472e2d3c39f2202636412a551b728`.
+- Added deterministic `forgeops.integrity/v1alpha1` records containing bounded
+  evidence identity, SHA-256, byte length, and explicit limitations.
+- Added separate creation and verification commands with match, mismatch, and
+  invalid-input semantics independent from contained health.
+- Retained exact bytes alongside the validated representation so ForgeOps hashes
+  the same read that passed contract validation.
+- Added strict 64 KiB integrity-record loading, duplicate-key rejection, exact
+  fields and ordering, supported algorithm enforcement, and disclosure-minimal
+  results.
+- Advanced repository-local package metadata to `0.8.0` without publishing a
+  distribution or accessing SignalForge.
+- Passed all 87 focused ForgeOps tests and all 145 repository tests, isolated
+  non-editable installation and installed command entries, source-mode
+  provenance, Python compilation, manifest validation, and whitespace
+  validation entirely offline.
+
+### Lesson
+
+A hash can prove only that bytes match a reference. Its operational value
+depends on retaining that reference separately and trusting it; an unsigned
+sidecar cannot establish who produced evidence or whether both files were
+replaced together.
+
+### Next small step
+
+Complete full repository and isolated-install acceptance, then publish the exact
+reviewed Milestone 052 tree under the already approved Gate 3.

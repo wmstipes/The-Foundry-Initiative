@@ -2,8 +2,9 @@
 
 ForgeOps is a local, bounded SignalForge operations tool. It collects a fixed
 read-only snapshot, renders deterministic evidence, validates saved evidence,
-and compares two validated artifacts. It does not diagnose incidents, recommend
-changes, or mutate the cluster.
+creates and verifies exact-byte integrity records, and compares two validated
+artifacts. It does not diagnose incidents, recommend changes, or mutate the
+cluster.
 
 This guide explains the current system as a whole. The
 [snapshot runbook](../runbooks/forgeops-snapshot.md) remains the procedural
@@ -134,6 +135,36 @@ manually delete package metadata while leaving an editable link in place.
 | `forgeops snapshot` | Explicit kubeconfig, exact context, optional explicit URLs | Text, Markdown, or snapshot JSON | Snapshot health/completeness |
 | `forgeops evidence validate` | One explicit local JSON file | Contract-validity summary | Validation |
 | `forgeops evidence compare` | Two explicit validated JSON files | Text or comparison JSON | Comparison |
+| `forgeops evidence integrity create` | One explicit validated evidence file | Integrity-record JSON | Integrity creation |
+| `forgeops evidence integrity verify` | One evidence file and one explicit integrity record | Match summary | Integrity verification |
+
+## Protect exact artifact bytes
+
+Create a record on standard output and deliberately retain it separately from
+the evidence it describes:
+
+~~~powershell
+forgeops evidence integrity create `
+  --input .\forgeops-snapshot.json > .\forgeops-snapshot.integrity.json
+~~~
+
+The record uses `forgeops.integrity/v1alpha1` and contains only the evidence
+schema, collection timestamp, context, SHA-256 algorithm and digest, exact byte
+length, and limitation statement. ForgeOps first validates the evidence and
+then hashes the same bytes it read, avoiding a second-read gap.
+
+Verify those exact bytes later:
+
+~~~powershell
+forgeops evidence integrity verify `
+  --input .\forgeops-snapshot.json `
+  --record .\forgeops-snapshot.integrity.json
+~~~
+
+`MATCH` is useful only if the record was retained separately and is trusted.
+If an actor can replace both files, an unsigned hash cannot reveal that fact.
+The record therefore establishes neither authorship nor cryptographic
+authenticity, and it is not a chain-of-custody system.
 
 ## Architecture and evidence flow
 
@@ -143,6 +174,7 @@ flowchart TD
     Collect --> Evaluate["Normalize and evaluate"]
     Evaluate --> Evidence["Snapshot evidence"]
     Evidence --> Validate["Strict offline validation"]
+    Validate --> Integrity["Exact-byte integrity"]
     Validate --> Compare["Deterministic comparison"]
     Compare --> Scenario["Synthetic scenario evaluation"]
 ```
@@ -154,6 +186,8 @@ The components preserve a one-way authority boundary:
 - `evaluate.py` applies deterministic health semantics;
 - `render.py` produces terminal, Markdown, and snapshot JSON views;
 - `evidence.py` loads and validates one explicit saved artifact;
+- `integrity.py` hashes validated exact bytes and verifies strict sidecar
+  records;
 - `comparison.py` compares two immutable validated representations; and
 - `provenance.py` inspects only local execution identity.
 
@@ -161,7 +195,7 @@ The synthetic scenario corpus exercises validation and comparison. It is not
 captured cluster evidence, complete health, training data, diagnosis, or
 recommendation.
 
-## Keep the four exit domains separate
+## Keep the exit domains separate
 
 | Domain | `0` | `1` | `2` |
 | --- | --- | --- | --- |
@@ -169,6 +203,8 @@ recommendation.
 | Snapshot | Required checks pass | Warning or failure | Invalid invocation or incomplete required evidence |
 | Validation | Artifact contract valid | Not used | Artifact invalid or unreadable |
 | Comparison | Valid artifacts equivalent | Valid artifacts differ | Invalid artifact or chronology |
+| Integrity creation | Valid record rendered | Not used | Evidence invalid or unreadable |
+| Integrity verification | Validated bytes and metadata match | Valid inputs do not match | Evidence or record invalid/unreadable |
 
 Validation exit `0` does not mean the contained snapshot is healthy. Comparison
 exit `1` does not mean an incident is severe or unresolved; a valid recovery
@@ -181,12 +217,15 @@ ForgeOps currently may:
 - inspect its local execution identity;
 - perform the fixed read-only SignalForge collection contract;
 - make bounded GET requests only to explicit accepted application base URLs;
-- read one or two explicit bounded evidence files; and
+- read one or two explicit bounded evidence files and one explicit bounded
+  integrity record;
+- calculate and compare SHA-256 over validated exact evidence bytes; and
 - render deterministic local output.
 
 ForgeOps does not currently establish:
 
-- artifact authorship, cryptographic authenticity, or chain of custody;
+- artifact authorship, cryptographic authenticity, trusted time, or chain of
+  custody;
 - complete cluster health or continuous monitoring;
 - causation, severity, diagnosis, or recommended action;
 - runbook applicability;
@@ -194,9 +233,10 @@ ForgeOps does not currently establish:
 - any authority to remediate or mutate the cluster.
 
 Execution provenance answers which local code and interpreter are running.
-Evidence provenance and integrity are different future concerns and require a
-separate contract. Scenario replay, grounded runbook mapping, and bounded
-incident reasoning likewise remain separately planned capabilities.
+The integrity record answers whether exact validated bytes still match a
+separately retained reference; it is not source attribution or authenticity.
+Scenario replay, grounded runbook mapping, and bounded incident reasoning
+remain separately planned capabilities.
 
 ## Documentation map
 
