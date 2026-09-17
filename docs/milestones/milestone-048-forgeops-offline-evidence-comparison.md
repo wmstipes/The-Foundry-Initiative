@@ -1,6 +1,6 @@
 # Milestone 048 — ForgeOps deterministic offline evidence comparison
 
-**Status:** Complete. Implementation, publication, CI, PR readiness, and merge completed through PR #35 at `ad05786`; closeout is recorded and branch cleanup remains separately gated
+**Status:** Complete, merged, closed, and cleaned up. Implementation PR #35 merged at `ad05786`; closeout PR #36 merged at `9055ef8`; Gate 10 removed both milestone branches locally and remotely
 
 **Started:** 2026-09-16
 
@@ -167,4 +167,12 @@ Future explanations must distinguish observed changes from inferred causes, cite
 7. Pull-request readiness — approved and complete for PR #35.
 8. Merge — approved and complete through PR #35 at `ad05786`.
 9. Closeout — approved and recorded on `codex/milestone-048-closeout`.
-10. Branch cleanup — not authorized.
+10. Branch cleanup — approved and complete; both Milestone 048 branches were deleted locally and remotely.
+
+## Final closeout
+
+- Closeout PR #36 merged at `9055ef8d564809dd355f8cdfa175259c5b9ee677`.
+- Gate 10 completed.
+- `codex/milestone-048-forgeops-evidence-comparison` and `codex/milestone-048-closeout` were deleted locally and remotely.
+- Milestone 048 is fully closed.
+- Milestone 049 is the immediate next step.

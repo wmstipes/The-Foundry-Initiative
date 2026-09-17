@@ -1153,3 +1153,21 @@ Deterministic comparison adds operational value without expanding authority when
 ### Next small step
 
 Complete the closeout record, then remove the Milestone 048 implementation and closeout branches only after separate Gate 10 approval. Select the next ForgeOps increment in a new planning pass.
+
+## 2026-09-17 — Milestone 048 cleanup and Milestone 049 planning
+
+### Result
+
+- Closeout PR #36 merged into `main` at `9055ef8d564809dd355f8cdfa175259c5b9ee677`.
+- Gate 10 completed: both Milestone 048 branches were deleted locally and remotely.
+- Milestone 048 is fully closed; only `main`, `feature/foundry-check-cli`, and `feature/project-status` remain intentionally retained.
+- A read-only planning pass selected a deterministic JSON comparison contract as Milestone 049, the smallest machine-consumable extension of the immutable comparison seam.
+- Planning and local implementation were separately approved; publication, release, deployment, live acceptance, PR readiness, merge, closeout, and cleanup remain separately gated.
+
+### Lesson
+
+Closing the prior milestone before implementation keeps repository history and authority transitions explicit. A renderer-only increment can improve automation value while preserving the validated offline boundary.
+
+### Next small step
+
+Implement and validate Milestone 049 locally without publishing, accessing SignalForge, or introducing storage, reasoning, recommendation, or mutation authority.
