@@ -155,6 +155,10 @@ The project has moved from basic workload deployment into repeatable engineering
 - Authority boundary: local Python/package metadata only; no kubeconfig, kubectl, HTTP, evidence loading, network, deployment, cluster access, or mutation
 - Publication: draft PR #41 opened from published implementation commit `8dc35c862e4c6a30e59af2c33d4512757c82772c`; its tree `621d1cfbc0faf8257a4711f6b6747172694a7ed7` exactly matches accepted local implementation commit `7443a278fc638458a036ed5251e7d1aa7e29903c`
 - Gate disposition: package/image release, deployment, and live acceptance were explicitly closed as not applicable; no registry, image, release tag, deployment, cluster, or endpoint action occurred
+- Final publication: head `4e5e7334448fb734fdc7e1f869d7215c8855c4cc` resolves to accepted tree `652d01fdb7933e037b0097170610ea8480164588`; final-head ForgeOps CI run `35265922723` passed
+- PR readiness and merge: PR #41 was marked ready under Gate 7 and merged under Gate 8 at `e5e2a0898480e7722295e8df5e35eb25d4829848`
+- Merge integrity: the implementation merge commit resolves to exact accepted tree `652d01fdb7933e037b0097170610ea8480164588`
+- Closeout: documentation-only branch `codex/milestone-051-closeout` records readiness, merge, integrity, and final gate state
 
 ## Milestone 038 closeout
 
@@ -312,7 +316,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review final-head CI and the exact published Milestone 051 diff before considering pull-request readiness under Gate 7.
+Merge the Milestone 051 documentation-only closeout, then complete the approved branch cleanup and synchronize clean `main`.
 
 ## Supporting completed work
 
