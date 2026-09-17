@@ -143,6 +143,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Gate disposition: package/image release, deployment, and live acceptance were explicitly closed as not applicable; acceptance remained entirely offline
 - PR readiness and merge: PR #39 was marked ready under Gate 7 and merged under Gate 8 at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`
 - Merge integrity: the published head and merge commit resolve to exact accepted tree `53f6de423608b1f6ca3a74b93b04b65f93d67051`
+- Closeout: documentation-only PR #40 records the accepted implementation, gate dispositions, merge evidence, and next-step boundary
 - Runtime impact: none; no registry artifact, image, release tag, manifest, deployment, cluster access, application endpoint access, persistent-state change, or Wiki change occurred
 
 ## Milestone 038 closeout

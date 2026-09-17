@@ -1298,7 +1298,7 @@ Review the complete accepted local diff. Publication and draft PR creation remai
 - Explicitly closed package/image release, deployment, and live acceptance as not applicable under Gates 4-6.
 - Marked PR #39 ready under Gate 7, then merged it under Gate 8 at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`.
 - Verified the merge tree remains the exact accepted tree `53f6de423608b1f6ca3a74b93b04b65f93d67051`.
-- Prepared the documentation-only closeout on `codex/milestone-050-closeout` under the approved Gate 9.
+- Prepared documentation-only closeout PR #40 on `codex/milestone-050-closeout` under the approved Gate 9.
 - No package, image, release tag, deployment, live acceptance, cluster access, endpoint access, persistent-state change, or Wiki mutation occurred.
 
 ### Lesson

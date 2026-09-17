@@ -424,7 +424,7 @@ See [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contr
 
 ### Milestone 050 — Bounded synthetic scenario corpus
 
-**Status:** Implementation PR #39 merged at `090a47f`; documentation-only closeout in progress. Gates 4-6 were explicitly closed as not applicable.
+**Status:** Implementation PR #39 merged at `090a47f`; documentation-only closeout PR #40 is in progress. Gates 4-6 were explicitly closed as not applicable.
 
 - Add five focused synthetic before/after evidence pairs covering timestamp-only stability, a Pod-restart warning, a routing regression, incomplete evidence, and routing recovery.
 - Validate every artifact through the existing strict `forgeops.snapshot/v1alpha1` loader.

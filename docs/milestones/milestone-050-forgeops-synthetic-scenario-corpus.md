@@ -149,5 +149,5 @@ A future consumer must not automatically receive kubeconfig access, collection a
 6. Live acceptance — approved disposition and closed as not applicable.
 7. Pull-request readiness — approved and complete after successful ForgeOps CI run `35240317432`.
 8. Merge — approved and complete; PR #39 merged at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`, preserving accepted tree `53f6de423608b1f6ca3a74b93b04b65f93d67051`.
-9. Closeout — approved and in progress on `codex/milestone-050-closeout`.
+9. Closeout — approved and in progress through documentation-only PR #40 from `codex/milestone-050-closeout`.
 10. Branch cleanup — approved and pending closeout merge verification.
