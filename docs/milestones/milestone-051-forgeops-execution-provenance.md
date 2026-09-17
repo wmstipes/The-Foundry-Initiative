@@ -1,6 +1,6 @@
 # Milestone 051 — ForgeOps trustworthy execution provenance
 
-**Status:** Local implementation and offline acceptance complete; publication and all later gates are not approved
+**Status:** Published in draft PR #41; package/image release, deployment, and live acceptance are explicitly closed as not applicable; Gate 7 and all later gates are not approved
 
 **Started:** 2026-09-17
 
@@ -137,6 +137,21 @@ manifest validation, and whitespace validation also pass.
 - No deployment, rollout, restart, live acceptance, cluster access, application
   endpoint access, or Wiki change.
 
+Gates 4-6 were explicitly approved and closed as not applicable. No release,
+deployment, or live acceptance action occurred.
+
+## Publication evidence
+
+- Draft pull request: #41.
+- Published branch: `codex/milestone-051-forgeops-execution-provenance`.
+- Accepted local implementation commit: `7443a278fc638458a036ed5251e7d1aa7e29903c`.
+- Published implementation commit: `8dc35c862e4c6a30e59af2c33d4512757c82772c`.
+- Exact matching local and published tree: `621d1cfbc0faf8257a4711f6b6747172694a7ed7`.
+- The repository connector was used because this runtime's HTTPS Git client has
+  no credential helper.
+- PR #41 remains draft. Readiness, merge, closeout, and cleanup require later
+  gates.
+
 ## Relationship to later work
 
 Execution provenance answers which code is running. A later evidence-integrity
@@ -148,10 +163,10 @@ reasoning remain separate capabilities with separate approval boundaries.
 
 1. Planning — approved.
 2. Local implementation — approved and complete; deterministic offline acceptance passes.
-3. Publication and draft PR — not approved.
-4. Package or image release — not approved; expected not applicable.
-5. Deployment — not approved; expected not applicable.
-6. Live acceptance — not approved; expected not applicable.
+3. Publication and draft PR — approved and complete through draft PR #41; the published implementation tree exactly matches the accepted local tree.
+4. Package or image release — approved disposition and closed as not applicable; no distribution, image, or release tag was published.
+5. Deployment — approved disposition and closed as not applicable; no deployable artifact, manifest, workload, configuration, or persistent state changed.
+6. Live acceptance — approved disposition and closed as not applicable; acceptance remained entirely offline with no cluster or endpoint access.
 7. Pull-request readiness — not approved.
 8. Merge — not approved.
 9. Closeout — not approved.

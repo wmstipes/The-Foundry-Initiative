@@ -153,6 +153,8 @@ The project has moved from basic workload deployment into repeatable engineering
 - Package metadata: repository-local version advances to `0.7.0`; no distribution is published
 - Local validation: all 79 focused ForgeOps tests and all 137 repository tests pass; isolated install, installed command entries, source launcher, Python compilation, manifest validation, and whitespace validation pass
 - Authority boundary: local Python/package metadata only; no kubeconfig, kubectl, HTTP, evidence loading, network, deployment, cluster access, or mutation
+- Publication: draft PR #41 opened from published implementation commit `8dc35c862e4c6a30e59af2c33d4512757c82772c`; its tree `621d1cfbc0faf8257a4711f6b6747172694a7ed7` exactly matches accepted local implementation commit `7443a278fc638458a036ed5251e7d1aa7e29903c`
+- Gate disposition: package/image release, deployment, and live acceptance were explicitly closed as not applicable; no registry, image, release tag, deployment, cluster, or endpoint action occurred
 
 ## Milestone 038 closeout
 
@@ -310,7 +312,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the exact Milestone 051 Gate 2 diff before considering publication under Gate 3.
+Review final-head CI and the exact published Milestone 051 diff before considering pull-request readiness under Gate 7.
 
 ## Supporting completed work
 
