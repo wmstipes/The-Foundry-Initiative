@@ -11,6 +11,7 @@ from .collect import Collector, validate_kubeconfig
 from .comparison import (
     EvidenceComparisonError,
     compare_evidence,
+    render_comparison_json,
     render_comparison_text,
 )
 from .constants import EXPECTED_CONTEXT
@@ -48,6 +49,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     compare.add_argument("--before", required=True, help="explicit earlier evidence file")
     compare.add_argument("--after", required=True, help="explicit later evidence file")
+    compare.add_argument(
+        "--format", choices=("text", "json"), default="text",
+        dest="output_format", help="output format (default: text)",
+    )
     return parser
 
 
@@ -83,7 +88,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             comparison = compare_evidence(before, after)
         except EvidenceComparisonError as exc:
             return _fail(f"comparison invalid: {exc.code}: {exc.summary}")
-        render_comparison_text(comparison, sys.stdout)
+        if args.output_format == "json":
+            render_comparison_json(comparison, sys.stdout)
+        else:
+            render_comparison_text(comparison, sys.stdout)
         return comparison.exit_code
     if args.command != "snapshot":
         return _fail("unsupported command")

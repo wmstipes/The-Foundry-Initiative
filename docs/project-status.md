@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, Milestone 046 added a deterministic JSON evidence view, Milestone 047 added strict offline validation, and Milestone 048 now locally compares two validated artifacts without expanding collection or mutation authority.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, Milestone 046 added a deterministic JSON evidence view, Milestone 047 added strict offline validation, and Milestone 048 added deterministic offline comparison without expanding collection or mutation authority. Milestone 049 is the immediate next step.
 
 ## Current application
 
@@ -100,7 +100,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Gate disposition: package/image release, deployment, and live acceptance were explicitly closed as not applicable; acceptance was intentionally offline
 - Local package metadata: `0.4.0`; no registry package, image, tag, manifest, deployment, cluster access, live acceptance, or Wiki change
 - Milestone 047 closeout and cleanup: closeout PR #34 merged at `2ebaa902f56f6b143009c4e630ba95f4a03759d8`; Gate 10 completed and both Milestone 047 branches were removed locally and remotely
-- Milestone 048: deterministic offline evidence comparison is locally implemented on `codex/milestone-048-forgeops-evidence-comparison`
+- Milestone 048: deterministic offline evidence comparison is complete, merged, closed, and cleaned up
 - Comparison interface: `forgeops evidence compare --before <file> --after <file>` validates both artifacts before comparing them
 - Comparison semantics: checks are matched by ID; additions, removals, status transitions, and same-status evidence changes are reported in stable order while collection timestamps are ignored as differences
 - Comparison exits: `0` equivalent, `1` different, and `2` invalid input or chronology; exit `1` is not a contained-health result
@@ -114,6 +114,18 @@ The project has moved from basic workload deployment into repeatable engineering
 - Merge integrity: the final published head and merge commit resolve to exact accepted tree `72c23057a43b485759072e0f5876495b73124b2c`
 - Post-merge checks: the operator confirmed all Actions displayed by GitHub were green
 - Gate disposition: package/image release, deployment, and live acceptance were explicitly closed as not applicable; no cluster or endpoint access occurred
+- Closeout and cleanup: closeout PR #36 merged at `9055ef8d564809dd355f8cdfa175259c5b9ee677`; Gate 10 completed and both Milestone 048 branches were deleted locally and remotely
+- Milestone 049: deterministic `forgeops.comparison/v1alpha1` JSON rendering is implemented locally on `codex/milestone-049-forgeops-json-comparison`
+- Interface: `forgeops evidence compare --before <file> --after <file> --format text|json`; text remains the default
+- JSON boundary: immutable comparison data only, with fixed order, deterministic counts, ordered deltas, explicit nulls, and no artifact paths or underlying evidence values
+- Safety boundary: renderer-only authority; no new file loading, collection, subprocess, HTTP, network, persistence, diagnosis, recommendation, AI reasoning, or mutation
+- Local validation: all 64 focused ForgeOps tests and all 122 repository tests pass; isolated installation, package version, all installed command entry checks, equivalent JSON comparison, manifest validation, and whitespace validation pass
+- Local package metadata: Milestone 049 advances the repository-local distribution to `0.6.0`; no distribution is published
+- Publication: draft PR #37 opened from remote commit `c1501c4f3834c59d010b9ee1c68190c4b490947d`; its tree `80f08b91f755d9fc97a24a3dcd64f56c413cdb58` exactly matches accepted local implementation commit `b35ffaeebde90421ea12274649baca2f2770f95d`
+- CI: ForgeOps CI run `35227321405` completed successfully on the published implementation tree
+- Gate 4 disposition: package/image release is explicitly closed as not applicable; version `0.6.0` remains repository-local metadata and no distribution, image, or release tag was published
+- Gate 5 disposition: deployment is explicitly closed as not applicable; no deployable artifact, manifest, workload, ServiceAccount, RBAC, configuration, rollout, restart, or persistent state changed
+- Gate 6 disposition: live acceptance is explicitly closed as not applicable; deterministic acceptance is intentionally offline and no SignalForge, Kubernetes API, or application endpoint was accessed
 
 ## Milestone 038 closeout
 
@@ -271,7 +283,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete Milestone 048 branch cleanup only after separate Gate 10 approval, then select the next bounded ForgeOps increment in a new planning pass.
+Review draft PR #37 and the successful final-head CI evidence for the separately approved PR-readiness decision.
 
 ## Supporting completed work
 

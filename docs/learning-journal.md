@@ -1153,3 +1153,80 @@ Deterministic comparison adds operational value without expanding authority when
 ### Next small step
 
 Complete the closeout record, then remove the Milestone 048 implementation and closeout branches only after separate Gate 10 approval. Select the next ForgeOps increment in a new planning pass.
+
+## 2026-09-17 — Milestone 048 cleanup and Milestone 049 planning
+
+### Result
+
+- Closeout PR #36 merged into `main` at `9055ef8d564809dd355f8cdfa175259c5b9ee677`.
+- Gate 10 completed: both Milestone 048 branches were deleted locally and remotely.
+- Milestone 048 is fully closed; only `main`, `feature/foundry-check-cli`, and `feature/project-status` remain intentionally retained.
+- A read-only planning pass selected a deterministic JSON comparison contract as Milestone 049, the smallest machine-consumable extension of the immutable comparison seam.
+- Planning and local implementation were separately approved; publication, release, deployment, live acceptance, PR readiness, merge, closeout, and cleanup remain separately gated.
+
+### Lesson
+
+Closing the prior milestone before implementation keeps repository history and authority transitions explicit. A renderer-only increment can improve automation value while preserving the validated offline boundary.
+
+### Next small step
+
+Implement and validate Milestone 049 locally without publishing, accessing SignalForge, or introducing storage, reasoning, recommendation, or mutation authority.
+
+## 2026-09-17 — Milestone 049 local implementation
+
+### Result
+
+- Added explicit `--format text|json` selection to `forgeops evidence compare`, preserving text as the default and retaining comparison exit codes `0`, `1`, and `2`.
+- Added deterministic `forgeops.comparison/v1alpha1` rendering from the immutable comparison model with fixed field order, stable delta order, explicit nulls, deterministic counts, and a fixed limitation statement.
+- Kept artifact paths and underlying observation, expectation, source, and error values out of the comparison document.
+- Added a fixed golden document and offline coverage for byte stability, all four delta kinds, text/JSON semantic parity, disclosure minimization, invalid-input fail-closed behavior, and no collection or network construction.
+- Advanced repository-local package metadata to `0.6.0`; no registry distribution, image, tag, manifest, deployment, live acceptance, cluster access, application endpoint access, or Wiki change occurred.
+- All 64 focused ForgeOps tests and all 122 repository tests pass. Isolated installation, package-version verification, all installed entry checks, equivalent JSON comparison, Kubernetes manifest validation, and whitespace validation pass.
+
+### Lesson
+
+A machine-readable handoff can remain narrower than its validated source artifacts. Serializing classifications and changed field names without evidence values creates a useful automation seam while reducing unnecessary disclosure and preserving the one-way authority boundary.
+
+### Next small step
+
+Review the complete Milestone 049 local diff and offline acceptance evidence. Publish the branch and open a draft PR only after separate Gate 3 approval.
+
+## 2026-09-17 — Milestone 049 publication and draft PR
+
+### Result
+
+- Published the two accepted local commits to `codex/milestone-049-forgeops-json-comparison` only after Gate 3 approval.
+- Opened draft PR #37, **Add deterministic ForgeOps comparison JSON**, against `main`.
+- Verified published head `c1501c4f3834c59d010b9ee1c68190c4b490947d` resolves to tree `80f08b91f755d9fc97a24a3dcd64f56c413cdb58`, exactly matching accepted local implementation commit `b35ffaeebde90421ea12274649baca2f2770f95d`.
+- ForgeOps CI run `35227321405` completed successfully on the published implementation tree.
+- No package or image was released, no cluster or application endpoint was accessed, and no deployment, Wiki, readiness, merge, closeout, or cleanup action occurred.
+
+### Next small step
+
+Explicitly dispose of Gates 4–6, then review draft PR #37 for readiness. Readiness remains a separate approval gate.
+
+## 2026-09-17 — Milestone 049 package and image release disposition
+
+### Result
+
+- Gate 4 was separately approved and closed as not applicable.
+- Version `0.6.0` remains repository-local package metadata only.
+- No Python distribution, container image, release tag, package-registry entry, or image-registry entry was created or published.
+- Draft PR #37 remains draft; deployment, live acceptance, PR readiness, merge, closeout, and cleanup remain separately gated.
+
+### Next small step
+
+Dispose of Gates 5 and 6 independently, then review draft PR #37 for readiness under Gate 7.
+
+## 2026-09-17 — Milestone 049 deployment and live-acceptance dispositions
+
+### Result
+
+- Gates 5 and 6 were explicitly approved and closed as not applicable.
+- Milestone 049 has no deployable package, image, manifest, workload, ServiceAccount, RBAC, configuration, rollout, restart, or persistent-state change.
+- Its deterministic acceptance boundary remains intentionally offline; no SignalForge resource, Kubernetes API, or application endpoint was accessed.
+- Draft PR #37 remains draft pending the separately approved readiness transition.
+
+### Next small step
+
+Confirm final-head CI and exact-tree evidence, then mark PR #37 ready under Gate 7.

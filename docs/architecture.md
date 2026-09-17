@@ -158,17 +158,19 @@ flowchart TD
     Evaluate --> Render["Terminal, Markdown, or JSON"]
     Render --> Artifact["Operator-saved JSON artifact"]
     Artifact --> Validator["Offline contract validator"]
+    Validator --> Compare["Immutable comparison"]
+    Compare --> CompareJSON["Text or JSON"]
 ```
 
 `src/forgeops/constants.py` owns the fixed SignalForge identities and limits. `runners.py` owns the deny-by-default process and network boundaries. `collect.py` owns collection and selected-field normalization, `evaluate.py` owns status semantics, and `render.py` owns presentation. The JSON renderer serializes only `EvaluatedSnapshot`; it cannot invoke subprocesses, contact a network, read a file, or recover discarded raw fields.
 
 `evidence.py` is a separate offline consumer. It reads at most 1 MiB from one explicit regular file, rejects malformed or duplicate-key JSON, validates the exact `forgeops.snapshot/v1alpha1` contract, and recalculates summary semantics before returning an immutable validated representation. It does not call the collector, invoke kubectl, contact a network, repair or rewrite the artifact, or treat validation success as a healthy cluster result. Contract validation does not establish provenance, authenticity, or the absence of sensitive text in arbitrary string values; operators must still review artifacts before sharing them.
 
-A future comparison or reasoning layer may consume only this validated evidence seam. It must not receive collection credentials, expand the allowlist, reinterpret missing evidence as healthy, acquire storage authority, or gain mutation authority implicitly.
+A future reasoning layer may consume only the validated evidence or deterministic comparison seams. It must not receive collection credentials, expand the allowlist, reinterpret missing evidence as healthy, acquire storage authority, or gain mutation authority implicitly.
 
-`comparison.py` is the first consumer of that seam. It accepts two `ValidatedEvidence` values, rejects reversed chronology, matches checks by identifier, and returns an immutable set of additions, removals, status transitions, and same-status evidence changes. Collection timestamps are displayed but excluded from change classification. The comparison layer does not reopen files, invoke collection, retain artifacts, infer causes, map runbooks, recommend actions, or serialize a new comparison contract. Exit code `1` means valid artifacts differ; it is not a health or severity result.
+`comparison.py` is the first consumer of that seam. It accepts two `ValidatedEvidence` values, rejects reversed chronology, matches checks by identifier, and returns an immutable set of additions, removals, status transitions, and same-status evidence changes. Collection timestamps are displayed but excluded from change classification. Its text and `forgeops.comparison/v1alpha1` JSON renderers accept only that immutable model. The JSON contract deliberately contains identifiers, classifications, statuses, changed field names, deterministic counts, and timestamps while omitting artifact paths and underlying evidence values. The comparison layer does not reopen files, invoke collection, retain artifacts, infer causes, map runbooks, or recommend actions. Exit code `1` means valid artifacts differ; it is not a health or severity result.
 
-The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → deterministic offline comparison → optional future reasoning. Later reasoning may consume validated evidence or the immutable comparison model, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
+The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → deterministic offline comparison → deterministic comparison representation → optional future reasoning. Later reasoning may consume validated evidence or the bounded comparison JSON, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
 
 ## Documentation authority and publication
 
@@ -207,7 +209,7 @@ Potential next architecture steps include:
 2. Continue the demonstrated Prometheus and Grafana backup cadence.
 3. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
 4. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
-5. Use only a contract-validated ForgeOps JSON artifact as the bounded input when separately planning comparison, replay, incident reasoning, or recommendations.
+5. Use only contract-validated evidence or the bounded comparison JSON when separately planning scenario replay, incident reasoning, or recommendations.
 
 ## Decision records
 

@@ -140,7 +140,22 @@ Comparison exit codes are separate from the health status inside either artifact
 
 An `after` timestamp may equal the `before` timestamp but must not be earlier. A reported change is not a diagnosis, causal claim, severity score, or recommendation. The command does not retain, rewrite, or copy either artifact and does not invoke kubectl, HTTP, or another network path.
 
-Validation is offline. It does not read or search for a kubeconfig, invoke kubectl, make an HTTP request, discover another file, contact a network service, or mutate the cluster. Passing validation establishes contract compatibility and internal consistency only; it does not prove artifact provenance, cryptographic authenticity, cluster health, or the absence of sensitive text in arbitrary string values. Review the artifact before sharing it.
+### Render comparison JSON
+
+Use the explicit JSON selector when a script or separately reviewed offline consumer needs the comparison:
+
+~~~powershell
+forgeops evidence compare `
+  --before .\forgeops-snapshot-before.json `
+  --after .\forgeops-snapshot-after.json `
+  --format json
+~~~
+
+The output schema is `forgeops.comparison/v1alpha1`. It preserves the two collection timestamps, contained overall statuses, deterministic summary counts, comparison exit code, and ordered deltas. Each delta contains only its check identifier, classification, before/after status, and changed field names. Added and removed checks use explicit `null` for the absent status and an empty changed-field array.
+
+The JSON does not include either artifact path, observation text, expected or observed values, evidence source, error text, or a copy of either artifact. Redirecting output to a file is an operator action; ForgeOps does not create, retain, reload, validate, sign, or establish provenance for comparison documents. Exit codes remain `0`, `1`, and `2` exactly as described above, including exit `1` after a complete valid JSON document is emitted for a difference.
+
+Validation and comparison are offline. They do not read or search for a kubeconfig, invoke kubectl, make an HTTP request, discover another file, contact a network service, or mutate the cluster. Passing validation establishes contract compatibility and internal consistency only; it does not prove artifact provenance, cryptographic authenticity, cluster health, or the absence of sensitive text in arbitrary string values. Review the artifact before sharing it.
 
 ## Interpret results
 
