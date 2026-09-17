@@ -1,6 +1,6 @@
 # Project Status
 
-**Last updated:** 2026-09-16
+**Last updated:** 2026-09-17
 
 **Current phase:** Operational visibility and ForgeOps deterministic evidence boundary
 
@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, Milestone 046 added a deterministic JSON evidence view, Milestone 047 added strict offline validation, Milestone 048 added deterministic offline comparison, and Milestone 049 added a deterministic JSON comparison contract without expanding collection or mutation authority. Milestone 050 is the immediate next step.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, Milestone 046 added a deterministic JSON evidence view, Milestone 047 added strict offline validation, Milestone 048 added deterministic offline comparison, Milestone 049 added a deterministic JSON comparison contract, and Milestone 050 added a bounded synthetic scenario corpus without expanding collection or mutation authority.
 
 ## Current application
 
@@ -138,6 +138,11 @@ The project has moved from basic workload deployment into repeatable engineering
 - Scenario boundary: synthetic evaluation data only, with one isolated check per artifact; not captured evidence, complete cluster health, training data, provenance, diagnosis, or recommendation
 - Authority boundary: no production model, schema, CLI, package-version, collection, subprocess, HTTP, network, persistence, AI reasoning, remediation, or mutation change
 - Local validation: all 68 focused ForgeOps tests and all 126 repository tests pass; isolated installation, package version, all installed command entry checks, stable and recovery comparisons, manifest validation, and whitespace validation pass
+- Publication: draft PR #39 opened from remote commit `067af70ef568a7342a8af6218cb6cddd252d9894`; its tree `53f6de423608b1f6ca3a74b93b04b65f93d67051` exactly matched accepted local implementation commit `099cdbc59b95d81c9eadfa78e21f0ade5974d88d`
+- CI: ForgeOps CI run `35240317432` completed successfully on the published implementation tree
+- Gate disposition: package/image release, deployment, and live acceptance were explicitly closed as not applicable; acceptance remained entirely offline
+- PR readiness and merge: PR #39 was marked ready under Gate 7 and merged under Gate 8 at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`
+- Merge integrity: the published head and merge commit resolve to exact accepted tree `53f6de423608b1f6ca3a74b93b04b65f93d67051`
 - Runtime impact: none; no registry artifact, image, release tag, manifest, deployment, cluster access, application endpoint access, persistent-state change, or Wiki change occurred
 
 ## Milestone 038 closeout
@@ -296,7 +301,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the complete local Milestone 050 diff and deterministic offline acceptance evidence. Publication and draft PR creation require separate Gate 3 approval.
+Complete the Milestone 050 documentation-only closeout and approved branch cleanup, then begin a separate read-only planning pass for Milestone 051.
 
 ## Supporting completed work
 

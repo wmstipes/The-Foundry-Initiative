@@ -1,6 +1,6 @@
 # Milestone 050 — ForgeOps bounded synthetic scenario corpus
 
-**Status:** Implemented and validated locally; publication and all later gates remain pending
+**Status:** Implementation merged through PR #39 at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`; documentation-only closeout in progress
 
 **Started:** 2026-09-17
 
@@ -117,7 +117,7 @@ Local acceptance passes all 68 focused ForgeOps tests and all 126 repository tes
 - Repository-local package metadata remains `0.6.0`.
 - No distribution, image, release tag, manifest, deployed workload, ServiceAccount, RBAC, Service, configuration, or persistent state changes.
 - No deployment, rollout, restart, live acceptance, cluster access, endpoint access, or Wiki change.
-- Gates 4-6 remain pending and must be separately disposed of as not applicable after publication approval, not silently skipped.
+- Gates 4-6 were explicitly approved and closed as not applicable. No release, deployment, or live acceptance occurred.
 
 ## Documentation updates
 
@@ -143,11 +143,11 @@ A future consumer must not automatically receive kubeconfig access, collection a
 
 1. Planning — approved.
 2. Local implementation — approved and complete; deterministic offline acceptance passes.
-3. Publication and draft PR — not approved.
-4. Package or image release — pending separate disposition; expected not applicable.
-5. Deployment — pending separate disposition; expected not applicable.
-6. Live acceptance — pending separate disposition; expected not applicable.
-7. Pull-request readiness — not approved.
-8. Merge — not approved.
-9. Closeout — not approved.
-10. Branch cleanup — not approved.
+3. Publication and draft PR — approved and complete; PR #39 opened from published head `067af70ef568a7342a8af6218cb6cddd252d9894` with exact accepted tree `53f6de423608b1f6ca3a74b93b04b65f93d67051`.
+4. Package or image release — approved disposition and closed as not applicable.
+5. Deployment — approved disposition and closed as not applicable.
+6. Live acceptance — approved disposition and closed as not applicable.
+7. Pull-request readiness — approved and complete after successful ForgeOps CI run `35240317432`.
+8. Merge — approved and complete; PR #39 merged at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`, preserving accepted tree `53f6de423608b1f6ca3a74b93b04b65f93d67051`.
+9. Closeout — approved and in progress on `codex/milestone-050-closeout`.
+10. Branch cleanup — approved and pending closeout merge verification.

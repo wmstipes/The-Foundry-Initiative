@@ -1288,3 +1288,23 @@ An evaluation corpus can add operational and portfolio value without adding oper
 ### Next small step
 
 Review the complete accepted local diff. Publication and draft PR creation remain a separate approval gate.
+
+## 2026-09-17 — Milestone 050 publication, readiness, merge, and closeout preparation
+
+### Result
+
+- Published the exact accepted implementation tree `53f6de423608b1f6ca3a74b93b04b65f93d67051` on `codex/milestone-050-forgeops-scenario-corpus` and opened draft PR #39.
+- ForgeOps CI run `35240317432` passed on published head `067af70ef568a7342a8af6218cb6cddd252d9894`.
+- Explicitly closed package/image release, deployment, and live acceptance as not applicable under Gates 4-6.
+- Marked PR #39 ready under Gate 7, then merged it under Gate 8 at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`.
+- Verified the merge tree remains the exact accepted tree `53f6de423608b1f6ca3a74b93b04b65f93d67051`.
+- Prepared the documentation-only closeout on `codex/milestone-050-closeout` under the approved Gate 9.
+- No package, image, release tag, deployment, live acceptance, cluster access, endpoint access, persistent-state change, or Wiki mutation occurred.
+
+### Lesson
+
+The corpus demonstrates that evaluation breadth can grow while operational authority remains fixed. Exact-tree verification also keeps the reviewed offline evidence tied to the merged result even when the local and connector-published commit identities differ.
+
+### Next small step
+
+Merge the closeout record, then delete both Milestone 050 branches locally and remotely under the approved Gate 10. Begin Milestone 051 only with a separate read-only planning pass.
