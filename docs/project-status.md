@@ -126,6 +126,10 @@ The project has moved from basic workload deployment into repeatable engineering
 - Gate 4 disposition: package/image release is explicitly closed as not applicable; version `0.6.0` remains repository-local metadata and no distribution, image, or release tag was published
 - Gate 5 disposition: deployment is explicitly closed as not applicable; no deployable artifact, manifest, workload, ServiceAccount, RBAC, configuration, rollout, restart, or persistent state changed
 - Gate 6 disposition: live acceptance is explicitly closed as not applicable; deterministic acceptance is intentionally offline and no SignalForge, Kubernetes API, or application endpoint was accessed
+- Final publication: head `a607126b0e2f38730a1ec6f383c72681523a11fb` resolves to accepted tree `253fdc4f34756d930bbfa77a583c125eb6600dd9`; final-head ForgeOps CI run `35229392947` passed
+- PR readiness and merge: PR #37 was marked ready after final-head CI and exact-tree verification, then merged at `972e6115e507894f9f2b916bb5f655365d99a2fb`
+- Merge integrity: the final published head and merge commit resolve to exact accepted tree `253fdc4f34756d930bbfa77a583c125eb6600dd9`
+- Runtime impact: none; no registry artifact, image, release tag, manifest, deployment, cluster access, application endpoint access, persistent-state change, or Wiki change occurred
 
 ## Milestone 038 closeout
 
@@ -283,7 +287,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review draft PR #37 and the successful final-head CI evidence for the separately approved PR-readiness decision.
+Merge the Milestone 049 closeout record, then remove the implementation and closeout branches under the approved Gate 10.
 
 ## Supporting completed work
 
