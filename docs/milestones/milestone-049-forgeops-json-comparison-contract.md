@@ -1,6 +1,6 @@
 # Milestone 049 — ForgeOps deterministic JSON comparison contract
 
-**Status:** Local implementation complete and accepted offline; publication is not authorized
+**Status:** Local implementation, draft PR publication, and CI complete; PR readiness and later gates remain separately gated
 
 **Started:** 2026-09-17
 
@@ -106,6 +106,17 @@ Local validation passes all 64 focused ForgeOps tests and all 122 repository tes
 - Gates 4–6 are expected to be closed as not applicable only after separate approval.
 - No deployment, rollout, restart, live acceptance, or Wiki change.
 
+## Publication evidence
+
+- Draft PR: #37.
+- Published branch: `codex/milestone-049-forgeops-json-comparison`.
+- Accepted local implementation commit: `b35ffaeebde90421ea12274649baca2f2770f95d`.
+- Published remote implementation commit: `c1501c4f3834c59d010b9ee1c68190c4b490947d`.
+- Exact matching local and published tree: `80f08b91f755d9fc97a24a3dcd64f56c413cdb58`.
+- The GitHub repository connector was used because this runtime's HTTPS Git client has no credential helper.
+- ForgeOps CI run `35227321405` completed successfully on the published implementation tree.
+- The PR remains draft. Release, deployment, live acceptance, readiness, merge, closeout, and cleanup remain separately gated.
+
 ## Deterministic acceptance
 
 1. The branch begins at exact baseline `9055ef8d564809dd355f8cdfa175259c5b9ee677`.
@@ -135,7 +146,7 @@ The comparison JSON is a bounded machine-consumable handoff for a separately pla
 
 1. Planning — approved.
 2. Local implementation — approved and complete.
-3. Publication and draft PR — not authorized.
+3. Publication and draft PR — approved and complete through draft PR #37.
 4. Package or image release — not authorized; expected to be not applicable.
 5. Deployment — not authorized; expected to be not applicable.
 6. Live acceptance — not authorized; expected to be not applicable.

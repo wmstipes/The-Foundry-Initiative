@@ -1190,3 +1190,17 @@ A machine-readable handoff can remain narrower than its validated source artifac
 ### Next small step
 
 Review the complete Milestone 049 local diff and offline acceptance evidence. Publish the branch and open a draft PR only after separate Gate 3 approval.
+
+## 2026-09-17 — Milestone 049 publication and draft PR
+
+### Result
+
+- Published the two accepted local commits to `codex/milestone-049-forgeops-json-comparison` only after Gate 3 approval.
+- Opened draft PR #37, **Add deterministic ForgeOps comparison JSON**, against `main`.
+- Verified published head `c1501c4f3834c59d010b9ee1c68190c4b490947d` resolves to tree `80f08b91f755d9fc97a24a3dcd64f56c413cdb58`, exactly matching accepted local implementation commit `b35ffaeebde90421ea12274649baca2f2770f95d`.
+- ForgeOps CI run `35227321405` completed successfully on the published implementation tree.
+- No package or image was released, no cluster or application endpoint was accessed, and no deployment, Wiki, readiness, merge, closeout, or cleanup action occurred.
+
+### Next small step
+
+Explicitly dispose of Gates 4–6, then review draft PR #37 for readiness. Readiness remains a separate approval gate.

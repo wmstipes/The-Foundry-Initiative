@@ -121,6 +121,8 @@ The project has moved from basic workload deployment into repeatable engineering
 - Safety boundary: renderer-only authority; no new file loading, collection, subprocess, HTTP, network, persistence, diagnosis, recommendation, AI reasoning, or mutation
 - Local validation: all 64 focused ForgeOps tests and all 122 repository tests pass; isolated installation, package version, all installed command entry checks, equivalent JSON comparison, manifest validation, and whitespace validation pass
 - Local package metadata: Milestone 049 advances the repository-local distribution to `0.6.0`; no distribution is published
+- Publication: draft PR #37 opened from remote commit `c1501c4f3834c59d010b9ee1c68190c4b490947d`; its tree `80f08b91f755d9fc97a24a3dcd64f56c413cdb58` exactly matches accepted local implementation commit `b35ffaeebde90421ea12274649baca2f2770f95d`
+- CI: ForgeOps CI run `35227321405` completed successfully on the published implementation tree
 
 ## Milestone 038 closeout
 
@@ -278,7 +280,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Review the complete Milestone 049 local diff and offline acceptance evidence before separately deciding whether to authorize publication and a draft PR.
+Review draft PR #37 and the successful published-tree CI evidence before separately deciding Gates 4–6 and later PR readiness.
 
 ## Supporting completed work
 
