@@ -1,6 +1,6 @@
 # Milestone 052 — ForgeOps deterministic evidence integrity records
 
-**Status:** Local implementation and deterministic offline acceptance complete
+**Status:** Implementation merged through PR #43 at `b4f42c24cb3afd3b4420716038d508a9f60712c3`; documentation-only closeout in progress
 
 **Started:** 2026-09-17
 
@@ -98,6 +98,23 @@ Offline tests prove:
 - No deployment or live acceptance is applicable; all acceptance remains
   offline.
 
+## Publication evidence
+
+- Accepted local implementation commit:
+  `181a8d762925f2620595f03ad927424cd5f06ac1`.
+- Published implementation commit:
+  `912468e566086a5234339ac09b3f98dddc53b4a2`.
+- Exact matching accepted and published tree:
+  `eeb97ba2a7442353116cef90f9d77df180b02c48`.
+- Draft PR #43 was opened from the published branch.
+- ForgeOps CI run `35288211586` completed successfully.
+- PR #43 was marked ready and merged at
+  `b4f42c24cb3afd3b4420716038d508a9f60712c3`.
+- The merge commit resolves to exact accepted tree
+  `eeb97ba2a7442353116cef90f9d77df180b02c48`.
+- The repository connector was used because this runtime's HTTPS Git client has
+  no credential helper.
+
 ## Local acceptance
 
 - All 87 focused ForgeOps tests pass.
@@ -116,11 +133,11 @@ Offline tests prove:
 
 1. Planning — pre-approved and complete.
 2. Local implementation — pre-approved and complete; deterministic offline acceptance passes.
-3. Publication and draft PR — pre-approved and pending.
+3. Publication and draft PR — pre-approved and complete through PR #43 with exact-tree verification.
 4. Package or image release — approved disposition: not applicable.
 5. Deployment — approved disposition: not applicable.
 6. Live acceptance — approved disposition: not applicable.
-7. Pull-request readiness — pre-approved and pending successful CI and exact-tree review.
-8. Merge — pre-approved and pending.
-9. Closeout — pre-approved and pending.
-10. Branch cleanup — pre-approved and pending merge verification.
+7. Pull-request readiness — pre-approved and complete after successful CI and exact-tree review.
+8. Merge — pre-approved and complete; PR #43 merged at `b4f42c24cb3afd3b4420716038d508a9f60712c3`.
+9. Closeout — pre-approved and in progress through `codex/milestone-052-closeout`.
+10. Branch cleanup — pre-approved and pending closeout merge verification.
