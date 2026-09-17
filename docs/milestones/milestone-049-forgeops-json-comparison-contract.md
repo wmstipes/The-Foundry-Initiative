@@ -1,10 +1,12 @@
 # Milestone 049 — ForgeOps deterministic JSON comparison contract
 
-**Status:** Local implementation, draft PR publication, and CI complete; package/image release, deployment, and live acceptance are closed as not applicable, and later gates remain separately gated
+**Status:** Complete. Implementation PR #37 merged at `972e611`; closeout is recorded and branch cleanup remains to be completed under the approved Gate 10
 
 **Started:** 2026-09-17
 
 **Implementation branch:** `codex/milestone-049-forgeops-json-comparison`
+
+**Closeout branch:** `codex/milestone-049-closeout`
 
 **Baseline:** `main` at `9055ef8d564809dd355f8cdfa175259c5b9ee677`
 
@@ -117,7 +119,11 @@ Local validation passes all 64 focused ForgeOps tests and all 122 repository tes
 - Exact matching local and published tree: `80f08b91f755d9fc97a24a3dcd64f56c413cdb58`.
 - The GitHub repository connector was used because this runtime's HTTPS Git client has no credential helper.
 - ForgeOps CI run `35227321405` completed successfully on the published implementation tree.
-- The PR remains draft. Package/image release, deployment, and live acceptance are explicitly closed as not applicable; readiness, merge, closeout, and cleanup remain separately gated.
+- Final published head `a607126b0e2f38730a1ec6f383c72681523a11fb` and accepted local final-head commit `2b7e9835251f1721b854e567dae8238b9e6d06d5` resolve to tree `253fdc4f34756d930bbfa77a583c125eb6600dd9`.
+- Final-head ForgeOps CI run `35229392947` completed successfully.
+- PR #37 was marked ready after exact-tree and CI verification, then merged at `972e6115e507894f9f2b916bb5f655365d99a2fb`.
+- The merge commit resolves to exact accepted tree `253fdc4f34756d930bbfa77a583c125eb6600dd9`.
+- No package, image, release tag, deployment, live acceptance, cluster access, application endpoint access, persistent-state change, or Wiki change occurred.
 
 ## Deterministic acceptance
 
@@ -152,7 +158,7 @@ The comparison JSON is a bounded machine-consumable handoff for a separately pla
 4. Package or image release — explicitly closed as not applicable; no distribution, image, or release tag was published.
 5. Deployment — explicitly closed as not applicable; no deployable artifact, manifest, workload, or persistent state changed.
 6. Live acceptance — explicitly closed as not applicable; deterministic acceptance is offline and no cluster or application endpoint was accessed.
-7. Pull-request readiness — not authorized.
-8. Merge — not authorized.
-9. Closeout — not authorized.
-10. Branch cleanup — not authorized.
+7. Pull-request readiness — approved and complete for PR #37.
+8. Merge — approved and complete through PR #37 at `972e611`.
+9. Closeout — approved and recorded on `codex/milestone-049-closeout`.
+10. Branch cleanup — approved and pending completion after the closeout merge.

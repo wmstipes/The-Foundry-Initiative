@@ -1230,3 +1230,22 @@ Dispose of Gates 5 and 6 independently, then review draft PR #37 for readiness u
 ### Next small step
 
 Confirm final-head CI and exact-tree evidence, then mark PR #37 ready under Gate 7.
+
+## 2026-09-17 — Milestone 049 readiness, merge, and closeout
+
+### Result
+
+- Final published head `a607126b0e2f38730a1ec6f383c72681523a11fb` resolved to tree `253fdc4f34756d930bbfa77a583c125eb6600dd9`, exactly matching accepted local final-head commit `2b7e9835251f1721b854e567dae8238b9e6d06d5`.
+- ForgeOps CI run `35229392947` completed successfully on that final published head.
+- Marked PR #37 ready under Gate 7, then merged it under Gate 8 at `972e6115e507894f9f2b916bb5f655365d99a2fb`.
+- Confirmed the merge commit resolves to the exact accepted tree `253fdc4f34756d930bbfa77a583c125eb6600dd9`.
+- Prepared the documentation-only closeout on `codex/milestone-049-closeout` under Gate 9.
+- No package, image, release tag, deployment, live acceptance, cluster access, application endpoint access, persistent-state change, or Wiki change occurred.
+
+### Lesson
+
+The versioned comparison contract creates a machine-consumable seam without transferring operational authority. Exact-tree verification ties the accepted offline behavior to both the final published head and the merge commit.
+
+### Next small step
+
+Merge the closeout record, then delete both Milestone 049 branches locally and remotely under the approved Gate 10.
