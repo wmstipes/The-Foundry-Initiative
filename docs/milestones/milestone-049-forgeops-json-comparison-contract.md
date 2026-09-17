@@ -1,6 +1,6 @@
 # Milestone 049 — ForgeOps deterministic JSON comparison contract
 
-**Status:** Local implementation, draft PR publication, and CI complete; PR readiness and later gates remain separately gated
+**Status:** Local implementation, draft PR publication, and CI complete; package/image release is closed as not applicable, and later gates remain separately gated
 
 **Started:** 2026-09-17
 
@@ -103,7 +103,8 @@ Local validation passes all 64 focused ForgeOps tests and all 122 repository tes
 - Local package metadata only: `0.6.0`.
 - No registry package, image, release tag, manifest, or deployed workload.
 - No ServiceAccount, RBAC, Service, configuration, or persistent-state change.
-- Gates 4–6 are expected to be closed as not applicable only after separate approval.
+- Gate 4 is explicitly closed as not applicable; `0.6.0` remains repository-local metadata and no registry distribution, image, or release tag was published.
+- Gates 5–6 remain separately gated and are expected to be not applicable.
 - No deployment, rollout, restart, live acceptance, or Wiki change.
 
 ## Publication evidence
@@ -115,7 +116,7 @@ Local validation passes all 64 focused ForgeOps tests and all 122 repository tes
 - Exact matching local and published tree: `80f08b91f755d9fc97a24a3dcd64f56c413cdb58`.
 - The GitHub repository connector was used because this runtime's HTTPS Git client has no credential helper.
 - ForgeOps CI run `35227321405` completed successfully on the published implementation tree.
-- The PR remains draft. Release, deployment, live acceptance, readiness, merge, closeout, and cleanup remain separately gated.
+- The PR remains draft. Package/image release is explicitly closed as not applicable; deployment, live acceptance, readiness, merge, closeout, and cleanup remain separately gated.
 
 ## Deterministic acceptance
 
@@ -147,7 +148,7 @@ The comparison JSON is a bounded machine-consumable handoff for a separately pla
 1. Planning — approved.
 2. Local implementation — approved and complete.
 3. Publication and draft PR — approved and complete through draft PR #37.
-4. Package or image release — not authorized; expected to be not applicable.
+4. Package or image release — explicitly closed as not applicable; no distribution, image, or release tag was published.
 5. Deployment — not authorized; expected to be not applicable.
 6. Live acceptance — not authorized; expected to be not applicable.
 7. Pull-request readiness — not authorized.

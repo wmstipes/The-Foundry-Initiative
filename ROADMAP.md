@@ -410,7 +410,7 @@ See [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comp
 
 ### Milestone 049 — Deterministic JSON comparison contract
 
-**Status:** Local implementation, draft PR #37 publication, and CI complete; PR readiness and all later gates remain separate.
+**Status:** Local implementation, draft PR #37 publication, and CI complete; package/image release is closed as not applicable, while deployment, live acceptance, PR readiness, and later gates remain separate.
 
 - Add `--format text|json` to the existing offline comparison command while keeping text as the default.
 - Serialize only the immutable `EvidenceComparison` model as `forgeops.comparison/v1alpha1`.

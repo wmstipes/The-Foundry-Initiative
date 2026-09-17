@@ -1204,3 +1204,16 @@ Review the complete Milestone 049 local diff and offline acceptance evidence. Pu
 ### Next small step
 
 Explicitly dispose of Gates 4–6, then review draft PR #37 for readiness. Readiness remains a separate approval gate.
+
+## 2026-09-17 — Milestone 049 package and image release disposition
+
+### Result
+
+- Gate 4 was separately approved and closed as not applicable.
+- Version `0.6.0` remains repository-local package metadata only.
+- No Python distribution, container image, release tag, package-registry entry, or image-registry entry was created or published.
+- Draft PR #37 remains draft; deployment, live acceptance, PR readiness, merge, closeout, and cleanup remain separately gated.
+
+### Next small step
+
+Dispose of Gates 5 and 6 independently, then review draft PR #37 for readiness under Gate 7.
