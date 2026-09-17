@@ -2,6 +2,10 @@
 
 This runbook operates the local ForgeOps snapshot command introduced in Milestone 045. The command collects a bounded point-in-time view of named SignalForge resources. It is not continuous monitoring, a complete cluster-health claim, a compliance check, or a remediation tool.
 
+Read the [ForgeOps operator and learning guide](../guides/forgeops-operator-learning-guide.md)
+for the consolidated architecture, command map, execution modes, exit domains,
+and trust boundaries.
+
 ## Safety boundary
 
 ForgeOps requires an explicit kubeconfig file and the exact context `kubernetes-admin@kubernetes`. It stops before resource collection if either preflight fails.
@@ -18,17 +22,33 @@ It does not collect logs, Events, Secrets, ConfigMaps, environment values, addre
 
 Optional HTTP checks run only when the operator supplies explicit base URLs. Redirects are disabled, response bodies are bounded, and unrecognized response fields are discarded.
 
-## Install locally
+## Install locally for operator use
 
 From a clean repository checkout:
 
 ~~~powershell
-python -m pip install -e .
-forgeops snapshot --help
-foundry-check --help
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install .
+.\.venv\Scripts\forgeops.exe provenance
+.\.venv\Scripts\forgeops.exe snapshot --help
+.\.venv\Scripts\foundry-check.exe --help
 ~~~
 
-The editable install exposes both repository commands. Milestones 045 and 046 do not publish a package to a registry.
+The normal install exposes both repository commands without binding a shared
+Python interpreter to an editable checkout. No package is published to a
+registry.
+
+For source development, use the repository-owned launcher:
+
+~~~powershell
+python .\scripts\run-forgeops-dev.py provenance
+~~~
+
+Do not use a global editable installation as the operator default. Before
+relying on any command, require provenance status `OK` and confirm the expected
+module path and Python executable. Provenance output contains local paths and
+should be reviewed before sharing.
 
 ## Identify the explicit kubeconfig
 

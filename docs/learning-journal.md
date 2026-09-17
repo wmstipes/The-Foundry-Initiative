@@ -1308,3 +1308,58 @@ The corpus demonstrates that evaluation breadth can grow while operational autho
 ### Next small step
 
 Merge the closeout record, then delete both Milestone 050 branches locally and remotely under the approved Gate 10. Begin Milestone 051 only with a separate read-only planning pass.
+
+## 2026-09-17 — Milestone 051 planning and local implementation
+
+### Result
+
+- Reconciled the completed Milestone 050 closeout and cleanup at clean `main`
+  commit `59cad31d28eee0d41e345a105b306f5165444cd5`.
+- Confirmed that one distribution named `foundry-check` exposes both command
+  entry points and that the earlier default documentation recommended an
+  editable install without exposing the loaded source.
+- Added an offline `forgeops provenance` command for distribution, module,
+  interpreter, execution-mode, and install-source identity.
+- Added a repository-owned Python launcher that explicitly selects the current
+  checkout before importing ForgeOps and works across operator and CI platforms.
+- Replaced the global editable-install recommendation with an isolated normal
+  operator installation.
+- Added a consolidated operator and learning guide while preserving the
+  historical milestone documents.
+- Advanced repository-local package metadata to `0.7.0` without publishing a
+  distribution or changing a cluster resource.
+- Passed all 79 focused ForgeOps tests and all 137 repository tests, isolated
+  non-editable installation and installed-entry checks, source-launcher
+  provenance, Python compilation, manifest validation, and whitespace
+  validation entirely offline.
+
+### Lesson
+
+Passing tests and matching repository metadata do not prove which checkout a
+workstation command imported. Execution provenance must identify the loaded
+module and interpreter directly, and it must remain distinct from future
+artifact provenance or authenticity.
+
+### Next small step
+
+Review the exact Gate 2 diff. Publication requires separate Gate 3 approval.
+
+## 2026-09-17 — Milestone 051 publication and Gates 4-6 disposition
+
+### Result
+
+- Reconstructed the accepted local implementation through the repository
+  connector because the runtime Git client has no HTTPS credential helper.
+- Verified every published blob against its local Git object ID.
+- Published implementation commit
+  `8dc35c862e4c6a30e59af2c33d4512757c82772c` with exact accepted tree
+  `621d1cfbc0faf8257a4711f6b6747172694a7ed7`.
+- Opened draft PR #41, **Add ForgeOps execution provenance**.
+- Explicitly closed package/image release, deployment, and live acceptance as
+  not applicable. No registry, image, tag, deployment, cluster access, endpoint
+  access, persistent-state change, or Wiki mutation occurred.
+
+### Next small step
+
+Publish this documentation reconciliation, then review final-head CI and the
+exact diff before separately approving Gate 7 readiness.

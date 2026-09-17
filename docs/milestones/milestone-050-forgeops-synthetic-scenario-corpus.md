@@ -1,6 +1,6 @@
 # Milestone 050 — ForgeOps bounded synthetic scenario corpus
 
-**Status:** Implementation merged through PR #39 at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`; documentation-only closeout in progress
+**Status:** Complete, merged, closed, synchronized, and cleaned up. Implementation PR #39 merged at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`; closeout PR #40 merged at `59cad31d28eee0d41e345a105b306f5165444cd5`
 
 **Started:** 2026-09-17
 
@@ -149,5 +149,13 @@ A future consumer must not automatically receive kubeconfig access, collection a
 6. Live acceptance — approved disposition and closed as not applicable.
 7. Pull-request readiness — approved and complete after successful ForgeOps CI run `35240317432`.
 8. Merge — approved and complete; PR #39 merged at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`, preserving accepted tree `53f6de423608b1f6ca3a74b93b04b65f93d67051`.
-9. Closeout — approved and in progress through documentation-only PR #40 from `codex/milestone-050-closeout`.
-10. Branch cleanup — approved and pending closeout merge verification.
+9. Closeout — approved and complete; documentation-only PR #40 merged at `59cad31d28eee0d41e345a105b306f5165444cd5`.
+10. Branch cleanup — approved and complete; both Milestone 050 branches were deleted locally and remotely, and local `main` was synchronized at the closeout merge.
+
+## Final closeout
+
+- Documentation-only closeout PR #40 merged at `59cad31d28eee0d41e345a105b306f5165444cd5`.
+- Gate 10 removed `codex/milestone-050-forgeops-scenario-corpus` and `codex/milestone-050-closeout` locally and remotely.
+- The Windows checkout was clean and synchronized at the closeout merge.
+- Only `main`, `feature/foundry-check-cli`, and `feature/project-status` remain intentionally retained.
+- Milestone 050 is fully closed. Milestone 051 began through a separate read-only planning pass.
