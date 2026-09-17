@@ -1,6 +1,6 @@
 # Milestone 051 — ForgeOps trustworthy execution provenance
 
-**Status:** Published in draft PR #41; package/image release, deployment, and live acceptance are explicitly closed as not applicable; Gate 7 and all later gates are not approved
+**Status:** Implementation merged through PR #41 at `e5e2a0898480e7722295e8df5e35eb25d4829848`; documentation-only closeout in progress
 
 **Started:** 2026-09-17
 
@@ -147,10 +147,15 @@ deployment, or live acceptance action occurred.
 - Accepted local implementation commit: `7443a278fc638458a036ed5251e7d1aa7e29903c`.
 - Published implementation commit: `8dc35c862e4c6a30e59af2c33d4512757c82772c`.
 - Exact matching local and published tree: `621d1cfbc0faf8257a4711f6b6747172694a7ed7`.
+- Final published head: `4e5e7334448fb734fdc7e1f869d7215c8855c4cc`.
+- Final accepted and published tree: `652d01fdb7933e037b0097170610ea8480164588`.
+- Final-head ForgeOps CI run `35265922723` completed successfully.
+- PR #41 was marked ready under Gate 7 and merged under Gate 8 at
+  `e5e2a0898480e7722295e8df5e35eb25d4829848`.
+- The merge commit resolves to exact accepted tree
+  `652d01fdb7933e037b0097170610ea8480164588`.
 - The repository connector was used because this runtime's HTTPS Git client has
   no credential helper.
-- PR #41 remains draft. Readiness, merge, closeout, and cleanup require later
-  gates.
 
 ## Relationship to later work
 
@@ -167,7 +172,7 @@ reasoning remain separate capabilities with separate approval boundaries.
 4. Package or image release — approved disposition and closed as not applicable; no distribution, image, or release tag was published.
 5. Deployment — approved disposition and closed as not applicable; no deployable artifact, manifest, workload, configuration, or persistent state changed.
 6. Live acceptance — approved disposition and closed as not applicable; acceptance remained entirely offline with no cluster or endpoint access.
-7. Pull-request readiness — not approved.
-8. Merge — not approved.
-9. Closeout — not approved.
-10. Branch cleanup — not approved.
+7. Pull-request readiness — approved and complete after successful final-head ForgeOps CI run `35265922723`.
+8. Merge — approved and complete; PR #41 merged at `e5e2a0898480e7722295e8df5e35eb25d4829848`, preserving accepted tree `652d01fdb7933e037b0097170610ea8480164588`.
+9. Closeout — approved and in progress through documentation-only branch `codex/milestone-051-closeout`.
+10. Branch cleanup — approved and pending closeout merge verification.
