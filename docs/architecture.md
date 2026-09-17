@@ -179,9 +179,19 @@ A future reasoning layer may consume only the validated evidence or deterministi
 
 `comparison.py` is the first consumer of that seam. It accepts two `ValidatedEvidence` values, rejects reversed chronology, matches checks by identifier, and returns an immutable set of additions, removals, status transitions, and same-status evidence changes. Collection timestamps are displayed but excluded from change classification. Its text and `forgeops.comparison/v1alpha1` JSON renderers accept only that immutable model. The JSON contract deliberately contains identifiers, classifications, statuses, changed field names, deterministic counts, and timestamps while omitting artifact paths and underlying evidence values. The comparison layer does not reopen files, invoke collection, retain artifacts, infer causes, map runbooks, or recommend actions. Exit code `1` means valid artifacts differ; it is not a health or severity result.
 
+Milestone 052 adds `integrity.py` as a sibling offline consumer of the validation
+seam. It reads one explicit evidence file once, validates those bytes, and
+computes a SHA-256 digest over the same exact bytes. The deterministic
+`forgeops.integrity/v1alpha1` sidecar contains bounded identity metadata, byte
+length, digest, and an explicit limitation. Verification reads one evidence
+file and one strict 64 KiB integrity record and reports match or mismatch
+without exposing paths or evidence values. A match detects byte alteration only
+relative to a separately retained trusted record; it establishes no authorship,
+signature, trusted time, authenticity, storage history, or chain of custody.
+
 Milestone 050 adds an offline scenario corpus above these unchanged seams. Each scenario supplies one focused synthetic check in valid before/after evidence artifacts plus the exact expected comparison JSON. The corpus covers equivalence, warning, failure, incomplete evidence, and recovery without adding a scenario runtime or production schema. It is evaluation data only: it contains no captured cluster response, real address, kubeconfig path, credential, UID, complete object, diagnosis, recommendation, or provenance claim. The focused overall status belongs only to the synthetic artifact and must not be read as complete cluster health.
 
-The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → deterministic offline comparison → deterministic comparison representation → optional future reasoning. Later reasoning may consume validated evidence or the bounded comparison JSON, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
+The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → exact-byte integrity and/or deterministic offline comparison → deterministic representations → optional future reasoning. Later reasoning may consume validated evidence or the bounded comparison JSON, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
 
 ## Documentation authority and publication
 

@@ -15,8 +15,20 @@ from .comparison import (
     render_comparison_text,
 )
 from .constants import EXPECTED_CONTEXT
-from .evidence import EvidenceValidationError, load_evidence_file
+from .evidence import (
+    EvidenceValidationError,
+    load_evidence_artifact,
+    load_evidence_file,
+)
 from .evaluate import evaluate
+from .integrity import (
+    IntegrityRecordError,
+    create_integrity_record,
+    load_integrity_inputs,
+    render_integrity_record,
+    render_integrity_verification,
+    verify_integrity,
+)
 from .provenance import inspect_execution_provenance, render_execution_provenance
 from .render import render_json, render_markdown, render_text
 from .runners import HttpRunner, KubectlRunner, RunnerFailure
@@ -56,6 +68,27 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument(
         "--format", choices=("text", "json"), default="text",
         dest="output_format", help="output format (default: text)",
+    )
+    integrity = evidence_commands.add_parser(
+        "integrity", help="create or verify an exact-byte evidence integrity record",
+    )
+    integrity_commands = integrity.add_subparsers(
+        dest="integrity_command", required=True,
+    )
+    integrity_create = integrity_commands.add_parser(
+        "create", help="render an integrity record for validated evidence",
+    )
+    integrity_create.add_argument(
+        "--input", required=True, help="explicit local evidence file",
+    )
+    integrity_verify = integrity_commands.add_parser(
+        "verify", help="verify evidence against an explicit integrity record",
+    )
+    integrity_verify.add_argument(
+        "--input", required=True, help="explicit local evidence file",
+    )
+    integrity_verify.add_argument(
+        "--record", required=True, help="explicit local integrity-record file",
     )
     return parser
 
@@ -101,6 +134,24 @@ def main(argv: Sequence[str] | None = None) -> int:
         else:
             render_comparison_text(comparison, sys.stdout)
         return comparison.exit_code
+    if args.command == "evidence" and args.evidence_command == "integrity":
+        if args.integrity_command == "create":
+            try:
+                artifact = load_evidence_artifact(args.input)
+            except EvidenceValidationError as exc:
+                return _fail(f"evidence invalid: {exc.code}: {exc.summary}")
+            render_integrity_record(create_integrity_record(artifact), sys.stdout)
+            return 0
+        if args.integrity_command == "verify":
+            try:
+                artifact, record = load_integrity_inputs(args.input, args.record)
+            except EvidenceValidationError as exc:
+                return _fail(f"evidence invalid: {exc.code}: {exc.summary}")
+            except IntegrityRecordError as exc:
+                return _fail(f"integrity record invalid: {exc.code}: {exc.summary}")
+            verification = verify_integrity(artifact, record)
+            render_integrity_verification(verification, sys.stdout)
+            return verification.exit_code
     if args.command != "snapshot":
         return _fail("unsupported command")
     if args.context != EXPECTED_CONTEXT:

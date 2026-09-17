@@ -107,6 +107,25 @@ Add `--format json` to emit the versioned `forgeops.comparison/v1alpha1` contrac
 
 Milestone 050 adds a five-case synthetic scenario corpus for repeatable offline demonstrations of stable evidence, a Pod-restart warning, a routing regression, incomplete evidence, and recovery. Every scenario uses the existing evidence and comparison contracts and includes an exact expected comparison document. The corpus is synthetic evaluation data, not a live-health claim, training data, provenance record, diagnosis, or recommendation.
 
+Create a deterministic exact-byte integrity record for one validated artifact,
+then retain that record separately if it will be used as a trusted reference:
+
+~~~powershell
+forgeops evidence integrity create `
+  --input .\forgeops-snapshot.json > .\forgeops-snapshot.integrity.json
+
+forgeops evidence integrity verify `
+  --input .\forgeops-snapshot.json `
+  --record .\forgeops-snapshot.integrity.json
+~~~
+
+The `forgeops.integrity/v1alpha1` record contains the evidence schema,
+collection time, context, exact byte length, and SHA-256 digest. Verification
+exit `0` means the validated artifact matches, `1` means it does not, and `2`
+means an input is invalid. A matching digest detects byte alteration only when
+the reference record was retained separately and trusted; it does not prove
+who created the evidence, authenticate it, or establish chain of custody.
+
 See the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-learning-guide.md), [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md), [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md), [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-validation.md), [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comparison.md), [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contract.md), [Milestone 050](docs/milestones/milestone-050-forgeops-synthetic-scenario-corpus.md), and [Milestone 051](docs/milestones/milestone-051-forgeops-execution-provenance.md).
 
 ## Documentation front door

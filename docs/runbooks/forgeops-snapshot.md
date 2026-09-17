@@ -177,6 +177,45 @@ The JSON does not include either artifact path, observation text, expected or ob
 
 Validation and comparison are offline. They do not read or search for a kubeconfig, invoke kubectl, make an HTTP request, discover another file, contact a network service, or mutate the cluster. Passing validation establishes contract compatibility and internal consistency only; it does not prove artifact provenance, cryptographic authenticity, cluster health, or the absence of sensitive text in arbitrary string values. Review the artifact before sharing it.
 
+## Create and verify an exact-byte integrity record
+
+Create a deterministic sidecar only after ForgeOps validates the evidence:
+
+~~~powershell
+forgeops evidence integrity create `
+  --input .\forgeops-snapshot.json > .\forgeops-snapshot.integrity.json
+~~~
+
+The `forgeops.integrity/v1alpha1` document contains the evidence schema,
+collection timestamp, context, algorithm, SHA-256 digest, exact byte length,
+and limitation statement. It omits the input path and evidence values. ForgeOps
+hashes the same bytes it validated and writes the record only to standard
+output; choosing and protecting a destination remains an operator action.
+
+Retain the record separately if it will serve as a trusted reference. Verify it
+later with:
+
+~~~powershell
+forgeops evidence integrity verify `
+  --input .\forgeops-snapshot.json `
+  --record .\forgeops-snapshot.integrity.json
+~~~
+
+Integrity verification has its own exit semantics:
+
+| Exit | Meaning |
+| ---: | --- |
+| `0` | The valid evidence bytes and bounded metadata match the valid record. |
+| `1` | Both inputs are valid, but length, digest, or metadata differs. |
+| `2` | The evidence or integrity record is invalid or unreadable. |
+
+The evidence remains limited to 1 MiB and the integrity record to 64 KiB.
+Verification reads only the two explicit files and emits no input path or
+evidence content. A match detects alteration relative to a separately retained
+trusted record. It does not identify the creator, authenticate either file,
+provide trusted time, or prove chain of custody; replacing both files can still
+produce a matching unsigned pair.
+
 ## Exercise the synthetic scenario corpus
 
 Milestone 050 provides five focused examples under

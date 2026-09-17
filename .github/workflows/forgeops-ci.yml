@@ -56,3 +56,5 @@ jobs:
           forgeops evidence validate --input tests/fixtures/forgeops/evaluated-json-golden.json
           forgeops evidence compare --before tests/fixtures/forgeops/evaluated-json-golden.json --after tests/fixtures/forgeops/evaluated-json-golden.json
           forgeops evidence compare --before tests/fixtures/forgeops/evaluated-json-golden.json --after tests/fixtures/forgeops/evaluated-json-golden.json --format json
+          forgeops evidence integrity create --input tests/fixtures/forgeops/evaluated-json-golden.json
+          forgeops evidence integrity verify --input tests/fixtures/forgeops/evaluated-json-golden.json --record tests/fixtures/forgeops/evaluated-json-golden.integrity.json
