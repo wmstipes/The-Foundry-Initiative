@@ -1,0 +1,29 @@
+{
+  "schema": "forgeops.snapshot/v1alpha1",
+  "collectedAtUtc": "2026-09-17T15:00:00Z",
+  "context": "kubernetes-admin@kubernetes",
+  "scope": "fixed SignalForge nodes, workloads, routing, Metrics APIService, and explicitly configured HTTP endpoints",
+  "redaction": "credentials, kubeconfig paths, addresses, headers, and complete objects omitted",
+  "summary": {
+    "pass": 1,
+    "warn": 0,
+    "fail": 0,
+    "unknown": 0,
+    "overallStatus": "PASS",
+    "exitCode": 0
+  },
+  "checks": [
+    {
+      "id": "node.synthetic-worker",
+      "status": "PASS",
+      "observation": "Synthetic node is Ready",
+      "source": "synthetic node evidence",
+      "collectedAtUtc": "2026-09-17T15:00:00Z",
+      "expected": "Ready=True",
+      "observed": "Ready=True"
+    }
+  ],
+  "limitations": [
+    "This is a bounded point-in-time observation, not continuous monitoring, a compliance assessment, or a complete statement of cluster health."
+  ]
+}

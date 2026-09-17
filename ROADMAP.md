@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-048 are complete, merged, closed, and cleaned up. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, a deterministic JSON evidence contract, strict offline validation for explicitly selected saved artifacts, and deterministic offline comparison. Milestone 049 is the immediate next step and adds a deterministic JSON comparison contract without expanding collection, storage, reasoning, or mutation authority.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-049 are complete, merged, closed, and cleaned up. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, and deterministic offline comparison. Milestone 050 is the immediate next step and requires a separate read-only planning pass.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -410,7 +410,7 @@ See [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comp
 
 ### Milestone 049 — Deterministic JSON comparison contract
 
-**Status:** Complete. Implementation PR #37 merged at `972e611`; package/image release, deployment, and live acceptance were explicitly closed as not applicable. Closeout is recorded here; branch cleanup remains to be completed under the approved Gate 10.
+**Status:** Complete and cleaned up. Implementation PR #37 merged at `972e611`; closeout PR #38 merged at `38bf1d8`; Gate 10 removed both Milestone 049 branches locally and remotely. Package/image release, deployment, and live acceptance were explicitly closed as not applicable.
 
 - Add `--format text|json` to the existing offline comparison command while keeping text as the default.
 - Serialize only the immutable `EvidenceComparison` model as `forgeops.comparison/v1alpha1`.
@@ -421,6 +421,19 @@ See [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comp
 - Exclude a comparison loader, scenario replay, history, provenance claims, compatibility negotiation, runbook mapping, AI reasoning, package publication, image, manifest, deployment, live acceptance, and Wiki changes.
 
 See [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contract.md).
+
+### Milestone 050 — Bounded synthetic scenario corpus
+
+**Status:** Implemented and validated locally; publication and all later gates remain pending.
+
+- Add five focused synthetic before/after evidence pairs covering timestamp-only stability, a Pod-restart warning, a routing regression, incomplete evidence, and routing recovery.
+- Validate every artifact through the existing strict `forgeops.snapshot/v1alpha1` loader.
+- Compare every pair through the existing immutable comparison seam and prove exact byte-stable `forgeops.comparison/v1alpha1` output.
+- Preserve the distinction between contained health and comparison execution, including comparison exit `1` for a valid recovery.
+- Keep the corpus disclosure-minimized and explicitly separate from captured SignalForge evidence, current-health claims, training data, provenance, diagnosis, recommendation, remediation, and mutation.
+- Add no production model, schema, CLI, package-version, workflow, image, manifest, deployment, live-acceptance, or Wiki change.
+
+See [Milestone 050](docs/milestones/milestone-050-forgeops-synthetic-scenario-corpus.md).
 
 Potential outcomes:
 

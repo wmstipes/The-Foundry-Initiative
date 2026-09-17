@@ -1,0 +1,29 @@
+{
+  "schema": "forgeops.snapshot/v1alpha1",
+  "collectedAtUtc": "2026-09-17T15:15:00Z",
+  "context": "kubernetes-admin@kubernetes",
+  "scope": "fixed SignalForge nodes, workloads, routing, Metrics APIService, and explicitly configured HTTP endpoints",
+  "redaction": "credentials, kubeconfig paths, addresses, headers, and complete objects omitted",
+  "summary": {
+    "pass": 0,
+    "warn": 1,
+    "fail": 0,
+    "unknown": 0,
+    "overallStatus": "WARN",
+    "exitCode": 1
+  },
+  "checks": [
+    {
+      "id": "pod.forge-restaurant.synthetic-restaurant-api",
+      "status": "WARN",
+      "observation": "Synthetic Pod is ready but has restarted",
+      "source": "synthetic Pod evidence",
+      "collectedAtUtc": "2026-09-17T15:15:00Z",
+      "expected": "phase=Running, ready=true, restarts=0",
+      "observed": "phase=Running, ready=true, restarts=1"
+    }
+  ],
+  "limitations": [
+    "This is a bounded point-in-time observation, not continuous monitoring, a compliance assessment, or a complete statement of cluster health."
+  ]
+}

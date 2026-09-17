@@ -1249,3 +1249,42 @@ The versioned comparison contract creates a machine-consumable seam without tran
 ### Next small step
 
 Merge the closeout record, then delete both Milestone 049 branches locally and remotely under the approved Gate 10.
+
+## 2026-09-17 — Milestone 049 cleanup and full closure
+
+### Result
+
+- Closeout PR #38 merged into `main` at `38bf1d84d5ad0611d050e1825233af82f369b4af`.
+- Gate 10 completed: both Milestone 049 branches were deleted locally and remotely.
+- Both the Windows and Codex checkouts were clean and synchronized with the closeout merge.
+- Only `main`, `feature/foundry-check-cli`, and `feature/project-status` remain intentionally retained.
+- Milestone 049 is fully implemented, merged, documented, closed, and cleaned up.
+- Milestone 050 is the immediate next step and requires a separate read-only planning pass.
+
+### Lesson
+
+Recording cleanup after branch deletion keeps the durable project history accurate without weakening the rule that ephemeral milestone branches disappear only after their reviewed content is safely merged.
+
+### Next small step
+
+Begin a strictly read-only Milestone 050 planning pass from clean `main` and compare the smallest credible ForgeOps increments before authorizing implementation.
+
+## 2026-09-17 — Milestone 050 planning and local implementation
+
+### Result
+
+- Selected a bounded synthetic scenario corpus as the smallest next increment because it exercises the complete validation, comparison, and JSON-representation path before runbook mapping or AI-assisted reasoning.
+- Preserved the accepted Milestone 049 Gate 10 reconciliation at commit `ff17c446a21ff44422ddd25b78853a755eed5c2f` and created `codex/milestone-050-forgeops-scenario-corpus` from that exact clean commit after separate implementation approval.
+- Added five focused before/after pairs for timestamp-only stability, a Pod-restart warning, a routing regression, incomplete evidence, and routing recovery.
+- Added exact expected `forgeops.comparison/v1alpha1` documents and focused tests for inventory, strict validation, status and exit semantics, exact deltas, byte stability, CLI reuse, no runner construction, and disclosure minimization.
+- Kept every scenario synthetic and limited to one isolated check. The artifacts are not complete health snapshots, captured evidence, training data, provenance, diagnosis, or recommendation.
+- Changed no production ForgeOps source, schema, CLI, package metadata, workflow, image, manifest, deployment, persistent state, or Wiki content.
+- All 68 focused ForgeOps tests and all 126 repository tests pass. Isolated installation, package-version verification, all installed command entry checks, exact stable and recovery comparisons, Kubernetes manifest validation, and whitespace validation also pass.
+
+### Lesson
+
+An evaluation corpus can add operational and portfolio value without adding operational authority. In particular, a recovery must still produce comparison exit `1` because the evidence changed; keeping comparison execution separate from contained health prevents a useful recovery from being mislabeled as comparison equivalence.
+
+### Next small step
+
+Review the complete accepted local diff. Publication and draft PR creation remain a separate approval gate.

@@ -1,6 +1,6 @@
 # Milestone 049 — ForgeOps deterministic JSON comparison contract
 
-**Status:** Complete. Implementation PR #37 merged at `972e611`; closeout is recorded and branch cleanup remains to be completed under the approved Gate 10
+**Status:** Complete, merged, closed, and cleaned up. Implementation PR #37 merged at `972e611`; closeout PR #38 merged at `38bf1d8`; Gate 10 removed both milestone branches locally and remotely
 
 **Started:** 2026-09-17
 
@@ -161,4 +161,13 @@ The comparison JSON is a bounded machine-consumable handoff for a separately pla
 7. Pull-request readiness — approved and complete for PR #37.
 8. Merge — approved and complete through PR #37 at `972e611`.
 9. Closeout — approved and recorded on `codex/milestone-049-closeout`.
-10. Branch cleanup — approved and pending completion after the closeout merge.
+10. Branch cleanup — approved and complete; both Milestone 049 branches were deleted locally and remotely.
+
+## Final closeout
+
+- Closeout PR #38 merged at `38bf1d84d5ad0611d050e1825233af82f369b4af`.
+- Gate 10 completed.
+- `codex/milestone-049-forgeops-json-comparison` and `codex/milestone-049-closeout` were deleted locally and remotely.
+- Milestone 049 is fully closed.
+- Only `main`, `feature/foundry-check-cli`, and `feature/project-status` remain intentionally retained.
+- Milestone 050 is the immediate next step and requires a separate read-only planning pass.
