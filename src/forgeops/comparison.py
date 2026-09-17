@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
+import json
 from typing import TextIO
 
 from .evidence import ValidatedEvidence
@@ -25,6 +26,14 @@ class DeltaKind(StrEnum):
     REMOVED = "REMOVED"
     STATUS_CHANGED = "STATUS_CHANGED"
     EVIDENCE_CHANGED = "EVIDENCE_CHANGED"
+
+
+COMPARISON_SCHEMA = "forgeops.comparison/v1alpha1"
+COMPARISON_LIMITATION = (
+    "This deterministic comparison reports validated field differences only; "
+    "it does not establish provenance, operational severity, causation, "
+    "diagnosis, or recommendation."
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -178,3 +187,53 @@ def render_comparison_text(comparison: EvidenceComparison, stream: TextIO) -> No
         f"{counts[DeltaKind.EVIDENCE_CHANGED]} evidence); "
         f"comparisonExit={comparison.exit_code}\n"
     )
+
+
+def _delta_counts(comparison: EvidenceComparison) -> dict[DeltaKind, int]:
+    counts = {kind: 0 for kind in DeltaKind}
+    for delta in comparison.deltas:
+        counts[delta.kind] += 1
+    return counts
+
+
+def render_comparison_json(comparison: EvidenceComparison, stream: TextIO) -> None:
+    """Render one deterministic, disclosure-minimized comparison document."""
+
+    counts = _delta_counts(comparison)
+    value = {
+        "schema": COMPARISON_SCHEMA,
+        "evidenceSchema": comparison.schema,
+        "beforeCollectedAtUtc": comparison.before_collected_at_utc,
+        "afterCollectedAtUtc": comparison.after_collected_at_utc,
+        "beforeOverallStatus": comparison.before_overall_status.value,
+        "afterOverallStatus": comparison.after_overall_status.value,
+        "summary": {
+            "totalChecks": comparison.total_checks,
+            "unchangedChecks": comparison.unchanged_checks,
+            "changedChecks": len(comparison.deltas),
+            "added": counts[DeltaKind.ADDED],
+            "removed": counts[DeltaKind.REMOVED],
+            "statusChanged": counts[DeltaKind.STATUS_CHANGED],
+            "evidenceChanged": counts[DeltaKind.EVIDENCE_CHANGED],
+            "comparisonExit": comparison.exit_code,
+        },
+        "deltas": [
+            {
+                "id": delta.check_id,
+                "kind": delta.kind.value,
+                "beforeStatus": (
+                    delta.before_status.value
+                    if delta.before_status is not None else None
+                ),
+                "afterStatus": (
+                    delta.after_status.value
+                    if delta.after_status is not None else None
+                ),
+                "changedFields": list(delta.changed_fields),
+            }
+            for delta in comparison.deltas
+        ],
+        "limitations": [COMPARISON_LIMITATION],
+    }
+    json.dump(value, stream, ensure_ascii=True, indent=2)
+    stream.write("\n")

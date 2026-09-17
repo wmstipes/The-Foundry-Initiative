@@ -95,7 +95,9 @@ forgeops evidence compare `
 
 Comparison reports added, removed, status-changed, and evidence-changed checks in deterministic order. Exit code `0` means the valid artifacts are operationally equivalent after ignoring collection timestamps, `1` means they differ, and `2` means an input or its chronology is invalid. Comparison does not infer causes or recommendations.
 
-See the [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md), [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md), [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-validation.md), and [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comparison.md).
+Add `--format json` to emit the versioned `forgeops.comparison/v1alpha1` contract for an offline script or later bounded consumer. The JSON contains timestamps, contained overall statuses, deterministic counts, check identifiers, change classifications, before/after statuses, and changed field names. It does not reproduce artifact paths or underlying evidence values.
+
+See the [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md), [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md), [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-validation.md), [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comparison.md), and [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contract.md).
 
 ## Documentation front door
 

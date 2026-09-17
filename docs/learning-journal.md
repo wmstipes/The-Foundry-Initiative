@@ -1171,3 +1171,22 @@ Closing the prior milestone before implementation keeps repository history and a
 ### Next small step
 
 Implement and validate Milestone 049 locally without publishing, accessing SignalForge, or introducing storage, reasoning, recommendation, or mutation authority.
+
+## 2026-09-17 — Milestone 049 local implementation
+
+### Result
+
+- Added explicit `--format text|json` selection to `forgeops evidence compare`, preserving text as the default and retaining comparison exit codes `0`, `1`, and `2`.
+- Added deterministic `forgeops.comparison/v1alpha1` rendering from the immutable comparison model with fixed field order, stable delta order, explicit nulls, deterministic counts, and a fixed limitation statement.
+- Kept artifact paths and underlying observation, expectation, source, and error values out of the comparison document.
+- Added a fixed golden document and offline coverage for byte stability, all four delta kinds, text/JSON semantic parity, disclosure minimization, invalid-input fail-closed behavior, and no collection or network construction.
+- Advanced repository-local package metadata to `0.6.0`; no registry distribution, image, tag, manifest, deployment, live acceptance, cluster access, application endpoint access, or Wiki change occurred.
+- All 64 focused ForgeOps tests and all 122 repository tests pass. Isolated installation, package-version verification, all installed entry checks, equivalent JSON comparison, Kubernetes manifest validation, and whitespace validation pass.
+
+### Lesson
+
+A machine-readable handoff can remain narrower than its validated source artifacts. Serializing classifications and changed field names without evidence values creates a useful automation seam while reducing unnecessary disclosure and preserving the one-way authority boundary.
+
+### Next small step
+
+Review the complete Milestone 049 local diff and offline acceptance evidence. Publish the branch and open a draft PR only after separate Gate 3 approval.

@@ -408,6 +408,20 @@ See [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-vali
 
 See [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comparison.md).
 
+### Milestone 049 — Deterministic JSON comparison contract
+
+**Status:** Local implementation complete and accepted offline; publication and all later gates remain separate.
+
+- Add `--format text|json` to the existing offline comparison command while keeping text as the default.
+- Serialize only the immutable `EvidenceComparison` model as `forgeops.comparison/v1alpha1`.
+- Preserve timestamps, contained statuses, counts, check identifiers, delta kinds, before/after statuses, changed-field names, and comparison exit semantics.
+- Prove fixed field order, stable identifier order, byte-repeatability, text/JSON parity, explicit null behavior, and disclosure minimization through offline tests and a golden fixture.
+- Omit artifact paths, observations, expected or observed values, sources, errors, and complete input artifacts.
+- Keep the renderer unable to read files, collect evidence, invoke a runner, contact a network, persist output automatically, infer causes, recommend actions, or mutate state.
+- Exclude a comparison loader, scenario replay, history, provenance claims, compatibility negotiation, runbook mapping, AI reasoning, package publication, image, manifest, deployment, live acceptance, and Wiki changes.
+
+See [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contract.md).
+
 Potential outcomes:
 
 - Collect a bounded, read-only snapshot of relevant Kubernetes state.

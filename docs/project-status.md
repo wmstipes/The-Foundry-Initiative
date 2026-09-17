@@ -115,6 +115,12 @@ The project has moved from basic workload deployment into repeatable engineering
 - Post-merge checks: the operator confirmed all Actions displayed by GitHub were green
 - Gate disposition: package/image release, deployment, and live acceptance were explicitly closed as not applicable; no cluster or endpoint access occurred
 - Closeout and cleanup: closeout PR #36 merged at `9055ef8d564809dd355f8cdfa175259c5b9ee677`; Gate 10 completed and both Milestone 048 branches were deleted locally and remotely
+- Milestone 049: deterministic `forgeops.comparison/v1alpha1` JSON rendering is implemented locally on `codex/milestone-049-forgeops-json-comparison`
+- Interface: `forgeops evidence compare --before <file> --after <file> --format text|json`; text remains the default
+- JSON boundary: immutable comparison data only, with fixed order, deterministic counts, ordered deltas, explicit nulls, and no artifact paths or underlying evidence values
+- Safety boundary: renderer-only authority; no new file loading, collection, subprocess, HTTP, network, persistence, diagnosis, recommendation, AI reasoning, or mutation
+- Local validation: all 64 focused ForgeOps tests and all 122 repository tests pass; isolated installation, package version, all installed command entry checks, equivalent JSON comparison, manifest validation, and whitespace validation pass
+- Local package metadata: Milestone 049 advances the repository-local distribution to `0.6.0`; no distribution is published
 
 ## Milestone 038 closeout
 
@@ -272,7 +278,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Implement Milestone 049's deterministic JSON comparison contract locally, preserving the offline one-way authority boundary and separate delivery gates.
+Review the complete Milestone 049 local diff and offline acceptance evidence before separately deciding whether to authorize publication and a draft PR.
 
 ## Supporting completed work
 

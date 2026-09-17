@@ -53,3 +53,4 @@ jobs:
           forgeops evidence compare --help
           forgeops evidence validate --input tests/fixtures/forgeops/evaluated-json-golden.json
           forgeops evidence compare --before tests/fixtures/forgeops/evaluated-json-golden.json --after tests/fixtures/forgeops/evaluated-json-golden.json
+          forgeops evidence compare --before tests/fixtures/forgeops/evaluated-json-golden.json --after tests/fixtures/forgeops/evaluated-json-golden.json --format json
