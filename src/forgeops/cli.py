@@ -17,6 +17,7 @@ from .comparison import (
 from .constants import EXPECTED_CONTEXT
 from .evidence import EvidenceValidationError, load_evidence_file
 from .evaluate import evaluate
+from .provenance import inspect_execution_provenance, render_execution_provenance
 from .render import render_json, render_markdown, render_text
 from .runners import HttpRunner, KubectlRunner, RunnerFailure
 
@@ -24,9 +25,12 @@ from .runners import HttpRunner, KubectlRunner, RunnerFailure
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="forgeops",
-        description="Collect or validate bounded SignalForge health evidence.",
+        description="Inspect execution or operate on bounded SignalForge health evidence.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
+    subparsers.add_parser(
+        "provenance", help="show the executing ForgeOps version and source",
+    )
     snapshot = subparsers.add_parser("snapshot", help="collect the SignalForge snapshot")
     snapshot.add_argument("--kubeconfig", required=True, help="explicit kubeconfig file")
     snapshot.add_argument("--context", required=True, help=f"exact context ({EXPECTED_CONTEXT})")
@@ -63,6 +67,10 @@ def _fail(message: str) -> int:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.command == "provenance":
+        provenance = inspect_execution_provenance()
+        render_execution_provenance(provenance, sys.stdout)
+        return provenance.exit_code
     if args.command == "evidence" and args.evidence_command == "validate":
         try:
             evidence = load_evidence_file(args.input)

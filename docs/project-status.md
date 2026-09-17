@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, Milestone 046 added a deterministic JSON evidence view, Milestone 047 added strict offline validation, Milestone 048 added deterministic offline comparison, Milestone 049 added a deterministic JSON comparison contract, and Milestone 050 added a bounded synthetic scenario corpus without expanding collection or mutation authority.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestone 044 defined and live-feasibility-tested the bounded read-only evidence contract. Milestone 045 implemented and live-validated that contract, Milestone 046 added a deterministic JSON evidence view, Milestone 047 added strict offline validation, Milestone 048 added deterministic offline comparison, Milestone 049 added a deterministic JSON comparison contract, and Milestone 050 added a bounded synthetic scenario corpus without expanding collection or mutation authority. Milestone 051 locally implements and validates explicit ForgeOps execution identity and supported local execution modes.
 
 ## Current application
 
@@ -143,8 +143,16 @@ The project has moved from basic workload deployment into repeatable engineering
 - Gate disposition: package/image release, deployment, and live acceptance were explicitly closed as not applicable; acceptance remained entirely offline
 - PR readiness and merge: PR #39 was marked ready under Gate 7 and merged under Gate 8 at `090a47f7cd546f4d2c0dac952da387f4e1fdf863`
 - Merge integrity: the published head and merge commit resolve to exact accepted tree `53f6de423608b1f6ca3a74b93b04b65f93d67051`
-- Closeout: documentation-only PR #40 records the accepted implementation, gate dispositions, merge evidence, and next-step boundary
+- Closeout and cleanup: documentation-only PR #40 merged at `59cad31d28eee0d41e345a105b306f5165444cd5`; Gate 10 removed both Milestone 050 branches locally and remotely, and clean `main` was synchronized at that commit
 - Runtime impact: none; no registry artifact, image, release tag, manifest, deployment, cluster access, application endpoint access, persistent-state change, or Wiki change occurred
+- Milestone 051: trustworthy execution provenance is implemented and validated locally on `codex/milestone-051-forgeops-execution-provenance`
+- Interface: `forgeops provenance` reports distribution, source-project, and module versions, loaded module path, Python executable, execution mode, install source, status, and findings
+- Execution modes: isolated normal installation for operator use; repository-owned source launcher for current-checkout development
+- Detection: version disagreement and invalid/missing sources fail; temporary-directory editable sources warn
+- Documentation: one current operator and learning guide consolidates architecture, commands, evidence flow, exit domains, recovery, and trust boundaries while historical milestone documents remain intact
+- Package metadata: repository-local version advances to `0.7.0`; no distribution is published
+- Local validation: all 79 focused ForgeOps tests and all 137 repository tests pass; isolated install, installed command entries, source launcher, Python compilation, manifest validation, and whitespace validation pass
+- Authority boundary: local Python/package metadata only; no kubeconfig, kubectl, HTTP, evidence loading, network, deployment, cluster access, or mutation
 
 ## Milestone 038 closeout
 
@@ -302,7 +310,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete the Milestone 050 documentation-only closeout and approved branch cleanup, then begin a separate read-only planning pass for Milestone 051.
+Review the exact Milestone 051 Gate 2 diff before considering publication under Gate 3.
 
 ## Supporting completed work
 

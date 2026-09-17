@@ -69,11 +69,19 @@ Milestone 042 adds one-file YAML drag-and-drop with visible and accessible targe
 ForgeOps now has a local deterministic snapshot command. It checks a fixed allowlist of SignalForge Nodes, Deployments, selected Pods, EndpointSlices, and Metrics APIService availability. Optional Restaurant API and Workbench checks run only against explicit operator-provided URLs.
 
 ~~~powershell
-python -m pip install -e .
-forgeops snapshot `
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install .
+.\.venv\Scripts\forgeops.exe provenance
+.\.venv\Scripts\forgeops.exe snapshot `
   --kubeconfig $env:KUBECONFIG `
   --context kubernetes-admin@kubernetes
 ~~~
+
+The repository-local environment is the supported operator mode. For source
+development, `scripts/run-forgeops-dev.py` explicitly selects the current
+checkout rather than relying on a global editable installation. Always run
+`forgeops provenance` first to see the loaded version, module path, Python
+executable, execution mode, and recorded installation source.
 
 Add `--format markdown` for a reviewable report or `--format json` for a deterministic machine-readable evidence artifact. Provide `--restaurant-url` and `--workbench-url` to include the five accepted application endpoints. All three renderers derive from the same evaluated snapshot and preserve the same ordered checks, status semantics, summary, and exit code. The command uses only bounded read operations, never falls back to an ambient kubeconfig or context, does not read sensitive Kubernetes objects, and cannot mutate the cluster. `UNKNOWN` evidence fails closed with exit code `2`.
 
@@ -99,7 +107,7 @@ Add `--format json` to emit the versioned `forgeops.comparison/v1alpha1` contrac
 
 Milestone 050 adds a five-case synthetic scenario corpus for repeatable offline demonstrations of stable evidence, a Pod-restart warning, a routing regression, incomplete evidence, and recovery. Every scenario uses the existing evidence and comparison contracts and includes an exact expected comparison document. The corpus is synthetic evaluation data, not a live-health claim, training data, provenance record, diagnosis, or recommendation.
 
-See the [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md), [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md), [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-validation.md), [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comparison.md), [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contract.md), and [Milestone 050](docs/milestones/milestone-050-forgeops-synthetic-scenario-corpus.md).
+See the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-learning-guide.md), [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md), [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md), [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-validation.md), [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comparison.md), [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contract.md), [Milestone 050](docs/milestones/milestone-050-forgeops-synthetic-scenario-corpus.md), and [Milestone 051](docs/milestones/milestone-051-forgeops-execution-provenance.md).
 
 ## Documentation front door
 
@@ -123,6 +131,7 @@ The-Foundry-Initiative/
 
   docs/
     architecture.md        Current system architecture and constraints
+    guides/                Consolidated current operator and learning guidance
     vision.md              Project purpose, principles, and direction
     learning-journal.md    Progress, lessons, and next small steps
     project-status.md      Current releases, milestones, and priorities
@@ -169,6 +178,7 @@ Completed SignalForge milestones include:
 * Grafana dashboards and bounded Prometheus rule evaluation deployed and recovery-tested
 * Forge YAML Workbench `0.10.0` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks, General YAML mode, the pinned OWASP Kubernetes Top 10:2025 review profile, formatting preview, review-first Markdown reports, counted Validation filters, browser-local Tree search, and safe one-file YAML drop
 * deterministic ForgeOps read-only snapshot implemented with offline fixtures, stable terminal, Markdown, and JSON output, a deny-by-default command runner, strict offline evidence validation, and deterministic offline comparison
+* ForgeOps execution provenance and supported isolated operator/source-development modes
 
 ## Earlier utility: foundry-check
 

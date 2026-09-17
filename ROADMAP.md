@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-049 are complete, merged, closed, and cleaned up. Milestone 050 implementation is merged and its documentation-only closeout is in progress. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison, and a bounded synthetic scenario corpus for stable, regression, incomplete-evidence, and recovery demonstrations.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-050 are complete, merged, closed, and cleaned up. Milestone 051 is implemented and validated locally. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison, and a bounded synthetic scenario corpus for stable, regression, incomplete-evidence, and recovery demonstrations. Milestone 051 makes local execution identity explicit before later evidence-integrity or reasoning work.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -424,7 +424,7 @@ See [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contr
 
 ### Milestone 050 — Bounded synthetic scenario corpus
 
-**Status:** Implementation PR #39 merged at `090a47f`; documentation-only closeout PR #40 is in progress. Gates 4-6 were explicitly closed as not applicable.
+**Status:** Complete, merged, closed, synchronized, and cleaned up. Implementation PR #39 merged at `090a47f`; closeout PR #40 merged at `59cad31`. Gates 4-6 were explicitly closed as not applicable.
 
 - Add five focused synthetic before/after evidence pairs covering timestamp-only stability, a Pod-restart warning, a routing regression, incomplete evidence, and routing recovery.
 - Validate every artifact through the existing strict `forgeops.snapshot/v1alpha1` loader.
@@ -434,6 +434,25 @@ See [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contr
 - Add no production model, schema, CLI, package-version, workflow, image, manifest, deployment, live-acceptance, or Wiki change.
 
 See [Milestone 050](docs/milestones/milestone-050-forgeops-synthetic-scenario-corpus.md).
+
+### Milestone 051 — Trustworthy execution provenance
+
+**Status:** Local implementation and offline acceptance complete; publication and all later gates are pending.
+
+- Add `forgeops provenance` to expose the distribution, module version, loaded
+  module path, Python executable, execution mode, and recorded source.
+- Detect version disagreement, invalid declared source mode, missing editable
+  source, and temporary-directory editable installations.
+- Replace the global editable-install recommendation with an isolated normal
+  operator install and a repository-owned source launcher.
+- Consolidate architecture, commands, evidence flow, exit semantics, and trust
+  boundaries into one current operator and learning guide.
+- Keep Milestones 044-050 intact as chronological evidence.
+- Add no collection, network, evidence-integrity, replay, reasoning, mutation,
+  deployment, or cluster authority.
+
+See [Milestone 051](docs/milestones/milestone-051-forgeops-execution-provenance.md)
+and the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-learning-guide.md).
 
 Potential outcomes:
 

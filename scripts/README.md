@@ -72,6 +72,21 @@ powershell -ExecutionPolicy Bypass -File .\scripts\deploy-metrics-server.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\test-metrics-server.ps1
 ```
 
+## ForgeOps source launcher
+
+Use the source launcher when development or review must execute the exact
+checkout being viewed:
+
+```powershell
+python .\scripts\run-forgeops-dev.py provenance
+python .\scripts\run-forgeops-dev.py `
+  evidence validate --input .\forgeops-snapshot.json
+```
+
+The launcher sets repository source identity only inside its Python process.
+Normal operator use should use the isolated, non-editable installation documented in the
+[ForgeOps guide](../docs/guides/forgeops-operator-learning-guide.md).
+
 ## Manifest validation
 
 ```powershell

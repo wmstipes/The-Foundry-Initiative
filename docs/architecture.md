@@ -144,6 +144,15 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 
 ## ForgeOps snapshot boundary
 
+Milestone 051 adds a local execution-provenance boundary before the operational
+flow. `provenance.py` reads only Python runtime and distribution metadata and
+reports the loaded module, interpreter, versions, execution mode, and recorded
+source. The repository-owned development launcher declares an exact source root
+and verifies that the loaded module and project version belong to it. This
+identity inspection has no kubeconfig, subprocess, HTTP, evidence, persistence,
+or cluster authority. Execution provenance does not establish evidence
+authenticity or chain of custody.
+
 Milestone 045 implements the Milestone 044 contract as a separate local Python command with no in-cluster workload or identity. It requires an explicit kubeconfig and exact context, invokes only a closed set of read operations, reduces raw responses to accepted fields, applies deterministic checks, and renders equivalent terminal and Markdown views. Milestone 046 adds a deterministic JSON view of that same evaluated model without adding collection authority.
 
 The first contract is deliberately SignalForge-specific. It covers the four expected nodes; the Restaurant API, Prometheus, Grafana, Forge YAML Workbench, and Metrics Server Deployments and Pods; allowlisted EndpointSlices; Metrics APIService availability; and optional GET requests to explicitly configured Restaurant API and Workbench endpoints. Missing or incomplete evidence remains `UNKNOWN` and prevents a healthy overall result.

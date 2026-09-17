@@ -48,6 +48,8 @@ jobs:
       - name: Verify both command entry points
         run: |
           foundry-check --help
+          forgeops provenance
+          python scripts/run-forgeops-dev.py provenance
           forgeops snapshot --help
           forgeops evidence validate --help
           forgeops evidence compare --help
