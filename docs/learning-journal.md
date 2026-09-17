@@ -1217,3 +1217,16 @@ Explicitly dispose of Gates 4–6, then review draft PR #37 for readiness. Readi
 ### Next small step
 
 Dispose of Gates 5 and 6 independently, then review draft PR #37 for readiness under Gate 7.
+
+## 2026-09-17 — Milestone 049 deployment and live-acceptance dispositions
+
+### Result
+
+- Gates 5 and 6 were explicitly approved and closed as not applicable.
+- Milestone 049 has no deployable package, image, manifest, workload, ServiceAccount, RBAC, configuration, rollout, restart, or persistent-state change.
+- Its deterministic acceptance boundary remains intentionally offline; no SignalForge resource, Kubernetes API, or application endpoint was accessed.
+- Draft PR #37 remains draft pending the separately approved readiness transition.
+
+### Next small step
+
+Confirm final-head CI and exact-tree evidence, then mark PR #37 ready under Gate 7.
