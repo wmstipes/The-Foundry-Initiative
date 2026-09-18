@@ -1477,3 +1477,32 @@ diagnosed; those meanings must remain in separate domains.
 
 Complete full repository and isolated-install acceptance, then publish the exact
 reviewed Milestone 053 tree under the pre-approved workflow.
+
+## 2026-09-18 — Milestone 053 publication, merge, and closeout preparation
+
+### Result
+
+- Published remote implementation commit
+  `500bc4da028b94b2ad403f401a7777c3e0e79f41`; its tree
+  `ddfa67a59024947c7403a679ce7254cdb1e232a3` exactly matches accepted local
+  commit `26538bac2d09e2fb9aef35f6032d71bcf109233a`.
+- ForgeOps CI run `35295260302` passed on the exact published tree.
+- Marked PR #45 ready under the pre-approved Gate 7 and merged it under Gate 8
+  at `6900aa956786976fb7a20e967137a8a3096e4514`.
+- Verified that the implementation merge resolves to the exact accepted tree.
+- Closed package/image release, deployment, and live acceptance as not
+  applicable; no registry, release tag, cluster, endpoint, persistent state,
+  or Wiki was touched.
+- Prepared the documentation-only closeout on
+  `codex/milestone-053-closeout` under the pre-approved Gate 9.
+
+### Lesson
+
+Exact-tree verification separates reviewed content from commit-transport
+details and gives the closeout a precise, reproducible implementation anchor.
+
+### Next small step
+
+Merge this documentation-only closeout, delete both Milestone 053 branches
+locally and remotely under the pre-approved Gate 10, and synchronize clean
+`main`.

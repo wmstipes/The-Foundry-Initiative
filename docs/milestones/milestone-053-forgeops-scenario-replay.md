@@ -1,6 +1,6 @@
 # Milestone 053 — ForgeOps bounded offline scenario replay
 
-**Status:** Local implementation and deterministic offline acceptance complete
+**Status:** Implementation complete and merged; documentation-only closeout in progress
 
 **Started:** 2026-09-18
 
@@ -121,15 +121,30 @@ Offline tests prove:
 - No SignalForge, Kubernetes API, application endpoint, or other network target
   was accessed.
 
+## Publication and merge evidence
+
+- Accepted local implementation commit:
+  `26538bac2d09e2fb9aef35f6032d71bcf109233a`.
+- Published remote implementation commit:
+  `500bc4da028b94b2ad403f401a7777c3e0e79f41`.
+- Both commits resolve to exact accepted tree:
+  `ddfa67a59024947c7403a679ce7254cdb1e232a3`.
+- ForgeOps CI run `35295260302` completed successfully on the published tree.
+- PR #45 was marked ready after exact-tree and CI verification, then merged at
+  `6900aa956786976fb7a20e967137a8a3096e4514`.
+- The merge commit resolves to the exact accepted implementation tree.
+- Package/image release, deployment, and live acceptance were closed as not
+  applicable. No external runtime or persistent resource changed.
+
 ## Gated delivery workflow
 
 1. Planning — pre-approved and complete.
 2. Local implementation — pre-approved and complete; deterministic offline acceptance passes.
-3. Publication and draft PR — pre-approved and pending.
+3. Publication and draft PR — complete; exact accepted tree published in PR #45.
 4. Package or image release — approved disposition: not applicable.
 5. Deployment — approved disposition: not applicable.
 6. Live acceptance — approved disposition: not applicable.
-7. Pull-request readiness — pre-approved and pending successful CI and exact-tree review.
-8. Merge — pre-approved and pending.
-9. Closeout — pre-approved and pending.
-10. Branch cleanup — pre-approved and pending merge verification.
+7. Pull-request readiness — complete after successful CI and exact-tree review.
+8. Merge — complete at `6900aa956786976fb7a20e967137a8a3096e4514`.
+9. Closeout — pre-approved and in progress on `codex/milestone-053-closeout`.
+10. Branch cleanup — pre-approved and pending closeout merge verification.

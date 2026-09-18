@@ -475,7 +475,7 @@ See [Milestone 052](docs/milestones/milestone-052-forgeops-evidence-integrity.md
 
 ### Milestone 053 — Bounded offline scenario replay
 
-**Status:** Local implementation and offline validation in progress.
+**Status:** Implementation complete and merged. PR #45 merged at `6900aa9`; documentation-only closeout and branch cleanup are in progress. Gates 4-6 were closed as not applicable.
 
 - Add `forgeops scenario replay --before <file> --after <file> --expected <file>`.
 - Strictly load the existing `forgeops.comparison/v1alpha1` contract with a
