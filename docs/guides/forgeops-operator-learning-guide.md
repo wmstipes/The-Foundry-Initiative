@@ -3,8 +3,9 @@
 ForgeOps is a local, bounded SignalForge operations tool. It collects a fixed
 read-only snapshot, renders deterministic evidence, validates saved evidence,
 creates and verifies exact-byte integrity records, and compares two validated
-artifacts. It does not diagnose incidents, recommend changes, or mutate the
-cluster.
+artifacts. It can also replay three explicitly selected offline scenario files
+against a deterministic expectation. It does not diagnose incidents, recommend
+changes, or mutate the cluster.
 
 This guide explains the current system as a whole. The
 [snapshot runbook](../runbooks/forgeops-snapshot.md) remains the procedural
@@ -137,6 +138,7 @@ manually delete package metadata while leaving an editable link in place.
 | `forgeops evidence compare` | Two explicit validated JSON files | Text or comparison JSON | Comparison |
 | `forgeops evidence integrity create` | One explicit validated evidence file | Integrity-record JSON | Integrity creation |
 | `forgeops evidence integrity verify` | One evidence file and one explicit integrity record | Match summary | Integrity verification |
+| `forgeops scenario replay` | Explicit before, after, and expected-comparison files | Replay match summary | Scenario replay |
 
 ## Protect exact artifact bytes
 
@@ -176,7 +178,7 @@ flowchart TD
     Evidence --> Validate["Strict offline validation"]
     Validate --> Integrity["Exact-byte integrity"]
     Validate --> Compare["Deterministic comparison"]
-    Compare --> Scenario["Synthetic scenario evaluation"]
+    Compare --> Scenario["Expected scenario replay"]
 ```
 
 The components preserve a one-way authority boundary:
@@ -189,10 +191,12 @@ The components preserve a one-way authority boundary:
 - `integrity.py` hashes validated exact bytes and verifies strict sidecar
   records;
 - `comparison.py` compares two immutable validated representations; and
+- `replay.py` checks one actual comparison against one strict expected
+  comparison; and
 - `provenance.py` inspects only local execution identity.
 
-The synthetic scenario corpus exercises validation and comparison. It is not
-captured cluster evidence, complete health, training data, diagnosis, or
+The synthetic scenario corpus exercises validation, comparison, and replay. It
+is not captured cluster evidence, complete health, training data, diagnosis, or
 recommendation.
 
 ## Keep the exit domains separate
@@ -205,10 +209,15 @@ recommendation.
 | Comparison | Valid artifacts equivalent | Valid artifacts differ | Invalid artifact or chronology |
 | Integrity creation | Valid record rendered | Not used | Evidence invalid or unreadable |
 | Integrity verification | Validated bytes and metadata match | Valid inputs do not match | Evidence or record invalid/unreadable |
+| Scenario replay | Actual comparison matches expectation | Valid replay differs from expectation | Evidence, expected comparison, or chronology invalid |
 
 Validation exit `0` does not mean the contained snapshot is healthy. Comparison
 exit `1` does not mean an incident is severe or unresolved; a valid recovery
 also differs from its earlier evidence and returns `1`.
+
+Replay exit `0` means the implementation produced the expected result. It does
+not inherit the expected comparison's exit code: a regression or recovery can
+contain comparison exit `1` and still be a successful replay.
 
 ## Trust and authority boundaries
 
@@ -220,6 +229,8 @@ ForgeOps currently may:
 - read one or two explicit bounded evidence files and one explicit bounded
   integrity record;
 - calculate and compare SHA-256 over validated exact evidence bytes; and
+- replay three explicit bounded offline scenario files through strict
+  validation and deterministic comparison; and
 - render deterministic local output.
 
 ForgeOps does not currently establish:
@@ -235,8 +246,8 @@ ForgeOps does not currently establish:
 Execution provenance answers which local code and interpreter are running.
 The integrity record answers whether exact validated bytes still match a
 separately retained reference; it is not source attribution or authenticity.
-Scenario replay, grounded runbook mapping, and bounded incident reasoning
-remain separately planned capabilities.
+Scenario replay checks deterministic behavior only. Grounded runbook mapping
+and bounded incident reasoning remain separately planned capabilities.
 
 ## Documentation map
 

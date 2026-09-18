@@ -107,6 +107,23 @@ Add `--format json` to emit the versioned `forgeops.comparison/v1alpha1` contrac
 
 Milestone 050 adds a five-case synthetic scenario corpus for repeatable offline demonstrations of stable evidence, a Pod-restart warning, a routing regression, incomplete evidence, and recovery. Every scenario uses the existing evidence and comparison contracts and includes an exact expected comparison document. The corpus is synthetic evaluation data, not a live-health claim, training data, provenance record, diagnosis, or recommendation.
 
+Replay one explicitly supplied scenario through the production validation and
+comparison seams:
+
+~~~powershell
+forgeops scenario replay `
+  --before .\before.json `
+  --after .\after.json `
+  --expected .\expected-comparison.json
+~~~
+
+Replay validates all three files, calculates the actual comparison, and checks
+it against the expected comparison model. Replay exit `0` means the actual
+deterministic result matched the expectation, even when that expected
+comparison contains differences and comparison exit `1`. Replay exit `1` means
+valid inputs produced a mismatch; exit `2` means an input or chronology is
+invalid. It does not collect state, diagnose a cause, or recommend action.
+
 Create a deterministic exact-byte integrity record for one validated artifact,
 then retain that record separately if it will be used as a trusted reference:
 

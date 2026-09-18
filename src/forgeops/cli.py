@@ -9,8 +9,10 @@ from typing import Sequence
 
 from .collect import Collector, validate_kubeconfig
 from .comparison import (
+    ComparisonValidationError,
     EvidenceComparisonError,
     compare_evidence,
+    load_comparison_file,
     render_comparison_json,
     render_comparison_text,
 )
@@ -30,6 +32,7 @@ from .integrity import (
     verify_integrity,
 )
 from .provenance import inspect_execution_provenance, render_execution_provenance
+from .replay import render_scenario_replay, replay_scenario
 from .render import render_json, render_markdown, render_text
 from .runners import HttpRunner, KubectlRunner, RunnerFailure
 
@@ -89,6 +92,20 @@ def build_parser() -> argparse.ArgumentParser:
     )
     integrity_verify.add_argument(
         "--record", required=True, help="explicit local integrity-record file",
+    )
+    scenario = subparsers.add_parser(
+        "scenario", help="operate on an explicitly supplied offline scenario",
+    )
+    scenario_commands = scenario.add_subparsers(
+        dest="scenario_command", required=True,
+    )
+    replay = scenario_commands.add_parser(
+        "replay", help="compare deterministic evidence with an expected comparison",
+    )
+    replay.add_argument("--before", required=True, help="explicit earlier evidence file")
+    replay.add_argument("--after", required=True, help="explicit later evidence file")
+    replay.add_argument(
+        "--expected", required=True, help="explicit expected comparison file",
     )
     return parser
 
@@ -152,6 +169,26 @@ def main(argv: Sequence[str] | None = None) -> int:
             verification = verify_integrity(artifact, record)
             render_integrity_verification(verification, sys.stdout)
             return verification.exit_code
+    if args.command == "scenario" and args.scenario_command == "replay":
+        try:
+            before = load_evidence_file(args.before)
+        except EvidenceValidationError as exc:
+            return _fail(f"before evidence invalid: {exc.code}: {exc.summary}")
+        try:
+            after = load_evidence_file(args.after)
+        except EvidenceValidationError as exc:
+            return _fail(f"after evidence invalid: {exc.code}: {exc.summary}")
+        try:
+            expected = load_comparison_file(args.expected)
+        except ComparisonValidationError as exc:
+            return _fail(f"expected comparison invalid: {exc.code}: {exc.summary}")
+        try:
+            actual = compare_evidence(before, after)
+        except EvidenceComparisonError as exc:
+            return _fail(f"scenario invalid: {exc.code}: {exc.summary}")
+        replay = replay_scenario(actual, expected)
+        render_scenario_replay(replay, sys.stdout)
+        return replay.exit_code
     if args.command != "snapshot":
         return _fail("unsupported command")
     if args.context != EXPECTED_CONTEXT:

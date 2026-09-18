@@ -36,8 +36,14 @@ forgeops evidence validate --input .\before.json
 forgeops evidence validate --input .\after.json
 forgeops evidence compare --before .\before.json --after .\after.json
 forgeops evidence compare --before .\before.json --after .\after.json --format json
+forgeops scenario replay `
+  --before .\before.json `
+  --after .\after.json `
+  --expected .\expected-comparison.json
 ~~~
 
 An exit code of `1` from a valid comparison means the artifacts differ. It does not
 mean that a recovery failed. ForgeOps does not collect, diagnose, recommend, retain,
-or mutate anything while validating or comparing these files.
+or mutate anything while validating, comparing, or replaying these files. Replay
+exit `0` means the deterministic actual comparison exactly matched the validated
+expectation; it is independent of the expected comparison's contained exit.

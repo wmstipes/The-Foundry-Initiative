@@ -239,8 +239,28 @@ forgeops evidence compare `
 These are deliberately isolated synthetic checks, not captured SignalForge evidence
 or complete snapshots. Their overall status applies only to the focused artifact. A
 recovery still returns comparison exit `1` because the valid artifacts differ; that
-exit is not a failed recovery or severity judgment. The corpus adds no scenario
-runner, collection path, retention, diagnosis, recommendation, or mutation behavior.
+exit is not a failed recovery or severity judgment.
+
+Replay the three explicit files without directory discovery:
+
+~~~powershell
+forgeops scenario replay `
+  --before .\before.json `
+  --after .\after.json `
+  --expected .\expected-comparison.json
+~~~
+
+The expected comparison is limited to 256 KiB and must pass the strict
+`forgeops.comparison/v1alpha1` loader. Replay returns `0` when the actual
+validated comparison exactly equals the validated expectation, `1` when valid
+inputs differ from the expectation, and `2` for invalid evidence, expectation,
+or chronology. The output omits file paths and evidence values.
+
+Replay success is evaluation success, not health success. A routing regression,
+incomplete-evidence transition, or recovery can correctly contain comparison
+exit `1` while replay itself returns `0`. Replay does not automatically verify
+Milestone 052 integrity records; use integrity verification separately when a
+trusted sidecar exists.
 
 ## Interpret results
 

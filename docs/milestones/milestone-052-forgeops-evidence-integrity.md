@@ -1,6 +1,6 @@
 # Milestone 052 — ForgeOps deterministic evidence integrity records
 
-**Status:** Implementation merged through PR #43 at `b4f42c24cb3afd3b4420716038d508a9f60712c3`; documentation-only closeout in progress
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #43 merged at `b4f42c24cb3afd3b4420716038d508a9f60712c3`; closeout PR #44 merged at `801f8cedaf411361e3e02b47cdae217ee56959c5`
 
 **Started:** 2026-09-17
 
@@ -139,5 +139,16 @@ Offline tests prove:
 6. Live acceptance — approved disposition: not applicable.
 7. Pull-request readiness — pre-approved and complete after successful CI and exact-tree review.
 8. Merge — pre-approved and complete; PR #43 merged at `b4f42c24cb3afd3b4420716038d508a9f60712c3`.
-9. Closeout — pre-approved and in progress through `codex/milestone-052-closeout`.
-10. Branch cleanup — pre-approved and pending closeout merge verification.
+9. Closeout — pre-approved and complete through PR #44 at `801f8cedaf411361e3e02b47cdae217ee56959c5`.
+10. Branch cleanup — pre-approved and complete; both Milestone 052 branches were deleted locally and remotely, and clean `main` was synchronized.
+
+## Final closeout
+
+- Documentation-only closeout PR #44 merged at
+  `801f8cedaf411361e3e02b47cdae217ee56959c5`.
+- Gate 10 removed `codex/milestone-052-forgeops-evidence-integrity` and
+  `codex/milestone-052-closeout` locally and remotely.
+- Clean `main` was synchronized at the closeout merge.
+- Only `main`, `feature/foundry-check-cli`, and `feature/project-status` remain
+  intentionally retained.
+- Milestone 052 is fully closed.
