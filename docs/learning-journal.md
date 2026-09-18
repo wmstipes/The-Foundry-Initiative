@@ -1442,3 +1442,38 @@ reviewed Milestone 052 tree under the already approved Gate 3.
 
 Merge this documentation-only closeout, complete branch cleanup, synchronize
 clean `main`, and then begin Milestone 053 bounded offline scenario replay.
+
+## 2026-09-18 — Milestone 053 planning and local implementation
+
+### Result
+
+- Reconciled Milestone 052 as fully merged, synchronized, and cleaned up at
+  `801f8cedaf411361e3e02b47cdae217ee56959c5`.
+- Added a strict loader for the existing `forgeops.comparison/v1alpha1`
+  contract, including bounded input, duplicate-key rejection, exact ordered
+  fields, supported values, sorted unique deltas, kind-specific shapes, and
+  recalculated summary semantics.
+- Added `forgeops scenario replay` with explicit before, after, and expected
+  paths and no directory discovery.
+- Kept replay exit semantics separate from the expected comparison and the
+  health statuses contained in its evidence.
+- Proved all five curated scenarios replay successfully, including regression,
+  incomplete-evidence, and recovery cases whose comparisons correctly return
+  `1` while replay returns `0`.
+- Advanced repository-local package metadata to `0.9.0` without publishing a
+  distribution or accessing SignalForge.
+- Passed all 95 focused ForgeOps tests and all 153 repository tests, isolated
+  non-editable installation and installed command entries, source-mode
+  provenance, Python compilation, manifest validation, whitespace validation,
+  and stable, recovery, and incomplete-evidence replay checks entirely offline.
+
+### Lesson
+
+Replay answers whether software behavior matched a reviewed expectation. It
+does not answer whether the scenario is healthy, current, authentic, severe, or
+diagnosed; those meanings must remain in separate domains.
+
+### Next small step
+
+Complete full repository and isolated-install acceptance, then publish the exact
+reviewed Milestone 053 tree under the pre-approved workflow.

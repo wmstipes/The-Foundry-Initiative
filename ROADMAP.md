@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-051 are complete, merged, closed, and cleaned up. Milestone 052 implementation is merged and its documentation-only closeout is in progress. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison, a bounded synthetic scenario corpus, explicit local execution identity, and a separate exact-byte integrity boundary.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-052 are complete, merged, closed, synchronized, and cleaned up. Milestone 053 locally implements bounded offline scenario replay. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison, a bounded synthetic scenario corpus, explicit local execution identity, and a separate exact-byte integrity boundary.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -456,7 +456,7 @@ and the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-lea
 
 ### Milestone 052 — Deterministic evidence integrity records
 
-**Status:** Implementation PR #43 merged at `b4f42c2`; documentation-only closeout is in progress. Gates 4-6 were closed as not applicable.
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #43 merged at `b4f42c2`; closeout PR #44 merged at `801f8ce`. Gates 4-6 were closed as not applicable.
 
 - Add `forgeops evidence integrity create --input <file>` to render a
   deterministic `forgeops.integrity/v1alpha1` record for exact validated bytes.
@@ -472,6 +472,24 @@ and the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-lea
   cluster authority.
 
 See [Milestone 052](docs/milestones/milestone-052-forgeops-evidence-integrity.md).
+
+### Milestone 053 — Bounded offline scenario replay
+
+**Status:** Local implementation and offline validation in progress.
+
+- Add `forgeops scenario replay --before <file> --after <file> --expected <file>`.
+- Strictly load the existing `forgeops.comparison/v1alpha1` contract with a
+  256 KiB limit, duplicate-key rejection, exact fields, supported values,
+  sorted unique deltas, kind-specific shapes, and recalculated summary counts.
+- Reuse the existing strict evidence loader and deterministic comparison seam.
+- Return replay exit `0` for an expectation match, `1` for a valid mismatch,
+  and `2` for invalid evidence, expectation, or chronology.
+- Keep replay success distinct from contained health and comparison exits.
+- Require all three explicit paths; do not discover directories or scenarios.
+- Add no collection, network, retention, runbook mapping, diagnosis,
+  recommendation, AI reasoning, remediation, deployment, or cluster authority.
+
+See [Milestone 053](docs/milestones/milestone-053-forgeops-scenario-replay.md).
 
 Potential outcomes:
 

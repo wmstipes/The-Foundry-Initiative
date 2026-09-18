@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 locally implements exact-byte evidence integrity records without claiming authenticity or chain of custody.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 locally implements bounded offline scenario replay without adding collection or reasoning authority.
 
 ## Current application
 
@@ -172,6 +172,14 @@ The project has moved from basic workload deployment into repeatable engineering
 - PR readiness and merge: draft PR #43 was marked ready after CI and exact-tree verification, then merged at `b4f42c24cb3afd3b4420716038d508a9f60712c3`
 - Merge integrity: the merge commit resolves to exact accepted tree `eeb97ba2a7442353116cef90f9d77df180b02c48`
 - Gate disposition: package/image release, deployment, and live acceptance were closed as not applicable; no registry, image, release tag, cluster, endpoint, persistent-state, or Wiki action occurred
+- Closeout and cleanup: PR #44 merged at `801f8cedaf411361e3e02b47cdae217ee56959c5`; both Milestone 052 branches were deleted locally and remotely, and clean `main` was synchronized at that commit
+- Milestone 053: bounded offline scenario replay is implemented locally on `codex/milestone-053-forgeops-scenario-replay`
+- Interface: `forgeops scenario replay --before <file> --after <file> --expected <file>` requires three explicit local files
+- Expected-comparison boundary: strict `forgeops.comparison/v1alpha1` loading with a 256 KiB limit, duplicate-key rejection, exact ordered fields, supported statuses and kinds, sorted unique deltas, kind-specific shapes, and recalculated counts
+- Replay semantics: exit `0` expectation match, `1` valid mismatch, and `2` invalid evidence, expected comparison, or chronology; replay success is independent of contained health and comparison exit
+- Scenario authority: no directory discovery, collection, kubeconfig, kubectl, HTTP, network, retention, integrity claim, runbook mapping, diagnosis, recommendation, AI reasoning, remediation, or mutation
+- Package metadata: repository-local version advances to `0.9.0`; no distribution is published
+- Local validation: all 95 focused ForgeOps tests and all 153 repository tests pass; isolated non-editable `0.9.0` installation, installed command entries, source launcher, Python compilation, manifest validation, whitespace validation, and stable/recovery/incomplete-evidence replay checks pass
 
 ## Milestone 038 closeout
 
@@ -329,9 +337,8 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Merge the Milestone 052 documentation-only closeout, remove both Milestone 052
-branches locally and remotely, and synchronize clean `main` before beginning
-bounded scenario replay in Milestone 053.
+Complete Milestone 053 deterministic offline acceptance, publication, merge,
+closeout, and cleanup before considering grounded runbook mapping.
 
 ## Supporting completed work
 

@@ -191,7 +191,17 @@ signature, trusted time, authenticity, storage history, or chain of custody.
 
 Milestone 050 adds an offline scenario corpus above these unchanged seams. Each scenario supplies one focused synthetic check in valid before/after evidence artifacts plus the exact expected comparison JSON. The corpus covers equivalence, warning, failure, incomplete evidence, and recovery without adding a scenario runtime or production schema. It is evaluation data only: it contains no captured cluster response, real address, kubeconfig path, credential, UID, complete object, diagnosis, recommendation, or provenance claim. The focused overall status belongs only to the synthetic artifact and must not be read as complete cluster health.
 
-The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → exact-byte integrity and/or deterministic offline comparison → deterministic representations → optional future reasoning. Later reasoning may consume validated evidence or the bounded comparison JSON, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
+Milestone 053 adds the bounded runtime deliberately excluded from Milestone
+050. `comparison.py` now strictly loads an explicit
+`forgeops.comparison/v1alpha1` document with fixed ordering, supported values,
+sorted unique deltas, kind-specific shapes, and recalculated summary semantics.
+`replay.py` compares that validated expectation with the actual immutable result
+produced from two explicitly selected validated evidence files. It scans no
+directory and discovers no scenario. Replay success means deterministic output
+matched expectation; it does not mean the contained state is healthy, current,
+authentic, severe, diagnosed, or actionable.
+
+The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → exact-byte integrity and/or deterministic offline comparison → explicit expected-result replay → optional future reasoning. Later reasoning may consume validated evidence or the bounded comparison JSON, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
 
 ## Documentation authority and publication
 
