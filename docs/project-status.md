@@ -370,6 +370,14 @@ SHA-256 checksums, not PyPI, and the public reuse license is MIT. The accepted
 demonstration identified no concrete unmet operator question, so model and
 retrieval integration remain deferred.
 
+The [ForgeOps post-v1 improvement roadmap](roadmaps/forgeops-post-v1-roadmap.md)
+proposes a separately gated sequence for installed-artifact demonstration,
+trust-failure evaluation, cross-platform release acceptance, evidence-bundle
+and release-provenance decisions, a conditional v1.1 path, deterministic v2
+profiles and timelines, and an evidence-gated assistive v3 horizon. The roadmap
+authorizes no implementation, live access, model integration, release, or
+remediation action by itself.
+
 Milestones 054-061 are complete, merged, synchronized, and cleaned up. The
 Milestone 057-061 implementation PRs are #54-#58; grouped closeout PR #59
 records final acceptance and Gate 10 cleanup. All milestone and previously

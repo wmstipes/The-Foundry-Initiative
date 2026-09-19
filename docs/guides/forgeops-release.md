@@ -7,8 +7,9 @@ tag `forgeops-v1.0.0`. The supported release assets are:
 - `SHA256SUMS.txt`.
 
 There is no PyPI package, container image, cluster deployment, background
-service, or external service. A Milestone 064 CI artifact is a review candidate,
-not a public release. Milestone 065 alone may create the tag and GitHub Release.
+service, or external service. Milestone 064 produced only a review candidate;
+Milestone 065 created the accepted tag and GitHub Release. Later documentation
+and development must not move that tag or replace its two assets.
 
 ## Requirements
 

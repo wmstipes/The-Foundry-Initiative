@@ -192,7 +192,7 @@ When updating counts:
 4. keep Vitest cases, promtool scenarios, validators, builds, audits, and live
    acceptance in their own categories; and
 5. explain any surprising delta, such as the five Restaurant API tests that
-   distinguish the 199-test top-level suite from the 204-test complete Python
+   distinguish the 209-test top-level suite from the 214-test complete Python
    discovery.
 
 Historical milestone counts remain historical evidence and must not be edited

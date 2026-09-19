@@ -1766,3 +1766,40 @@ Maintain the immutable tag and GitHub Release as the supported ForgeOps v1
 baseline. Begin another milestone only when it directly improves the final
 incident-copilot demonstration, proves that it is trustworthy, or prepares a
 future release; otherwise defer the work.
+
+## 2026-09-19 — ForgeOps post-v1 roadmap planning
+
+- Audited the README, roadmap, architecture, project status, testing guide,
+  release guide, contribution workflow, Wiki source, command surface, and
+  accepted demonstration and model-readiness records after v1 closeout.
+- Corrected the testing guide's stale 199/204 example to match its dated
+  209/214 inventory, replaced pre-v1 README language that implied causal or
+  remediation authority, updated the release guide's completed-tag state, and
+  aligned the contribution guide with the repository's `codex/` branch
+  convention.
+- Created a post-v1 candidate roadmap for an installed-artifact demonstration
+  runner, trust-failure evaluation, cross-platform acceptance, bounded
+  evidence-bundle and release-provenance decisions, and a conditional v1.1
+  readiness and release path. Expanded it through a deterministic v2 horizon
+  for explicit profiles, timelines, and portable bundles and a conditional v3
+  horizon whose first gate must identify a measurable deterministic gap or stop
+  the sequence.
+- Classified every candidate by the governing purpose it serves and explicitly
+  deferred model/RAG, autonomous remediation, forced live failures, broad
+  telemetry, and new distribution channels without admission evidence.
+- Added stable Wiki navigation to the repository-owned roadmap source without
+  copying volatile release or operational state into the Wiki.
+- Changed no ForgeOps code, schema, package input, tag, release asset,
+  deployment, live system, or operational authority.
+
+### Lesson
+
+A future roadmap is useful only when it constrains work as well as proposing
+it. Explicit admission evidence and rejection criteria prevent a successful v1
+from turning into an unbounded list of technologies to add.
+
+### Next small step
+
+Review and publish the documentation and exact Wiki-source copies. Admit
+Milestone 066 only through a separate planning gate; the roadmap itself does
+not authorize implementation.
