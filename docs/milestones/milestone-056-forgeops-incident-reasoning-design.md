@@ -1,6 +1,6 @@
 # Milestone 056 — ForgeOps bounded incident-reasoning design and evaluation
 
-**Status:** Implemented and accepted locally; publication in progress
+**Status:** Implementation complete and merged; documentation-only closeout in progress
 
 **Started:** 2026-09-19
 
@@ -80,11 +80,23 @@ only and is neither captured SignalForge evidence nor training data.
 
 1. Scope and design — pre-approved and complete.
 2. Local implementation and offline acceptance — pre-approved and complete.
-3. Publication and pull request — pre-approved; in progress.
+3. Publication and pull request — complete; PR #51 published the exact accepted tree.
 4. Package/image release — closed as not applicable.
 5. Deployment — closed as not applicable.
 6. Live acceptance — closed as not applicable.
-7. Ready for review — pre-approved; pending publication and CI.
-8. Merge — pre-approved; pending publication and CI.
-9. Documentation-only closeout — pre-approved; pending implementation merge.
-10. Branch cleanup — pre-approved; pending closeout merge.
+7. Ready for review — complete after ForgeOps CI run `35414081332` passed.
+8. Merge — complete; PR #51 merged at `04b686a6b790133914c4f058f00390f8ab43eaa9`.
+9. Documentation-only closeout — pre-approved and in progress.
+10. Branch cleanup — pre-approved; pending closeout merge and grouped action-time confirmation.
+
+## Publication and merge evidence
+
+- Accepted local implementation commit:
+  `e3616400188a7f0f38934de4cb9e58384a098399`.
+- Published remote implementation commit:
+  `e8bb716bc5594d5cd467451ff5d9db50de42f5ee`.
+- Both commits resolve to exact accepted tree:
+  `d8d2073408f2efc64491e294b3604cd11a2a6951`.
+- ForgeOps CI run `35414081332` completed successfully.
+- PR #51 merged at `04b686a6b790133914c4f058f00390f8ab43eaa9`;
+  the merge resolves to the exact accepted implementation tree.
