@@ -1,0 +1,81 @@
+{
+  "schema": "forgeops.incident-adversarial-evaluation/v1alpha1",
+  "cases": [
+    {
+      "id": "added-passing-check",
+      "expectedDisposition": "ACCEPT",
+      "expectedCode": null,
+      "expectedState": "CHANGED",
+      "requiredUncertainties": ["cause-not-established", "mapping-incomplete", "point-in-time-only"],
+      "protectedBoundary": "neutral-change-is-not-health"
+    },
+    {
+      "id": "fabricated-reason-status",
+      "expectedDisposition": "REJECT",
+      "expectedCode": "mapping-mismatch",
+      "expectedState": null,
+      "requiredUncertainties": [],
+      "protectedBoundary": "mapping-reasons-must-match-facts"
+    },
+    {
+      "id": "mapping-coverage-gap",
+      "expectedDisposition": "ACCEPT",
+      "expectedCode": null,
+      "expectedState": "DEGRADED",
+      "requiredUncertainties": ["cause-not-established", "mapping-incomplete", "point-in-time-only"],
+      "protectedBoundary": "unmapped-deltas-remain-visible"
+    },
+    {
+      "id": "mixed-recovery-neutral-change",
+      "expectedDisposition": "ACCEPT",
+      "expectedCode": null,
+      "expectedState": "CHANGED",
+      "requiredUncertainties": ["cause-not-established", "mapping-incomplete", "point-in-time-only"],
+      "protectedBoundary": "recovery-is-not-overstated"
+    },
+    {
+      "id": "mixed-unknown-and-failure",
+      "expectedDisposition": "ACCEPT",
+      "expectedCode": null,
+      "expectedState": "INCOMPLETE",
+      "requiredUncertainties": ["cause-not-established", "evidence-incomplete", "mapping-incomplete", "point-in-time-only"],
+      "protectedBoundary": "uncertainty-takes-precedence"
+    },
+    {
+      "id": "neutral-evidence-change",
+      "expectedDisposition": "ACCEPT",
+      "expectedCode": null,
+      "expectedState": "CHANGED",
+      "requiredUncertainties": ["cause-not-established", "mapping-incomplete", "point-in-time-only"],
+      "protectedBoundary": "neutral-change-is-not-health"
+    },
+    {
+      "id": "removed-check",
+      "expectedDisposition": "ACCEPT",
+      "expectedCode": null,
+      "expectedState": "INCOMPLETE",
+      "requiredUncertainties": ["cause-not-established", "evidence-incomplete", "mapping-incomplete", "point-in-time-only"],
+      "protectedBoundary": "absence-remains-uncertain"
+    },
+    {
+      "id": "stale-mapping-window",
+      "expectedDisposition": "REJECT",
+      "expectedCode": "window-mismatch",
+      "expectedState": null,
+      "requiredUncertainties": [],
+      "protectedBoundary": "inputs-must-share-one-window"
+    },
+    {
+      "id": "structurally-valid-altered-title",
+      "expectedDisposition": "ACCEPT_UNAUTHENTICATED",
+      "expectedCode": null,
+      "expectedState": "DEGRADED",
+      "requiredUncertainties": ["cause-not-established", "point-in-time-only"],
+      "protectedBoundary": "validation-is-not-authenticity"
+    }
+  ],
+  "decision": "DEFER_MODEL_AND_RETRIEVAL",
+  "limitations": [
+    "These synthetic adversarial cases evaluate deterministic trust boundaries; they are not captured incidents, model training data, current-health claims, or remediation authority."
+  ]
+}

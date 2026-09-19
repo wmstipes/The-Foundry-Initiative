@@ -291,6 +291,12 @@ Incident replay exit `0` means only that the deterministic brief matched the
 strict expected artifact. It does not inherit or reinterpret the expected
 brief's bounded state.
 
+Milestone 061 evaluated nine additional adversarial boundary cases and deferred
+model and retrieval integration. The deterministic brief is ready for a
+separately approved read-only demonstration; model work requires a measured
+unmet operator need and a separate evaluation, privacy, dependency, and failure
+boundary.
+
 ## Documentation map
 
 - [Snapshot runbook](../runbooks/forgeops-snapshot.md): operating commands and

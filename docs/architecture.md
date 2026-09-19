@@ -223,7 +223,22 @@ evaluation corpus is recalculated against the current comparison and mapping
 seams so future implementation begins with measurable expectations instead of
 an unconstrained narrative interface.
 
-The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → exact-byte integrity and/or deterministic offline comparison → explicit expected-result replay → optional future reasoning. Later reasoning may consume validated evidence or the bounded comparison JSON, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
+Milestones 057-060 implement the bounded deterministic briefing path without
+expanding collection authority. `runbook_mapping.py` strictly loads saved
+mapping artifacts; `incident.py` cross-checks comparison and mapping windows,
+facts, reasons, and coverage before constructing
+`forgeops.incident-brief/v1alpha1`; and `incident_replay.py` compares that
+immutable model with one strict expected brief. Text and JSON are two views of
+the same model. `CHANGED` closes the neutral-delta gap without implying health,
+while `INCOMPLETE` preserves precedence for unknown or removed evidence.
+
+Milestone 061 adds only synthetic adversarial evaluation and a decision record.
+It defers model and retrieval integration because no measured unmet operator
+need or adequate model-quality boundary exists. Structural validation remains
+distinct from authenticity: mutually consistent but altered descriptive text
+can still be valid untrusted input.
+
+The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → exact-byte integrity and/or deterministic offline comparison → grounded runbook mapping → deterministic incident brief → exact expected-result replay. Any later model experiment remains a separate authority decision and gains no kubeconfig, network, storage, or mutation authority through this data flow.
 
 ## Documentation authority and publication
 

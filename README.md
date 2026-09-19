@@ -198,6 +198,11 @@ forgeops incident replay `
 
 Replay exit `0` means an exact deterministic match, not healthy contained state.
 
+The [Milestone 061 readiness decision](docs/design/forgeops-model-readiness-decision.md)
+defers model and retrieval integration. Deterministic briefing is ready for a
+separately approved read-only demonstration, while probabilistic assistance
+must first show measurable value over this baseline.
+
 ## Documentation front door
 
 The [GitHub Wiki](https://github.com/wmstipes/The-Foundry-Initiative/wiki) is a curated reader-facing navigation layer. Repository documentation remains authoritative; the Wiki intentionally points to the current project status, architecture, roadmap, runbooks, milestone evidence, and vision instead of copying them.
