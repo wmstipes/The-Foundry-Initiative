@@ -161,6 +161,16 @@ forgeops runbook map `
   --format text
 ~~~
 
+Validate a saved mapping independently before using it as another offline
+consumer's input:
+
+~~~powershell
+forgeops runbook mapping validate --input .\mapping.json
+~~~
+
+Validation success establishes contract validity, not mapping completeness,
+catalog provenance, runbook applicability, or contained system health.
+
 The [bounded incident-reasoning design](docs/design/forgeops-bounded-incident-reasoning.md)
 defines evaluation and safety requirements for a future incident brief. No
 production incident command or model integration exists yet.
