@@ -1,8 +1,7 @@
 # Milestone 064 — ForgeOps v1 release-candidate hardening
 
-**Status:** Candidate accepted and squash-merged through PR #68 at
-`0fde4d904b9731a3c99f0ae5d367ac8f36a1fce1`; documentation-only closeout and
-branch cleanup remain. No tag or release has been created.
+**Status:** Complete through implementation PR #68, closeout PR #69, clean-main
+synchronization, branch cleanup, and temporary-artifact removal
 
 **Started:** 2026-09-19
 
@@ -62,9 +61,12 @@ reasoning, collection, deployment, or remediation capability.
    accepted wheel digest, and PR #68 was marked ready.
 8. Merge — complete; PR #68 was squash-merged at
    `0fde4d904b9731a3c99f0ae5d367ac8f36a1fce1`.
-9. Documentation-only closeout — in progress; it adds no package, tag,
+9. Documentation-only closeout — complete through PR #69 at
+   `9f86d2ceefd40e58282190711ec5e2eb69adba6f`; it added no package, tag,
    deployment, live-system, or remediation authority.
-10. Branch cleanup and synchronization — pending.
+10. Branch cleanup and synchronization — complete; clean local `main` was
+   synchronized to the closeout, both Milestone 064 branches were removed
+   locally and remotely, and the temporary candidate directory was removed.
 
 ## Stop condition
 
