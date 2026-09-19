@@ -1,6 +1,6 @@
 # Milestone 056 — ForgeOps bounded incident-reasoning design and evaluation
 
-**Status:** Implementation complete and merged; documentation-only closeout in progress
+**Status:** Complete, merged, synchronized, and cleaned up
 
 **Started:** 2026-09-19
 
@@ -86,8 +86,8 @@ only and is neither captured SignalForge evidence nor training data.
 6. Live acceptance — closed as not applicable.
 7. Ready for review — complete after ForgeOps CI run `35414081332` passed.
 8. Merge — complete; PR #51 merged at `04b686a6b790133914c4f058f00390f8ab43eaa9`.
-9. Documentation-only closeout — pre-approved and in progress.
-10. Branch cleanup — pre-approved; pending closeout merge and grouped action-time confirmation.
+9. Documentation-only closeout — complete; PR #52 merged at `548b63ef4acfa436ce79ac9554f8ae7c350ff832`.
+10. Branch cleanup — complete; both Milestone 056 branches were deleted locally and remotely.
 
 ## Publication and merge evidence
 
