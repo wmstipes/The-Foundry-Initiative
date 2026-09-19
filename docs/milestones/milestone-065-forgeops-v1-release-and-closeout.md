@@ -1,7 +1,8 @@
 # Milestone 065 — ForgeOps v1 release and closeout
 
-**Status:** ForgeOps v1.0.0 published and independently accepted; release-record
-merge, documentation-only closeout, and branch cleanup remain
+**Status:** ForgeOps v1.0.0 published, independently accepted, and recorded
+through PR #70 at `1369df1a4fec39bcce781ef814274bee435c4644`;
+documentation-only closeout and branch cleanup remain
 
 **Started:** 2026-09-19
 
@@ -100,8 +101,12 @@ package's v1 release number.
 6. Independent published-asset acceptance — complete on Windows Python 3.14.7.
 7. Release acceptance review — complete; published identity, asset set,
    checksums, provenance, and offline behavior all match the accepted candidate.
-8. Release-record merge — pending.
-9. Documentation-only closeout — pending.
+8. Release-record merge — complete through PR #70 at
+   `1369df1a4fec39bcce781ef814274bee435c4644`. No workflow ran because the
+   validated change set was documentation-only and outside workflow path
+   filters.
+9. Documentation-only closeout — in progress; it changes no tag, release asset,
+   package, deployment, live system, or operational authority.
 10. Branch and temporary-artifact cleanup — pending.
 
 ## Acceptance boundary
@@ -111,3 +116,17 @@ above. GitHub-generated source archives are review conveniences, not the
 supported operator artifact. A matching unsigned checksum detects byte changes
 relative to the separately reviewed value but does not prove authorship or
 chain of custody.
+
+## Release-record merge evidence
+
+- Accepted release-record head:
+  `3f188b03f0b5ec68e08bed556e4eed0dbfdf61e2`.
+- Accepted release-record tree:
+  `e8e8c5942c0a9b4cf017e3b42b4c02e5a4335c80`.
+- Release-record PR: #70.
+- Squash merge: `1369df1a4fec39bcce781ef814274bee435c4644`.
+
+The immutable `forgeops-v1.0.0` tag remains at the accepted Milestone 064
+closeout source rather than moving to later documentation commits. Gate 10 must
+preserve that tag and public release while removing only the two Milestone 065
+working branches and the temporary published-asset acceptance directory.
