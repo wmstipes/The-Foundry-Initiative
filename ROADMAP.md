@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-054 are implemented and merged; Milestone 054 remote branch cleanup remains queued for one grouped confirmation. Milestone 055 implements deterministic offline mapping from validated comparisons to repository-owned runbook knowledge. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison and replay, a bounded synthetic scenario corpus, explicit local execution identity, exact-byte integrity, validated runbook knowledge, and grounded deterministic mapping.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-055 are implemented and merged; Milestones 054-055 remote branch cleanup remains queued for one grouped confirmation. Milestone 056 defines the bounded incident-reasoning contract and synthetic evaluation boundary without adding a production reasoning command. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison and replay, a bounded synthetic scenario corpus, explicit local execution identity, exact-byte integrity, validated runbook knowledge, and grounded deterministic mapping.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -524,6 +524,26 @@ See [Milestone 054](docs/milestones/milestone-054-forgeops-runbook-catalog.md).
   remediation, deployment, or cluster authority.
 
 See [Milestone 055](docs/milestones/milestone-055-forgeops-runbook-mapping.md).
+
+### Milestone 056 — Bounded incident-reasoning design and evaluation
+
+**Status:** Implemented and accepted locally; publication in progress.
+
+- Define the proposed explicit incident-brief inputs, disclosure-bounded
+  output, evidence citations, uncertainty rules, and authority limitations.
+- Define `STABLE`, `DEGRADED`, `INCOMPLETE`, and `RECOVERED` only as summaries
+  of the supplied comparison window.
+- Add a five-case `forgeops.incident-evaluation/v1alpha1` synthetic corpus.
+- Recalculate expected deltas and runbook mappings through current production
+  seams in offline tests.
+- Require every future factual statement to trace to validated comparison or
+  mapping fields and forbid unsupported cause, current-health, severity, and
+  remediation claims.
+- Add no incident command, mapping loader, model, retrieval, diagnosis,
+  recommendation, deployment, or cluster authority.
+
+See [Milestone 056](docs/milestones/milestone-056-forgeops-incident-reasoning-design.md)
+and the [bounded incident-reasoning design](docs/design/forgeops-bounded-incident-reasoning.md).
 
 Potential outcomes:
 

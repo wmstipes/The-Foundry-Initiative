@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestone 054 added a strict offline runbook knowledge catalog. Milestone 055 adds deterministic grounded mapping without diagnosis or recommendation authority.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestone 054 added a strict offline runbook knowledge catalog. Milestone 055 added deterministic grounded mapping. Milestone 056 defines a bounded incident-reasoning design and evaluation corpus without adding runtime reasoning.
 
 ## Current application
 
@@ -343,15 +343,10 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Publish, merge, and close out Milestone 055 before defining the bounded
-incident-reasoning contract and evaluation corpus. Milestone 054 implementation
-and closeout are merged; its remote branch deletions are queued for the grouped
-action-time confirmation after Milestone 056.
-
-Milestone 055 implementation PR #49 merged at
-`113e629ee105dce3f3a09d0f12c6bce4f53129a4` with exact accepted tree
-`bf74bd8d8d40ac32c58b04f3b7d43edc19deef9f`; ForgeOps CI run `35413595246`
-passed. Its documentation-only closeout is in progress.
+Publish, merge, and close out Milestone 056. Then delete the six merged remote
+branches for Milestones 054-056 under one action-time confirmation and select
+the next bounded increment. No production incident-reasoning implementation is
+authorized by the Milestone 056 design.
 
 ## Supporting completed work
 

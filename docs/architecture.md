@@ -216,6 +216,13 @@ disclosure-bounded `forgeops.runbook-mapping/v1alpha1` document. Unmatched
 deltas remain explicit. Mapping does not reopen evidence, inspect runbook text,
 rank procedures, infer causes, recommend actions, or gain operational access.
 
+Milestone 056 deliberately adds no runtime component. Its design fixes the
+future incident brief's inputs, bounded state vocabulary, citation and
+uncertainty rules, forbidden claims, and disclosure limits. A synthetic
+evaluation corpus is recalculated against the current comparison and mapping
+seams so future implementation begins with measurable expectations instead of
+an unconstrained narrative interface.
+
 The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → exact-byte integrity and/or deterministic offline comparison → explicit expected-result replay → optional future reasoning. Later reasoning may consume validated evidence or the bounded comparison JSON, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
 
 ## Documentation authority and publication
