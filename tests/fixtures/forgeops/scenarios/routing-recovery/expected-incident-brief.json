@@ -1,0 +1,40 @@
+{
+  "schema": "forgeops.incident-brief/v1alpha1",
+  "comparisonSchema": "forgeops.comparison/v1alpha1",
+  "mappingSchema": "forgeops.runbook-mapping/v1alpha1",
+  "beforeCollectedAtUtc": "2026-09-17T15:40:00Z",
+  "afterCollectedAtUtc": "2026-09-17T15:45:00Z",
+  "state": "RECOVERED",
+  "facts": [
+    {
+      "id": "routing.forge-restaurant.synthetic-service",
+      "kind": "STATUS_CHANGED",
+      "beforeStatus": "FAIL",
+      "afterStatus": "PASS"
+    }
+  ],
+  "runbooks": [
+    {
+      "runbookId": "success-verification",
+      "title": "Verify recovery against the success standard",
+      "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+      "section": "Success Standard",
+      "reasons": [
+        {
+          "checkId": "routing.forge-restaurant.synthetic-service",
+          "deltaKind": "STATUS_CHANGED",
+          "afterStatus": "PASS"
+        }
+      ]
+    }
+  ],
+  "unmappedDeltaIds": [],
+  "uncertainties": [
+    "cause-not-established",
+    "point-in-time-only"
+  ],
+  "limitations": [
+    "This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.",
+    "Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution."
+  ]
+}

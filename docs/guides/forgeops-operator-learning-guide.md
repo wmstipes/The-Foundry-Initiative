@@ -143,6 +143,7 @@ manually delete package metadata while leaving an editable link in place.
 | `forgeops runbook map` | Explicit comparison and runbook-catalog files | Deterministic text or mapping JSON | Runbook mapping |
 | `forgeops runbook mapping validate` | One explicit saved mapping file | Contract-validity summary | Mapping validation |
 | `forgeops incident brief` | Explicit comparison and mapping files | Deterministic incident-brief JSON | Brief construction |
+| `forgeops incident replay` | Explicit comparison, mapping, and expected-brief files | Exact match summary | Brief replay |
 
 ## Protect exact artifact bytes
 
@@ -217,6 +218,7 @@ recommendation.
 | Runbook mapping | Every delta is mapped | Valid deltas remain unmapped | Comparison or catalog invalid/unreadable |
 | Mapping validation | Mapping contract valid | Not used | Mapping invalid or unreadable |
 | Incident brief | Valid consistent inputs rendered | Not used | Input invalid, unreadable, or inconsistent |
+| Incident replay | Actual brief matches expectation | Valid brief differs | Input invalid, unreadable, or inconsistent |
 
 Validation exit `0` does not mean the contained snapshot is healthy. Comparison
 exit `1` does not mean an incident is severe or unresolved; a valid recovery
@@ -280,6 +282,10 @@ Milestone 058 implements the first JSON-only deterministic brief. `CHANGED`
 closes the neutral-delta gap in the original four-state design. Brief exit `0`
 means only that valid, mutually consistent inputs were rendered; it is
 independent of the contained state.
+
+Incident replay exit `0` means only that the deterministic brief matched the
+strict expected artifact. It does not inherit or reinterpret the expected
+brief's bounded state.
 
 ## Documentation map
 

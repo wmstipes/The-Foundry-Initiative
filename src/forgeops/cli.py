@@ -31,7 +31,13 @@ from .integrity import (
     render_integrity_verification,
     verify_integrity,
 )
-from .incident import IncidentBriefError, build_incident_brief, render_incident_brief_json
+from .incident import (
+    IncidentBriefError,
+    build_incident_brief,
+    load_incident_brief,
+    render_incident_brief_json,
+)
+from .incident_replay import render_incident_replay, replay_incident_brief
 from .provenance import inspect_execution_provenance, render_execution_provenance
 from .replay import render_scenario_replay, replay_scenario
 from .render import render_json, render_markdown, render_text
@@ -172,6 +178,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--format", choices=("json",), default="json",
         dest="output_format", help="output format (json)",
     )
+    incident_replay = incident_commands.add_parser(
+        "replay", help="compare a deterministic brief with an explicit expectation",
+    )
+    incident_replay.add_argument(
+        "--comparison", required=True, help="explicit local comparison file",
+    )
+    incident_replay.add_argument(
+        "--mapping", required=True, help="explicit local runbook-mapping file",
+    )
+    incident_replay.add_argument(
+        "--expected", required=True, help="explicit expected incident-brief file",
+    )
     return parser
 
 
@@ -213,7 +231,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         else:
             render_runbook_mapping_text(mapping, sys.stdout)
         return mapping.exit_code
-    if args.command == "incident" and args.incident_command == "brief":
+    if args.command == "incident" and args.incident_command in ("brief", "replay"):
         try:
             comparison = load_comparison_file(args.comparison)
         except ComparisonValidationError as exc:
@@ -226,8 +244,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             brief = build_incident_brief(comparison, mapping)
         except IncidentBriefError as exc:
             return _fail(f"incident brief invalid: {exc.code}: {exc.summary}")
-        render_incident_brief_json(brief, sys.stdout)
-        return 0
+        if args.incident_command == "brief":
+            render_incident_brief_json(brief, sys.stdout)
+            return 0
+        try:
+            expected = load_incident_brief(args.expected)
+        except IncidentBriefError as exc:
+            return _fail(f"expected incident brief invalid: {exc.code}: {exc.summary}")
+        replay = replay_incident_brief(brief, expected)
+        render_incident_replay(replay, sys.stdout)
+        return replay.exit_code
     if args.command == "runbook" and args.runbook_command == "mapping":
         try:
             mapping = load_runbook_mapping(args.input)

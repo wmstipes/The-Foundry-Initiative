@@ -78,7 +78,10 @@ class ForgeOpsScenarioCorpusTests(unittest.TestCase):
             with self.subTest(scenario=name):
                 files = {path.name for path in (SCENARIO_ROOT / name).iterdir()}
                 self.assertEqual(
-                    {"before.json", "after.json", "expected-comparison.json"},
+                    {
+                        "before.json", "after.json", "expected-comparison.json",
+                        "expected-incident-brief.json",
+                    },
                     files,
                 )
                 for filename in files:

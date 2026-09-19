@@ -185,6 +185,17 @@ The command cross-checks both validated inputs and returns process exit `0`
 when a brief is rendered, regardless of its bounded `STABLE`, `CHANGED`,
 `DEGRADED`, `INCOMPLETE`, or `RECOVERED` state. No model integration exists.
 
+Replay a brief against an explicit strict expectation:
+
+~~~powershell
+forgeops incident replay `
+  --comparison .\comparison.json `
+  --mapping .\mapping.json `
+  --expected .\expected-incident-brief.json
+~~~
+
+Replay exit `0` means an exact deterministic match, not healthy contained state.
+
 ## Documentation front door
 
 The [GitHub Wiki](https://github.com/wmstipes/The-Foundry-Initiative/wiki) is a curated reader-facing navigation layer. Repository documentation remains authoritative; the Wiki intentionally points to the current project status, architecture, roadmap, runbooks, milestone evidence, and vision instead of copying them.
