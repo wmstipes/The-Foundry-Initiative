@@ -348,6 +348,11 @@ incident-reasoning contract and evaluation corpus. Milestone 054 implementation
 and closeout are merged; its remote branch deletions are queued for the grouped
 action-time confirmation after Milestone 056.
 
+Milestone 055 implementation PR #49 merged at
+`113e629ee105dce3f3a09d0f12c6bce4f53129a4` with exact accepted tree
+`bf74bd8d8d40ac32c58b04f3b7d43edc19deef9f`; ForgeOps CI run `35413595246`
+passed. Its documentation-only closeout is in progress.
+
 ## Supporting completed work
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
