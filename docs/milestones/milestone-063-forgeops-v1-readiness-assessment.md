@@ -1,6 +1,7 @@
 # Milestone 063 — ForgeOps v1 readiness assessment
 
-**Status:** Assessment and local validation complete; publication pending
+**Status:** Complete and merged through PR #66; documentation-only closeout in
+progress
 
 **Started:** 2026-09-19
 
@@ -69,10 +70,25 @@ belong only to the separately reviewable Milestone 064 candidate.
 5. Deployment — closed as not applicable.
 6. Live acceptance — closed as not applicable; the assessment uses existing
    accepted evidence and an offline wheel-install check.
-7. Acceptance review and PR readiness — pending.
-8. Merge — pending.
-9. Documentation-only closeout — pending.
+7. Acceptance review and PR readiness — complete; accepted remote head
+   `25b9340b56b58af7fd8f88fdffcf82d1ed7ed5e9` resolved to tree
+   `d407063392c9294fc8aed27a747744ee1c111201`, exactly matching the validated
+   local tree, and PR #66 was marked ready. GitHub Actions did not run because
+   the documentation-only paths were outside the workflow filters.
+8. Merge — complete; PR #66 was squash-merged at
+   `2293865859ddc6259f8cedee95705e800a152bc6`.
+9. Documentation-only closeout — in progress; this update records the accepted
+   assessment and merge without adding release or operational authority.
 10. Branch cleanup and synchronization — pending.
+
+## Merge and publication evidence
+
+- Accepted implementation head: `25b9340b56b58af7fd8f88fdffcf82d1ed7ed5e9`.
+- Exact accepted tree: `d407063392c9294fc8aed27a747744ee1c111201`.
+- Implementation PR: #66.
+- Squash merge: `2293865859ddc6259f8cedee95705e800a152bc6`.
+- Package publication, release tag, deployment, and live acceptance remained
+  not applicable.
 
 ## Acceptance boundary
 
