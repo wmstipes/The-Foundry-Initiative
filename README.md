@@ -83,6 +83,12 @@ checkout rather than relying on a global editable installation. Always run
 `forgeops provenance` first to see the loaded version, module path, Python
 executable, execution mode, and recorded installation source.
 
+ForgeOps v1 is packaged separately as `signalforge-forgeops`. The supported
+public artifact will be a wheel plus `SHA256SUMS.txt` on the product-specific
+GitHub Release; it will not be published to PyPI. See the
+[release guide](docs/guides/forgeops-release.md) for verification, isolated
+offline installation, acceptance, and rollback.
+
 Add `--format markdown` for a reviewable report or `--format json` for a deterministic machine-readable evidence artifact. Provide `--restaurant-url` and `--workbench-url` to include the five accepted application endpoints. All three renderers derive from the same evaluated snapshot and preserve the same ordered checks, status semantics, summary, and exit code. The command uses only bounded read operations, never falls back to an ambient kubeconfig or context, does not read sensitive Kubernetes objects, and cannot mutate the cluster. `UNKNOWN` evidence fails closed with exit code `2`.
 
 Validate one explicitly selected saved artifact offline before passing it to another consumer:
@@ -240,7 +246,7 @@ The-Foundry-Initiative/
     runbooks/              Operator procedures and recovery guidance
     wiki/                  Repository-owned source for the curated Wiki front door
 
-  src/                      foundry-check and ForgeOps Python packages
+  src/                      ForgeOps plus the legacy foundry-check source utility
   tests/                    Shared automated tests and offline ForgeOps fixtures
   experiments/              Prototypes and exploratory work
 
@@ -292,7 +298,10 @@ It evaluates whether a local repository has a reasonable project foundation. It 
 
 The tool checks for baseline project structure, required documentation files, implementation and test directories, and suspicious tracked secret filenames.
 
-It remains part of The Foundry Initiative as a small supporting utility and early proof of practice.
+It remains part of The Foundry Initiative as a small supporting utility and
+early proof of practice. It is deliberately excluded from the
+`signalforge-forgeops` v1 wheel and is not part of the supported ForgeOps
+operator artifact.
 
 ## SignalForge development workflow
 

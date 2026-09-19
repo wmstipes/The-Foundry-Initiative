@@ -624,8 +624,8 @@ and the [demonstration guide](docs/guides/forgeops-incident-copilot-demonstratio
 
 ### Milestone 063 — ForgeOps v1 readiness assessment
 
-**Status:** Complete through implementation PR #66 at `2293865` and closeout PR
-#67; branch cleanup remains. The assessment confirms one bounded
+**Status:** Complete through implementation PR #66 at `2293865`, closeout PR
+#67, synchronization, and branch cleanup. The assessment confirms one bounded
 release-candidate hardening milestone is required before v1 publication.
 
 - Select GitHub Release wheel plus SHA-256 checksums as the v1 distribution
@@ -643,7 +643,8 @@ and the [v1 release-readiness decision](docs/design/forgeops-v1-release-readines
 
 ### Milestone 064 — ForgeOps v1 release-candidate hardening
 
-**Status:** Approved and pending Milestone 063 closeout.
+**Status:** Local implementation and validation complete; draft PR, CI proof,
+and fresh Windows operator acceptance pending.
 
 - Resolve only the seven accepted v1 release blockers.
 - Produce and validate a non-published `1.0.0` wheel and checksum.

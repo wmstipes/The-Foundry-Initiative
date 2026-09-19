@@ -87,6 +87,22 @@ The launcher sets repository source identity only inside its Python process.
 Normal operator use should use the isolated, non-editable installation documented in the
 [ForgeOps guide](../docs/guides/forgeops-operator-learning-guide.md).
 
+## ForgeOps release-candidate helpers
+
+Build the bounded two-file candidate into a new directory, then validate its
+exact contents and checksum:
+
+```powershell
+python .\scripts\build-forgeops-release.py --output-dir .\dist-forgeops
+python .\scripts\validate-forgeops-release.py --dist-dir .\dist-forgeops
+```
+
+The build helper refuses an existing output directory. The validator accepts
+only the expected `signalforge-forgeops` wheel and `SHA256SUMS.txt`, and checks
+identity, version, supported Python range, license, entry point, package scope,
+runtime dependencies, and exact digest. These helpers do not publish, deploy,
+or access a live system. See the [release guide](../docs/guides/forgeops-release.md).
+
 ## Manifest validation
 
 ```powershell

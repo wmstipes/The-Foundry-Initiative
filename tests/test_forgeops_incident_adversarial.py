@@ -182,7 +182,7 @@ class ForgeOpsIncidentAdversarialTests(unittest.TestCase):
 
     def test_decision_adds_no_runtime_or_dependency_authority(self) -> None:
         package = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
-        self.assertEqual("0.15.0", package["project"]["version"])
+        self.assertEqual("1.0.0", package["project"]["version"])
         self.assertEqual([], package["project"]["dependencies"])
         self.assertEqual([], [name for name in sys.modules if name.startswith("openai")])
         parser = build_parser()
