@@ -9,6 +9,7 @@ The Foundry Initiative is a personal engineering, learning, and portfolio projec
 - **Understand the project:** Read the [project overview](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/README.md).
 - **See what is running now:** Review the [current project status](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/project-status.md).
 - **Review the system design:** Explore the [architecture and constraints](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/architecture.md).
+- **Understand testing evidence:** Read the [testing and validation guide](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/testing-and-validation.md).
 - **Follow the project direction:** Open the [roadmap](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/ROADMAP.md).
 - **Operate SignalForge:** Use the [operator runbooks](https://github.com/wmstipes/The-Foundry-Initiative/tree/main/docs/runbooks).
 - **Inspect implementation evidence:** Browse the [milestone records](https://github.com/wmstipes/The-Foundry-Initiative/tree/main/docs/milestones).
