@@ -4,6 +4,7 @@
 - [Project overview](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/README.md)
 - [Current project status](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/project-status.md)
 - [Architecture and constraints](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/architecture.md)
+- [Testing and validation](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/testing-and-validation.md)
 - [Roadmap](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/ROADMAP.md)
 - [Operator runbooks](https://github.com/wmstipes/The-Foundry-Initiative/tree/main/docs/runbooks)
 - [Milestone records](https://github.com/wmstipes/The-Foundry-Initiative/tree/main/docs/milestones)
