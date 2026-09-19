@@ -1,6 +1,6 @@
 # Milestone 057 — ForgeOps runbook-mapping validation
 
-**Status:** Implementation complete; publication pending
+**Status:** Complete, merged, synchronized, and cleaned up through implementation PR #54 and grouped closeout PR #59
 
 **Started:** 2026-09-19
 
