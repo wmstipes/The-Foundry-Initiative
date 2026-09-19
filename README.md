@@ -161,6 +161,10 @@ forgeops runbook map `
   --format text
 ~~~
 
+The [bounded incident-reasoning design](docs/design/forgeops-bounded-incident-reasoning.md)
+defines evaluation and safety requirements for a future incident brief. No
+production incident command or model integration exists yet.
+
 ## Documentation front door
 
 The [GitHub Wiki](https://github.com/wmstipes/The-Foundry-Initiative/wiki) is a curated reader-facing navigation layer. Repository documentation remains authoritative; the Wiki intentionally points to the current project status, architecture, roadmap, runbooks, milestone evidence, and vision instead of copying them.

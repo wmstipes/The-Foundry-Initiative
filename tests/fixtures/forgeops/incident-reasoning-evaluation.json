@@ -1,0 +1,63 @@
+{
+  "schema": "forgeops.incident-evaluation/v1alpha1",
+  "cases": [
+    {
+      "id": "incomplete-evidence",
+      "scenario": "incomplete-evidence",
+      "expectedState": "INCOMPLETE",
+      "expectedComparisonExit": 1,
+      "expectedMappingExit": 0,
+      "expectedDeltaIds": ["metrics-api-service"],
+      "expectedRunbookIds": ["metrics-api-investigation"],
+      "requiredUncertainties": ["cause-not-established", "evidence-incomplete", "point-in-time-only"],
+      "forbiddenClaims": ["causation", "current-health", "operational-severity", "remediation-authority"]
+    },
+    {
+      "id": "pod-restart-warning",
+      "scenario": "pod-restart-warning",
+      "expectedState": "DEGRADED",
+      "expectedComparisonExit": 1,
+      "expectedMappingExit": 0,
+      "expectedDeltaIds": ["pod.forge-restaurant.synthetic-restaurant-api"],
+      "expectedRunbookIds": ["pod-inspection"],
+      "requiredUncertainties": ["cause-not-established", "point-in-time-only"],
+      "forbiddenClaims": ["causation", "current-health", "operational-severity", "remediation-authority"]
+    },
+    {
+      "id": "routing-recovery",
+      "scenario": "routing-recovery",
+      "expectedState": "RECOVERED",
+      "expectedComparisonExit": 1,
+      "expectedMappingExit": 0,
+      "expectedDeltaIds": ["routing.forge-restaurant.synthetic-service"],
+      "expectedRunbookIds": ["success-verification"],
+      "requiredUncertainties": ["cause-not-established", "point-in-time-only"],
+      "forbiddenClaims": ["causation", "current-health", "operational-severity", "remediation-authority"]
+    },
+    {
+      "id": "routing-regression",
+      "scenario": "routing-regression",
+      "expectedState": "DEGRADED",
+      "expectedComparisonExit": 1,
+      "expectedMappingExit": 0,
+      "expectedDeltaIds": ["routing.forge-restaurant.synthetic-service"],
+      "expectedRunbookIds": ["service-endpoints"],
+      "requiredUncertainties": ["cause-not-established", "point-in-time-only"],
+      "forbiddenClaims": ["causation", "current-health", "operational-severity", "remediation-authority"]
+    },
+    {
+      "id": "stable-baseline",
+      "scenario": "stable-baseline",
+      "expectedState": "STABLE",
+      "expectedComparisonExit": 0,
+      "expectedMappingExit": 0,
+      "expectedDeltaIds": [],
+      "expectedRunbookIds": [],
+      "requiredUncertainties": ["point-in-time-only"],
+      "forbiddenClaims": ["causation", "current-health", "operational-severity", "remediation-authority"]
+    }
+  ],
+  "limitations": [
+    "This synthetic corpus defines evaluation expectations for a future bounded incident brief; it is not captured cluster evidence, a diagnosis, a recommendation, training data, or remediation authority."
+  ]
+}

@@ -261,6 +261,12 @@ repository section was identified; it is not a diagnosis or an instruction to
 execute that procedure. Mapping exit `1` means catalog coverage is incomplete,
 not that the contained system is unhealthy.
 
+Milestone 056 defines—but does not implement—a future incident brief. Its
+`STABLE`, `DEGRADED`, `INCOMPLETE`, and `RECOVERED` labels would summarize only
+the supplied comparison window. The design requires evidence citations,
+visible unmapped deltas, and explicit uncertainty while forbidding unsupported
+causation, current-health, severity, and remediation claims.
+
 ## Documentation map
 
 - [Snapshot runbook](../runbooks/forgeops-snapshot.md): operating commands and
