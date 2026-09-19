@@ -24,7 +24,7 @@ forgeops provenance
 
 The report identifies:
 
-- the `foundry-check` distribution version that provides the `forgeops` entry
+- the `signalforge-forgeops` distribution version that provides the `forgeops` entry
   point;
 - the version declared by the loaded ForgeOps module;
 - the Python executable;
@@ -112,7 +112,7 @@ Use the same Python interpreter throughout this inspection:
 
 ~~~powershell
 python -c "import forgeops; print(forgeops.__file__)"
-python -m pip show foundry-check
+python -m pip show signalforge-forgeops
 python -m forgeops provenance
 ~~~
 
@@ -124,10 +124,11 @@ If the loaded path points to an obsolete or temporary checkout, remove that
 distribution from the interpreter:
 
 ~~~powershell
-python -m pip uninstall foundry-check
+python -m pip uninstall signalforge-forgeops foundry-check
 ~~~
 
-Then create or rebuild the repository-local environment described above. Do not
+The second name covers only a legacy pre-v1 repository installation. Then
+create or rebuild the repository-local environment described above. Do not
 manually delete package metadata while leaving an editable link in place.
 
 ## Command map

@@ -17,7 +17,7 @@ from urllib.request import url2pathname
 from . import __version__
 
 
-DISTRIBUTION_NAME = "foundry-check"
+DISTRIBUTION_NAME = "signalforge-forgeops"
 SOURCE_MODE_ENV = "FORGEOPS_SOURCE_ROOT"
 
 

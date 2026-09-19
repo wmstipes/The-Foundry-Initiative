@@ -32,12 +32,14 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install .
 .\.venv\Scripts\forgeops.exe provenance
 .\.venv\Scripts\forgeops.exe snapshot --help
-.\.venv\Scripts\foundry-check.exe --help
 ~~~
 
-The normal install exposes both repository commands without binding a shared
-Python interpreter to an editable checkout. No package is published to a
-registry.
+The ForgeOps v1 wheel exposes only the `forgeops` command without binding a
+shared Python interpreter to an editable checkout. The legacy `foundry-check`
+utility remains in repository history and source tests but is deliberately not
+part of the v1 wheel. The supported public channel is the bounded GitHub
+Release described in the [release guide](../guides/forgeops-release.md), not a
+package registry.
 
 For source development, use the repository-owned launcher:
 

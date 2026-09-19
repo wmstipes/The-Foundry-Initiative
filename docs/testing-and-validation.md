@@ -11,16 +11,16 @@ is not collapsed into one misleading total.
 
 | Suite | Current count | Scope |
 | --- | ---: | --- |
-| ForgeOps Python tests | 141 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 199 | Everything collected below `tests/` |
+| ForgeOps Python tests | 151 | `tests/test_forgeops*.py`; included in both Python totals below |
+| Top-level Python tests | 209 | Everything collected below `tests/` |
 | Restaurant API Python tests | 5 | `apps/restaurant-api/tests/test_main.py` |
-| Complete repository Python discovery | 204 | Top-level 199 plus Restaurant API 5 |
+| Complete repository Python discovery | 214 | Top-level 209 plus Restaurant API 5 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
-The Python counts are nested, not additive: the 141 ForgeOps tests are part of
-the 199 top-level tests, and the 199 plus the five Restaurant API tests produce
-the 204-test complete Python discovery. The Workbench tests and promtool
+The Python counts are nested, not additive: the 151 ForgeOps tests are part of
+the 209 top-level tests, and the 209 plus the five Restaurant API tests produce
+the 214-test complete Python discovery. The Workbench tests and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -48,6 +48,9 @@ The focused ForgeOps suite covers:
   execution authority;
 - deterministic incident states, uncertainty precedence, golden text/JSON
   output, and adversarial boundary cases; and
+- v1 product identity, version and Python-range alignment, MIT metadata,
+  package selection, bounded workflow permissions and assets, release-note
+  boundaries, and clean candidate source staging; and
 - offline isolation, including tests that prove collection or network runners
   are not constructed by offline commands.
 
@@ -105,10 +108,10 @@ $env:PYTHONPATH = "$PWD\src;$PWD\apps\restaurant-api"
 Useful narrower Python suites are:
 
 ~~~powershell
-# Top-level Python suite: currently 199 tests
+# Top-level Python suite: currently 209 tests
 .\.venv\Scripts\python.exe -m pytest -q .\tests
 
-# Focused ForgeOps suite: currently 141 tests
+# Focused ForgeOps suite: currently 151 tests
 .\.venv\Scripts\python.exe -m unittest discover `
   -s tests -p 'test_forgeops*.py' -v
 
@@ -151,6 +154,7 @@ The GitHub Actions workflows remain the executable source of truth for CI
 environment setup and path triggers:
 
 - `.github/workflows/forgeops-ci.yml`
+- `.github/workflows/forgeops-release.yml`
 - `.github/workflows/restaurant-api-ci.yml`
 - `.github/workflows/forge-yaml-workbench-ci.yml`
 - `.github/workflows/k8s-manifest-validation.yml`
