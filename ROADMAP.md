@@ -527,7 +527,7 @@ See [Milestone 055](docs/milestones/milestone-055-forgeops-runbook-mapping.md).
 
 ### Milestone 056 — Bounded incident-reasoning design and evaluation
 
-**Status:** Implemented and accepted locally; publication in progress.
+**Status:** Implementation complete and merged through PR #51 at `04b686a`; documentation-only closeout and grouped branch cleanup are in progress. Gates 4-6 were closed as not applicable.
 
 - Define the proposed explicit incident-brief inputs, disclosure-bounded
   output, evidence citations, uncertainty rules, and authority limitations.
