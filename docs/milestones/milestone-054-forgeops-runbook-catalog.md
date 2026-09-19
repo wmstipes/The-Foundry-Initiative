@@ -1,6 +1,6 @@
 # Milestone 054 — ForgeOps validated runbook knowledge catalog
 
-**Status:** Implementation complete and merged; documentation-only closeout in progress
+**Status:** Complete, merged, synchronized, and cleaned up
 
 **Started:** 2026-09-19
 
@@ -81,8 +81,8 @@ that every referenced file and heading exists.
 6. Live acceptance — closed as not applicable.
 7. Ready for review — complete after ForgeOps CI run `35413007290` passed.
 8. Merge — complete; PR #47 merged at `a59dec9876b01345b71403c16f7106931c0c1af8`.
-9. Documentation-only closeout — pre-approved and in progress.
-10. Branch cleanup — pre-approved; pending closeout merge verification.
+9. Documentation-only closeout — complete; PR #48 merged at `a4fbf0d9d1d71e81d7bbf2f290559b7e9e45d6e9`.
+10. Branch cleanup — complete; both Milestone 054 branches were deleted locally and remotely.
 
 ## Publication and merge evidence
 

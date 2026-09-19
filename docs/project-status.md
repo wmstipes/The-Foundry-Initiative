@@ -343,15 +343,14 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Publish, merge, and close out Milestone 056. Then delete the six merged remote
-branches for Milestones 054-056 under one action-time confirmation and select
-the next bounded increment. No production incident-reasoning implementation is
-authorized by the Milestone 056 design.
+Select the next bounded increment through a fresh read-only planning pass. A
+production incident brief would first require a strict mapping-result loader
+and deterministic implementation; Milestone 056 does not authorize model use.
 
-Milestone 056 implementation PR #51 merged at
-`04b686a6b790133914c4f058f00390f8ab43eaa9` with exact accepted tree
-`d8d2073408f2efc64491e294b3604cd11a2a6951`; ForgeOps CI run `35414081332`
-passed. Its documentation-only closeout is in progress.
+Milestones 054-056 are complete, merged, synchronized, and cleaned up. Their
+implementation PRs are #47, #49, and #51; their closeout PRs are #48, #50, and
+#52. All six milestone branches were deleted locally and remotely after the
+grouped Gate 10 confirmation.
 
 ## Supporting completed work
 

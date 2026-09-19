@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-055 are implemented and merged; Milestones 054-055 remote branch cleanup remains queued for one grouped confirmation. Milestone 056 defines the bounded incident-reasoning contract and synthetic evaluation boundary without adding a production reasoning command. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison and replay, a bounded synthetic scenario corpus, explicit local execution identity, exact-byte integrity, validated runbook knowledge, and grounded deterministic mapping.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-056 are complete, merged, closed, synchronized, and cleaned up. Milestone 056 defines the bounded incident-reasoning contract and synthetic evaluation boundary without adding a production reasoning command. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison and replay, a bounded synthetic scenario corpus, explicit local execution identity, exact-byte integrity, validated runbook knowledge, and grounded deterministic mapping.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -493,7 +493,7 @@ See [Milestone 053](docs/milestones/milestone-053-forgeops-scenario-replay.md).
 
 ### Milestone 054 — Validated runbook knowledge catalog
 
-**Status:** Implementation complete and merged through PR #47 at `a59dec9`; documentation-only closeout and branch cleanup are in progress. Gates 4-6 were closed as not applicable.
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #47 merged at `a59dec9`; closeout PR #48 merged at `a4fbf0d`. Gate 10 removed both Milestone 054 branches locally and remotely. Gates 4-6 were closed as not applicable.
 
 - Add `forgeops runbook catalog validate --input <file>` as a separate offline
   validator for `forgeops.runbook-catalog/v1alpha1`.
@@ -509,7 +509,7 @@ See [Milestone 054](docs/milestones/milestone-054-forgeops-runbook-catalog.md).
 
 ### Milestone 055 — Deterministic grounded runbook mapping
 
-**Status:** Implementation complete and merged through PR #49 at `113e629`; documentation-only closeout and branch cleanup are in progress. Gates 4-6 were closed as not applicable.
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #49 merged at `113e629`; closeout PR #50 merged at `5e5bcde`. Gate 10 removed both Milestone 055 branches locally and remotely. Gates 4-6 were closed as not applicable.
 
 - Add `forgeops runbook map --comparison <file> --catalog <file>` with text and
   JSON output.
@@ -527,7 +527,7 @@ See [Milestone 055](docs/milestones/milestone-055-forgeops-runbook-mapping.md).
 
 ### Milestone 056 — Bounded incident-reasoning design and evaluation
 
-**Status:** Implementation complete and merged through PR #51 at `04b686a`; documentation-only closeout and grouped branch cleanup are in progress. Gates 4-6 were closed as not applicable.
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #51 merged at `04b686a`; closeout PR #52 merged at `548b63e`. Gate 10 removed both Milestone 056 branches locally and remotely. Gates 4-6 were closed as not applicable.
 
 - Define the proposed explicit incident-brief inputs, disclosure-bounded
   output, evidence citations, uncertainty rules, and authority limitations.

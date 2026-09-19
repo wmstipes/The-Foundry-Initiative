@@ -1,6 +1,6 @@
 # Milestone 055 — ForgeOps deterministic grounded runbook mapping
 
-**Status:** Implementation complete and merged; documentation-only closeout in progress
+**Status:** Complete, merged, synchronized, and cleaned up
 
 **Started:** 2026-09-19
 
@@ -96,8 +96,8 @@ A known regression or recovery can map completely and return mapping exit `0`.
 6. Live acceptance — closed as not applicable.
 7. Ready for review — complete after ForgeOps CI run `35413595246` passed.
 8. Merge — complete; PR #49 merged at `113e629ee105dce3f3a09d0f12c6bce4f53129a4`.
-9. Documentation-only closeout — pre-approved and in progress.
-10. Branch cleanup — pre-approved; pending closeout merge verification.
+9. Documentation-only closeout — complete; PR #50 merged at `5e5bcde2f2e8b1b70e413751b3cfbccc1cb16295`.
+10. Branch cleanup — complete; both Milestone 055 branches were deleted locally and remotely.
 
 ## Publication and merge evidence
 
