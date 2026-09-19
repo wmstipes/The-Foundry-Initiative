@@ -556,6 +556,18 @@ and the [bounded incident-reasoning design](docs/design/forgeops-bounded-inciden
 
 See [Milestone 057](docs/milestones/milestone-057-forgeops-runbook-mapping-validation.md).
 
+### Milestone 058 — Deterministic structured incident brief
+
+**Status:** Implementation complete; publication pending.
+
+- Add JSON-only `forgeops incident brief` for explicit comparison and mapping files.
+- Cross-check both validated artifacts before rendering.
+- Add the neutral `CHANGED` state so the classifier is total without making a health claim.
+- Preserve citations, unmapped deltas, uncertainty, and fixed authority limitations.
+- Add no model, retrieval, diagnosis, recommendation, network, or cluster authority.
+
+See [Milestone 058](docs/milestones/milestone-058-forgeops-structured-incident-brief.md).
+
 Potential outcomes:
 
 - Collect a bounded, read-only snapshot of relevant Kubernetes state.

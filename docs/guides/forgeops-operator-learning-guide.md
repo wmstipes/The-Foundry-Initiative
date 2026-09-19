@@ -142,6 +142,7 @@ manually delete package metadata while leaving an editable link in place.
 | `forgeops runbook catalog validate` | One explicit runbook-catalog file | Validity and bounded counts | Catalog validation |
 | `forgeops runbook map` | Explicit comparison and runbook-catalog files | Deterministic text or mapping JSON | Runbook mapping |
 | `forgeops runbook mapping validate` | One explicit saved mapping file | Contract-validity summary | Mapping validation |
+| `forgeops incident brief` | Explicit comparison and mapping files | Deterministic incident-brief JSON | Brief construction |
 
 ## Protect exact artifact bytes
 
@@ -215,6 +216,7 @@ recommendation.
 | Scenario replay | Actual comparison matches expectation | Valid replay differs from expectation | Evidence, expected comparison, or chronology invalid |
 | Runbook mapping | Every delta is mapped | Valid deltas remain unmapped | Comparison or catalog invalid/unreadable |
 | Mapping validation | Mapping contract valid | Not used | Mapping invalid or unreadable |
+| Incident brief | Valid consistent inputs rendered | Not used | Input invalid, unreadable, or inconsistent |
 
 Validation exit `0` does not mean the contained snapshot is healthy. Comparison
 exit `1` does not mean an incident is severe or unresolved; a valid recovery
@@ -268,11 +270,16 @@ strict serialized contract. A valid mapping may contain `mappingExit=1`; the
 validator does not prove that it came from the canonical catalog or that a
 referenced procedure applies.
 
-Milestone 056 defines—but does not implement—a future incident brief. Its
+Milestone 056 defined the contract without implementing an incident brief. Its
 `STABLE`, `DEGRADED`, `INCOMPLETE`, and `RECOVERED` labels would summarize only
 the supplied comparison window. The design requires evidence citations,
 visible unmapped deltas, and explicit uncertainty while forbidding unsupported
 causation, current-health, severity, and remediation claims.
+
+Milestone 058 implements the first JSON-only deterministic brief. `CHANGED`
+closes the neutral-delta gap in the original four-state design. Brief exit `0`
+means only that valid, mutually consistent inputs were rendered; it is
+independent of the contained state.
 
 ## Documentation map
 

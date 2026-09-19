@@ -31,6 +31,7 @@ from .integrity import (
     render_integrity_verification,
     verify_integrity,
 )
+from .incident import IncidentBriefError, build_incident_brief, render_incident_brief_json
 from .provenance import inspect_execution_provenance, render_execution_provenance
 from .replay import render_scenario_replay, replay_scenario
 from .render import render_json, render_markdown, render_text
@@ -154,6 +155,23 @@ def build_parser() -> argparse.ArgumentParser:
         "--format", choices=("text", "json"), default="text",
         dest="output_format", help="output format (default: text)",
     )
+    incident = subparsers.add_parser(
+        "incident", help="operate on explicit offline incident artifacts",
+    )
+    incident_commands = incident.add_subparsers(dest="incident_command", required=True)
+    brief = incident_commands.add_parser(
+        "brief", help="render a deterministic artifact-bounded incident brief",
+    )
+    brief.add_argument(
+        "--comparison", required=True, help="explicit local comparison file",
+    )
+    brief.add_argument(
+        "--mapping", required=True, help="explicit local runbook-mapping file",
+    )
+    brief.add_argument(
+        "--format", choices=("json",), default="json",
+        dest="output_format", help="output format (json)",
+    )
     return parser
 
 
@@ -195,6 +213,21 @@ def main(argv: Sequence[str] | None = None) -> int:
         else:
             render_runbook_mapping_text(mapping, sys.stdout)
         return mapping.exit_code
+    if args.command == "incident" and args.incident_command == "brief":
+        try:
+            comparison = load_comparison_file(args.comparison)
+        except ComparisonValidationError as exc:
+            return _fail(f"comparison invalid: {exc.code}: {exc.summary}")
+        try:
+            mapping = load_runbook_mapping(args.mapping)
+        except RunbookMappingError as exc:
+            return _fail(f"runbook mapping invalid: {exc.code}: {exc.summary}")
+        try:
+            brief = build_incident_brief(comparison, mapping)
+        except IncidentBriefError as exc:
+            return _fail(f"incident brief invalid: {exc.code}: {exc.summary}")
+        render_incident_brief_json(brief, sys.stdout)
+        return 0
     if args.command == "runbook" and args.runbook_command == "mapping":
         try:
             mapping = load_runbook_mapping(args.input)

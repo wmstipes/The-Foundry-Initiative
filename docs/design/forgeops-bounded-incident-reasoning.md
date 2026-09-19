@@ -2,8 +2,8 @@
 
 ## Status
 
-Accepted Milestone 056 design and synthetic evaluation boundary. No production
-incident command or model integration exists.
+Accepted Milestone 056 design and synthetic evaluation boundary, advanced by
+Milestone 058's deterministic structured brief. No model integration exists.
 
 ## Purpose
 
@@ -21,19 +21,21 @@ forgeops incident brief \
   --format text|json
 ~~~
 
-This interface is a design target only. A later milestone must add a strict
-mapping-result loader before implementing the command.
+Milestones 057 and 058 implement strict mapping loading and the JSON format.
+Text rendering remains deferred.
 
 ## Proposed deterministic state vocabulary
 
 | State | Bounded meaning |
 | --- | --- |
 | `STABLE` | The supplied comparison contains no deltas. |
+| `CHANGED` | Valid deltas exist but do not establish stable, degraded, incomplete, or recovered state. |
 | `DEGRADED` | At least one supplied delta ends in `WARN` or `FAIL`. |
 | `INCOMPLETE` | At least one supplied delta ends in `UNKNOWN`; uncertainty takes precedence. |
 | `RECOVERED` | Changed checks end in `PASS` after an earlier non-passing state, with no later non-passing delta. |
 
-These labels summarize the supplied artifacts only. They are not incident
+`CHANGED` closes the original neutral-delta gap. These labels summarize the
+supplied artifacts only. They are not incident
 severity, current health, business impact, or causal analysis.
 
 ## Proposed brief contract
