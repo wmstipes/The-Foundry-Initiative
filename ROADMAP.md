@@ -351,6 +351,12 @@ Each telemetry layer should answer a specific operational question before it is 
 **Status:** ForgeOps v1.0.0 complete — deterministic incident-copilot baseline,
 demonstration, release proof, publication, and closeout are complete
 
+The separately maintained
+[ForgeOps post-v1 improvement roadmap](docs/roadmaps/forgeops-post-v1-roadmap.md)
+defines candidate Milestones 066-072. It is direction, not implementation
+authorization; each candidate must pass the governing-purpose and milestone
+admission gates before work begins.
+
 Evolve the rules-based `/analyze` endpoint into a grounded Kubernetes incident copilot.
 
 ### Milestone 044 — Read-only health snapshot design
@@ -689,12 +695,19 @@ immutable tag and public release.
 
 Potential outcomes:
 
-- Collect a bounded, read-only snapshot of relevant Kubernetes state.
-- Normalize incidents, symptoms, events, logs, and metrics into a structured schema.
-- Combine deterministic checks with retrieval and language-model reasoning where each adds value.
-- Cite the evidence used for every diagnosis and recommendation.
-- Evaluate ForgeOps against repeatable failure scenarios.
+- Make the installed-artifact demonstration easier to run and review without
+  expanding its authority.
+- Demonstrate documented rejection and mismatch behavior through exact
+  synthetic trust-failure cases.
+- Strengthen installed-wheel portability and release-provenance evidence only
+  where it improves a named trust claim.
+- Reconsider model or retrieval assistance only after a concrete operator
+  question remains unanswered and a measurable evaluation boundary exists.
 - Preserve human approval for operational changes; autonomous cluster mutation is out of scope until explicit safety criteria exist.
+
+Model or retrieval work is not active, broader telemetry requires a concrete
+question, and informational output does not gain remediation authority. The
+post-v1 roadmap is the current source for candidate ForgeOps sequencing.
 
 ## Phase 7 — Portfolio and hybrid-cloud expansion
 

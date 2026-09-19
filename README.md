@@ -20,7 +20,7 @@ The goal is to keep building, documenting, learning, and turning experience into
 
 ## Current focus
 
-The active workstream is **SignalForge**, a Raspberry Pi Kubernetes lab designed to build practical experience with Kubernetes, containerized applications, infrastructure troubleshooting, and eventually AI-assisted operations.
+The active workstream is **SignalForge**, a Raspberry Pi Kubernetes lab designed to build practical experience with Kubernetes, containerized applications, infrastructure troubleshooting, deterministic incident analysis, and carefully gated future assistance.
 
 SignalForge uses a restaurant analogy to make Kubernetes concepts easier to understand:
 
@@ -30,7 +30,8 @@ SignalForge uses a restaurant analogy to make Kubernetes concepts easier to unde
 * a Service is the stable phone number
 * a ConfigMap is the local settings sheet
 * NodePort is the public front door
-* the future AI agent is the operations manager
+* ForgeOps is the evidence-bound operations analyst; the human operator retains
+  diagnosis and remediation authority
 
 The cluster currently hosts the **SignalForge Restaurant API**, a FastAPI service, and **Forge YAML Workbench**, a browser-local YAML inspector with Kubernetes and General YAML modes.
 
@@ -54,7 +55,13 @@ It currently includes:
 * lightweight in-cluster Prometheus manifests with Pod-level discovery
 * Kubernetes Metrics Server for current node and Pod CPU/memory visibility
 
-The long-term goal is to evolve this service into **ForgeOps**, an AI-assisted Kubernetes incident copilot that can help analyze cluster symptoms, summarize likely causes, and recommend next troubleshooting steps.
+**ForgeOps v1.0.0** is now the released deterministic incident copilot. It
+collects a bounded read-only snapshot, validates and compares supplied evidence,
+maps cataloged runbook references, and renders an artifact-bounded incident
+brief. It does not infer cause, determine operational severity or impact,
+recommend remediation, or authorize execution. Model and retrieval work remains
+deferred until a demonstrated operator question cannot be answered by the
+deterministic baseline.
 
 ## Forge YAML Workbench
 
@@ -322,6 +329,7 @@ Planned next steps include:
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
 * maintain the bounded ForgeOps v1 release and require new work to improve the final incident-copilot demonstration, prove trustworthiness, or prepare a future release; model and retrieval integration remain deferred because the demonstration identified no concrete unmet operator question
+* follow the [ForgeOps post-v1 improvement roadmap](docs/roadmaps/forgeops-post-v1-roadmap.md) for separately approved demonstration, trust, and future-release candidates
 
 ## Why this project exists
 

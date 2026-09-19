@@ -1,12 +1,15 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-16
+**Last updated:** 2026-09-19
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
 ## System purpose
 
-SignalForge is a four-node Raspberry Pi Kubernetes lab for practicing cloud-native application delivery, release engineering, observability, troubleshooting, and eventually AI-assisted operations.
+SignalForge is a four-node Raspberry Pi Kubernetes lab for practicing
+cloud-native application delivery, release engineering, observability,
+troubleshooting, deterministic incident analysis, and carefully gated future
+assistance.
 
 The primary workload is the SignalForge Restaurant API, a small FastAPI service that makes infrastructure behavior visible through health endpoints, runtime metadata, application metrics, and intentionally simple operational workflows. Forge YAML Workbench is a separate stateless browser application for inspecting Kubernetes and general YAML without granting it cluster access.
 
@@ -284,7 +287,11 @@ Potential next architecture steps include:
 2. Continue the demonstrated Prometheus and Grafana backup cadence.
 3. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
 4. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
-5. Use only contract-validated evidence or the bounded comparison JSON when separately planning scenario replay, incident reasoning, or recommendations.
+5. Preserve ForgeOps v1.0.0 as the deterministic, informational baseline and
+   admit post-v1 work only through the
+   [ForgeOps improvement roadmap](roadmaps/forgeops-post-v1-roadmap.md).
+6. Keep model, retrieval, broader telemetry, and remediation deferred until a
+   concrete operator question and measurable acceptance boundary justify them.
 
 ## Decision records
 

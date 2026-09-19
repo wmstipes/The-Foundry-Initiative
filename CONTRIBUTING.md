@@ -4,7 +4,8 @@ The Foundry Initiative currently uses a lightweight, review-first workflow.
 
 ## Working approach
 
-1. Create a focused branch from `main` using `agent/<description>` or `feature/<description>`.
+1. Create a focused branch from `main` using `codex/<description>` for assisted
+   work or `feature/<description>` for other focused changes.
 2. Keep each change small enough to review and explain.
 3. Add or update documentation alongside code.
 4. Run relevant tests and checks before opening a pull request. Use the
