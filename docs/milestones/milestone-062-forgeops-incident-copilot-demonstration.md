@@ -1,7 +1,7 @@
 # Milestone 062 — ForgeOps deterministic incident-copilot demonstration
 
-**Status:** Accepted through live read-only Gate 6; PR readiness and merge
-pending
+**Status:** Complete and merged through PR #63; documentation-only closeout
+in progress
 
 **Started:** 2026-09-19
 
@@ -126,10 +126,25 @@ documentation.
    configuration, rollout, restart, or persistent state changes.
 6. Live read-only demonstration — complete; both snapshots, integrity checks,
    comparison, mapping, and briefs passed within the approved boundary.
-7. Acceptance review and PR readiness — pending final published-tree review.
-8. Merge — pending.
-9. Documentation-only closeout — pending.
+7. Acceptance review and PR readiness — complete; accepted remote head
+   `b7969d888f9ca032c9a7969af3783d154e565ae2` resolved to tree
+   `18894b421b35d9c2d959946f15448396140fe454`, exactly matching the accepted
+   implementation tree, and PR #63 was marked ready.
+8. Merge — complete; PR #63 was squash-merged at
+   `6e7e5802037fa55245761410196f165281a4c804`.
+9. Documentation-only closeout — in progress; this update records the accepted
+   demonstration and merge without adding operational capability.
 10. Branch cleanup and synchronization — pending.
+
+## Merge and publication evidence
+
+- Accepted implementation head: `b7969d888f9ca032c9a7969af3783d154e565ae2`.
+- Exact accepted implementation tree: `18894b421b35d9c2d959946f15448396140fe454`.
+- Implementation PR: #63.
+- Squash merge: `6e7e5802037fa55245761410196f165281a4c804`.
+- GitHub Actions did not run because the documentation-only paths were outside
+  the repository's workflow filters; the approved local suites and validators
+  remain the executable acceptance evidence.
 
 ## Deferred decisions
 

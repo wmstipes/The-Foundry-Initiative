@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-09-19
 
-**Current phase:** Operational visibility and ForgeOps deterministic incident-copilot demonstration
+**Current phase:** Operational visibility and ForgeOps deterministic v1 readiness
 
 ## Summary
 
@@ -204,6 +204,7 @@ historical evidence rather than being rewritten when the suite grows.
 - Operator assessment: no concrete operator question remained unanswered by the deterministic brief, so model and retrieval integration remain deferred
 - Demonstration boundary: synthetic `DEGRADED` behavior remains explicitly separate from the live `STABLE` baseline; no failure was injected and no live artifact was committed or published
 - Authority boundary: no new command, schema, package version, dependency, model, retrieval service, broader collection, deployment, recommendation, remediation, or mutation is introduced
+- Publication and merge: accepted implementation head `b7969d888f9ca032c9a7969af3783d154e565ae2` resolved to exact tree `18894b421b35d9c2d959946f15448396140fe454`; PR #63 was marked ready and squash-merged at `6e7e5802037fa55245761410196f165281a4c804`
 
 ## Milestone 038 closeout
 
@@ -361,19 +362,23 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete Milestone 062 PR readiness, merge, documentation-only closeout, and
-branch cleanup. The accepted demonstration identified no concrete unmet
-operator question, so model and retrieval integration remain deferred.
+Complete Milestone 062 documentation-only closeout and branch cleanup, then
+open a separate planning gate for a bounded ForgeOps v1-readiness assessment.
+That assessment must prepare the v1 release and preserve the current command,
+evidence, trust, offline-first, approval, and authority boundaries. The
+accepted demonstration identified no concrete unmet operator question, so
+model and retrieval integration remain deferred.
 
 Milestones 054-061 are complete, merged, synchronized, and cleaned up. The
 Milestone 057-061 implementation PRs are #54-#58; grouped closeout PR #59
 records final acceptance and Gate 10 cleanup. All milestone and previously
 retained historical branches were deleted locally and remotely.
 
-Milestone 062 planning, offline rehearsal, and live read-only acceptance are
-complete. The live demonstration used only the existing bounded reads from the
-operator workstation; no runtime, deployment, persistent state, or cluster
-object changed.
+Milestone 062 planning, offline rehearsal, live read-only acceptance, PR
+readiness, and merge are complete through PR #63 at `6e7e580`. The live
+demonstration used only the existing bounded reads from the operator
+workstation; no runtime, deployment, persistent state, or cluster object
+changed.
 
 ## Supporting completed work
 
