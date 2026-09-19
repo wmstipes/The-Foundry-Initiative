@@ -580,6 +580,17 @@ See [Milestone 058](docs/milestones/milestone-058-forgeops-structured-incident-b
 
 See [Milestone 059](docs/milestones/milestone-059-forgeops-incident-brief-replay.md).
 
+### Milestone 060 — Deterministic operator-facing incident brief
+
+**Status:** Implementation complete; publication pending.
+
+- Add a fixed human-readable renderer over the accepted structured brief.
+- Preserve parity with JSON, visible unmapped deltas, uncertainty, and limitations.
+- Label runbook references as informational catalog-rule matches.
+- Add no prose generation, model, diagnosis, recommendation, or operational authority.
+
+See [Milestone 060](docs/milestones/milestone-060-forgeops-operator-incident-brief.md).
+
 Potential outcomes:
 
 - Collect a bounded, read-only snapshot of relevant Kubernetes state.

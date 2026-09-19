@@ -184,6 +184,8 @@ forgeops incident brief `
 The command cross-checks both validated inputs and returns process exit `0`
 when a brief is rendered, regardless of its bounded `STABLE`, `CHANGED`,
 `DEGRADED`, `INCOMPLETE`, or `RECOVERED` state. No model integration exists.
+Omit `--format` or select `--format text` for the deterministic operator-facing
+view of the same facts and limitations.
 
 Replay a brief against an explicit strict expectation:
 

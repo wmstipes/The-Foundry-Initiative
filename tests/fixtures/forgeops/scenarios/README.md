@@ -29,7 +29,9 @@ Each directory contains:
 - `expected-comparison.json`: the exact deterministic
   `forgeops.comparison/v1alpha1` output; and
 - `expected-incident-brief.json`: the exact deterministic
-  `forgeops.incident-brief/v1alpha1` output after canonical runbook mapping.
+  `forgeops.incident-brief/v1alpha1` output after canonical runbook mapping; and
+- `expected-incident-brief.txt`: the exact deterministic operator-facing view
+  of that same brief model.
 
 Use the existing offline interfaces to inspect a scenario:
 

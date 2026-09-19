@@ -457,3 +457,52 @@ def render_incident_brief_json(brief: IncidentBrief, stream: TextIO) -> None:
     }
     json.dump(payload, stream, ensure_ascii=True, indent=2)
     stream.write("\n")
+
+
+def render_incident_brief_text(brief: IncidentBrief, stream: TextIO) -> None:
+    """Render the same bounded brief model for deterministic human review."""
+
+    stream.write("ForgeOps incident brief\n")
+    stream.write(
+        f"Supplied window: {brief.before_collected_at_utc} -> "
+        f"{brief.after_collected_at_utc}\n"
+    )
+    stream.write(f"Bounded state: {brief.state.value}\n")
+
+    stream.write("\nDeterministic facts\n")
+    if not brief.facts:
+        stream.write("- none\n")
+    for fact in brief.facts:
+        before = fact.before_status.value if fact.before_status is not None else "-"
+        after = fact.after_status.value if fact.after_status is not None else "-"
+        stream.write(
+            f"- {fact.check_id}: {fact.delta_kind.value} {before} -> {after}\n"
+        )
+
+    stream.write("\nCataloged runbook references (informational only)\n")
+    if not brief.runbooks:
+        stream.write("- none\n")
+    for runbook in brief.runbooks:
+        stream.write(
+            f"- {runbook.runbook_id}: {runbook.title} "
+            f"[{runbook.path}#{runbook.section}]\n"
+        )
+        for reason in runbook.reasons:
+            stream.write(
+                f"  matched rule: {reason.check_id} {reason.delta_kind} "
+                f"after={reason.after_status.value}\n"
+            )
+
+    stream.write("\nUnmapped deltas\n")
+    if not brief.unmapped_delta_ids:
+        stream.write("- none\n")
+    for check_id in brief.unmapped_delta_ids:
+        stream.write(f"- {check_id}\n")
+
+    stream.write("\nUncertainty\n")
+    for uncertainty in brief.uncertainties:
+        stream.write(f"- {uncertainty}\n")
+
+    stream.write("\nAuthority limitations\n")
+    for limitation in INCIDENT_LIMITATIONS:
+        stream.write(f"- {limitation}\n")

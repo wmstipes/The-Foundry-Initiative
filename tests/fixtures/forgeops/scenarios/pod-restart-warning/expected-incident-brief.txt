@@ -1,0 +1,21 @@
+ForgeOps incident brief
+Supplied window: 2026-09-17T15:10:00Z -> 2026-09-17T15:15:00Z
+Bounded state: DEGRADED
+
+Deterministic facts
+- pod.forge-restaurant.synthetic-restaurant-api: STATUS_CHANGED PASS -> WARN
+
+Cataloged runbook references (informational only)
+- pod-inspection: Inspect Pod state and restarts [docs/runbooks/restaurant-api-operator-runbook.md#Check Pods]
+  matched rule: pod.forge-restaurant.synthetic-restaurant-api STATUS_CHANGED after=WARN
+
+Unmapped deltas
+- none
+
+Uncertainty
+- cause-not-established
+- point-in-time-only
+
+Authority limitations
+- This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.
+- Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution.

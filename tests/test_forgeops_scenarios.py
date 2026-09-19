@@ -80,7 +80,7 @@ class ForgeOpsScenarioCorpusTests(unittest.TestCase):
                 self.assertEqual(
                     {
                         "before.json", "after.json", "expected-comparison.json",
-                        "expected-incident-brief.json",
+                        "expected-incident-brief.json", "expected-incident-brief.txt",
                     },
                     files,
                 )

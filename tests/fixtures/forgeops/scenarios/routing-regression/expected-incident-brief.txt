@@ -1,0 +1,21 @@
+ForgeOps incident brief
+Supplied window: 2026-09-17T15:20:00Z -> 2026-09-17T15:25:00Z
+Bounded state: DEGRADED
+
+Deterministic facts
+- routing.forge-restaurant.synthetic-service: STATUS_CHANGED PASS -> FAIL
+
+Cataloged runbook references (informational only)
+- service-endpoints: Investigate Service endpoint routing [docs/runbooks/restaurant-api-operator-runbook.md#Common Issue: Service Exists but Has No Endpoints]
+  matched rule: routing.forge-restaurant.synthetic-service STATUS_CHANGED after=FAIL
+
+Unmapped deltas
+- none
+
+Uncertainty
+- cause-not-established
+- point-in-time-only
+
+Authority limitations
+- This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.
+- Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution.
