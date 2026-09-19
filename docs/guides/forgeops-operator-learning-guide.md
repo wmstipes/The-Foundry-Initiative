@@ -141,6 +141,7 @@ manually delete package metadata while leaving an editable link in place.
 | `forgeops scenario replay` | Explicit before, after, and expected-comparison files | Replay match summary | Scenario replay |
 | `forgeops runbook catalog validate` | One explicit runbook-catalog file | Validity and bounded counts | Catalog validation |
 | `forgeops runbook map` | Explicit comparison and runbook-catalog files | Deterministic text or mapping JSON | Runbook mapping |
+| `forgeops runbook mapping validate` | One explicit saved mapping file | Contract-validity summary | Mapping validation |
 
 ## Protect exact artifact bytes
 
@@ -213,6 +214,7 @@ recommendation.
 | Integrity verification | Validated bytes and metadata match | Valid inputs do not match | Evidence or record invalid/unreadable |
 | Scenario replay | Actual comparison matches expectation | Valid replay differs from expectation | Evidence, expected comparison, or chronology invalid |
 | Runbook mapping | Every delta is mapped | Valid deltas remain unmapped | Comparison or catalog invalid/unreadable |
+| Mapping validation | Mapping contract valid | Not used | Mapping invalid or unreadable |
 
 Validation exit `0` does not mean the contained snapshot is healthy. Comparison
 exit `1` does not mean an incident is severe or unresolved; a valid recovery
@@ -260,6 +262,11 @@ selectors against immutable comparison deltas. A match explains why a
 repository section was identified; it is not a diagnosis or an instruction to
 execute that procedure. Mapping exit `1` means catalog coverage is incomplete,
 not that the contained system is unhealthy.
+
+Mapping validation exit `0` means only that the saved mapping satisfies its
+strict serialized contract. A valid mapping may contain `mappingExit=1`; the
+validator does not prove that it came from the canonical catalog or that a
+referenced procedure applies.
 
 Milestone 056 defines—but does not implement—a future incident brief. Its
 `STABLE`, `DEGRADED`, `INCOMPLETE`, and `RECOVERED` labels would summarize only

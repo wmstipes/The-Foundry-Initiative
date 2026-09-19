@@ -36,6 +36,8 @@ from .replay import render_scenario_replay, replay_scenario
 from .render import render_json, render_markdown, render_text
 from .runbooks import RunbookCatalogError, load_runbook_catalog
 from .runbook_mapping import (
+    RunbookMappingError,
+    load_runbook_mapping,
     map_runbooks,
     render_runbook_mapping_json,
     render_runbook_mapping_text,
@@ -127,6 +129,18 @@ def build_parser() -> argparse.ArgumentParser:
     catalog_validate.add_argument(
         "--input", required=True, help="explicit local runbook-catalog file",
     )
+    mapping_artifact = runbook_commands.add_parser(
+        "mapping", help="operate on a saved runbook mapping",
+    )
+    mapping_commands = mapping_artifact.add_subparsers(
+        dest="mapping_command", required=True,
+    )
+    mapping_validate = mapping_commands.add_parser(
+        "validate", help="validate a ForgeOps runbook mapping",
+    )
+    mapping_validate.add_argument(
+        "--input", required=True, help="explicit local runbook-mapping file",
+    )
     mapping = runbook_commands.add_parser(
         "map", help="map a validated comparison to cataloged runbook sections",
     )
@@ -181,6 +195,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         else:
             render_runbook_mapping_text(mapping, sys.stdout)
         return mapping.exit_code
+    if args.command == "runbook" and args.runbook_command == "mapping":
+        try:
+            mapping = load_runbook_mapping(args.input)
+        except RunbookMappingError as exc:
+            return _fail(f"runbook mapping invalid: {exc.code}: {exc.summary}")
+        sys.stdout.write(
+            f"VALID forgeops.runbook-mapping/v1alpha1 "
+            f"totalDeltas={mapping.total_deltas} "
+            f"mappedDeltas={len(mapping.mapped_delta_ids)} "
+            f"unmappedDeltas={len(mapping.unmapped_delta_ids)} "
+            f"runbookMatches={len(mapping.matches)} "
+            f"containedMappingExit={mapping.exit_code}\n"
+        )
+        return 0
     if args.command == "evidence" and args.evidence_command == "compare":
         try:
             before = load_evidence_file(args.before)

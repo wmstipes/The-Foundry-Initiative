@@ -545,6 +545,17 @@ See [Milestone 055](docs/milestones/milestone-055-forgeops-runbook-mapping.md).
 See [Milestone 056](docs/milestones/milestone-056-forgeops-incident-reasoning-design.md)
 and the [bounded incident-reasoning design](docs/design/forgeops-bounded-incident-reasoning.md).
 
+### Milestone 057 — Strict runbook-mapping artifact validation
+
+**Status:** Implementation complete; publication pending.
+
+- Add `forgeops runbook mapping validate --input <file>`.
+- Strictly load the existing `forgeops.runbook-mapping/v1alpha1` contract.
+- Keep validation success separate from contained mapping completeness.
+- Add no incident state, briefing, diagnosis, model, network, or cluster authority.
+
+See [Milestone 057](docs/milestones/milestone-057-forgeops-runbook-mapping-validation.md).
+
 Potential outcomes:
 
 - Collect a bounded, read-only snapshot of relevant Kubernetes state.

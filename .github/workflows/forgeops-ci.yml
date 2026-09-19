@@ -62,3 +62,5 @@ jobs:
           forgeops runbook catalog validate --input docs/reference/forgeops-runbook-catalog.json
           forgeops runbook map --comparison tests/fixtures/forgeops/scenarios/routing-regression/expected-comparison.json --catalog docs/reference/forgeops-runbook-catalog.json
           forgeops runbook map --comparison tests/fixtures/forgeops/scenarios/routing-regression/expected-comparison.json --catalog docs/reference/forgeops-runbook-catalog.json --format json
+          forgeops runbook map --comparison tests/fixtures/forgeops/scenarios/routing-regression/expected-comparison.json --catalog docs/reference/forgeops-runbook-catalog.json --format json > /tmp/forgeops-runbook-mapping.json
+          forgeops runbook mapping validate --input /tmp/forgeops-runbook-mapping.json
