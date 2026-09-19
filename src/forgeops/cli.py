@@ -35,6 +35,11 @@ from .provenance import inspect_execution_provenance, render_execution_provenanc
 from .replay import render_scenario_replay, replay_scenario
 from .render import render_json, render_markdown, render_text
 from .runbooks import RunbookCatalogError, load_runbook_catalog
+from .runbook_mapping import (
+    map_runbooks,
+    render_runbook_mapping_json,
+    render_runbook_mapping_text,
+)
 from .runners import HttpRunner, KubectlRunner, RunnerFailure
 
 
@@ -122,6 +127,19 @@ def build_parser() -> argparse.ArgumentParser:
     catalog_validate.add_argument(
         "--input", required=True, help="explicit local runbook-catalog file",
     )
+    mapping = runbook_commands.add_parser(
+        "map", help="map a validated comparison to cataloged runbook sections",
+    )
+    mapping.add_argument(
+        "--comparison", required=True, help="explicit local comparison file",
+    )
+    mapping.add_argument(
+        "--catalog", required=True, help="explicit local runbook-catalog file",
+    )
+    mapping.add_argument(
+        "--format", choices=("text", "json"), default="text",
+        dest="output_format", help="output format (default: text)",
+    )
     return parser
 
 
@@ -148,6 +166,21 @@ def main(argv: Sequence[str] | None = None) -> int:
             f"containedExit={snapshot.exit_code}\n"
         )
         return 0
+    if args.command == "runbook" and args.runbook_command == "map":
+        try:
+            comparison = load_comparison_file(args.comparison)
+        except ComparisonValidationError as exc:
+            return _fail(f"comparison invalid: {exc.code}: {exc.summary}")
+        try:
+            catalog = load_runbook_catalog(args.catalog)
+        except RunbookCatalogError as exc:
+            return _fail(f"runbook catalog invalid: {exc.code}: {exc.summary}")
+        mapping = map_runbooks(comparison, catalog)
+        if args.output_format == "json":
+            render_runbook_mapping_json(mapping, sys.stdout)
+        else:
+            render_runbook_mapping_text(mapping, sys.stdout)
+        return mapping.exit_code
     if args.command == "evidence" and args.evidence_command == "compare":
         try:
             before = load_evidence_file(args.before)

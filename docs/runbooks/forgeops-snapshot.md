@@ -273,6 +273,20 @@ Exit `0` means the catalog contract is valid. Exit `2` means the selected file
 is unavailable or invalid. A valid catalog is maintained knowledge only: it
 does not mean any cataloged procedure applies to the current evidence.
 
+## Map a comparison to cataloged runbook sections offline
+
+~~~powershell
+forgeops runbook map `
+  --comparison .\comparison.json `
+  --catalog .\docs\reference\forgeops-runbook-catalog.json `
+  --format text
+~~~
+
+Use `--format json` for `forgeops.runbook-mapping/v1alpha1`. Exit `0` means
+every delta had at least one catalog match, exit `1` means valid deltas remain
+unmapped, and exit `2` means an input is invalid. A match is a traceable rule
+result, not proof of causation, diagnosis, severity, or permission to act.
+
 ## Interpret results
 
 | Status | Meaning |

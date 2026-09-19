@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-053 are complete, merged, closed, synchronized, and cleaned up. Milestone 054 implements a validated offline runbook knowledge catalog. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison and replay, a bounded synthetic scenario corpus, explicit local execution identity, a separate exact-byte integrity boundary, and validated repository-owned runbook knowledge.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-054 are implemented and merged; Milestone 054 remote branch cleanup remains queued for one grouped confirmation. Milestone 055 implements deterministic offline mapping from validated comparisons to repository-owned runbook knowledge. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison and replay, a bounded synthetic scenario corpus, explicit local execution identity, exact-byte integrity, validated runbook knowledge, and grounded deterministic mapping.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -506,6 +506,24 @@ See [Milestone 053](docs/milestones/milestone-053-forgeops-scenario-replay.md).
   model invocation, remediation, deployment, or cluster authority.
 
 See [Milestone 054](docs/milestones/milestone-054-forgeops-runbook-catalog.md).
+
+### Milestone 055 — Deterministic grounded runbook mapping
+
+**Status:** Implemented and accepted locally; publication in progress.
+
+- Add `forgeops runbook map --comparison <file> --catalog <file>` with text and
+  JSON output.
+- Validate both explicit inputs before evaluating catalog rules.
+- Match only check identifier, delta kind, and after status; cite every matched
+  delta and exact repository runbook section.
+- Serialize the bounded `forgeops.runbook-mapping/v1alpha1` contract.
+- Return `0` when all deltas are mapped, `1` when valid deltas remain unmapped,
+  and `2` for invalid input.
+- Keep mapping exit separate from evidence health and comparison exit.
+- Add no causal inference, diagnosis, recommendation, model invocation,
+  remediation, deployment, or cluster authority.
+
+See [Milestone 055](docs/milestones/milestone-055-forgeops-runbook-mapping.md).
 
 Potential outcomes:
 

@@ -1539,3 +1539,17 @@ then deleted locally and remotely and clean `main` was synchronized.
 
 Merge this closeout, remove both Milestone 054 branches, synchronize clean
 `main`, and begin Milestone 055 deterministic grounded runbook mapping.
+
+## 2026-09-19 — Milestone 055 deterministic grounded runbook mapping
+
+- Started from the merged Milestone 054 closeout at `a4fbf0d9…`; local
+  Milestone 054 branches were removed while their two merged remote branches
+  await the final grouped browser deletion confirmation.
+- Added a pure mapping layer over validated comparison and catalog models.
+- Added deterministic text and `forgeops.runbook-mapping/v1alpha1` JSON output.
+- Preserved unmapped deltas and introduced a separate mapping exit domain:
+  `0` complete coverage, `1` valid but incomplete coverage, and `2` invalid
+  input.
+- Proved regression, warning, incomplete-evidence, and recovery mappings while
+  keeping mapping distinct from health, causation, diagnosis, recommendation,
+  and remediation authority.
