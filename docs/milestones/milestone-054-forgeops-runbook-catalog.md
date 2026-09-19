@@ -1,6 +1,6 @@
 # Milestone 054 — ForgeOps validated runbook knowledge catalog
 
-**Status:** Implemented and accepted locally; publication in progress
+**Status:** Implementation complete and merged; documentation-only closeout in progress
 
 **Started:** 2026-09-19
 
@@ -75,11 +75,23 @@ that every referenced file and heading exists.
 
 1. Scope and design — pre-approved and complete.
 2. Local implementation and offline acceptance — pre-approved and complete.
-3. Publication and pull request — pre-approved; in progress.
+3. Publication and pull request — complete; PR #47 published the exact accepted tree.
 4. Package/image release — closed as not applicable.
 5. Deployment — closed as not applicable.
 6. Live acceptance — closed as not applicable.
-7. Ready for review — pre-approved; pending publication and CI.
-8. Merge — pre-approved; pending publication and CI.
-9. Documentation-only closeout — pre-approved; pending implementation merge.
-10. Branch cleanup — pre-approved; pending closeout merge.
+7. Ready for review — complete after ForgeOps CI run `35413007290` passed.
+8. Merge — complete; PR #47 merged at `a59dec9876b01345b71403c16f7106931c0c1af8`.
+9. Documentation-only closeout — pre-approved and in progress.
+10. Branch cleanup — pre-approved; pending closeout merge verification.
+
+## Publication and merge evidence
+
+- Accepted local implementation commit:
+  `9fe04bbd41024b47a4b197f5e39e67650018437c`.
+- Published remote implementation commit:
+  `33ff6977d27c60efcc014cb1fd40342a0cb8167d`.
+- Both commits resolve to exact accepted tree:
+  `6eca773e40b4d8d856c76de4afdcf53aa8f13f50`.
+- ForgeOps CI run `35413007290` completed successfully.
+- PR #47 merged at `a59dec9876b01345b71403c16f7106931c0c1af8`;
+  the merge resolves to the exact accepted implementation tree.
