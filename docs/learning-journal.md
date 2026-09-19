@@ -1722,3 +1722,35 @@ Close Milestone 064 and synchronize clean `main`. Then begin Milestone 065 by
 reconfirming the accepted source and digest before creating the exact
 `forgeops-v1.0.0` tag. Publication remains gated on the tag workflow's complete
 test, rebuild, exact-wheel install, and minimal-asset release path.
+
+## 2026-09-19 — Milestone 065 ForgeOps v1.0.0 release
+
+- Reconfirmed the synchronized Milestone 064 closeout with two fresh,
+  byte-identical builds that matched the accepted candidate digest.
+- Created annotated product tag `forgeops-v1.0.0` at exact source commit
+  `9f86d2ceefd40e58282190711ec5e2eb69adba6f`.
+- Release workflow run `35465207955` passed all ten jobs across tagged-source
+  testing, reproducible build, exact-wheel installation on Python 3.11-3.14,
+  and bounded GitHub Release publication.
+- Published exactly the 51,589-byte `signalforge-forgeops` wheel and
+  `SHA256SUMS.txt`; the wheel retained SHA-256
+  `be4d0a3001dac9bbbeec819327379461e27a7255557f6bdd66fd69d81ee7fc19`.
+- Independently downloaded both public assets on Windows, matched the checksum
+  asset and wheel digests, installed offline on Python 3.14.7, returned
+  provenance `OK`, and passed strict evidence validation and stable replay.
+- Preserved the deterministic, offline-first, informational-only boundary. No
+  PyPI package, container, deployment, cluster access, external service, model,
+  retrieval system, or remediation authority was introduced.
+
+### Lesson
+
+A release is not accepted merely because a publication job succeeded. Trust
+comes from linking the tag to reviewed source, reproducing the candidate,
+constraining publication assets and permissions, and independently installing
+the public bytes through the documented operator path.
+
+### Next small step
+
+Merge the release record and documentation-only closeout, remove release
+branches and temporary acceptance artifacts, and retain the immutable tag and
+GitHub Release as the supported ForgeOps v1 baseline.

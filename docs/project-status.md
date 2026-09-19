@@ -2,13 +2,13 @@
 
 **Last updated:** 2026-09-19
 
-**Current phase:** ForgeOps deterministic v1 release readiness
+**Current phase:** ForgeOps v1.0.0 release closeout
 
 ## Summary
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestones 054-056 established strict runbook knowledge, deterministic grounded mapping, and the bounded incident-reasoning design. Milestones 057-060 implemented strict mapping validation, deterministic structured briefing, exact replay, and a fixed operator text view. Milestone 061 adversarially evaluated those boundaries and deferred model and retrieval integration. Milestone 062 has now passed its synthetic and live read-only incident-copilot demonstration without expanding that authority or identifying a concrete unmet operator question.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestones 054-056 established strict runbook knowledge, deterministic grounded mapping, and the bounded incident-reasoning design. Milestones 057-060 implemented strict mapping validation, deterministic structured briefing, exact replay, and a fixed operator text view. Milestone 061 adversarially evaluated those boundaries and deferred model and retrieval integration. Milestone 062 passed its synthetic and live read-only incident-copilot demonstration without expanding that authority or identifying a concrete unmet operator question. Milestone 063 defined the bounded release contract, Milestone 064 proved the exact candidate, and Milestone 065 published and independently accepted ForgeOps v1.0.0.
 
 The [testing and validation guide](testing-and-validation.md) defines current
 suite counts, collection scope, commands, offline and live boundaries, and the
@@ -362,10 +362,9 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete Milestone 064 documentation-only closeout and branch cleanup, then
-begin the approved Milestone 065 release from the exact accepted candidate.
-Milestone 063 synchronization and branch cleanup are complete. The release
-channel is a GitHub Release wheel with
+Record and close the accepted ForgeOps v1.0.0 release, then synchronize clean
+`main` and remove the temporary published-asset acceptance directory. The
+release channel is a GitHub Release wheel with
 SHA-256 checksums, not PyPI, and the public reuse license is MIT. The accepted
 demonstration identified no concrete unmet operator question, so model and
 retrieval integration remain deferred.
@@ -409,8 +408,18 @@ matrices, bounded tag-only GitHub Release automation, and an operator release
 procedure. PR #68, both nine-job Python 3.11-3.14 CI runs, reproducible artifact
 digest verification, and fresh Windows Python 3.14.7 offline acceptance passed.
 PR #68 squash-merged at `0fde4d904b9731a3c99f0ae5d367ac8f36a1fce1`.
-Documentation-only closeout and branch cleanup remain; no tag or public release
-belongs to this milestone.
+Closeout PR #69 merged at `9f86d2ceefd40e58282190711ec5e2eb69adba6f`;
+clean `main` synchronization, both branch deletions, and temporary candidate
+removal completed Gate 10. Milestone 064 published no package or tag.
+
+Milestone 065 reconfirmed the exact accepted source and wheel before creating
+annotated tag `forgeops-v1.0.0` at the Milestone 064 closeout commit. Release
+workflow run `35465207955` passed all ten tagged-source, reproducible-build,
+exact-wheel install, and publication jobs. The final GitHub Release contains
+only the 51,589-byte wheel and checksum file. Fresh Windows Python 3.14.7
+acceptance verified both published asset digests, installed with `--no-index`,
+returned provenance `OK`, and passed the offline command smoke path. Release
+record, documentation-only closeout, and cleanup remain.
 
 ## Supporting completed work
 

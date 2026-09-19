@@ -84,8 +84,9 @@ checkout rather than relying on a global editable installation. Always run
 executable, execution mode, and recorded installation source.
 
 ForgeOps v1 is packaged separately as `signalforge-forgeops`. The supported
-public artifact will be a wheel plus `SHA256SUMS.txt` on the product-specific
-GitHub Release; it will not be published to PyPI. See the
+public artifact is the wheel plus `SHA256SUMS.txt` on the
+[ForgeOps v1.0.0 GitHub Release](https://github.com/wmstipes/The-Foundry-Initiative/releases/tag/forgeops-v1.0.0);
+it is not published to PyPI. See the
 [release guide](docs/guides/forgeops-release.md) for verification, isolated
 offline installation, acceptance, and rollback.
 
@@ -149,7 +150,7 @@ means an input is invalid. A matching digest detects byte alteration only when
 the reference record was retained separately and trusted; it does not prove
 who created the evidence, authenticate it, or establish chain of custody.
 
-See the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-learning-guide.md), [incident-copilot demonstration](docs/guides/forgeops-incident-copilot-demonstration.md), [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [current architecture](docs/architecture.md), [project status](docs/project-status.md), and [Milestone 044-062 records](docs/milestones).
+See the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-learning-guide.md), [incident-copilot demonstration](docs/guides/forgeops-incident-copilot-demonstration.md), [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [current architecture](docs/architecture.md), [project status](docs/project-status.md), and [Milestone 044-065 records](docs/milestones).
 
 Validate the repository-owned runbook knowledge catalog offline:
 
@@ -289,6 +290,7 @@ Completed SignalForge milestones include:
 * validated runbook knowledge with deterministic grounded mapping and strict saved-mapping validation
 * deterministic structured and operator incident briefs with exact replay and adversarial trust-boundary evaluation
 * model and retrieval integration explicitly deferred until a read-only end-to-end demonstration identifies measurable operator value
+* ForgeOps v1.0.0 published as a reproducible MIT-licensed wheel with SHA-256 checksums, Python 3.11-3.14 proof, and independent offline Windows acceptance
 
 ## Earlier utility: foundry-check
 
@@ -319,7 +321,7 @@ Planned next steps include:
 * observe naturally occurring alert behavior before deciding whether notification delivery is justified
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
-* complete the approved ForgeOps v1 sequence: document the readiness decision, harden and prove the exact `1.0.0` wheel, then publish it with SHA-256 checksums through GitHub Releases; model and retrieval integration remain deferred because the demonstration identified no concrete unmet operator question
+* maintain the bounded ForgeOps v1 release and require new work to improve the final incident-copilot demonstration, prove trustworthiness, or prepare a future release; model and retrieval integration remain deferred because the demonstration identified no concrete unmet operator question
 
 ## Why this project exists
 
