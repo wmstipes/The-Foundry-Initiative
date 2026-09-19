@@ -362,8 +362,7 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete Milestone 062 documentation-only closeout and branch cleanup, then
-open a separate planning gate for a bounded ForgeOps v1-readiness assessment.
+Open a separate planning gate for a bounded ForgeOps v1-readiness assessment.
 That assessment must prepare the v1 release and preserve the current command,
 evidence, trust, offline-first, approval, and authority boundaries. The
 accepted demonstration identified no concrete unmet operator question, so
@@ -375,10 +374,14 @@ records final acceptance and Gate 10 cleanup. All milestone and previously
 retained historical branches were deleted locally and remotely.
 
 Milestone 062 planning, offline rehearsal, live read-only acceptance, PR
-readiness, and merge are complete through PR #63 at `6e7e580`. The live
-demonstration used only the existing bounded reads from the operator
-workstation; no runtime, deployment, persistent state, or cluster object
-changed.
+readiness, merge, documentation-only closeout, and branch cleanup are complete.
+Implementation PR #63 merged at `6e7e580`; closeout PR #64 merged at
+`5619a5f`. The operator synchronized clean local `main`, removed the local
+implementation branch (no local closeout branch existed), removed both remote
+milestone branches, pruned stale remote-tracking references, and removed the
+temporary demonstration artifacts. The live demonstration used only the
+existing bounded reads from the operator workstation; no runtime, deployment,
+persistent state, or cluster object changed.
 
 ## Supporting completed work
 
