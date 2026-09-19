@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-061 are complete, merged, closed, synchronized, and cleaned up; Milestone 062 is the approved deterministic incident-copilot demonstration. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison and replay, a bounded synthetic scenario corpus, explicit local execution identity, exact-byte integrity, validated runbook knowledge, grounded deterministic mapping, strict mapping validation, deterministic structured and operator incident briefs, exact brief replay, and adversarial trust-boundary evaluation. Model and retrieval integration remain deferred while Milestone 062 demonstrates the existing path and measures whether an operator need remains unmet.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-061 are complete, merged, closed, synchronized, and cleaned up; Milestone 062 has passed its approved deterministic incident-copilot demonstration and awaits merge and closeout. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison and replay, a bounded synthetic scenario corpus, explicit local execution identity, exact-byte integrity, validated runbook knowledge, grounded deterministic mapping, strict mapping validation, deterministic structured and operator incident briefs, exact brief replay, and adversarial trust-boundary evaluation. Model and retrieval integration remain deferred because Milestone 062 identified no concrete operator question unmet by the deterministic brief.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -330,7 +330,7 @@ Each telemetry layer should answer a specific operational question before it is 
 
 ## Phase 6 — ForgeOps AI-assisted operations
 
-**Status:** In progress — deterministic incident-briefing baseline complete; Milestone 062 demonstration approved and in progress
+**Status:** In progress — Milestone 062 demonstration accepted; merge and closeout pending
 
 Evolve the rules-based `/analyze` endpoint into a grounded Kubernetes incident copilot.
 
@@ -606,8 +606,8 @@ and the [model-readiness decision](docs/design/forgeops-model-readiness-decision
 
 ### Milestone 062 — Deterministic incident-copilot demonstration
 
-**Status:** In progress. The plan and all ten gates are approved; the offline
-synthetic rehearsal passed, and live read-only acceptance remains pending.
+**Status:** Accepted through live read-only Gate 6. Offline synthetic and live
+demonstration tracks passed; PR readiness, merge, and closeout remain.
 
 - Demonstrate the current evidence-to-brief path without adding a new command,
   model, dependency, or operational authority.

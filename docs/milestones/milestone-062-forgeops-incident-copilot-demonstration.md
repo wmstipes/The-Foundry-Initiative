@@ -1,7 +1,7 @@
 # Milestone 062 — ForgeOps deterministic incident-copilot demonstration
 
-**Status:** In progress; plan approved and offline rehearsal passed, live
-read-only acceptance pending
+**Status:** Accepted through live read-only Gate 6; PR readiness and merge
+pending
 
 **Started:** 2026-09-19
 
@@ -53,6 +53,35 @@ No kubeconfig, kubectl, HTTP runner, cluster, endpoint, model, retrieval
 service, or external service was used during this rehearsal. Temporary output
 was removed after review.
 
+## Live read-only acceptance evidence
+
+The approved operator-workstation demonstration used the exact published source
+at `8dd94800e2e13b71b1984aaef7ac71bd632b6e7d`, one explicit kubeconfig, the
+exact `kubernetes-admin@kubernetes` context, and the two documented private-lab
+application URLs.
+
+- Source provenance was consistent for repository-local version `0.15.0`.
+- The supplied window was `2026-09-19T18:08:08Z` through
+  `2026-09-19T18:09:32Z`.
+- Both bounded snapshots contained 33 checks, overall `PASS`, and snapshot exit
+  `0`.
+- Both saved artifacts strictly validated, and immediate integrity verification
+  reported matching length, digest, and metadata. This demonstrates only a
+  match to the colocated records at verification time, not authenticity or
+  chain of custody.
+- Deterministic comparison returned exit `0` with zero changed checks.
+- The runbook mapping strictly validated with zero deltas, zero mapped or
+  unmapped deltas, zero runbook matches, and mapping exit `0`.
+- JSON and text incident briefs both returned exit `0` and the bounded state
+  `STABLE`, with no facts, runbook matches, or unmapped deltas and with
+  `point-in-time-only` uncertainty.
+- The operator reported no concrete question left unanswered by the
+  deterministic brief in this demonstration.
+
+No outage, restart, rollout, configuration change, remediation, write request,
+or cluster mutation was used to manufacture the result. The temporary evidence
+artifacts remain local and are not repository evidence.
+
 ## Acceptance boundary
 
 Milestone acceptance requires:
@@ -95,17 +124,17 @@ documentation.
    exists and repository-local version `0.15.0` is unchanged.
 5. Deployment — complete as not applicable; no image, manifest, workload,
    configuration, rollout, restart, or persistent state changes.
-6. Live read-only demonstration — approved; execution remains pending because
-   it requires the operator workstation's explicit kubeconfig and private-lab
-   reachability.
-7. Acceptance review and PR readiness — pending.
+6. Live read-only demonstration — complete; both snapshots, integrity checks,
+   comparison, mapping, and briefs passed within the approved boundary.
+7. Acceptance review and PR readiness — pending final published-tree review.
 8. Merge — pending.
 9. Documentation-only closeout — pending.
 10. Branch cleanup and synchronization — pending.
 
 ## Deferred decisions
 
-Model and retrieval integration remain deferred. A one-command orchestrator,
-broader telemetry, and remediation remain deferred unless this demonstration
-identifies a concrete need that satisfies the governing milestone rule and is
-approved separately.
+Model and retrieval integration remain deferred because the demonstration
+identified no concrete unmet operator question. A one-command orchestrator,
+broader telemetry, and remediation also remain deferred unless later evidence
+identifies a need that satisfies the governing milestone rule and is approved
+separately.
