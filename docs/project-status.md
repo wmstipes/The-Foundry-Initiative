@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-09-19
 
-**Current phase:** Operational visibility and ForgeOps deterministic v1 readiness
+**Current phase:** ForgeOps deterministic v1 release readiness
 
 ## Summary
 
@@ -362,11 +362,12 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Open a separate planning gate for a bounded ForgeOps v1-readiness assessment.
-That assessment must prepare the v1 release and preserve the current command,
-evidence, trust, offline-first, approval, and authority boundaries. The
-accepted demonstration identified no concrete unmet operator question, so
-model and retrieval integration remain deferred.
+Complete the documentation-only Milestone 063 readiness assessment, then begin
+the approved Milestone 064 release-candidate hardening against its seven exact
+blockers. The release channel is a GitHub Release wheel with SHA-256 checksums,
+not PyPI, and the public reuse license is MIT. The accepted demonstration
+identified no concrete unmet operator question, so model and retrieval
+integration remain deferred.
 
 Milestones 054-061 are complete, merged, synchronized, and cleaned up. The
 Milestone 057-061 implementation PRs are #54-#58; grouped closeout PR #59
@@ -382,6 +383,14 @@ milestone branches, pruned stale remote-tracking references, and removed the
 temporary demonstration artifacts. The live demonstration used only the
 existing bounded reads from the operator workstation; no runtime, deployment,
 persistent state, or cluster object changed.
+
+Milestone 063's read-only audit built the current pure-Python wheel, installed
+it into a fresh Python 3.12 environment without a registry, and passed installed
+provenance, console and module help, strict evidence validation, and stable
+scenario replay. It also confirmed seven release blockers: product and
+distribution identity, `1.0.0` version alignment, exact artifact validation,
+supported-Python proof, MIT license metadata, bounded GitHub release automation,
+and an operator release procedure. No live system or external service was used.
 
 ## Supporting completed work
 

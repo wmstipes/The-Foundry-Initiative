@@ -310,7 +310,7 @@ Planned next steps include:
 * observe naturally occurring alert behavior before deciding whether notification delivery is justified
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
-* evaluate the accepted deterministic ForgeOps baseline against bounded v1 release-readiness criteria before adding any new capability; model and retrieval integration remain deferred because the demonstration identified no concrete unmet operator question
+* complete the approved ForgeOps v1 sequence: document the readiness decision, harden and prove the exact `1.0.0` wheel, then publish it with SHA-256 checksums through GitHub Releases; model and retrieval integration remain deferred because the demonstration identified no concrete unmet operator question
 
 ## Why this project exists
 
