@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestones 054-056 established strict runbook knowledge, deterministic grounded mapping, and the bounded incident-reasoning design. Milestones 057-060 implement strict mapping validation, deterministic structured briefing, exact replay, and a fixed operator text view. Milestone 061 adversarially evaluates those boundaries and defers model and retrieval integration.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestones 054-056 established strict runbook knowledge, deterministic grounded mapping, and the bounded incident-reasoning design. Milestones 057-060 implemented strict mapping validation, deterministic structured briefing, exact replay, and a fixed operator text view. Milestone 061 adversarially evaluated those boundaries and deferred model and retrieval integration.
 
 ## Current application
 
@@ -186,6 +186,14 @@ The project has moved from basic workload deployment into repeatable engineering
 - Merge integrity: the implementation merge commit resolves to exact accepted tree `ddfa67a59024947c7403a679ce7254cdb1e232a3`
 - Gate disposition: package/image release, deployment, and live acceptance were closed as not applicable; no registry, image, release tag, cluster, endpoint, persistent-state, or Wiki action occurred
 - Closeout and cleanup: documentation-only PR #46 merged at `c8ad7b6e8a7e740521446cb23a039b71f09f82d1`; Gate 10 removed both Milestone 053 branches locally and remotely, and clean `main` was synchronized at that commit
+- Milestone 057: strict `forgeops.runbook-mapping/v1alpha1` loading and `forgeops runbook mapping validate` are complete and merged through PR #54 at `35c6e87c936eb6d486750aed40aa398039164e62`; validation exit remains separate from contained mapping completeness
+- Milestone 058: deterministic `forgeops incident brief` JSON output is complete and merged through PR #55 at `67d0d41fbb15a561b428d154d93465272c566aa7`; every fact is cited from the supplied comparison and every runbook is a grounded catalog-rule match rather than a diagnosis
+- Milestone 059: exact incident-brief replay across five synthetic scenarios is complete and merged through PR #56 at `e2c313494b051508c1c7ee375792e8d00eec52a9`; replay exit reports expectation equality rather than contained state
+- Milestone 060: deterministic operator text rendering is complete and merged through PR #57 at `f3c63bacfcfdca4e55cfb9eb8adfe1b70d110921`; text and JSON retain identical facts, uncertainty, informational guidance, and authority limitations
+- Milestone 061: nine-case adversarial evaluation and the model-readiness decision are complete and merged through PR #58 at `9f3d8f13f3a0fe3b746084c889848d19f0ad431c`; ForgeOps CI runs `35448696493`, `35449046318`, `35449474657`, `35449756167`, and `35450511724` passed for Milestones 057-061
+- Readiness decision: deterministic briefing is ready for a separately gated read-only end-to-end demonstration; model and retrieval integration remain deferred until measured unmet operator need and explicit privacy, quality, and failure-mode criteria exist
+- Authority boundary: Milestones 057-061 added no package publication, model, retrieval service, external service, live incident claim, cluster access, endpoint access, deployment, recommendation authority, remediation authority, persistent state, or mutation
+- Closeout and cleanup: grouped documentation-only PR #59 records final acceptance; Gate 10 removes all Milestone 057-061 and previously retained historical branches locally and remotely, and clean `main` is synchronized after merge
 
 ## Milestone 038 closeout
 
@@ -343,14 +351,14 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-After Milestones 057-061 close out, plan a separately gated read-only
-end-to-end ForgeOps demonstration. Model and retrieval integration remain
-deferred until that demonstration identifies a measurable unmet operator need.
+Plan a separately gated read-only end-to-end ForgeOps demonstration. Model and
+retrieval integration remain deferred until that demonstration identifies a
+measurable unmet operator need.
 
-Milestones 054-056 are complete, merged, synchronized, and cleaned up. Their
-implementation PRs are #47, #49, and #51; their closeout PRs are #48, #50, and
-#52. All six milestone branches were deleted locally and remotely after the
-grouped Gate 10 confirmation.
+Milestones 054-061 are complete, merged, synchronized, and cleaned up. The
+Milestone 057-061 implementation PRs are #54-#58; grouped closeout PR #59
+records final acceptance and Gate 10 cleanup. All milestone and previously
+retained historical branches were deleted locally and remotely.
 
 ## Supporting completed work
 

@@ -547,7 +547,7 @@ and the [bounded incident-reasoning design](docs/design/forgeops-bounded-inciden
 
 ### Milestone 057 — Strict runbook-mapping artifact validation
 
-**Status:** Implementation complete; publication pending.
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #54 merged at `35c6e87`; grouped closeout PR #59 recorded final acceptance and Gate 10 cleanup.
 
 - Add `forgeops runbook mapping validate --input <file>`.
 - Strictly load the existing `forgeops.runbook-mapping/v1alpha1` contract.
@@ -558,7 +558,7 @@ See [Milestone 057](docs/milestones/milestone-057-forgeops-runbook-mapping-valid
 
 ### Milestone 058 — Deterministic structured incident brief
 
-**Status:** Implementation complete; publication pending.
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #55 merged at `67d0d41`; grouped closeout PR #59 recorded final acceptance and Gate 10 cleanup.
 
 - Add JSON-only `forgeops incident brief` for explicit comparison and mapping files.
 - Cross-check both validated artifacts before rendering.
@@ -570,7 +570,7 @@ See [Milestone 058](docs/milestones/milestone-058-forgeops-structured-incident-b
 
 ### Milestone 059 — Exact incident-brief replay and evaluation
 
-**Status:** Implementation complete; publication pending.
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #56 merged at `e2c3134`; grouped closeout PR #59 recorded final acceptance and Gate 10 cleanup.
 
 - Strictly load `forgeops.incident-brief/v1alpha1` expectations.
 - Add explicit comparison, mapping, and expected-brief replay.
@@ -582,7 +582,7 @@ See [Milestone 059](docs/milestones/milestone-059-forgeops-incident-brief-replay
 
 ### Milestone 060 — Deterministic operator-facing incident brief
 
-**Status:** Implementation complete; publication pending.
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #57 merged at `f3c63ba`; grouped closeout PR #59 recorded final acceptance and Gate 10 cleanup.
 
 - Add a fixed human-readable renderer over the accepted structured brief.
 - Preserve parity with JSON, visible unmapped deltas, uncertainty, and limitations.
@@ -593,7 +593,7 @@ See [Milestone 060](docs/milestones/milestone-060-forgeops-operator-incident-bri
 
 ### Milestone 061 — Adversarial evaluation and model-readiness decision
 
-**Status:** Implementation complete; publication pending.
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #58 merged at `9f3d8f1`; grouped closeout PR #59 recorded final acceptance and Gate 10 cleanup.
 
 - Exercise nine synthetic adversarial trust-boundary cases through production seams.
 - Prove neutral, incomplete, degraded, recovery, mapping-gap, and rejection behavior.
