@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestone 054 added a strict offline runbook knowledge catalog. Milestone 055 added deterministic grounded mapping. Milestone 056 defines a bounded incident-reasoning design and evaluation corpus without adding runtime reasoning.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestones 054-056 established strict runbook knowledge, deterministic grounded mapping, and the bounded incident-reasoning design. Milestones 057-060 implement strict mapping validation, deterministic structured briefing, exact replay, and a fixed operator text view. Milestone 061 adversarially evaluates those boundaries and defers model and retrieval integration.
 
 ## Current application
 
@@ -343,9 +343,9 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Select the next bounded increment through a fresh read-only planning pass. A
-production incident brief would first require a strict mapping-result loader
-and deterministic implementation; Milestone 056 does not authorize model use.
+After Milestones 057-061 close out, plan a separately gated read-only
+end-to-end ForgeOps demonstration. Model and retrieval integration remain
+deferred until that demonstration identifies a measurable unmet operator need.
 
 Milestones 054-056 are complete, merged, synchronized, and cleaned up. Their
 implementation PRs are #47, #49, and #51; their closeout PRs are #48, #50, and

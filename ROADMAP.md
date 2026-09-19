@@ -591,6 +591,19 @@ See [Milestone 059](docs/milestones/milestone-059-forgeops-incident-brief-replay
 
 See [Milestone 060](docs/milestones/milestone-060-forgeops-operator-incident-brief.md).
 
+### Milestone 061 — Adversarial evaluation and model-readiness decision
+
+**Status:** Implementation complete; publication pending.
+
+- Exercise nine synthetic adversarial trust-boundary cases through production seams.
+- Prove neutral, incomplete, degraded, recovery, mapping-gap, and rejection behavior.
+- Record explicitly that structural validation is not artifact authenticity.
+- Defer model and retrieval integration until an end-to-end demonstration identifies a measurable unmet need.
+- Add no runtime command, dependency, network, deployment, or cluster authority.
+
+See [Milestone 061](docs/milestones/milestone-061-forgeops-adversarial-evaluation.md)
+and the [model-readiness decision](docs/design/forgeops-model-readiness-decision.md).
+
 Potential outcomes:
 
 - Collect a bounded, read-only snapshot of relevant Kubernetes state.
