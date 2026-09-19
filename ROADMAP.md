@@ -493,7 +493,7 @@ See [Milestone 053](docs/milestones/milestone-053-forgeops-scenario-replay.md).
 
 ### Milestone 054 — Validated runbook knowledge catalog
 
-**Status:** Implemented and accepted locally; publication in progress.
+**Status:** Implementation complete and merged through PR #47 at `a59dec9`; documentation-only closeout and branch cleanup are in progress. Gates 4-6 were closed as not applicable.
 
 - Add `forgeops runbook catalog validate --input <file>` as a separate offline
   validator for `forgeops.runbook-catalog/v1alpha1`.

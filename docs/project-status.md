@@ -346,6 +346,11 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 Publish and merge Milestone 054, close it out, and clean its branches before
 starting deterministic grounded runbook mapping.
 
+Milestone 054 implementation PR #47 merged at
+`a59dec9876b01345b71403c16f7106931c0c1af8` with exact accepted tree
+`6eca773e40b4d8d856c76de4afdcf53aa8f13f50`. ForgeOps CI run `35413007290`
+passed. The documentation-only closeout and branch cleanup remain.
+
 ## Supporting completed work
 
 Lightweight Grafana remains deployed with retained storage, provisioned SignalForge dashboards, tested persistence, encrypted off-node backup, isolated restore, credential recovery and rollback/return.
