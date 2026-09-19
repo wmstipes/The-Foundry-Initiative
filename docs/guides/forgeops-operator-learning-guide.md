@@ -4,8 +4,10 @@ ForgeOps is a local, bounded SignalForge operations tool. It collects a fixed
 read-only snapshot, renders deterministic evidence, validates saved evidence,
 creates and verifies exact-byte integrity records, and compares two validated
 artifacts. It can also replay three explicitly selected offline scenario files
-against a deterministic expectation. It does not diagnose incidents, recommend
-changes, or mutate the cluster.
+against a deterministic expectation, map comparison deltas to cataloged
+runbook sections, validate saved mappings, and render or replay deterministic
+incident briefs. It does not diagnose incidents, recommend changes, or mutate
+the cluster.
 
 This guide explains the current system as a whole. The
 [snapshot runbook](../runbooks/forgeops-snapshot.md) remains the procedural
@@ -184,6 +186,9 @@ flowchart TD
     Validate --> Integrity["Exact-byte integrity"]
     Validate --> Compare["Deterministic comparison"]
     Compare --> Scenario["Expected scenario replay"]
+    Compare --> Mapping["Grounded runbook mapping"]
+    Mapping --> Brief["Deterministic incident brief"]
+    Brief --> BriefReplay["Expected brief replay"]
 ```
 
 The components preserve a one-way authority boundary:
@@ -195,9 +200,16 @@ The components preserve a one-way authority boundary:
 - `evidence.py` loads and validates one explicit saved artifact;
 - `integrity.py` hashes validated exact bytes and verifies strict sidecar
   records;
-- `comparison.py` compares two immutable validated representations; and
+- `comparison.py` compares two immutable validated representations;
 - `replay.py` checks one actual comparison against one strict expected
-  comparison; and
+  comparison;
+- `runbooks.py` validates the explicit runbook catalog;
+- `runbook_mapping.py` maps comparison deltas and strictly validates saved
+  mappings;
+- `incident.py` cross-checks mapping and comparison artifacts and renders the
+  immutable brief model;
+- `incident_replay.py` checks one actual brief against one strict expected
+  brief; and
 - `provenance.py` inspects only local execution identity.
 
 The synthetic scenario corpus exercises validation, comparison, and replay. It
@@ -238,8 +250,12 @@ ForgeOps currently may:
 - read one or two explicit bounded evidence files and one explicit bounded
   integrity record;
 - calculate and compare SHA-256 over validated exact evidence bytes; and
-- replay three explicit bounded offline scenario files through strict
-  validation and deterministic comparison; and
+- read explicit bounded comparison, runbook-catalog, runbook-mapping, and
+  expected-brief files;
+- replay explicit bounded offline scenario files through strict validation and
+  deterministic comparison;
+- map deltas only through cataloged selectors and render deterministic incident
+  briefs; and
 - render deterministic local output.
 
 ForgeOps does not currently establish:
@@ -255,8 +271,9 @@ ForgeOps does not currently establish:
 Execution provenance answers which local code and interpreter are running.
 The integrity record answers whether exact validated bytes still match a
 separately retained reference; it is not source attribution or authenticity.
-Scenario replay checks deterministic behavior only. Bounded incident reasoning
-remains a separately planned capability.
+Scenario and incident replay check deterministic behavior only. Bounded
+incident briefing is implemented; probabilistic model and retrieval reasoning
+remain deferred capabilities.
 
 The canonical runbook catalog at
 `docs/reference/forgeops-runbook-catalog.json` makes repository knowledge
@@ -297,6 +314,10 @@ separately approved read-only demonstration; model work requires a measured
 unmet operator need and a separate evaluation, privacy, dependency, and failure
 boundary.
 
+The [deterministic incident-copilot demonstration](forgeops-incident-copilot-demonstration.md)
+keeps synthetic incident evaluation separate from live read-only evidence and
+uses the existing command surface without adding operational authority.
+
 ## Documentation map
 
 - [Snapshot runbook](../runbooks/forgeops-snapshot.md): operating commands and
@@ -307,7 +328,9 @@ boundary.
 - [Roadmap](../../ROADMAP.md): sequencing and later outcomes.
 - [Testing and validation](../testing-and-validation.md): current suite
   boundaries, commands, counts, and evidence semantics.
-- [Milestones 044-061](../milestones): chronological design, implementation,
+- [Incident-copilot demonstration](forgeops-incident-copilot-demonstration.md):
+  approved synthetic and live read-only demonstration procedure.
+- [Milestones 044-062](../milestones): chronological design, implementation,
   validation, and closeout evidence.
 
 Historical milestone documents remain intact. This guide is the consolidated

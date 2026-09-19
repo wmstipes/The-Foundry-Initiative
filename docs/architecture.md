@@ -240,6 +240,13 @@ can still be valid untrusted input.
 
 The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → exact-byte integrity and/or deterministic offline comparison → grounded runbook mapping → deterministic incident brief → exact expected-result replay. Any later model experiment remains a separate authority decision and gains no kubeconfig, network, storage, or mutation authority through this data flow.
 
+Milestone 062 demonstrates this existing path without adding another runtime
+layer. Its synthetic track proves deterministic incident behavior against exact
+expectations, while its separately approved live track proves only the bounded
+read-only collection path and the facts derived from two supplied snapshots.
+The tracks must not be blended into a fabricated live incident, and no failure
+is injected to force a non-stable result.
+
 ## Documentation authority and publication
 
 The main repository is the authoritative documentation system. `ROADMAP.md` owns direction and sequencing, `docs/project-status.md` owns current live state, `docs/architecture.md` owns system design and constraints, `docs/milestones` owns chronological evidence, and `docs/runbooks` owns operator procedures.

@@ -2,13 +2,13 @@
 
 **Last updated:** 2026-09-19
 
-**Current phase:** Operational visibility and ForgeOps deterministic incident-briefing boundary
+**Current phase:** Operational visibility and ForgeOps deterministic incident-copilot demonstration
 
 ## Summary
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestones 054-056 established strict runbook knowledge, deterministic grounded mapping, and the bounded incident-reasoning design. Milestones 057-060 implemented strict mapping validation, deterministic structured briefing, exact replay, and a fixed operator text view. Milestone 061 adversarially evaluated those boundaries and deferred model and retrieval integration.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestones 054-056 established strict runbook knowledge, deterministic grounded mapping, and the bounded incident-reasoning design. Milestones 057-060 implemented strict mapping validation, deterministic structured briefing, exact replay, and a fixed operator text view. Milestone 061 adversarially evaluated those boundaries and deferred model and retrieval integration. Milestone 062 has now passed its synthetic and live read-only incident-copilot demonstration without expanding that authority or identifying a concrete unmet operator question.
 
 The [testing and validation guide](testing-and-validation.md) defines current
 suite counts, collection scope, commands, offline and live boundaries, and the
@@ -199,6 +199,11 @@ historical evidence rather than being rewritten when the suite grows.
 - Readiness decision: deterministic briefing is ready for a separately gated read-only end-to-end demonstration; model and retrieval integration remain deferred until measured unmet operator need and explicit privacy, quality, and failure-mode criteria exist
 - Authority boundary: Milestones 057-061 added no package publication, model, retrieval service, external service, live incident claim, cluster access, endpoint access, deployment, recommendation authority, remediation authority, persistent state, or mutation
 - Closeout and cleanup: grouped documentation-only PR #59 merged at `28c02293301fe7380d98485a0717ecc68e8069f8` and recorded final acceptance; Gate 10 removed all Milestone 057-061 and previously retained historical branches locally and remotely, leaving clean synchronized `main` as the only branch
+- Milestone 062: deterministic incident-copilot demonstration approved with all ten gates; the offline routing-regression rehearsal passed through provenance, evidence validation, comparison, catalog validation, mapping validation, text and JSON briefing, and exact brief replay
+- Live acceptance: two 33-check `PASS` snapshots across `2026-09-19T18:08:08Z` through `2026-09-19T18:09:32Z` strictly validated and matched their immediate integrity records; comparison found zero changed checks; mapping contained zero deltas; and JSON and text briefs both rendered `STABLE` with `point-in-time-only` uncertainty
+- Operator assessment: no concrete operator question remained unanswered by the deterministic brief, so model and retrieval integration remain deferred
+- Demonstration boundary: synthetic `DEGRADED` behavior remains explicitly separate from the live `STABLE` baseline; no failure was injected and no live artifact was committed or published
+- Authority boundary: no new command, schema, package version, dependency, model, retrieval service, broader collection, deployment, recommendation, remediation, or mutation is introduced
 
 ## Milestone 038 closeout
 
@@ -356,14 +361,19 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Plan a separately gated read-only end-to-end ForgeOps demonstration. Model and
-retrieval integration remain deferred until that demonstration identifies a
-measurable unmet operator need.
+Complete Milestone 062 PR readiness, merge, documentation-only closeout, and
+branch cleanup. The accepted demonstration identified no concrete unmet
+operator question, so model and retrieval integration remain deferred.
 
 Milestones 054-061 are complete, merged, synchronized, and cleaned up. The
 Milestone 057-061 implementation PRs are #54-#58; grouped closeout PR #59
 records final acceptance and Gate 10 cleanup. All milestone and previously
 retained historical branches were deleted locally and remotely.
+
+Milestone 062 planning, offline rehearsal, and live read-only acceptance are
+complete. The live demonstration used only the existing bounded reads from the
+operator workstation; no runtime, deployment, persistent state, or cluster
+object changed.
 
 ## Supporting completed work
 

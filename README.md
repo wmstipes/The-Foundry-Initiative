@@ -143,7 +143,7 @@ means an input is invalid. A matching digest detects byte alteration only when
 the reference record was retained separately and trusted; it does not prove
 who created the evidence, authenticate it, or establish chain of custody.
 
-See the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-learning-guide.md), [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [current architecture](docs/architecture.md), [project status](docs/project-status.md), and [Milestone 044-061 records](docs/milestones).
+See the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-learning-guide.md), [incident-copilot demonstration](docs/guides/forgeops-incident-copilot-demonstration.md), [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [current architecture](docs/architecture.md), [project status](docs/project-status.md), and [Milestone 044-062 records](docs/milestones).
 
 Validate the repository-owned runbook knowledge catalog offline:
 
@@ -199,9 +199,11 @@ forgeops incident replay `
 Replay exit `0` means an exact deterministic match, not healthy contained state.
 
 The [Milestone 061 readiness decision](docs/design/forgeops-model-readiness-decision.md)
-defers model and retrieval integration. Deterministic briefing is ready for a
-separately approved read-only demonstration, while probabilistic assistance
-must first show measurable value over this baseline.
+defers model and retrieval integration. The approved
+[Milestone 062 demonstration](docs/guides/forgeops-incident-copilot-demonstration.md)
+now exercises deterministic briefing through separate synthetic-incident and
+live read-only tracks. Probabilistic assistance must first show measurable
+value over this baseline.
 
 ## Documentation front door
 
@@ -308,7 +310,7 @@ Planned next steps include:
 * observe naturally occurring alert behavior before deciding whether notification delivery is justified
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
-* run a separately gated read-only end-to-end ForgeOps demonstration before considering model or retrieval integration
+* complete the approved read-only Milestone 062 ForgeOps demonstration and measure any unmet operator need before considering model or retrieval integration
 
 ## Why this project exists
 
