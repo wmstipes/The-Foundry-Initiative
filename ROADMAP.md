@@ -624,7 +624,8 @@ and the [demonstration guide](docs/guides/forgeops-incident-copilot-demonstratio
 
 ### Milestone 063 — ForgeOps v1 readiness assessment
 
-**Status:** In progress. The read-only assessment confirms one bounded
+**Status:** Complete through implementation PR #66 at `2293865` and closeout PR
+#67; branch cleanup remains. The assessment confirms one bounded
 release-candidate hardening milestone is required before v1 publication.
 
 - Select GitHub Release wheel plus SHA-256 checksums as the v1 distribution

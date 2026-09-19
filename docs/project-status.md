@@ -362,12 +362,12 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete the documentation-only Milestone 063 readiness assessment, then begin
-the approved Milestone 064 release-candidate hardening against its seven exact
-blockers. The release channel is a GitHub Release wheel with SHA-256 checksums,
-not PyPI, and the public reuse license is MIT. The accepted demonstration
-identified no concrete unmet operator question, so model and retrieval
-integration remain deferred.
+Complete Milestone 063 branch cleanup after documentation-only closeout PR #67,
+then begin the approved Milestone 064 release-candidate hardening against its
+seven exact blockers. The release channel is a GitHub Release wheel with
+SHA-256 checksums, not PyPI, and the public reuse license is MIT. The accepted
+demonstration identified no concrete unmet operator question, so model and
+retrieval integration remain deferred.
 
 Milestones 054-061 are complete, merged, synchronized, and cleaned up. The
 Milestone 057-061 implementation PRs are #54-#58; grouped closeout PR #59
@@ -391,6 +391,10 @@ scenario replay. It also confirmed seven release blockers: product and
 distribution identity, `1.0.0` version alignment, exact artifact validation,
 supported-Python proof, MIT license metadata, bounded GitHub release automation,
 and an operator release procedure. No live system or external service was used.
+The accepted assessment tree `d407063392c9294fc8aed27a747744ee1c111201`
+was published at head `25b9340b56b58af7fd8f88fdffcf82d1ed7ed5e9`
+and squash-merged through PR #66 at
+`2293865859ddc6259f8cedee95705e800a152bc6`.
 
 ## Supporting completed work
 
