@@ -775,12 +775,19 @@ extends the existing OWASP review profile through a Workbench-first NIST track:
 - use NIST SP 800-190 as the primary container-security guidance source;
 - attach selected NIST SP 800-53 Release 5.2.0 controls only as traceable
   references, never as a compliance verdict;
+- use NIST SP 800-37 Revision 2 only to identify where manifest evidence may
+  support an RMF activity, without claiming to execute the RMF;
+- treat supplied YAML only as an `examine` input informed by NIST SP 800-53A,
+  never as a complete control assessment, and never infer an SP 800-53B impact
+  baseline;
 - use NIST CSF 2.0 only for high-level outcome orientation rather than YAML
   pass/fail checks;
 - preserve browser-local processing, supported-GVK scope, strict CSP, and the
   `direct`, `partial`, and `cluster-context-required` evidence boundary;
 - present shared OWASP and NIST evidence without claiming framework or control
   equivalence; and
+- keep Categorize, organizational control selection, Authorize, and continuous
+  monitoring outside Workbench authority; and
 - evaluate exact golden and adversarial cases before selecting a future
   Workbench release version.
 

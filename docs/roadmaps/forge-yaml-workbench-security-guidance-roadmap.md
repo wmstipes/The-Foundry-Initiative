@@ -43,6 +43,29 @@ An 800-53 reference is not a control assessment. NIST describes the catalog as
 flexible and customizable within an organization-wide risk process and warns
 that mappings and crosswalks are not necessarily one-to-one or equivalent.
 
+### Lifecycle context — NIST SP 800-37 Revision 2
+
+[NIST SP 800-37 Revision 2](https://csrc.nist.gov/pubs/sp/800/37/r2/final)
+defines the Risk Management Framework lifecycle. Workbench may label where a
+manifest observation could support an RMF activity, but it does not execute the
+RMF or replace the accountable organizational roles, decisions, and evidence
+required by that process.
+
+### Assessment-method reference — NIST SP 800-53A Release 5.2.0
+
+[NIST SP 800-53A Revision 5](https://csrc.nist.gov/pubs/sp/800/53/a/r5/final)
+may inform assessment-support metadata. Workbench can only examine the supplied
+YAML. It cannot interview personnel, test a running control, determine that a
+control operates as intended, or issue a control assessment result.
+
+### User-supplied baselines — NIST SP 800-53B
+
+[NIST SP 800-53B](https://csrc.nist.gov/pubs/sp/800/53/b/upd1/final) may be
+referenced only when an operator explicitly supplies an applicable baseline or
+tailored profile. Workbench must not infer a Low, Moderate, or High impact
+baseline, select organizational controls, or treat a generic baseline as an
+authorization boundary.
+
 ### Outcome orientation — NIST Cybersecurity Framework 2.0
 
 [NIST CSF 2.0](https://www.nist.gov/cyberframework) may organize high-level
@@ -56,6 +79,30 @@ inform pipeline or microservices guidance. It is not part of the first profile
 because the current Workbench analyzes supplied YAML rather than a DevSecOps
 pipeline or service mesh.
 
+### Deferred interchange — OSCAL
+
+An OSCAL component-definition, assessment-results, or other machine-readable
+export remains deferred until a named downstream workflow and exact schema
+boundary justify it. Adding OSCAL only to advertise format support would create
+false interoperability and maintenance claims.
+
+## RMF applicability boundary
+
+| RMF step | Bounded Workbench role | Explicit exclusion |
+| --- | --- | --- |
+| Prepare | Identify pinned sources, evidence scope, and missing context | No organizational risk strategy, role assignment, or system-level preparation |
+| Categorize | Report that impact categorization is required context | No inference of information types, impact values, or system category from YAML |
+| Select | Display references from an explicitly supplied profile or baseline | No automatic baseline selection, tailoring, overlays, or organizational control decision |
+| Implement | Record manifest-visible configuration evidence related to a selected control | No conclusion that the complete control is implemented or effective |
+| Assess | Produce assessment-supporting observations using only the `examine` method | No interviews, runtime tests, satisfied/not-satisfied determination, or assessment report |
+| Authorize | State that authorization evidence and accountable review remain external | No authorization recommendation, risk acceptance, ATO, or authorization decision |
+| Monitor | Export point-in-time observations for possible external reuse | No continuous-monitoring, current-health, drift-detection, or ongoing-authorization claim |
+
+The initial RMF-aligned report is an evidence appendix, not an RMF dashboard,
+score, checklist completion meter, system security plan, assessment report,
+plan of action and milestones, authorization package, or authorization to
+operate.
+
 ## Preserved boundaries
 
 Every candidate must preserve:
@@ -68,6 +115,11 @@ Every candidate must preserve:
   data;
 - separate `direct`, `partial`, and `cluster-context-required` applicability;
 - no claim of NIST, federal, FISMA, FedRAMP, CSF, or 800-53 compliance;
+- no inferred impact categorization, control baseline, tailoring decision,
+  assessment determination, risk acceptance, authorization, or ongoing
+  monitoring status;
+- no `satisfied`, `not satisfied`, `implemented`, `effective`, `authorized`, or
+  equivalent status derived from supplied YAML;
 - no claim about effective RBAC, admission, runtime state, image contents,
   supply-chain provenance, logging, monitoring, incident response, policy,
   process, or organizational implementation when the manifest cannot prove it;
@@ -99,8 +151,10 @@ compliance scoring.
 
 Define a pinned browser-local profile containing stable rule identifiers,
 source references, manifest scope, severity rationale, evidence fields,
-applicability, remediation-neutral guidance, and optional selected 800-53 and
-CSF references.
+applicability, remediation-neutral guidance, optional selected 800-53 and CSF
+references, and optional RMF-support metadata. RMF metadata must use bounded
+values for the related step, evidence role, and `examine` method rather than
+free-form claims.
 
 The contract must reject duplicate rules, unknown fields, unsupported source
 versions, invalid references, hidden network dependencies, and ambiguous
@@ -131,7 +185,21 @@ without implying that categories or controls are equivalent.
 Filtering and counts must not change the analysis, overall result, source
 coverage, or Markdown report contents unexpectedly.
 
-### Work package W5 — Adversarial and golden evaluation
+### Work package W5 — RMF evidence model and report appendix
+
+**Purpose:** Prove trustworthiness and prepare a future Workbench release.
+
+Define and render a deterministic appendix that connects each applicable
+manifest fact to its pinned source, related RMF step, selected control
+reference, evidence role, `examine` method, observed fields, and missing
+external evidence.
+
+The evidence role must distinguish `implementation-evidence`,
+`assessment-input`, and `context-required`. The appendix must not calculate an
+RMF progress percentage, aggregate compliance score, control-effectiveness
+status, residual risk, authorization recommendation, or ATO readiness result.
+
+### Work package W6 — Adversarial and golden evaluation
 
 **Purpose:** Prove trustworthiness.
 
@@ -141,9 +209,12 @@ cross-framework overlap, and context-required cases.
 
 Acceptance must prove deterministic ordering, stable identifiers, exact report
 output, no network use, no hidden compliance score, and no claim beyond the
-supplied manifest.
+supplied manifest. Negative cases must reject inferred categorization,
+automatic Low/Moderate/High baseline selection, complete-control assertions,
+assessment conclusions, authorization language, continuous-monitoring claims,
+and unsupported OSCAL interoperability.
 
-### Work package W6 — Workbench release readiness and release
+### Work package W7 — Workbench release readiness and release
 
 **Purpose:** Prepare a future release.
 
@@ -170,5 +241,7 @@ of Workbench or model access to a kubeconfig or live cluster.
 
 The track succeeds when a reviewer receives clearer, source-traceable
 configuration guidance from supplied YAML while understanding exactly what the
-manifest does and does not prove. More framework labels, findings, or controls
-are not success by themselves.
+manifest does and does not prove. An RMF-aligned appendix succeeds only when it
+makes evidence reusable without being mistaken for RMF completion, a control
+assessment, risk acceptance, or authorization. More framework labels,
+findings, controls, or lifecycle steps are not success by themselves.

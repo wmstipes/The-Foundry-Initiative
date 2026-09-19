@@ -1817,9 +1817,17 @@ not authorize implementation.
   800-53 Release 5.2.0 controls only as traceable non-equivalent references,
   CSF 2.0 only for high-level outcome orientation, and SP 800-204C as a deferred
   pipeline or service-mesh source.
+- Added an RMF-aligned evidence-support boundary based on SP 800-37 Revision 2:
+  Workbench may support Prepare, Select, Implement, and Assess with bounded
+  manifest observations, while Categorize remains external context and
+  Authorize remains entirely outside Workbench authority.
+- Limited SP 800-53A use to the `examine` method for supplied YAML, prohibited
+  automatic SP 800-53B impact-baseline selection, and deferred OSCAL until a
+  named downstream workflow justifies an exact interchange contract.
 - Defined candidate work packages for source applicability, a strict versioned
-  profile, browser-local implementation, OWASP/NIST presentation, adversarial
-  evaluation, and future Workbench release readiness.
+  profile, browser-local implementation, OWASP/NIST presentation, an RMF
+  evidence appendix, adversarial evaluation, and future Workbench release
+  readiness.
 - Preserved the existing supported-GVK, strict-CSP, no-network, no-upload,
   no-cluster-access, no-compliance-claim, and no-remediation boundaries.
 - Changed no application code, profile data, package, image, tag, release
@@ -1829,7 +1837,9 @@ not authorize implementation.
 
 Cross-framework guidance is useful only when one manifest fact remains one
 fact, every source stays traceable, and references are not mistaken for
-equivalent controls or compliance evidence.
+equivalent controls or compliance evidence. RMF terminology adds value only
+when it clarifies how evidence may be reused without implying categorization,
+assessment completion, risk acceptance, or authorization.
 
 ### Next small step
 
