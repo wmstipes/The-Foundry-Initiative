@@ -7,8 +7,14 @@ The Foundry Initiative currently uses a lightweight, review-first workflow.
 1. Create a focused branch from `main` using `agent/<description>` or `feature/<description>`.
 2. Keep each change small enough to review and explain.
 3. Add or update documentation alongside code.
-4. Run relevant tests and checks before opening a pull request.
+4. Run relevant tests and checks before opening a pull request. Use the
+   [testing and validation guide](docs/testing-and-validation.md) to identify
+   the applicable suites and evidence boundaries.
 5. Open pull requests as drafts until the work is ready for final review.
+
+When a change adds, removes, parameterizes, relocates, or changes discovery of
+tests, update the testing guide's dated inventory and suite description in the
+same pull request. Report named suite counts rather than an unlabeled total.
 
 ## Commit messages
 
