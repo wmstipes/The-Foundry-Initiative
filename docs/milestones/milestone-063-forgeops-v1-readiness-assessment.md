@@ -1,7 +1,7 @@
 # Milestone 063 — ForgeOps v1 readiness assessment
 
-**Status:** Complete and merged through PR #66; documentation-only closeout in
-progress
+**Status:** Complete through implementation PR #66 and documentation-only
+closeout PR #67; branch cleanup pending
 
 **Started:** 2026-09-19
 
@@ -77,8 +77,9 @@ belong only to the separately reviewable Milestone 064 candidate.
    the documentation-only paths were outside the workflow filters.
 8. Merge — complete; PR #66 was squash-merged at
    `2293865859ddc6259f8cedee95705e800a152bc6`.
-9. Documentation-only closeout — in progress; this update records the accepted
-   assessment and merge without adding release or operational authority.
+9. Documentation-only closeout — complete through PR #67; this update records
+   the accepted assessment and merge without adding release or operational
+   authority.
 10. Branch cleanup and synchronization — pending.
 
 ## Merge and publication evidence
@@ -87,6 +88,7 @@ belong only to the separately reviewable Milestone 064 candidate.
 - Exact accepted tree: `d407063392c9294fc8aed27a747744ee1c111201`.
 - Implementation PR: #66.
 - Squash merge: `2293865859ddc6259f8cedee95705e800a152bc6`.
+- Documentation-only closeout PR: #67.
 - Package publication, release tag, deployment, and live acceptance remained
   not applicable.
 
