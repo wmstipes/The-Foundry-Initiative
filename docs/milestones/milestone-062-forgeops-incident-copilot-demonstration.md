@@ -85,9 +85,16 @@ documentation.
 2. Documentation reconciliation and offline rehearsal — complete; all 141
    focused ForgeOps tests and all 204 repository Python tests passed, as did
    manifest, Wiki, alert-rule source, compilation, and whitespace validation.
-3. Draft-PR publication and CI — pending.
-4. Package or image release — approved as not applicable unless scope changes.
-5. Deployment — approved as not applicable unless scope changes.
+3. Draft-PR publication and CI — complete; draft PR #63 opened from remote
+   commit `5c8d26d31037286a9c95bdbb43f824d029bec522`, whose tree
+   `46ef3424648abc04a3ea91be9cd7007fcbf1ec57` exactly matched the reviewed
+   local tree. GitHub triggered no workflow because the change is outside the
+   existing code and manifest path filters; the approved local validation is
+   the executable evidence for this documentation-only change.
+4. Package or image release — complete as not applicable; no release artifact
+   exists and repository-local version `0.15.0` is unchanged.
+5. Deployment — complete as not applicable; no image, manifest, workload,
+   configuration, rollout, restart, or persistent state changes.
 6. Live read-only demonstration — approved; execution remains pending because
    it requires the operator workstation's explicit kubeconfig and private-lab
    reachability.
