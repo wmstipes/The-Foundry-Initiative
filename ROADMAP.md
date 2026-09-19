@@ -509,7 +509,7 @@ See [Milestone 054](docs/milestones/milestone-054-forgeops-runbook-catalog.md).
 
 ### Milestone 055 — Deterministic grounded runbook mapping
 
-**Status:** Implemented and accepted locally; publication in progress.
+**Status:** Implementation complete and merged through PR #49 at `113e629`; documentation-only closeout and branch cleanup are in progress. Gates 4-6 were closed as not applicable.
 
 - Add `forgeops runbook map --comparison <file> --catalog <file>` with text and
   JSON output.

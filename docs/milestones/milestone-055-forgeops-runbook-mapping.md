@@ -1,6 +1,6 @@
 # Milestone 055 — ForgeOps deterministic grounded runbook mapping
 
-**Status:** Implemented and accepted locally; publication in progress
+**Status:** Implementation complete and merged; documentation-only closeout in progress
 
 **Started:** 2026-09-19
 
@@ -90,11 +90,23 @@ A known regression or recovery can map completely and return mapping exit `0`.
 
 1. Scope and design — pre-approved and complete.
 2. Local implementation and offline acceptance — pre-approved and complete.
-3. Publication and pull request — pre-approved; in progress.
+3. Publication and pull request — complete; PR #49 published the exact accepted tree.
 4. Package/image release — closed as not applicable.
 5. Deployment — closed as not applicable.
 6. Live acceptance — closed as not applicable.
-7. Ready for review — pre-approved; pending publication and CI.
-8. Merge — pre-approved; pending publication and CI.
-9. Documentation-only closeout — pre-approved; pending implementation merge.
-10. Branch cleanup — pre-approved; pending closeout merge.
+7. Ready for review — complete after ForgeOps CI run `35413595246` passed.
+8. Merge — complete; PR #49 merged at `113e629ee105dce3f3a09d0f12c6bce4f53129a4`.
+9. Documentation-only closeout — pre-approved and in progress.
+10. Branch cleanup — pre-approved; pending closeout merge verification.
+
+## Publication and merge evidence
+
+- Accepted local implementation commit:
+  `bc84d6f3f82098e5026c04bbe10b3bfaa9031e12`.
+- Published remote implementation commit:
+  `688ec8ea89219ffe40b498ab9fb0fb4105525288`.
+- Both commits resolve to exact accepted tree:
+  `bf74bd8d8d40ac32c58b04f3b7d43edc19deef9f`.
+- ForgeOps CI run `35413595246` completed successfully.
+- PR #49 merged at `113e629ee105dce3f3a09d0f12c6bce4f53129a4`;
+  the merge resolves to the exact accepted implementation tree.
