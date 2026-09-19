@@ -405,8 +405,9 @@ seven blockers. Its candidate uses
 the `signalforge-forgeops` identity and version `1.0.0`, the MIT license, an
 exact reproducible wheel plus SHA-256 record, Python 3.11-3.14 source and wheel
 matrices, bounded tag-only GitHub Release automation, and an operator release
-procedure. Draft PR, CI artifact proof, and fresh Windows operator acceptance
-remain pending. No tag or public release belongs to this milestone.
+procedure. Draft PR #68, all nine Python 3.11-3.14 CI jobs, reproducible artifact
+digest verification, and fresh Windows Python 3.14.7 offline acceptance passed.
+Merge and closeout remain; no tag or public release belongs to this milestone.
 
 ## Supporting completed work
 
