@@ -91,12 +91,15 @@ class ForgeOpsIncidentReasoningDesignTests(unittest.TestCase):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, text)
 
-    def test_design_has_no_runtime_command_or_model_dependency(self) -> None:
+    def test_runtime_brief_has_no_model_dependency(self) -> None:
         from forgeops.cli import build_parser
 
-        help_text = build_parser().format_help()
-        self.assertNotIn("incident", help_text)
-        self.assertNotIn("reason", help_text)
+        args = build_parser().parse_args([
+            "incident", "brief", "--comparison", "comparison.json",
+            "--mapping", "mapping.json", "--format", "json",
+        ])
+        self.assertEqual("incident", args.command)
+        self.assertEqual("brief", args.incident_command)
         self.assertEqual([], [name for name in sys.modules if name.startswith("openai")])
 
 

@@ -172,8 +172,18 @@ Validation success establishes contract validity, not mapping completeness,
 catalog provenance, runbook applicability, or contained system health.
 
 The [bounded incident-reasoning design](docs/design/forgeops-bounded-incident-reasoning.md)
-defines evaluation and safety requirements for a future incident brief. No
-production incident command or model integration exists yet.
+defines evaluation and safety requirements for the deterministic JSON brief:
+
+~~~powershell
+forgeops incident brief `
+  --comparison .\comparison.json `
+  --mapping .\mapping.json `
+  --format json
+~~~
+
+The command cross-checks both validated inputs and returns process exit `0`
+when a brief is rendered, regardless of its bounded `STABLE`, `CHANGED`,
+`DEGRADED`, `INCOMPLETE`, or `RECOVERED` state. No model integration exists.
 
 ## Documentation front door
 
