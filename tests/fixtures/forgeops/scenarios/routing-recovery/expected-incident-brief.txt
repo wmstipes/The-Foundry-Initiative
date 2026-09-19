@@ -1,0 +1,21 @@
+ForgeOps incident brief
+Supplied window: 2026-09-17T15:40:00Z -> 2026-09-17T15:45:00Z
+Bounded state: RECOVERED
+
+Deterministic facts
+- routing.forge-restaurant.synthetic-service: STATUS_CHANGED FAIL -> PASS
+
+Cataloged runbook references (informational only)
+- success-verification: Verify recovery against the success standard [docs/runbooks/restaurant-api-operator-runbook.md#Success Standard]
+  matched rule: routing.forge-restaurant.synthetic-service STATUS_CHANGED after=PASS
+
+Unmapped deltas
+- none
+
+Uncertainty
+- cause-not-established
+- point-in-time-only
+
+Authority limitations
+- This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.
+- Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution.

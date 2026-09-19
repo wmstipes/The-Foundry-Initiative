@@ -24,6 +24,7 @@ from forgeops.incident import (  # noqa: E402
     build_incident_brief,
     classify_incident_state,
     render_incident_brief_json,
+    render_incident_brief_text,
 )
 from forgeops.models import Status  # noqa: E402
 from forgeops.runbook_mapping import (  # noqa: E402
@@ -72,6 +73,50 @@ class ForgeOpsIncidentBriefTests(unittest.TestCase):
                 self.assertEqual(case["requiredUncertainties"], list(brief.uncertainties))
                 self.assertEqual(case["expectedDeltaIds"], [fact.check_id for fact in brief.facts])
                 self.assertEqual(case["expectedRunbookIds"], [item.runbook_id for item in brief.runbooks])
+
+    def test_text_renderer_matches_every_golden_operator_brief(self) -> None:
+        for scenario in sorted(path.name for path in SCENARIOS.iterdir() if path.is_dir()):
+            comparison = load_comparison_file(
+                str(SCENARIOS / scenario / "expected-comparison.json"),
+            )
+            brief = build_incident_brief(comparison, self.mapping_for(comparison))
+            first, second = StringIO(), StringIO()
+            render_incident_brief_text(brief, first)
+            render_incident_brief_text(brief, second)
+            with self.subTest(scenario=scenario):
+                self.assertEqual(first.getvalue(), second.getvalue())
+                self.assertEqual(
+                    (SCENARIOS / scenario / "expected-incident-brief.txt").read_text(
+                        encoding="utf-8",
+                    ),
+                    first.getvalue(),
+                )
+                lowered = first.getvalue().lower()
+                self.assertNotIn("likely cause", lowered)
+                self.assertNotIn("recommended action", lowered)
+                self.assertNotIn("execute this", lowered)
+
+    def test_text_and_json_render_the_same_model(self) -> None:
+        comparison = load_comparison_file(
+            str(SCENARIOS / "routing-regression" / "expected-comparison.json"),
+        )
+        brief = build_incident_brief(comparison, self.mapping_for(comparison))
+        text_output, json_output = StringIO(), StringIO()
+        render_incident_brief_text(brief, text_output)
+        render_incident_brief_json(brief, json_output)
+        payload = json.loads(json_output.getvalue())
+        self.assertIn(f"Bounded state: {payload['state']}", text_output.getvalue())
+        for fact in payload["facts"]:
+            self.assertIn(fact["id"], text_output.getvalue())
+        for runbook in payload["runbooks"]:
+            self.assertIn(runbook["runbookId"], text_output.getvalue())
+
+    def test_text_is_default_and_json_remains_explicit(self) -> None:
+        args = build_parser().parse_args([
+            "incident", "brief", "--comparison", "comparison.json",
+            "--mapping", "mapping.json",
+        ])
+        self.assertEqual("text", args.output_format)
 
     def test_state_rule_is_total_for_neutral_changes(self) -> None:
         comparison = EvidenceComparison(

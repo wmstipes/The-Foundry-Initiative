@@ -1,0 +1,22 @@
+ForgeOps incident brief
+Supplied window: 2026-09-17T15:30:00Z -> 2026-09-17T15:35:00Z
+Bounded state: INCOMPLETE
+
+Deterministic facts
+- metrics-api-service: STATUS_CHANGED PASS -> UNKNOWN
+
+Cataloged runbook references (informational only)
+- metrics-api-investigation: Investigate Metrics API availability [docs/runbooks/restaurant-api-operator-runbook.md#Common Issue: Metrics API Not Available]
+  matched rule: metrics-api-service STATUS_CHANGED after=UNKNOWN
+
+Unmapped deltas
+- none
+
+Uncertainty
+- cause-not-established
+- evidence-incomplete
+- point-in-time-only
+
+Authority limitations
+- This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.
+- Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution.

@@ -65,4 +65,5 @@ jobs:
           forgeops runbook map --comparison tests/fixtures/forgeops/scenarios/routing-regression/expected-comparison.json --catalog docs/reference/forgeops-runbook-catalog.json --format json > /tmp/forgeops-runbook-mapping.json
           forgeops runbook mapping validate --input /tmp/forgeops-runbook-mapping.json
           forgeops incident brief --comparison tests/fixtures/forgeops/scenarios/routing-regression/expected-comparison.json --mapping /tmp/forgeops-runbook-mapping.json --format json
+          forgeops incident brief --comparison tests/fixtures/forgeops/scenarios/routing-regression/expected-comparison.json --mapping /tmp/forgeops-runbook-mapping.json --format text
           forgeops incident replay --comparison tests/fixtures/forgeops/scenarios/routing-regression/expected-comparison.json --mapping /tmp/forgeops-runbook-mapping.json --expected tests/fixtures/forgeops/scenarios/routing-regression/expected-incident-brief.json

@@ -1,0 +1,19 @@
+ForgeOps incident brief
+Supplied window: 2026-09-17T15:00:00Z -> 2026-09-17T15:05:00Z
+Bounded state: STABLE
+
+Deterministic facts
+- none
+
+Cataloged runbook references (informational only)
+- none
+
+Unmapped deltas
+- none
+
+Uncertainty
+- point-in-time-only
+
+Authority limitations
+- This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.
+- Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution.

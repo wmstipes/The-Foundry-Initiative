@@ -36,6 +36,7 @@ from .incident import (
     build_incident_brief,
     load_incident_brief,
     render_incident_brief_json,
+    render_incident_brief_text,
 )
 from .incident_replay import render_incident_replay, replay_incident_brief
 from .provenance import inspect_execution_provenance, render_execution_provenance
@@ -175,8 +176,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--mapping", required=True, help="explicit local runbook-mapping file",
     )
     brief.add_argument(
-        "--format", choices=("json",), default="json",
-        dest="output_format", help="output format (json)",
+        "--format", choices=("text", "json"), default="text",
+        dest="output_format", help="output format (default: text)",
     )
     incident_replay = incident_commands.add_parser(
         "replay", help="compare a deterministic brief with an explicit expectation",
@@ -245,7 +246,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         except IncidentBriefError as exc:
             return _fail(f"incident brief invalid: {exc.code}: {exc.summary}")
         if args.incident_command == "brief":
-            render_incident_brief_json(brief, sys.stdout)
+            if args.output_format == "json":
+                render_incident_brief_json(brief, sys.stdout)
+            else:
+                render_incident_brief_text(brief, sys.stdout)
             return 0
         try:
             expected = load_incident_brief(args.expected)
