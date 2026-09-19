@@ -1506,3 +1506,20 @@ details and gives the closeout a precise, reproducible implementation anchor.
 Merge this documentation-only closeout, delete both Milestone 053 branches
 locally and remotely under the pre-approved Gate 10, and synchronize clean
 `main`.
+
+The closeout merged through PR #46 at
+`c8ad7b6e8a7e740521446cb23a039b71f09f82d1`; both Milestone 053 branches were
+then deleted locally and remotely and clean `main` was synchronized.
+
+## 2026-09-19 — Milestone 054 validated runbook knowledge catalog
+
+- Confirmed Milestone 053 Gate 10 cleanup and synchronized clean `main` at
+  `c8ad7b6e8a7e740521446cb23a039b71f09f82d1`.
+- Selected a validated knowledge catalog before mapping so repository runbook
+  identities and applicability selectors have a reviewable trust boundary.
+- Added strict `forgeops.runbook-catalog/v1alpha1` parsing and the explicit
+  `forgeops runbook catalog validate` command.
+- Added a seven-entry canonical catalog with fourteen selectors and tests that
+  prove every referenced runbook path and exact heading exists.
+- Kept catalog validity distinct from runbook applicability, diagnosis,
+  recommendation, and remediation authority.

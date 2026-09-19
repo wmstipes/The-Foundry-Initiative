@@ -139,6 +139,7 @@ manually delete package metadata while leaving an editable link in place.
 | `forgeops evidence integrity create` | One explicit validated evidence file | Integrity-record JSON | Integrity creation |
 | `forgeops evidence integrity verify` | One evidence file and one explicit integrity record | Match summary | Integrity verification |
 | `forgeops scenario replay` | Explicit before, after, and expected-comparison files | Replay match summary | Scenario replay |
+| `forgeops runbook catalog validate` | One explicit runbook-catalog file | Validity and bounded counts | Catalog validation |
 
 ## Protect exact artifact bytes
 
@@ -248,6 +249,12 @@ The integrity record answers whether exact validated bytes still match a
 separately retained reference; it is not source attribution or authenticity.
 Scenario replay checks deterministic behavior only. Grounded runbook mapping
 and bounded incident reasoning remain separately planned capabilities.
+
+The canonical runbook catalog at
+`docs/reference/forgeops-runbook-catalog.json` makes repository knowledge
+machine-addressable. Validation proves its contract and repository tests prove
+its referenced headings exist. It does not determine that a runbook applies to
+an observed change; deterministic mapping remains a separate capability.
 
 ## Documentation map
 

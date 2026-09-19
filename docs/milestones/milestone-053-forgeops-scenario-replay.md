@@ -1,6 +1,6 @@
 # Milestone 053 — ForgeOps bounded offline scenario replay
 
-**Status:** Implementation complete and merged; documentation-only closeout in progress
+**Status:** Complete, merged, synchronized, and cleaned up
 
 **Started:** 2026-09-18
 
@@ -147,4 +147,4 @@ Offline tests prove:
 7. Pull-request readiness — complete after successful CI and exact-tree review.
 8. Merge — complete at `6900aa956786976fb7a20e967137a8a3096e4514`.
 9. Closeout — pre-approved and in progress on `codex/milestone-053-closeout`.
-10. Branch cleanup — pre-approved and pending closeout merge verification.
+10. Branch cleanup — complete; both Milestone 053 branches were deleted locally and remotely, and clean `main` was synchronized at the closeout merge.

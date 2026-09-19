@@ -59,3 +59,4 @@ jobs:
           forgeops evidence integrity create --input tests/fixtures/forgeops/evaluated-json-golden.json
           forgeops evidence integrity verify --input tests/fixtures/forgeops/evaluated-json-golden.json --record tests/fixtures/forgeops/evaluated-json-golden.integrity.json
           forgeops scenario replay --before tests/fixtures/forgeops/scenarios/stable-baseline/before.json --after tests/fixtures/forgeops/scenarios/stable-baseline/after.json --expected tests/fixtures/forgeops/scenarios/stable-baseline/expected-comparison.json
+          forgeops runbook catalog validate --input docs/reference/forgeops-runbook-catalog.json

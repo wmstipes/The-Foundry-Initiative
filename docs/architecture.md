@@ -201,6 +201,14 @@ directory and discovers no scenario. Replay success means deterministic output
 matched expectation; it does not mean the contained state is healthy, current,
 authentic, severe, diagnosed, or actionable.
 
+Milestone 054 adds `runbooks.py` as a separate offline knowledge-contract
+boundary. It validates one explicit `forgeops.runbook-catalog/v1alpha1` file
+containing stable runbook identities, repository-local Markdown targets, exact
+headings, and bounded selectors over existing comparison fields. The canonical
+catalog is repository-owned and its targets are checked in tests. Validation
+does not load a comparison, select a runbook, claim applicability, or create
+diagnostic or remediation authority.
+
 The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → exact-byte integrity and/or deterministic offline comparison → explicit expected-result replay → optional future reasoning. Later reasoning may consume validated evidence or the bounded comparison JSON, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
 
 ## Documentation authority and publication
