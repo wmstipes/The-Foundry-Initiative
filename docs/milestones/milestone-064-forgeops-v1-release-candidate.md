@@ -1,8 +1,8 @@
 # Milestone 064 — ForgeOps v1 release-candidate hardening
 
-**Status:** Candidate accepted through draft PR #68, independent CI, and fresh
-Windows operator validation. Merge and closeout remain pending. No tag or
-release has been created.
+**Status:** Candidate accepted and squash-merged through PR #68 at
+`0fde4d904b9731a3c99f0ae5d367ac8f36a1fce1`; documentation-only closeout and
+branch cleanup remain. No tag or release has been created.
 
 **Started:** 2026-09-19
 
@@ -57,10 +57,13 @@ reasoning, collection, deployment, or remediation capability.
 5. Deployment — closed as not applicable.
 6. Fresh Windows operator candidate installation and offline acceptance —
    complete on Python 3.14.7.
-7. Acceptance review and PR readiness — pending this documentation
-   reconciliation and its required CI rerun.
-8. Merge — pending.
-9. Documentation-only closeout — pending.
+7. Acceptance review and PR readiness — complete; reconciled head `f7ee4f7`
+   passed all nine jobs again in ForgeOps CI run `35463958602`, reproducing the
+   accepted wheel digest, and PR #68 was marked ready.
+8. Merge — complete; PR #68 was squash-merged at
+   `0fde4d904b9731a3c99f0ae5d367ac8f36a1fce1`.
+9. Documentation-only closeout — in progress; it adds no package, tag,
+   deployment, live-system, or remediation authority.
 10. Branch cleanup and synchronization — pending.
 
 ## Stop condition
@@ -121,3 +124,19 @@ operator acceptance.
 This evidence accepts the candidate for merge. It does not publish the package,
 establish current cluster health, or grant remediation authority. The retained
 operator directory remains temporary evidence until Milestone 064 closeout.
+
+## Merge evidence and v1 handoff
+
+- Accepted reconciled implementation head:
+  `f7ee4f7e8ee73f8e33db9abee37720ba752e38b1`.
+- Accepted reconciled tree: `9002c39ef65732442786eda224f3658e5d6b2e53`.
+- Final candidate CI run: `35463958602`; all nine jobs passed and artifact ID
+  `10591001557` retained the same exact wheel and checksum.
+- Implementation PR: #68.
+- Squash merge: `0fde4d904b9731a3c99f0ae5d367ac8f36a1fce1`.
+
+Milestone 065 may begin only from the synchronized Milestone 064 closeout. It
+must reconfirm the accepted source and wheel digest before creating tag
+`forgeops-v1.0.0`. The tag-triggered workflow, not an operator workstation,
+must rebuild, test, install, and publish only the wheel and checksum. Published
+asset verification remains a separate acceptance gate.

@@ -643,8 +643,8 @@ and the [v1 release-readiness decision](docs/design/forgeops-v1-release-readines
 
 ### Milestone 064 — ForgeOps v1 release-candidate hardening
 
-**Status:** Candidate accepted through draft PR #68, Python 3.11-3.14 CI, and
-fresh Windows Python 3.14.7 acceptance; merge and closeout pending.
+**Status:** Candidate accepted and squash-merged through PR #68 at `0fde4d9`;
+documentation-only closeout and branch cleanup remain.
 
 - Resolve only the seven accepted v1 release blockers.
 - Produce and validate a non-published `1.0.0` wheel and checksum.
@@ -655,7 +655,7 @@ fresh Windows Python 3.14.7 acceptance; merge and closeout pending.
 
 ### Milestone 065 — ForgeOps v1 release and closeout
 
-**Status:** Approved and pending an accepted Milestone 064 candidate.
+**Status:** Approved and pending synchronized Milestone 064 closeout.
 
 - Reconfirm the exact accepted source and candidate artifact.
 - Publish only tag `forgeops-v1.0.0`, the reviewed wheel, and SHA-256 checksums

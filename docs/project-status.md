@@ -362,9 +362,10 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete the approved Milestone 064 release-candidate hardening against its
-seven exact blockers. Milestone 063 synchronization and branch cleanup are
-complete. The release channel is a GitHub Release wheel with
+Complete Milestone 064 documentation-only closeout and branch cleanup, then
+begin the approved Milestone 065 release from the exact accepted candidate.
+Milestone 063 synchronization and branch cleanup are complete. The release
+channel is a GitHub Release wheel with
 SHA-256 checksums, not PyPI, and the public reuse license is MIT. The accepted
 demonstration identified no concrete unmet operator question, so model and
 retrieval integration remain deferred.
@@ -405,9 +406,11 @@ seven blockers. Its candidate uses
 the `signalforge-forgeops` identity and version `1.0.0`, the MIT license, an
 exact reproducible wheel plus SHA-256 record, Python 3.11-3.14 source and wheel
 matrices, bounded tag-only GitHub Release automation, and an operator release
-procedure. Draft PR #68, all nine Python 3.11-3.14 CI jobs, reproducible artifact
+procedure. PR #68, both nine-job Python 3.11-3.14 CI runs, reproducible artifact
 digest verification, and fresh Windows Python 3.14.7 offline acceptance passed.
-Merge and closeout remain; no tag or public release belongs to this milestone.
+PR #68 squash-merged at `0fde4d904b9731a3c99f0ae5d367ac8f36a1fce1`.
+Documentation-only closeout and branch cleanup remain; no tag or public release
+belongs to this milestone.
 
 ## Supporting completed work
 
