@@ -9,7 +9,8 @@ approval
 
 ## Purpose
 
-This roadmap identifies the next improvements that could make the final
+This roadmap identifies improvements from the supported v1 baseline through
+possible v2 and v3 horizons. The sequence should make the final
 incident-copilot demonstration clearer, make its trust claims easier to verify,
 or prepare a later ForgeOps release. It does not reopen the accepted v1.0.0
 release or authorize implementation by itself.
@@ -44,7 +45,19 @@ The `forgeops-v1.0.0` tag and its two release assets remain immutable. Later
 documentation or implementation commits must not move the tag or replace those
 assets.
 
-## Recommended sequence
+## Version horizons
+
+| Horizon | Intended result | Admission boundary |
+| --- | --- | --- |
+| v1.x | Make the released deterministic demonstration easier to run, challenge, and verify | Backward-compatible improvement with no collection- or remediation-authority expansion |
+| v2 | Generalize the deterministic operator path through explicit target profiles, ordered incident timelines, and portable evidence bundles | A demonstrated operator or reviewer need justifies a major compatibility boundary and migration plan |
+| v3 | Add evaluated assistive reasoning only if it measurably answers a question the v2 deterministic baseline cannot | Independent corpus, measurable improvement, privacy and failure design, untrusted-draft treatment, and an explicit stop decision |
+
+Version numbers are outcomes of accepted scope, not deadlines. If a horizon
+does not satisfy its admission boundary, ForgeOps remains on the last supported
+baseline without creating release work.
+
+## Horizon 1 — v1.x demonstration and trust hardening
 
 ### Milestone 066 — Installed-artifact demonstration runner
 
@@ -146,6 +159,194 @@ the final boundary.
 If readiness fails, release work stops without creating a tag or modifying the
 v1.0.0 release.
 
+## Horizon 2 — deterministic ForgeOps v2
+
+ForgeOps v2 would remain deterministic, read-only, and informational. Its
+major-version justification would be a deliberate generalization beyond the
+SignalForge-specific pairwise evidence path, not model integration or
+remediation.
+
+### Milestone 073 — v2 problem statement and compatibility boundary
+
+**Purpose:** Improve the demonstration and prepare a future release.
+
+Use accepted v1.x demonstrations to identify the exact operator and reviewer
+needs that require a v2 boundary. Define supported v1 artifacts, migration,
+compatibility, versioning, and explicit exclusions before changing a schema or
+command.
+
+Acceptance may conclude that v2 is not justified. In that case, later v2
+milestones remain deferred.
+
+### Milestone 074 — Declarative target-profile design
+
+**Purpose:** Improve the demonstration and prove trustworthiness.
+
+Design a strict, versioned profile that replaces compiled SignalForge target
+constants with an explicitly supplied allowlist of named resources and
+optional endpoints. Profiles must not enable ambient discovery, Secrets,
+broad namespace reads, arbitrary commands, credential embedding, or mutation.
+
+The design must define profile validation, size and count limits, canonical
+ordering, redaction, provenance limitations, and how a profile is bound to its
+evidence.
+
+### Milestone 075 — Deterministic target-profile implementation
+
+**Purpose:** Improve the demonstration and prepare v2.
+
+Implement only the accepted profile contract through the existing deny-by-
+default runners. Preserve an explicit kubeconfig and exact context for every
+live read, and prove that invalid or overbroad profiles fail before collection.
+
+The fixed SignalForge profile remains a supported migration and regression
+fixture until an approved compatibility decision says otherwise.
+
+### Milestone 076 — Ordered incident timeline
+
+**Purpose:** Improve the demonstration.
+
+Extend deterministic comparison from one before/after pair to a bounded,
+strictly ordered sequence of validated snapshots. Render observed transitions,
+recoveries, persistent unknowns, and mapping coverage without inferring cause,
+severity, impact, or remediation.
+
+Acceptance requires exact timeline expectations, chronology and duplicate
+rejection, bounded input counts and sizes, stable ordering, and equivalence
+between structured and operator-facing views.
+
+### Milestone 077 — Portable evidence bundle
+
+**Purpose:** Improve the demonstration, prove trustworthiness, and prepare v2.
+
+If Milestone 069 accepts the manifest concept, implement a bounded portable
+bundle containing only explicitly selected validated artifacts, their
+manifest, and deterministic replay inputs. Bundle creation and verification
+must work offline and must not silently collect, rewrite, or authenticate the
+underlying evidence.
+
+### Milestone 078 — Profile-aware runbook knowledge
+
+**Purpose:** Improve the demonstration.
+
+Allow deterministic mapping to select an explicitly supplied, validated
+catalog appropriate to the active target profile. Catalog selection must be
+visible in the evidence chain and cannot prove that a runbook applies or
+authorize its execution.
+
+This milestone is admitted only if v2 profile demonstrations expose a concrete
+catalog-selection need.
+
+### Milestone 079 — v2 adversarial and compatibility evaluation
+
+**Purpose:** Prove that v2 is trustworthy.
+
+Challenge profile confusion, cross-profile artifact mixing, reordered or
+truncated timelines, malicious bundle paths, stale catalogs, v1 migration, and
+forbidden claims. Compare all accepted behavior with the v1 deterministic
+baseline and document every intentional incompatibility.
+
+### Milestone 080 — ForgeOps v2 readiness, candidate, release, and closeout
+
+**Purpose:** Prepare and complete the v2 release.
+
+Audit the accepted v2 scope, schemas, migration path, documentation, test
+inventory, reproducibility, platform support, artifact set, and rollback.
+Build and independently accept the exact candidate before any tag or public
+asset is created.
+
+If the v2 contract, migration, or trust evaluation is incomplete, release work
+stops and the supported v1.x baseline remains unchanged.
+
+## Horizon 3 — conditional assistive ForgeOps v3
+
+ForgeOps v3 is not promised. It is a conditional horizon for evaluated model
+or retrieval assistance only if deterministic v2 demonstrations identify a
+concrete unanswered operator question. The deterministic pipeline remains the
+authority-bearing source of facts; probabilistic output remains untrusted
+draft text with no live-system or remediation authority.
+
+### Milestone 081 — v3 admission and stop decision
+
+**Purpose:** Improve the demonstration and prevent unjustified scope.
+
+Review v2 demonstrations and operator feedback for one concrete unanswered
+question. Record a measurable success threshold and determine whether model or
+retrieval assistance is plausibly necessary.
+
+If no qualifying gap exists, stop the v3 sequence. Continuing because an AI
+feature is fashionable is an explicit failure of this gate.
+
+### Milestone 082 — Independent assistive-reasoning evaluation corpus
+
+**Purpose:** Prove trustworthiness.
+
+Create an evaluation corpus independent of model training and prompt tuning.
+It must include answerable, unanswerable, conflicting, incomplete, adversarial,
+and forbidden-claim cases with scoring for factual support, citations,
+abstention, uncertainty, and authority-boundary compliance.
+
+### Milestone 083 — v3 privacy, threat, dependency, and failure design
+
+**Purpose:** Prove trustworthiness and prepare v3.
+
+Decide local versus remote processing, data minimization, retention, model and
+retrieval dependencies, timeouts, unavailability behavior, prompt-injection
+treatment, update policy, and operator disclosure. No kubeconfig, credential,
+endpoint, collection, persistence, or mutation authority may reach the
+assistive component.
+
+### Milestone 084 — Offline assistive-reasoning experiment
+
+**Purpose:** Improve the demonstration.
+
+Run a bounded experiment using only validated, redacted v2 evidence bundles.
+Compare its answers with the deterministic brief and the independent corpus.
+Output must be visibly labeled untrusted draft assistance and must fail closed
+to the deterministic baseline when unavailable or invalid.
+
+This experiment is not yet a supported ForgeOps feature or release candidate.
+
+### Milestone 085 — Citation and forbidden-claim enforcement
+
+**Purpose:** Prove trustworthiness.
+
+Require every assistive factual claim to resolve to supplied evidence or
+catalog material, and reject unsupported causation, severity, impact,
+applicability, current-health, and remediation-authority claims. Evaluate
+enforcement independently from model quality.
+
+### Milestone 086 — Comparative operator evaluation
+
+**Purpose:** Improve the demonstration and prove trustworthiness.
+
+Compare deterministic-only and assistive workflows on the admitted operator
+question. Measure correctness, unsupported claims, abstention, time to answer,
+review burden, reproducibility, and failure recovery.
+
+The assistive path advances only if it clears the predeclared threshold without
+weakening the deterministic baseline or authority boundaries.
+
+### Milestone 087 — ForgeOps v3 readiness assessment
+
+**Purpose:** Prepare a future release.
+
+Audit whether the evaluated assistive path is supportable across privacy,
+quality, dependency, platform, cost, failure, upgrade, rollback, and operator-
+disclosure boundaries. The acceptable outcome is deferral or rejection.
+
+### Milestone 088 — ForgeOps v3 candidate, release, and closeout
+
+**Purpose:** Prepare and complete a conditional v3 release.
+
+Begin only after Milestone 087 accepts an exact scope. Prove the deterministic
+core independently, evaluate the exact assistive dependency and configuration,
+publish only reviewed artifacts, independently accept the public release, and
+document how to disable or remove assistance while retaining deterministic
+operation.
+
+If any v3 trust threshold fails, no tag or public release is created.
+
 ## Conditional add-ons
 
 The following are not scheduled milestones. Each needs new evidence before it
@@ -156,7 +357,7 @@ can enter the sequence:
 | Static HTML demonstration report | A reviewer cannot efficiently understand or share the deterministic text and JSON brief | Improve the demonstration |
 | Additional synthetic incident families | A concrete failure mode is absent from the current corpus and has a deterministic expected result | Improve the demonstration; prove trustworthiness |
 | Broader runbook catalog | A demonstrated delta remains unmapped and an authoritative repository runbook exists | Improve the demonstration |
-| Model or retrieval experiment | A concrete operator question remains unanswered by the deterministic brief, with an independent evaluation corpus and measurable threshold | Improve the demonstration |
+| Model or retrieval experiment | Milestone 081 admits one concrete question that v2 cannot answer, with an independent evaluation corpus and measurable threshold | Improve the demonstration |
 | Additional live telemetry | A specific operational question cannot be answered by existing bounded evidence | Improve the demonstration |
 
 ## Rejected or deferred work

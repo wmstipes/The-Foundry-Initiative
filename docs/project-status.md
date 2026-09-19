@@ -373,9 +373,10 @@ retrieval integration remain deferred.
 The [ForgeOps post-v1 improvement roadmap](roadmaps/forgeops-post-v1-roadmap.md)
 proposes a separately gated sequence for installed-artifact demonstration,
 trust-failure evaluation, cross-platform release acceptance, evidence-bundle
-and release-provenance decisions, and a conditional v1.1 path. The roadmap
-authorizes no implementation, live access, release, or remediation action by
-itself.
+and release-provenance decisions, a conditional v1.1 path, deterministic v2
+profiles and timelines, and an evidence-gated assistive v3 horizon. The roadmap
+authorizes no implementation, live access, model integration, release, or
+remediation action by itself.
 
 Milestones 054-061 are complete, merged, synchronized, and cleaned up. The
 Milestone 057-061 implementation PRs are #54-#58; grouped closeout PR #59

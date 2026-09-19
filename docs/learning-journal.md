@@ -1780,7 +1780,10 @@ future release; otherwise defer the work.
 - Created a post-v1 candidate roadmap for an installed-artifact demonstration
   runner, trust-failure evaluation, cross-platform acceptance, bounded
   evidence-bundle and release-provenance decisions, and a conditional v1.1
-  readiness and release path.
+  readiness and release path. Expanded it through a deterministic v2 horizon
+  for explicit profiles, timelines, and portable bundles and a conditional v3
+  horizon whose first gate must identify a measurable deterministic gap or stop
+  the sequence.
 - Classified every candidate by the governing purpose it serves and explicitly
   deferred model/RAG, autonomous remediation, forced live failures, broad
   telemetry, and new distribution channels without admission evidence.

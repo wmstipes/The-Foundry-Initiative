@@ -353,7 +353,8 @@ demonstration, release proof, publication, and closeout are complete
 
 The separately maintained
 [ForgeOps post-v1 improvement roadmap](docs/roadmaps/forgeops-post-v1-roadmap.md)
-defines candidate Milestones 066-072. It is direction, not implementation
+defines candidate Milestones 066-088 across v1.x, deterministic v2, and a
+conditional assistive v3. It is direction, not implementation
 authorization; each candidate must pass the governing-purpose and milestone
 admission gates before work begins.
 
