@@ -360,6 +360,12 @@ can enter the sequence:
 | Model or retrieval experiment | Milestone 081 admits one concrete question that v2 cannot answer, with an independent evaluation corpus and measurable threshold | Improve the demonstration |
 | Additional live telemetry | A specific operational question cannot be answered by existing bounded evidence | Improve the demonstration |
 
+Forge YAML Workbench configuration guidance is planned separately in the
+[Workbench security-guidance roadmap](forge-yaml-workbench-security-guidance-roadmap.md).
+Its first NIST profile remains browser-local and does not become ForgeOps
+evidence without a later demonstrated need and separately approved artifact
+contract.
+
 ## Rejected or deferred work
 
 - Autonomous or one-click remediation remains rejected because ForgeOps has no

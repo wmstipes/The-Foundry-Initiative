@@ -710,6 +710,84 @@ Model or retrieval work is not active, broader telemetry requires a concrete
 question, and informational output does not gain remediation authority. The
 post-v1 roadmap is the current source for candidate ForgeOps sequencing.
 
+## ForgeOps version horizons
+
+The detailed
+[ForgeOps post-v1 improvement roadmap](docs/roadmaps/forgeops-post-v1-roadmap.md)
+defines the acceptance boundaries and candidate Milestones 066-088. The
+version horizons are summarized here so the intended product direction is
+visible without leaving the main roadmap.
+
+### ForgeOps v1.x — run and verify the deterministic baseline
+
+- Add an installed-artifact demonstration runner that invokes existing public
+  commands without reimplementing ForgeOps logic.
+- Demonstrate exact rejection and mismatch behavior through offline synthetic
+  trust-failure cases.
+- Maintain installed-wheel acceptance across meaningful supported platforms.
+- Decide whether a deterministic evidence-bundle manifest and stronger release
+  provenance materially improve operator trust.
+- Prepare and publish v1.1 only if accepted operator-visible improvements
+  justify a release.
+
+### ForgeOps v2 — deterministic profiles, timelines, and bundles
+
+- Replace compiled SignalForge target constants with an explicitly supplied,
+  strictly validated, deny-by-default target profile.
+- Preserve exact kubeconfig, context, resource allowlist, endpoint, size,
+  count, redaction, and no-mutation boundaries for every live read.
+- Extend before/after comparison into a bounded ordered incident timeline that
+  shows transitions, recovery, persistent unknowns, and mapping coverage
+  without inferring cause, severity, impact, or remediation.
+- Create portable offline evidence bundles only if the manifest decision proves
+  review and replay value.
+- Select explicit profile-aware runbook catalogs without claiming that a
+  catalog match proves applicability or authorizes execution.
+- Prove v1 migration and v2 compatibility through adversarial evaluation before
+  an exact v2 candidate and release.
+
+### ForgeOps v3 — conditional evaluated assistance
+
+- Begin with an admission-and-stop decision based on one concrete operator
+  question that deterministic v2 cannot answer.
+- Build an independent corpus covering answerable, unanswerable, conflicting,
+  incomplete, adversarial, citation, abstention, and forbidden-claim cases.
+- Define privacy, retention, local-versus-remote processing, dependency,
+  timeout, prompt-injection, failure, and operator-disclosure boundaries before
+  a model or retrieval experiment.
+- Permit experiments to consume only validated, redacted offline v2 evidence
+  bundles; no kubeconfig, credential, endpoint, collection, persistence, or
+  mutation authority reaches the assistive component.
+- Require evidence citations and reject unsupported causation, severity,
+  impact, applicability, current-health, or remediation-authority claims.
+- Advance toward v3 only if comparative operator evaluation clears a
+  predeclared threshold without weakening deterministic operation.
+
+If no qualifying deterministic gap exists, ForgeOps remains on the supported
+v2 baseline and v3 is not pursued merely to add AI.
+
+## Forge YAML Workbench security-guidance horizon
+
+The separate
+[Workbench security-guidance roadmap](docs/roadmaps/forge-yaml-workbench-security-guidance-roadmap.md)
+extends the existing OWASP review profile through a Workbench-first NIST track:
+
+- use NIST SP 800-190 as the primary container-security guidance source;
+- attach selected NIST SP 800-53 Release 5.2.0 controls only as traceable
+  references, never as a compliance verdict;
+- use NIST CSF 2.0 only for high-level outcome orientation rather than YAML
+  pass/fail checks;
+- preserve browser-local processing, supported-GVK scope, strict CSP, and the
+  `direct`, `partial`, and `cluster-context-required` evidence boundary;
+- present shared OWASP and NIST evidence without claiming framework or control
+  equivalence; and
+- evaluate exact golden and adversarial cases before selecting a future
+  Workbench release version.
+
+The first NIST profile does not change ForgeOps. Any later connection requires
+a separately approved, strict, versioned artifact boundary and a demonstrated
+operator need.
+
 ## Phase 7 — Portfolio and hybrid-cloud expansion
 
 **Status:** Planned

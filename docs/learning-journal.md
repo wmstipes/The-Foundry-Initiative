@@ -1803,3 +1803,35 @@ from turning into an unbounded list of technologies to add.
 Review and publish the documentation and exact Wiki-source copies. Admit
 Milestone 066 only through a separate planning gate; the roadmap itself does
 not authorize implementation.
+
+## 2026-09-19 — Visible version horizons and NIST guidance planning
+
+- Expanded the main roadmap with an inline summary of projected ForgeOps v1.x,
+  deterministic v2, and conditional assistive v3 features so readers do not
+  have to discover the detailed roadmap through a single Phase 6 link.
+- Kept v3 evidence-gated: the sequence stops unless deterministic v2 leaves one
+  measurable operator question unanswered.
+- Selected a Workbench-first configuration-guidance track rather than coupling
+  browser-local analysis to ForgeOps.
+- Chose NIST SP 800-190 as the primary container-security source, selected SP
+  800-53 Release 5.2.0 controls only as traceable non-equivalent references,
+  CSF 2.0 only for high-level outcome orientation, and SP 800-204C as a deferred
+  pipeline or service-mesh source.
+- Defined candidate work packages for source applicability, a strict versioned
+  profile, browser-local implementation, OWASP/NIST presentation, adversarial
+  evaluation, and future Workbench release readiness.
+- Preserved the existing supported-GVK, strict-CSP, no-network, no-upload,
+  no-cluster-access, no-compliance-claim, and no-remediation boundaries.
+- Changed no application code, profile data, package, image, tag, release
+  asset, live Wiki, deployment, cluster, or operational authority.
+
+### Lesson
+
+Cross-framework guidance is useful only when one manifest fact remains one
+fact, every source stays traceable, and references are not mistaken for
+equivalent controls or compliance evidence.
+
+### Next small step
+
+Review and publish the visible version summaries and Workbench security-
+guidance roadmap. Implementation remains a separate milestone decision.
