@@ -262,6 +262,17 @@ exit `1` while replay itself returns `0`. Replay does not automatically verify
 Milestone 052 integrity records; use integrity verification separately when a
 trusted sidecar exists.
 
+## Validate the repository runbook catalog offline
+
+~~~powershell
+forgeops runbook catalog validate `
+  --input .\docs\reference\forgeops-runbook-catalog.json
+~~~
+
+Exit `0` means the catalog contract is valid. Exit `2` means the selected file
+is unavailable or invalid. A valid catalog is maintained knowledge only: it
+does not mean any cataloged procedure applies to the current evidence.
+
 ## Interpret results
 
 | Status | Meaning |

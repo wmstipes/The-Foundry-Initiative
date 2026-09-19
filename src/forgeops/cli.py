@@ -34,6 +34,7 @@ from .integrity import (
 from .provenance import inspect_execution_provenance, render_execution_provenance
 from .replay import render_scenario_replay, replay_scenario
 from .render import render_json, render_markdown, render_text
+from .runbooks import RunbookCatalogError, load_runbook_catalog
 from .runners import HttpRunner, KubectlRunner, RunnerFailure
 
 
@@ -106,6 +107,20 @@ def build_parser() -> argparse.ArgumentParser:
     replay.add_argument("--after", required=True, help="explicit later evidence file")
     replay.add_argument(
         "--expected", required=True, help="explicit expected comparison file",
+    )
+    runbook = subparsers.add_parser(
+        "runbook", help="operate on explicit offline runbook knowledge",
+    )
+    runbook_commands = runbook.add_subparsers(dest="runbook_command", required=True)
+    catalog = runbook_commands.add_parser(
+        "catalog", help="operate on a runbook catalog",
+    )
+    catalog_commands = catalog.add_subparsers(dest="catalog_command", required=True)
+    catalog_validate = catalog_commands.add_parser(
+        "validate", help="validate a ForgeOps runbook catalog",
+    )
+    catalog_validate.add_argument(
+        "--input", required=True, help="explicit local runbook-catalog file",
     )
     return parser
 
@@ -189,6 +204,21 @@ def main(argv: Sequence[str] | None = None) -> int:
         replay = replay_scenario(actual, expected)
         render_scenario_replay(replay, sys.stdout)
         return replay.exit_code
+    if (
+        args.command == "runbook"
+        and args.runbook_command == "catalog"
+        and args.catalog_command == "validate"
+    ):
+        try:
+            catalog = load_runbook_catalog(args.input)
+        except RunbookCatalogError as exc:
+            return _fail(f"runbook catalog invalid: {exc.code}: {exc.summary}")
+        signal_count = sum(len(entry.signals) for entry in catalog.entries)
+        sys.stdout.write(
+            f"VALID forgeops.runbook-catalog/v1alpha1 "
+            f"entries={len(catalog.entries)} signals={signal_count}\n"
+        )
+        return 0
     if args.command != "snapshot":
         return _fail("unsupported command")
     if args.context != EXPECTED_CONTEXT:

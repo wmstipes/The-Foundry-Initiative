@@ -6,7 +6,7 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Current position
 
-The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-052 are complete, merged, closed, synchronized, and cleaned up. Milestone 053 locally implements bounded offline scenario replay. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison, a bounded synthetic scenario corpus, explicit local execution identity, and a separate exact-byte integrity boundary.
+The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. Milestones 001-030 and 032-053 are complete, merged, closed, synchronized, and cleaned up. Milestone 054 implements a validated offline runbook knowledge catalog. Restaurant API `0.7.0` runs as three replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana, bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and Grafana use retained local storage with tested persistence and recovery procedures; the Workbench is intentionally stateless and performs analysis in the browser. The repository-owned GitHub Wiki front door is live without transferring authority away from repository documentation. ForgeOps implements and has live-validated the accepted bounded, read-only snapshot contract with offline fixtures, a deny-by-default runner, deterministic evidence and comparison JSON contracts, strict offline validation for explicitly selected saved artifacts, deterministic offline comparison and replay, a bounded synthetic scenario corpus, explicit local execution identity, a separate exact-byte integrity boundary, and validated repository-owned runbook knowledge.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
@@ -475,7 +475,7 @@ See [Milestone 052](docs/milestones/milestone-052-forgeops-evidence-integrity.md
 
 ### Milestone 053 — Bounded offline scenario replay
 
-**Status:** Implementation complete and merged. PR #45 merged at `6900aa9`; documentation-only closeout and branch cleanup are in progress. Gates 4-6 were closed as not applicable.
+**Status:** Complete, merged, synchronized, and cleaned up. Implementation PR #45 merged at `6900aa9`; closeout PR #46 merged at `c8ad7b6`. Gate 10 removed both Milestone 053 branches locally and remotely. Gates 4-6 were closed as not applicable.
 
 - Add `forgeops scenario replay --before <file> --after <file> --expected <file>`.
 - Strictly load the existing `forgeops.comparison/v1alpha1` contract with a
@@ -490,6 +490,22 @@ See [Milestone 052](docs/milestones/milestone-052-forgeops-evidence-integrity.md
   recommendation, AI reasoning, remediation, deployment, or cluster authority.
 
 See [Milestone 053](docs/milestones/milestone-053-forgeops-scenario-replay.md).
+
+### Milestone 054 — Validated runbook knowledge catalog
+
+**Status:** Implemented and accepted locally; publication in progress.
+
+- Add `forgeops runbook catalog validate --input <file>` as a separate offline
+  validator for `forgeops.runbook-catalog/v1alpha1`.
+- Catalog stable runbook IDs, repository-relative Markdown targets, exact
+  section headings, and bounded signal selectors.
+- Enforce strict fields, ordering, enumerations, safe paths, duplicate-key
+  rejection, UTF-8 JSON, and a 256 KiB input limit.
+- Prove every canonical runbook path and section exists in the repository.
+- Add no runbook selection, applicability claim, diagnosis, recommendation,
+  model invocation, remediation, deployment, or cluster authority.
+
+See [Milestone 054](docs/milestones/milestone-054-forgeops-runbook-catalog.md).
 
 Potential outcomes:
 

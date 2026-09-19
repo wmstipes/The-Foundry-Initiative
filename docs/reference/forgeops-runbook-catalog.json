@@ -1,0 +1,148 @@
+{
+  "schema": "forgeops.runbook-catalog/v1alpha1",
+  "entries": [
+    {
+      "id": "metrics-api-investigation",
+      "title": "Investigate Metrics API availability",
+      "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+      "section": "Common Issue: Metrics API Not Available",
+      "signals": [
+        {
+          "match": "exact",
+          "checkId": "metrics-api-service",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
+        }
+      ]
+    },
+    {
+      "id": "node-readiness",
+      "title": "Inspect cluster node readiness",
+      "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+      "section": "Cluster Nodes",
+      "signals": [
+        {
+          "match": "prefix",
+          "checkId": "node.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
+        }
+      ]
+    },
+    {
+      "id": "pod-inspection",
+      "title": "Inspect Pod state and restarts",
+      "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+      "section": "Check Pods",
+      "signals": [
+        {
+          "match": "prefix",
+          "checkId": "pod.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
+        },
+        {
+          "match": "prefix",
+          "checkId": "pods.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
+        }
+      ]
+    },
+    {
+      "id": "restaurant-endpoint",
+      "title": "Investigate Restaurant API endpoint failures",
+      "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+      "section": "Run Smoke Tests Only",
+      "signals": [
+        {
+          "match": "prefix",
+          "checkId": "http.restaurant-api.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
+        }
+      ]
+    },
+    {
+      "id": "service-endpoints",
+      "title": "Investigate Service endpoint routing",
+      "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+      "section": "Common Issue: Service Exists but Has No Endpoints",
+      "signals": [
+        {
+          "match": "prefix",
+          "checkId": "routing.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
+        }
+      ]
+    },
+    {
+      "id": "success-verification",
+      "title": "Verify recovery against the success standard",
+      "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+      "section": "Success Standard",
+      "signals": [
+        {
+          "match": "exact",
+          "checkId": "metrics-api-service",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["PASS"]
+        },
+        {
+          "match": "prefix",
+          "checkId": "deployment.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["PASS"]
+        },
+        {
+          "match": "prefix",
+          "checkId": "http.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["PASS"]
+        },
+        {
+          "match": "prefix",
+          "checkId": "node.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["PASS"]
+        },
+        {
+          "match": "prefix",
+          "checkId": "pod.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["PASS"]
+        },
+        {
+          "match": "prefix",
+          "checkId": "pods.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["PASS"]
+        },
+        {
+          "match": "prefix",
+          "checkId": "routing.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["PASS"]
+        }
+      ]
+    },
+    {
+      "id": "workload-rollout",
+      "title": "Investigate workload rollout health",
+      "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+      "section": "Common Issue: Deployment Does Not Roll Out",
+      "signals": [
+        {
+          "match": "prefix",
+          "checkId": "deployment.",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "This catalog identifies repository runbook sections and bounded signal selectors; it does not establish applicability, causation, diagnosis, recommendation, or remediation authority."
+  ]
+}

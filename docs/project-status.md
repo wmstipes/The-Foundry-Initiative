@@ -8,7 +8,7 @@
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
 
-The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 adds bounded offline scenario replay without adding collection or reasoning authority; its implementation is merged and closeout is in progress.
+The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestone 054 adds a strict offline runbook knowledge catalog without yet selecting procedures.
 
 ## Current application
 
@@ -185,7 +185,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - PR readiness and merge: draft PR #45 was marked ready after CI and exact-tree verification, then merged at `6900aa956786976fb7a20e967137a8a3096e4514`
 - Merge integrity: the implementation merge commit resolves to exact accepted tree `ddfa67a59024947c7403a679ce7254cdb1e232a3`
 - Gate disposition: package/image release, deployment, and live acceptance were closed as not applicable; no registry, image, release tag, cluster, endpoint, persistent-state, or Wiki action occurred
-- Closeout: documentation-only reconciliation is in progress on `codex/milestone-053-closeout`; branch cleanup follows closeout merge verification
+- Closeout and cleanup: documentation-only PR #46 merged at `c8ad7b6e8a7e740521446cb23a039b71f09f82d1`; Gate 10 removed both Milestone 053 branches locally and remotely, and clean `main` was synchronized at that commit
 
 ## Milestone 038 closeout
 
@@ -343,8 +343,8 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Merge the Milestone 053 documentation-only closeout, complete branch cleanup,
-and synchronize clean `main` before considering grounded runbook mapping.
+Publish and merge Milestone 054, close it out, and clean its branches before
+starting deterministic grounded runbook mapping.
 
 ## Supporting completed work
 

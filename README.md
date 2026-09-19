@@ -145,6 +145,13 @@ who created the evidence, authenticate it, or establish chain of custody.
 
 See the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-learning-guide.md), [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md), [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md), [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-validation.md), [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comparison.md), [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contract.md), [Milestone 050](docs/milestones/milestone-050-forgeops-synthetic-scenario-corpus.md), and [Milestone 051](docs/milestones/milestone-051-forgeops-execution-provenance.md).
 
+Validate the repository-owned runbook knowledge catalog offline:
+
+~~~powershell
+forgeops runbook catalog validate `
+  --input .\docs\reference\forgeops-runbook-catalog.json
+~~~
+
 ## Documentation front door
 
 The [GitHub Wiki](https://github.com/wmstipes/The-Foundry-Initiative/wiki) is a curated reader-facing navigation layer. Repository documentation remains authoritative; the Wiki intentionally points to the current project status, architecture, roadmap, runbooks, milestone evidence, and vision instead of copying them.
