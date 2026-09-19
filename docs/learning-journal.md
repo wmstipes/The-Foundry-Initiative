@@ -1744,6 +1744,14 @@ test, rebuild, exact-wheel install, and minimal-asset release path.
 - Merged the validated release record through PR #70 at
   `1369df1a4fec39bcce781ef814274bee435c4644`; the immutable release tag remains
   anchored to the accepted source commit rather than later documentation.
+- Merged documentation-only closeout PR #71 at
+  `8a671c9d186ce37321fa925e6e957ac9e1286507`.
+- Completed Gate 10 from clean synchronized `main`: removed both Milestone 065
+  branches locally and remotely, pruned remote references, and removed the
+  temporary published-asset acceptance directory.
+- Reconfirmed that the final GitHub Release remains non-draft and
+  non-prerelease and that immutable tag `forgeops-v1.0.0` still resolves to the
+  accepted source commit.
 
 ### Lesson
 
@@ -1754,6 +1762,7 @@ the public bytes through the documented operator path.
 
 ### Next small step
 
-Merge the release record and documentation-only closeout, remove release
-branches and temporary acceptance artifacts, and retain the immutable tag and
-GitHub Release as the supported ForgeOps v1 baseline.
+Maintain the immutable tag and GitHub Release as the supported ForgeOps v1
+baseline. Begin another milestone only when it directly improves the final
+incident-copilot demonstration, proves that it is trustworthy, or prepares a
+future release; otherwise defer the work.

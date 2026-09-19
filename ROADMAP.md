@@ -7,10 +7,10 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 ## Current position
 
 The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab.
-Milestones 001-030 and 032-064 are complete, merged, closed, synchronized, and
+Milestones 001-030 and 032-065 are complete, merged, closed, synchronized, and
 cleaned up. ForgeOps v1.0.0 is published through its product-specific GitHub
-Release and has passed independent published-wheel acceptance; Milestone 065
-release recording and closeout remain. Restaurant API `0.7.0` runs as three
+Release, has passed independent published-wheel acceptance, and is the
+supported ForgeOps v1 baseline. Restaurant API `0.7.0` runs as three
 replicas alongside lightweight Prometheus, Kubernetes Metrics Server, Grafana,
 bounded rule evaluation, and Forge YAML Workbench. NVMe-backed Prometheus and
 Grafana use retained local storage with tested persistence and recovery
@@ -348,7 +348,8 @@ Each telemetry layer should answer a specific operational question before it is 
 
 ## Phase 6 — ForgeOps AI-assisted operations
 
-**Status:** In progress — deterministic incident-copilot baseline and demonstration complete; v1 release readiness is active
+**Status:** ForgeOps v1.0.0 complete — deterministic incident-copilot baseline,
+demonstration, release proof, publication, and closeout are complete
 
 Evolve the rules-based `/analyze` endpoint into a grounded Kubernetes incident copilot.
 
@@ -673,8 +674,11 @@ synchronization, branch cleanup, and temporary-artifact removal.
 
 ### Milestone 065 — ForgeOps v1 release and closeout
 
-**Status:** ForgeOps v1.0.0 is published, independently accepted, and recorded
-through PR #70 at `1369df1`; documentation-only closeout and cleanup remain.
+**Status:** Complete, merged, synchronized, and cleaned up. ForgeOps v1.0.0 was
+published and independently accepted; release-record PR #70 merged at
+`1369df1`, closeout PR #71 merged at `8a671c9`, and Gate 10 removed both
+milestone branches and temporary acceptance artifacts while preserving the
+immutable tag and public release.
 
 - Reconfirm the exact accepted source and candidate artifact.
 - Publish only tag `forgeops-v1.0.0`, the reviewed wheel, and SHA-256 checksums

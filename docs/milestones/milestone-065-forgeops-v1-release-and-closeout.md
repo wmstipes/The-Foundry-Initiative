@@ -1,8 +1,11 @@
 # Milestone 065 — ForgeOps v1 release and closeout
 
-**Status:** ForgeOps v1.0.0 published, independently accepted, and recorded
-through PR #70 at `1369df1a4fec39bcce781ef814274bee435c4644`;
-documentation-only closeout and branch cleanup remain
+**Status:** Complete, merged, synchronized, and cleaned up. ForgeOps v1.0.0
+was published and independently accepted; release-record PR #70 merged at
+`1369df1a4fec39bcce781ef814274bee435c4644`, closeout PR #71 merged at
+`8a671c9d186ce37321fa925e6e957ac9e1286507`, and Gate 10 preserved the
+immutable release while removing the milestone branches and temporary
+acceptance artifacts.
 
 **Started:** 2026-09-19
 
@@ -105,9 +108,13 @@ package's v1 release number.
    `1369df1a4fec39bcce781ef814274bee435c4644`. No workflow ran because the
    validated change set was documentation-only and outside workflow path
    filters.
-9. Documentation-only closeout — in progress; it changes no tag, release asset,
-   package, deployment, live system, or operational authority.
-10. Branch and temporary-artifact cleanup — pending.
+9. Documentation-only closeout — complete through PR #71 at
+   `8a671c9d186ce37321fa925e6e957ac9e1286507`; it changed no tag, release
+   asset, package, deployment, live system, or operational authority.
+10. Branch and temporary-artifact cleanup — complete. Clean `main` was
+    synchronized at the PR #71 merge, both Milestone 065 branches were removed
+    locally and remotely, and the temporary published-asset acceptance
+    directory was removed.
 
 ## Acceptance boundary
 
@@ -126,7 +133,19 @@ chain of custody.
 - Release-record PR: #70.
 - Squash merge: `1369df1a4fec39bcce781ef814274bee435c4644`.
 
-The immutable `forgeops-v1.0.0` tag remains at the accepted Milestone 064
-closeout source rather than moving to later documentation commits. Gate 10 must
-preserve that tag and public release while removing only the two Milestone 065
-working branches and the temporary published-asset acceptance directory.
+## Final closeout evidence
+
+- Documentation-only closeout PR #71 squash-merged at
+  `8a671c9d186ce37321fa925e6e957ac9e1286507`.
+- The operator synchronized clean `main` at that exact commit and verified that
+  only local and remote `main` remained.
+- Both `codex/milestone-065-v1-release` and
+  `codex/milestone-065-closeout` were removed locally and remotely.
+- The temporary `forgeops-v1-release-*` acceptance directory was removed.
+- The final check reconfirmed a non-draft, non-prerelease GitHub Release and
+  immutable tag `forgeops-v1.0.0` still resolving to
+  `9f86d2ceefd40e58282190711ec5e2eb69adba6f`.
+
+This final reconciliation is documentation bookkeeping only. It must not move
+the release tag, replace either public asset, modify package inputs, deploy
+anything, access a live system, or expand ForgeOps remediation authority.
