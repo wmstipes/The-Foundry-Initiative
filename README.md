@@ -330,6 +330,7 @@ Planned next steps include:
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
 * maintain the bounded ForgeOps v1 release and require new work to improve the final incident-copilot demonstration, prove trustworthiness, or prepare a future release; model and retrieval integration remain deferred because the demonstration identified no concrete unmet operator question
 * follow the [ForgeOps post-v1 improvement roadmap](docs/roadmaps/forgeops-post-v1-roadmap.md) for separately approved demonstration, trust, and future-release candidates
+* follow the [Workbench security-guidance roadmap](docs/roadmaps/forge-yaml-workbench-security-guidance-roadmap.md) for a browser-local NIST SP 800-190 profile with selected SP 800-53 references and no compliance claim
 
 ## Why this project exists
 
