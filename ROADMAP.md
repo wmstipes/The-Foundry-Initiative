@@ -330,7 +330,7 @@ Each telemetry layer should answer a specific operational question before it is 
 
 ## Phase 6 — ForgeOps AI-assisted operations
 
-**Status:** In progress — deterministic incident-copilot baseline and demonstration complete; v1-readiness planning is next
+**Status:** In progress — deterministic incident-copilot baseline and demonstration complete; v1 release readiness is active
 
 Evolve the rules-based `/analyze` endpoint into a grounded Kubernetes incident copilot.
 
@@ -621,6 +621,46 @@ and the [model-readiness decision](docs/design/forgeops-model-readiness-decision
 
 See [Milestone 062](docs/milestones/milestone-062-forgeops-incident-copilot-demonstration.md)
 and the [demonstration guide](docs/guides/forgeops-incident-copilot-demonstration.md).
+
+### Milestone 063 — ForgeOps v1 readiness assessment
+
+**Status:** In progress. The read-only assessment confirms one bounded
+release-candidate hardening milestone is required before v1 publication.
+
+- Select GitHub Release wheel plus SHA-256 checksums as the v1 distribution
+  channel; exclude PyPI.
+- Select the MIT License for public reuse.
+- Record the strong deterministic, test, demonstration, and fresh-wheel-install
+  evidence already satisfied.
+- Identify package identity, version alignment, exact artifact validation,
+  supported-Python proof, license metadata, release automation, and operator
+  release procedure as the seven release blockers.
+- Add no new product capability or operational authority.
+
+See [Milestone 063](docs/milestones/milestone-063-forgeops-v1-readiness-assessment.md)
+and the [v1 release-readiness decision](docs/design/forgeops-v1-release-readiness.md).
+
+### Milestone 064 — ForgeOps v1 release-candidate hardening
+
+**Status:** Approved and pending Milestone 063 closeout.
+
+- Resolve only the seven accepted v1 release blockers.
+- Produce and validate a non-published `1.0.0` wheel and checksum.
+- Prove the exact candidate across the declared Python support range and a fresh
+  offline operator installation.
+- Preserve all current collection, evidence, informational-guidance, approval,
+  and no-remediation boundaries.
+
+### Milestone 065 — ForgeOps v1 release and closeout
+
+**Status:** Approved and pending an accepted Milestone 064 candidate.
+
+- Reconfirm the exact accepted source and candidate artifact.
+- Publish only tag `forgeops-v1.0.0`, the reviewed wheel, and SHA-256 checksums
+  through GitHub Releases.
+- Verify checksum, isolated offline installation, provenance, and the bounded
+  command smoke path from the published artifact.
+- Record limitations, close v1, synchronize, and clean up.
 
 Potential outcomes:
 
