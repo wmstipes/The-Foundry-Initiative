@@ -1684,3 +1684,41 @@ Plan the separately gated read-only end-to-end ForgeOps demonstration. Use it
 to measure whether deterministic briefing leaves a concrete operator need
 before proposing any model, retrieval, external-service, or additional
 operational authority.
+
+## 2026-09-19 — Milestones 062-064 incident demonstration and v1 candidate
+
+- Milestone 062 exercised separate synthetic `DEGRADED` and live read-only
+  `STABLE` tracks. The deterministic incident brief left no concrete operator
+  question unanswered, so model and retrieval work remained deferred.
+- Milestone 063 selected a GitHub Release wheel plus SHA-256 checksums, excluded
+  PyPI, selected the MIT license, and identified seven exact v1 blockers.
+- Milestone 064 aligned the product on distribution `signalforge-forgeops` and
+  version `1.0.0`, excluded the legacy utility from the wheel, added clean
+  reproducible builds and strict artifact validation, and proved source and
+  exact-wheel installs on Python 3.11-3.14.
+- Strict local validation rejected the first wheel because stale build output
+  leaked the legacy package. Staging only the reviewed ForgeOps inputs fixed the
+  defect before a candidate was accepted.
+- Local builds and two independent CI runs reproduced the exact 51,589-byte
+  wheel with SHA-256
+  `be4d0a3001dac9bbbeec819327379461e27a7255557f6bdd66fd69d81ee7fc19`.
+- Fresh Windows Python 3.14.7 acceptance independently downloaded the CI
+  artifact, matched the checksum, installed with `--no-index`, returned
+  provenance `OK`, and passed the bounded offline smoke path.
+- PR #68 squash-merged the accepted candidate at
+  `0fde4d904b9731a3c99f0ae5d367ac8f36a1fce1` without creating a release tag,
+  publishing a package, deploying, or expanding remediation authority.
+
+### Lesson
+
+Artifact validation must inspect what was actually built, not merely trust
+package-selection configuration. A clean source stage, deterministic rebuild,
+exact manifest validation, cross-version install matrix, and independent
+operator checksum form complementary trust layers.
+
+### Next small step
+
+Close Milestone 064 and synchronize clean `main`. Then begin Milestone 065 by
+reconfirming the accepted source and digest before creating the exact
+`forgeops-v1.0.0` tag. Publication remains gated on the tag workflow's complete
+test, rebuild, exact-wheel install, and minimal-asset release path.
