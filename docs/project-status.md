@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-09-19
 
-**Current phase:** ForgeOps v1.0.0 release closeout
+**Current phase:** ForgeOps v1.0.0 supported baseline
 
 ## Summary
 
@@ -362,9 +362,10 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Complete the documentation-only ForgeOps v1.0.0 closeout, then synchronize
-clean `main`, remove both Milestone 065 branches, and remove the temporary
-published-asset acceptance directory. The release channel is a GitHub Release wheel with
+Maintain the accepted ForgeOps v1.0.0 baseline. Any future milestone must
+directly improve the final incident-copilot demonstration, prove that it is
+trustworthy, or prepare a future release; work that satisfies none of those
+purposes remains deferred. The release channel is a GitHub Release wheel with
 SHA-256 checksums, not PyPI, and the public reuse license is MIT. The accepted
 demonstration identified no concrete unmet operator question, so model and
 retrieval integration remain deferred.
@@ -420,7 +421,14 @@ only the 51,589-byte wheel and checksum file. Fresh Windows Python 3.14.7
 acceptance verified both published asset digests, installed with `--no-index`,
 returned provenance `OK`, and passed the offline command smoke path. Release
 record PR #70 merged at `1369df1a4fec39bcce781ef814274bee435c4644`.
-Documentation-only closeout and cleanup remain.
+Documentation-only closeout PR #71 merged at
+`8a671c9d186ce37321fa925e6e957ac9e1286507`. The operator synchronized clean
+`main` at that commit, removed both Milestone 065 branches locally and
+remotely, pruned remote references, and removed the temporary acceptance
+directory. Final verification preserved the non-draft, non-prerelease GitHub
+Release and immutable tag at the accepted source commit. ForgeOps v1.0.0 is
+fully closed without changing the release assets, package inputs, live system,
+or remediation authority.
 
 ## Supporting completed work
 
