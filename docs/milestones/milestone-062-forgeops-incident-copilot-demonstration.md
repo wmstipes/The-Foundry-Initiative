@@ -132,8 +132,9 @@ documentation.
    implementation tree, and PR #63 was marked ready.
 8. Merge — complete; PR #63 was squash-merged at
    `6e7e5802037fa55245761410196f165281a4c804`.
-9. Documentation-only closeout — in progress; this update records the accepted
-   demonstration and merge without adding operational capability.
+9. Documentation-only closeout — in progress through PR #64; this update
+   records the accepted demonstration and merge without adding operational
+   capability.
 10. Branch cleanup and synchronization — pending.
 
 ## Merge and publication evidence
@@ -142,6 +143,7 @@ documentation.
 - Exact accepted implementation tree: `18894b421b35d9c2d959946f15448396140fe454`.
 - Implementation PR: #63.
 - Squash merge: `6e7e5802037fa55245761410196f165281a4c804`.
+- Documentation-only closeout PR: #64.
 - GitHub Actions did not run because the documentation-only paths were outside
   the repository's workflow filters; the approved local suites and validators
   remain the executable acceptance evidence.
