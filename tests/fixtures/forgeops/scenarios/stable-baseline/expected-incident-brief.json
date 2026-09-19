@@ -1,0 +1,18 @@
+{
+  "schema": "forgeops.incident-brief/v1alpha1",
+  "comparisonSchema": "forgeops.comparison/v1alpha1",
+  "mappingSchema": "forgeops.runbook-mapping/v1alpha1",
+  "beforeCollectedAtUtc": "2026-09-17T15:00:00Z",
+  "afterCollectedAtUtc": "2026-09-17T15:05:00Z",
+  "state": "STABLE",
+  "facts": [],
+  "runbooks": [],
+  "unmappedDeltaIds": [],
+  "uncertainties": [
+    "point-in-time-only"
+  ],
+  "limitations": [
+    "This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.",
+    "Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution."
+  ]
+}

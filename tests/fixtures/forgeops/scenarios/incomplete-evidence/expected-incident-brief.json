@@ -1,0 +1,41 @@
+{
+  "schema": "forgeops.incident-brief/v1alpha1",
+  "comparisonSchema": "forgeops.comparison/v1alpha1",
+  "mappingSchema": "forgeops.runbook-mapping/v1alpha1",
+  "beforeCollectedAtUtc": "2026-09-17T15:30:00Z",
+  "afterCollectedAtUtc": "2026-09-17T15:35:00Z",
+  "state": "INCOMPLETE",
+  "facts": [
+    {
+      "id": "metrics-api-service",
+      "kind": "STATUS_CHANGED",
+      "beforeStatus": "PASS",
+      "afterStatus": "UNKNOWN"
+    }
+  ],
+  "runbooks": [
+    {
+      "runbookId": "metrics-api-investigation",
+      "title": "Investigate Metrics API availability",
+      "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+      "section": "Common Issue: Metrics API Not Available",
+      "reasons": [
+        {
+          "checkId": "metrics-api-service",
+          "deltaKind": "STATUS_CHANGED",
+          "afterStatus": "UNKNOWN"
+        }
+      ]
+    }
+  ],
+  "unmappedDeltaIds": [],
+  "uncertainties": [
+    "cause-not-established",
+    "evidence-incomplete",
+    "point-in-time-only"
+  ],
+  "limitations": [
+    "This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.",
+    "Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution."
+  ]
+}

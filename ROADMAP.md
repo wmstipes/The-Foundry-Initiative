@@ -568,6 +568,18 @@ See [Milestone 057](docs/milestones/milestone-057-forgeops-runbook-mapping-valid
 
 See [Milestone 058](docs/milestones/milestone-058-forgeops-structured-incident-brief.md).
 
+### Milestone 059 — Exact incident-brief replay and evaluation
+
+**Status:** Implementation complete; publication pending.
+
+- Strictly load `forgeops.incident-brief/v1alpha1` expectations.
+- Add explicit comparison, mapping, and expected-brief replay.
+- Store exact expected briefs for all five synthetic scenarios.
+- Keep replay success separate from the contained incident state.
+- Add no model, diagnosis, network, deployment, or cluster authority.
+
+See [Milestone 059](docs/milestones/milestone-059-forgeops-incident-brief-replay.md).
+
 Potential outcomes:
 
 - Collect a bounded, read-only snapshot of relevant Kubernetes state.
