@@ -1,7 +1,7 @@
 # Milestone 062 — ForgeOps deterministic incident-copilot demonstration
 
-**Status:** Complete and merged through PR #63; documentation-only closeout
-in progress
+**Status:** Complete, merged, synchronized, and cleaned up through
+implementation PR #63 and closeout PR #64
 
 **Started:** 2026-09-19
 
@@ -132,10 +132,14 @@ documentation.
    implementation tree, and PR #63 was marked ready.
 8. Merge — complete; PR #63 was squash-merged at
    `6e7e5802037fa55245761410196f165281a4c804`.
-9. Documentation-only closeout — in progress through PR #64; this update
-   records the accepted demonstration and merge without adding operational
+9. Documentation-only closeout — complete; PR #64 was squash-merged at
+   `5619a5fe581c22c8c6070d526291765ed1949da6` without adding operational
    capability.
-10. Branch cleanup and synchronization — pending.
+10. Branch cleanup and synchronization — complete; the operator synchronized
+    clean local `main` at the closeout merge, deleted the local implementation
+    branch (no local closeout branch existed), deleted both remote Milestone
+    062 branches, pruned stale remote-tracking references, and removed the
+    temporary demonstration artifacts.
 
 ## Merge and publication evidence
 
@@ -144,6 +148,7 @@ documentation.
 - Implementation PR: #63.
 - Squash merge: `6e7e5802037fa55245761410196f165281a4c804`.
 - Documentation-only closeout PR: #64.
+- Closeout squash merge: `5619a5fe581c22c8c6070d526291765ed1949da6`.
 - GitHub Actions did not run because the documentation-only paths were outside
   the repository's workflow filters; the approved local suites and validators
   remain the executable acceptance evidence.
