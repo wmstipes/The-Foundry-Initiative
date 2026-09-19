@@ -1741,6 +1741,9 @@ test, rebuild, exact-wheel install, and minimal-asset release path.
 - Preserved the deterministic, offline-first, informational-only boundary. No
   PyPI package, container, deployment, cluster access, external service, model,
   retrieval system, or remediation authority was introduced.
+- Merged the validated release record through PR #70 at
+  `1369df1a4fec39bcce781ef814274bee435c4644`; the immutable release tag remains
+  anchored to the accepted source commit rather than later documentation.
 
 ### Lesson
 

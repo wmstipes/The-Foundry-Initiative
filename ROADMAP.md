@@ -673,8 +673,8 @@ synchronization, branch cleanup, and temporary-artifact removal.
 
 ### Milestone 065 — ForgeOps v1 release and closeout
 
-**Status:** ForgeOps v1.0.0 is published and independently accepted; release
-record, documentation-only closeout, and cleanup remain.
+**Status:** ForgeOps v1.0.0 is published, independently accepted, and recorded
+through PR #70 at `1369df1`; documentation-only closeout and cleanup remain.
 
 - Reconfirm the exact accepted source and candidate artifact.
 - Publish only tag `forgeops-v1.0.0`, the reviewed wheel, and SHA-256 checksums

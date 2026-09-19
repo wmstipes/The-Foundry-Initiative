@@ -362,9 +362,9 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 
 ## Immediate next step
 
-Record and close the accepted ForgeOps v1.0.0 release, then synchronize clean
-`main` and remove the temporary published-asset acceptance directory. The
-release channel is a GitHub Release wheel with
+Complete the documentation-only ForgeOps v1.0.0 closeout, then synchronize
+clean `main`, remove both Milestone 065 branches, and remove the temporary
+published-asset acceptance directory. The release channel is a GitHub Release wheel with
 SHA-256 checksums, not PyPI, and the public reuse license is MIT. The accepted
 demonstration identified no concrete unmet operator question, so model and
 retrieval integration remain deferred.
@@ -419,7 +419,8 @@ exact-wheel install, and publication jobs. The final GitHub Release contains
 only the 51,589-byte wheel and checksum file. Fresh Windows Python 3.14.7
 acceptance verified both published asset digests, installed with `--no-index`,
 returned provenance `OK`, and passed the offline command smoke path. Release
-record, documentation-only closeout, and cleanup remain.
+record PR #70 merged at `1369df1a4fec39bcce781ef814274bee435c4644`.
+Documentation-only closeout and cleanup remain.
 
 ## Supporting completed work
 
