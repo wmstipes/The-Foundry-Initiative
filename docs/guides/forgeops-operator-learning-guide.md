@@ -140,6 +140,7 @@ manually delete package metadata while leaving an editable link in place.
 | `forgeops evidence integrity verify` | One evidence file and one explicit integrity record | Match summary | Integrity verification |
 | `forgeops scenario replay` | Explicit before, after, and expected-comparison files | Replay match summary | Scenario replay |
 | `forgeops runbook catalog validate` | One explicit runbook-catalog file | Validity and bounded counts | Catalog validation |
+| `forgeops runbook map` | Explicit comparison and runbook-catalog files | Deterministic text or mapping JSON | Runbook mapping |
 
 ## Protect exact artifact bytes
 
@@ -211,6 +212,7 @@ recommendation.
 | Integrity creation | Valid record rendered | Not used | Evidence invalid or unreadable |
 | Integrity verification | Validated bytes and metadata match | Valid inputs do not match | Evidence or record invalid/unreadable |
 | Scenario replay | Actual comparison matches expectation | Valid replay differs from expectation | Evidence, expected comparison, or chronology invalid |
+| Runbook mapping | Every delta is mapped | Valid deltas remain unmapped | Comparison or catalog invalid/unreadable |
 
 Validation exit `0` does not mean the contained snapshot is healthy. Comparison
 exit `1` does not mean an incident is severe or unresolved; a valid recovery
@@ -247,14 +249,17 @@ ForgeOps does not currently establish:
 Execution provenance answers which local code and interpreter are running.
 The integrity record answers whether exact validated bytes still match a
 separately retained reference; it is not source attribution or authenticity.
-Scenario replay checks deterministic behavior only. Grounded runbook mapping
-and bounded incident reasoning remain separately planned capabilities.
+Scenario replay checks deterministic behavior only. Bounded incident reasoning
+remains a separately planned capability.
 
 The canonical runbook catalog at
 `docs/reference/forgeops-runbook-catalog.json` makes repository knowledge
 machine-addressable. Validation proves its contract and repository tests prove
-its referenced headings exist. It does not determine that a runbook applies to
-an observed change; deterministic mapping remains a separate capability.
+its referenced headings exist. Deterministic mapping evaluates only cataloged
+selectors against immutable comparison deltas. A match explains why a
+repository section was identified; it is not a diagnosis or an instruction to
+execute that procedure. Mapping exit `1` means catalog coverage is incomplete,
+not that the contained system is unhealthy.
 
 ## Documentation map
 

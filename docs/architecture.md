@@ -209,6 +209,13 @@ catalog is repository-owned and its targets are checked in tests. Validation
 does not load a comparison, select a runbook, claim applicability, or create
 diagnostic or remediation authority.
 
+Milestone 055 adds `runbook_mapping.py` as a pure consumer of the validated
+comparison and catalog models. It applies only declared check-identifier,
+delta-kind, and after-status selectors and produces deterministic text or a
+disclosure-bounded `forgeops.runbook-mapping/v1alpha1` document. Unmatched
+deltas remain explicit. Mapping does not reopen evidence, inspect runbook text,
+rank procedures, infer causes, recommend actions, or gain operational access.
+
 The one-way authority path is therefore: bounded collection → selected-field normalization → deterministic evaluation → redacted evidence artifact → strict offline validation → exact-byte integrity and/or deterministic offline comparison → explicit expected-result replay → optional future reasoning. Later reasoning may consume validated evidence or the bounded comparison JSON, but it gains no kubeconfig, network, storage, or mutation authority through that data flow.
 
 ## Documentation authority and publication

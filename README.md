@@ -152,6 +152,15 @@ forgeops runbook catalog validate `
   --input .\docs\reference\forgeops-runbook-catalog.json
 ~~~
 
+Map a validated comparison to the catalog without collection or diagnosis:
+
+~~~powershell
+forgeops runbook map `
+  --comparison .\comparison.json `
+  --catalog .\docs\reference\forgeops-runbook-catalog.json `
+  --format text
+~~~
+
 ## Documentation front door
 
 The [GitHub Wiki](https://github.com/wmstipes/The-Foundry-Initiative/wiki) is a curated reader-facing navigation layer. Repository documentation remains authoritative; the Wiki intentionally points to the current project status, architecture, roadmap, runbooks, milestone evidence, and vision instead of copying them.
