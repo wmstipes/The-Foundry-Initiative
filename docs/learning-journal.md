@@ -1606,3 +1606,81 @@ The Milestone 056 closeout merged through PR #52 at `548b63ef…`. After one
 grouped action-time confirmation, all six merged Milestone 054-056 branches
 were deleted remotely; all corresponding local branches were already removed.
 Clean `main` was synchronized before the final documentation reconciliation.
+
+## 2026-09-19 — Milestones 057-060 deterministic incident briefing
+
+- Milestone 057 added strict loading for saved
+  `forgeops.runbook-mapping/v1alpha1` artifacts and the explicit
+  `forgeops runbook mapping validate` command. Validation success remains
+  separate from contained mapping completeness, catalog provenance, and
+  runbook applicability. PR #54 merged at `35c6e87c…` after ForgeOps CI run
+  `35448696493` passed.
+- Milestone 058 added deterministic `forgeops incident brief` JSON output over
+  one explicit comparison and one explicit mapping. The total state model adds
+  `CHANGED` for neutral differences without turning them into health claims.
+  PR #55 merged at `67d0d41f…` after ForgeOps CI run `35449046318` passed.
+- Milestone 059 added strict expected-brief loading and exact offline replay for
+  five synthetic scenarios. Replay exit reports expectation equality rather
+  than contained incident state. PR #56 merged at `e2c31349…` after ForgeOps
+  CI run `35449474657` passed.
+- Milestone 060 added a fixed operator text view over the same immutable brief
+  used by JSON. It preserves facts, catalog-rule matches, unmapped deltas,
+  uncertainty, and authority limitations without adding generated prose or a
+  recommendation. PR #57 merged at `f3c63bac…` after ForgeOps CI run
+  `35449756167` passed.
+- Repository-local package metadata advanced incrementally from `0.12.0` to
+  `0.15.0`; no package or image was published and no deployment, cluster,
+  endpoint, persistent-state, or mutation authority was added.
+
+### Lesson
+
+A useful incident brief does not require diagnosis. Keeping deterministic facts,
+bounded interpretation, grounded runbook matches, uncertainty, and execution
+authority in separate fields makes the result reviewable without overstating
+what the evidence proves.
+
+## 2026-09-19 — Milestone 061 adversarial evaluation and readiness decision
+
+- Added nine synthetic adversarial cases covering neutral additions, removals,
+  unknown evidence, mixed recovery, failure with uncertainty, mapping gaps,
+  stale windows, fabricated mapping reasons, and structurally valid but altered
+  descriptive text.
+- Confirmed that stale or inconsistent inputs fail closed, mapping gaps remain
+  visible, uncertainty takes precedence over failure interpretation, and
+  structural validation does not establish authenticity.
+- Recorded `DEFER_MODEL_AND_RETRIEVAL`: deterministic briefing is ready for a
+  separately approved read-only end-to-end demonstration, but no measured unmet
+  need or accepted privacy, quality, dependency, and failure-mode boundary yet
+  justifies a probabilistic component.
+- Added no runtime command, dependency, prompt, model, retrieval service,
+  network access, cluster access, endpoint access, recommendation, remediation,
+  persistent state, or mutation.
+- All 199 repository tests and the focused ForgeOps suite passed locally;
+  ForgeOps CI run `35450511724` passed, and PR #58 merged at `9f3d8f13…`.
+
+### Lesson
+
+Adversarial evaluation is valuable even when it produces a no-go decision. The
+decision to defer a model is positive engineering evidence because it ties new
+complexity to a measurable need instead of treating AI integration as the goal.
+
+## 2026-09-19 — Milestones 057-061 grouped closeout and cleanup
+
+- Reconciled the roadmap, project status, and five milestone records against
+  implementation PRs #54-#58 and their successful ForgeOps CI runs.
+- Passed all 204 repository tests, Python compilation, Kubernetes manifest
+  validation, and whitespace validation on the documentation-only closeout.
+- Merged grouped closeout PR #59 at
+  `28c02293301fe7380d98485a0717ecc68e8069f8`.
+- Deleted all Milestone 057-061 branches and the two previously retained
+  historical branches locally and remotely. GitHub and the synchronized local
+  repository now retain only `main`.
+- Kept the Wiki unchanged because its stable navigation remained correct and
+  its offline exact-copy validation passed.
+
+### Next small step
+
+Plan the separately gated read-only end-to-end ForgeOps demonstration. Use it
+to measure whether deterministic briefing leaves a concrete operator need
+before proposing any model, retrieval, external-service, or additional
+operational authority.

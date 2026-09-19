@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-09-19
 
-**Current phase:** Operational visibility and ForgeOps deterministic evidence boundary
+**Current phase:** Operational visibility and ForgeOps deterministic incident-briefing boundary
 
 ## Summary
 
@@ -193,7 +193,7 @@ The project has moved from basic workload deployment into repeatable engineering
 - Milestone 061: nine-case adversarial evaluation and the model-readiness decision are complete and merged through PR #58 at `9f3d8f13f3a0fe3b746084c889848d19f0ad431c`; ForgeOps CI runs `35448696493`, `35449046318`, `35449474657`, `35449756167`, and `35450511724` passed for Milestones 057-061
 - Readiness decision: deterministic briefing is ready for a separately gated read-only end-to-end demonstration; model and retrieval integration remain deferred until measured unmet operator need and explicit privacy, quality, and failure-mode criteria exist
 - Authority boundary: Milestones 057-061 added no package publication, model, retrieval service, external service, live incident claim, cluster access, endpoint access, deployment, recommendation authority, remediation authority, persistent state, or mutation
-- Closeout and cleanup: grouped documentation-only PR #59 records final acceptance; Gate 10 removes all Milestone 057-061 and previously retained historical branches locally and remotely, and clean `main` is synchronized after merge
+- Closeout and cleanup: grouped documentation-only PR #59 merged at `28c02293301fe7380d98485a0717ecc68e8069f8` and recorded final acceptance; Gate 10 removed all Milestone 057-061 and previously retained historical branches locally and remotely, leaving clean synchronized `main` as the only branch
 
 ## Milestone 038 closeout
 

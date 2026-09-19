@@ -143,7 +143,7 @@ means an input is invalid. A matching digest detects byte alteration only when
 the reference record was retained separately and trusted; it does not prove
 who created the evidence, authenticate it, or establish chain of custody.
 
-See the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-learning-guide.md), [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [Milestone 045](docs/milestones/milestone-045-forgeops-deterministic-read-only-snapshot.md), [Milestone 046](docs/milestones/milestone-046-forgeops-json-evidence-contract.md), [Milestone 047](docs/milestones/milestone-047-forgeops-offline-evidence-validation.md), [Milestone 048](docs/milestones/milestone-048-forgeops-offline-evidence-comparison.md), [Milestone 049](docs/milestones/milestone-049-forgeops-json-comparison-contract.md), [Milestone 050](docs/milestones/milestone-050-forgeops-synthetic-scenario-corpus.md), and [Milestone 051](docs/milestones/milestone-051-forgeops-execution-provenance.md).
+See the [ForgeOps operator and learning guide](docs/guides/forgeops-operator-learning-guide.md), [ForgeOps snapshot runbook](docs/runbooks/forgeops-snapshot.md), [current architecture](docs/architecture.md), [project status](docs/project-status.md), and [Milestone 044-061 records](docs/milestones).
 
 Validate the repository-owned runbook knowledge catalog offline:
 
@@ -273,6 +273,10 @@ Completed SignalForge milestones include:
 * Forge YAML Workbench `0.10.0` published for AMD64/ARM64, digest-pinned, deployed, and browser-validated with Kubernetes `v1.36.4` schema checks, General YAML mode, the pinned OWASP Kubernetes Top 10:2025 review profile, formatting preview, review-first Markdown reports, counted Validation filters, browser-local Tree search, and safe one-file YAML drop
 * deterministic ForgeOps read-only snapshot implemented with offline fixtures, stable terminal, Markdown, and JSON output, a deny-by-default command runner, strict offline evidence validation, and deterministic offline comparison
 * ForgeOps execution provenance and supported isolated operator/source-development modes
+* exact-byte ForgeOps evidence-integrity records and bounded offline scenario replay
+* validated runbook knowledge with deterministic grounded mapping and strict saved-mapping validation
+* deterministic structured and operator incident briefs with exact replay and adversarial trust-boundary evaluation
+* model and retrieval integration explicitly deferred until a read-only end-to-end demonstration identifies measurable operator value
 
 ## Earlier utility: foundry-check
 
@@ -300,7 +304,7 @@ Planned next steps include:
 * observe naturally occurring alert behavior before deciding whether notification delivery is justified
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
 * evaluate Loki and OpenTelemetry only when a specific operational question requires them
-* evolve the rules-based `/analyze` logic toward an evidence-grounded ForgeOps workflow
+* run a separately gated read-only end-to-end ForgeOps demonstration before considering model or retrieval integration
 
 ## Why this project exists
 
