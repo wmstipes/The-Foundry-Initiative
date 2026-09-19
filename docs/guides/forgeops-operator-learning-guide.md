@@ -305,6 +305,8 @@ boundary.
   boundaries.
 - [Project status](../project-status.md): current accepted state.
 - [Roadmap](../../ROADMAP.md): sequencing and later outcomes.
+- [Testing and validation](../testing-and-validation.md): current suite
+  boundaries, commands, counts, and evidence semantics.
 - [Milestones 044-061](../milestones): chronological design, implementation,
   validation, and closeout evidence.
 

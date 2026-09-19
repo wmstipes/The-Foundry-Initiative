@@ -10,6 +10,11 @@ The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernete
 
 The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestones 054-056 established strict runbook knowledge, deterministic grounded mapping, and the bounded incident-reasoning design. Milestones 057-060 implemented strict mapping validation, deterministic structured briefing, exact replay, and a fixed operator text view. Milestone 061 adversarially evaluated those boundaries and deferred model and retrieval integration.
 
+The [testing and validation guide](testing-and-validation.md) defines current
+suite counts, collection scope, commands, offline and live boundaries, and the
+maintenance rule for future test changes. Historical milestone counts remain
+historical evidence rather than being rewritten when the suite grows.
+
 ## Current application
 
 - Application: SignalForge Restaurant API

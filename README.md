@@ -209,6 +209,9 @@ The [GitHub Wiki](https://github.com/wmstipes/The-Foundry-Initiative/wiki) is a 
 
 The reviewed Wiki source lives in `docs/wiki`, and `scripts/validate-wiki-front-door.py` verifies its structure, links, stable-content boundary, and exact-copy publication contract.
 
+The [testing and validation guide](docs/testing-and-validation.md) defines the
+current suites, commands, dated counts, and the limits of each evidence type.
+
 ## Repository map
 
 ```text
@@ -229,6 +232,7 @@ The-Foundry-Initiative/
     vision.md              Project purpose, principles, and direction
     learning-journal.md    Progress, lessons, and next small steps
     project-status.md      Current releases, milestones, and priorities
+    testing-and-validation.md  Test suites, commands, counts, and evidence boundaries
     milestones/            Chronological implementation evidence
     observability/         PromQL baselines and observability guidance
     runbooks/              Operator procedures and recovery guidance
