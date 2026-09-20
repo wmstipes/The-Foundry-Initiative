@@ -10,9 +10,16 @@ updates:
       timezone: "America/New_York"
     open-pull-requests-limit: 5
     groups:
-      workflow-actions:
+      workflow-actions-security:
+        applies-to: "security-updates"
         patterns:
           - "*"
+      workflow-actions-patches:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   - package-ecosystem: "pip"
     directory: "/"
@@ -23,9 +30,16 @@ updates:
       timezone: "America/New_York"
     open-pull-requests-limit: 5
     groups:
-      forgeops-build-dependencies:
+      forgeops-build-security:
+        applies-to: "security-updates"
         patterns:
           - "*"
+      forgeops-build-patches:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   - package-ecosystem: "pip"
     directory: "/apps/restaurant-api"
@@ -36,9 +50,16 @@ updates:
       timezone: "America/New_York"
     open-pull-requests-limit: 5
     groups:
-      restaurant-api-python:
+      restaurant-api-security:
+        applies-to: "security-updates"
         patterns:
           - "*"
+      restaurant-api-python-patches:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   - package-ecosystem: "npm"
     directory: "/apps/forge-yaml-workbench"
@@ -49,9 +70,16 @@ updates:
       timezone: "America/New_York"
     open-pull-requests-limit: 5
     groups:
-      workbench-node:
+      workbench-node-security:
+        applies-to: "security-updates"
         patterns:
           - "*"
+      workbench-node-patches:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/apps/restaurant-api"
@@ -62,9 +90,16 @@ updates:
       timezone: "America/New_York"
     open-pull-requests-limit: 5
     groups:
-      restaurant-api-base-images:
+      restaurant-api-base-image-security:
+        applies-to: "security-updates"
         patterns:
           - "*"
+      restaurant-api-base-image-patches:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/apps/forge-yaml-workbench"
@@ -75,6 +110,13 @@ updates:
       timezone: "America/New_York"
     open-pull-requests-limit: 5
     groups:
-      workbench-base-images:
+      workbench-base-image-security:
+        applies-to: "security-updates"
         patterns:
           - "*"
+      workbench-base-image-patches:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"

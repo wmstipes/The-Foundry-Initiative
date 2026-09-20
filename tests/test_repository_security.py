@@ -79,6 +79,38 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
             },
         )
 
+    def test_dependabot_groups_security_updates_separately_from_version_updates(
+        self,
+    ) -> None:
+        config = read_text(ROOT / ".github" / "dependabot.yml")
+        self.assertEqual(config.count('applies-to: "security-updates"'), 6)
+        self.assertEqual(config.count('applies-to: "version-updates"'), 6)
+
+        group_blocks = re.findall(
+            r"(?m)^      [a-z][a-z-]+:\n(?P<body>(?:^ {8,}.*\n?)*)",
+            config,
+        )
+        version_groups = [
+            block
+            for block in group_blocks
+            if 'applies-to: "version-updates"' in block
+        ]
+        self.assertEqual(len(version_groups), 6)
+        for block in version_groups:
+            with self.subTest(group=block.splitlines()[0]):
+                self.assertIn('update-types:\n          - "patch"', block)
+                self.assertNotIn('- "minor"', block)
+                self.assertNotIn('- "major"', block)
+
+    def test_restaurant_api_pytest_version_contains_security_fix(self) -> None:
+        requirements = read_text(
+            ROOT / "apps" / "restaurant-api" / "requirements-dev.txt"
+        )
+        match = re.search(r"(?m)^pytest==(\d+)\.(\d+)\.(\d+)$", requirements)
+        self.assertIsNotNone(match)
+        version = tuple(int(part) for part in match.groups())
+        self.assertGreaterEqual(version, (9, 0, 3))
+
     def test_security_policy_uses_private_reporting(self) -> None:
         policy = read_text(ROOT / "SECURITY.md")
         self.assertIn("/security/advisories/new", policy)
