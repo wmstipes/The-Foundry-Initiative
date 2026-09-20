@@ -139,6 +139,12 @@ npm audit
 Pop-Location
 ~~~
 
+For Workbench pull requests, the Docker workflow also builds and starts a
+native AMD64 image under the deployment's read-only, non-root, no-added-
+capability constraints. It requires `/healthz` and `/` to respond and verifies
+the page title plus the CSP, content-type, frame, and referrer security headers
+before the existing AMD64 and ARM64 build validation runs.
+
 Run the repository validators separately:
 
 ~~~powershell
