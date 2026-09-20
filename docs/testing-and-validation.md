@@ -76,8 +76,9 @@ cause, or remediation authorization.
   guidance.
 - `tests/test_wiki_front_door.py` covers stable Wiki content, links, workflow
   triggers, and exact-copy publication behavior.
-- `apps/restaurant-api/tests/test_main.py` covers health, version, analysis,
-  metrics, and bounded unmatched-path metric labels.
+- `apps/restaurant-api/tests/test_main.py` covers root metadata, health,
+  readiness, version, menu, status, analysis, metrics, and bounded
+  unmatched-path metric labels.
 
 ### Forge YAML Workbench
 
@@ -207,8 +208,8 @@ When updating counts:
 3. keep nested counts visibly nested rather than adding them twice;
 4. keep Vitest cases, promtool scenarios, validators, builds, audits, and live
    acceptance in their own categories; and
-5. explain any surprising delta, such as the five Restaurant API tests that
-   distinguish the 217-test top-level suite from the 222-test complete Python
+5. explain any surprising delta, such as the nine Restaurant API tests that
+   distinguish the 217-test top-level suite from the 226-test complete Python
    discovery.
 
 Historical milestone counts remain historical evidence and must not be edited
