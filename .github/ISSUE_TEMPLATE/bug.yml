@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a reproducible defect in a supported Project Forge component.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not report security vulnerabilities here. Use the private vulnerability-reporting link shown before opening an issue.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - ForgeOps
+        - Restaurant API
+        - Forge YAML Workbench
+        - Kubernetes or observability
+        - CI, release, or documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed behavior
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Provide the smallest safe sequence that reproduces the defect.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: v1.0.0 or full commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Supporting evidence
+      description: Include relevant sanitized logs, output, screenshots, or test results. Never include secrets.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed credentials, tokens, personal data, and other sensitive information.
+          required: true

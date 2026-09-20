@@ -116,6 +116,34 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
         self.assertIn("/security/advisories/new", policy)
         self.assertIn("do not open a public issue", policy.lower())
 
+    def test_required_validation_is_unfiltered_and_dependency_aware(self) -> None:
+        workflow = read_text(WORKFLOW_DIR / "required-validation.yml")
+        self.assertIn("push:\n    branches: [main]", workflow)
+        self.assertIn("pull_request:\n    branches: [main]", workflow)
+        self.assertNotIn("paths:", workflow)
+        self.assertIn("actions/dependency-review-action@", workflow)
+        self.assertIn("fail-on-severity: moderate", workflow)
+        self.assertIn("name: Gate 4 required validation", workflow)
+
+    def test_repository_community_templates_are_bounded_and_security_aware(
+        self,
+    ) -> None:
+        pull_request_template = read_text(ROOT / ".github" / "PULL_REQUEST_TEMPLATE.md")
+        self.assertIn("## Validation", pull_request_template)
+        self.assertIn("## Documentation impact", pull_request_template)
+        self.assertIn("## Security and release impact", pull_request_template)
+
+        issue_config = read_text(ROOT / ".github" / "ISSUE_TEMPLATE" / "config.yml")
+        self.assertIn("blank_issues_enabled: false", issue_config)
+        self.assertIn("/security/advisories/new", issue_config)
+
+    def test_gitattributes_normalizes_source_and_preserves_binary_files(self) -> None:
+        attributes = read_text(ROOT / ".gitattributes")
+        self.assertIn("* text=auto", attributes)
+        self.assertIn("*.yml text eol=lf", attributes)
+        self.assertIn("*.py text eol=lf", attributes)
+        self.assertIn("*.png binary", attributes)
+
 
 if __name__ == "__main__":
     unittest.main()

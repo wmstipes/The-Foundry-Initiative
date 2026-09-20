@@ -1,0 +1,104 @@
+name: Required Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONUTF8: "1"
+
+jobs:
+  python:
+    name: Complete Python validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Install exact dependencies
+        run: |
+          python -m pip install setuptools==84.0.0 wheel==0.48.0
+          python -m pip install . --no-build-isolation
+          python -m pip install \
+            -r apps/restaurant-api/requirements.txt \
+            -r apps/restaurant-api/requirements-dev.txt
+      - name: Run complete Python discovery
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}/apps/restaurant-api
+        run: python -m pytest -q
+
+  workbench:
+    name: Workbench validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/forge-yaml-workbench
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/forge-yaml-workbench/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm run csp:check
+      - run: npm audit
+
+  repository:
+    name: Repository and manifest validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install pyyaml==6.0.2
+      - name: Run tracked repository validators
+        run: |
+          python scripts/validate-k8s-manifests.py
+          python scripts/validate-wiki-front-door.py
+          python scripts/validate-alert-rules.py
+          python -m unittest tests.test_repository_security -v
+
+  dependencies:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: moderate
+
+  required:
+    name: Gate 4 required validation
+    if: always()
+    needs: [python, workbench, repository, dependencies]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require every applicable validation
+        env:
+          PYTHON_RESULT: ${{ needs.python.result }}
+          WORKBENCH_RESULT: ${{ needs.workbench.result }}
+          REPOSITORY_RESULT: ${{ needs.repository.result }}
+          DEPENDENCY_RESULT: ${{ needs.dependencies.result }}
+        run: |
+          test "$PYTHON_RESULT" = success
+          test "$WORKBENCH_RESULT" = success
+          test "$REPOSITORY_RESULT" = success
+          test "$DEPENDENCY_RESULT" = success -o "$DEPENDENCY_RESULT" = skipped
