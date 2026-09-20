@@ -46,6 +46,62 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
+      - name: Build and smoke test native container
+        if: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && !inputs.publish) }}
+        shell: bash
+        working-directory: apps/forge-yaml-workbench
+        env:
+          SMOKE_IMAGE: forge-yaml-workbench:smoke-${{ github.sha }}
+          SMOKE_CONTAINER: forge-yaml-workbench-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+
+          cleanup() {
+            docker logs "${SMOKE_CONTAINER}" 2>/dev/null || true
+            docker rm --force "${SMOKE_CONTAINER}" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          docker build --tag "${SMOKE_IMAGE}" .
+          docker run --detach \
+            --name "${SMOKE_CONTAINER}" \
+            --publish 127.0.0.1:18080:8080 \
+            --read-only \
+            --tmpfs /tmp:rw,noexec,nosuid,size=32m \
+            --security-opt no-new-privileges:true \
+            --cap-drop ALL \
+            "${SMOKE_IMAGE}"
+
+          ready=false
+          for attempt in {1..30}; do
+            if [[ "$(curl --fail --silent --show-error http://127.0.0.1:18080/healthz 2>/dev/null || true)" == "ok" ]]; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+
+          if [[ "${ready}" != "true" ]]; then
+            echo "container did not become healthy within 30 seconds" >&2
+            exit 1
+          fi
+
+          headers="${RUNNER_TEMP}/forge-yaml-workbench-headers.txt"
+          normalized_headers="${RUNNER_TEMP}/forge-yaml-workbench-headers-normalized.txt"
+          body="${RUNNER_TEMP}/forge-yaml-workbench-index.html"
+          curl --fail --silent --show-error \
+            --dump-header "${headers}" \
+            --output "${body}" \
+            http://127.0.0.1:18080/
+          tr -d '\r' < "${headers}" > "${normalized_headers}"
+
+          test "$(docker exec "${SMOKE_CONTAINER}" id -u)" != "0"
+          grep --fixed-strings --quiet '<title>Forge YAML Workbench</title>' "${body}"
+          grep --extended-regexp --ignore-case --quiet '^x-content-type-options:[[:space:]]*nosniff$' "${normalized_headers}"
+          grep --extended-regexp --ignore-case --quiet '^x-frame-options:[[:space:]]*DENY$' "${normalized_headers}"
+          grep --extended-regexp --ignore-case --quiet '^referrer-policy:[[:space:]]*no-referrer$' "${normalized_headers}"
+          grep --extended-regexp --ignore-case --quiet '^content-security-policy:' "${normalized_headers}"
+
       - name: Prepare versioned publication
         if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
         id: release
