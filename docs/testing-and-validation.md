@@ -13,14 +13,14 @@ is not collapsed into one misleading total.
 | --- | ---: | --- |
 | ForgeOps Python tests | 151 | `tests/test_forgeops*.py`; included in both Python totals below |
 | Top-level Python tests | 217 | Everything collected below `tests/` |
-| Restaurant API Python tests | 5 | `apps/restaurant-api/tests/test_main.py` |
-| Complete repository Python discovery | 222 | Top-level 217 plus Restaurant API 5 |
+| Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
+| Complete repository Python discovery | 226 | Top-level 217 plus Restaurant API 9 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
 The Python counts are nested, not additive: the 151 ForgeOps tests are part of
-the 217 top-level tests, and the 217 plus the five Restaurant API tests produce
-the 222-test complete Python discovery. The Workbench tests and promtool
+the 217 top-level tests, and the 217 plus the nine Restaurant API tests produce
+the 226-test complete Python discovery. The Workbench tests and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -121,7 +121,7 @@ Useful narrower Python suites are:
 .\.venv\Scripts\python.exe -m unittest discover `
   -s tests -p 'test_forgeops*.py' -v
 
-# Restaurant API suite: currently 5 tests
+# Restaurant API suite: currently 9 tests
 Push-Location .\apps\restaurant-api
 ..\..\.venv\Scripts\python.exe -m pytest -q
 Pop-Location
