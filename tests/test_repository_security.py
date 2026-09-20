@@ -144,6 +144,22 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
         self.assertIn("*.py text eol=lf", attributes)
         self.assertIn("*.png binary", attributes)
 
+    def test_every_publication_job_uses_the_release_environment(self) -> None:
+        expected_jobs = {
+            "forgeops-release.yml": "publish",
+            "forge-yaml-workbench-docker.yml": "publish",
+            "restaurant-api-docker.yml": "build-and-push",
+        }
+        for filename, job in expected_jobs.items():
+            with self.subTest(workflow=filename, job=job):
+                workflow = read_text(WORKFLOW_DIR / filename)
+                match = re.search(
+                    rf"(?ms)^  {re.escape(job)}:\n(?P<body>.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)",
+                    workflow,
+                )
+                self.assertIsNotNone(match, f"missing publication job {job}")
+                self.assertIn("    environment: release\n", match.group("body"))
+
 
 if __name__ == "__main__":
     unittest.main()

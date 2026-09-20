@@ -29,6 +29,9 @@ The repository uses GitHub-hosted controls together with tracked policy:
   which covers complete Python discovery, Workbench tests/build/audit,
   repository and manifest validators, and dependency review. CodeQL must
   report no errors and no security alert at high severity or above.
+- Published GitHub releases are immutable. Release-tag rules block updates,
+  deletion, and force pushes for ForgeOps, Workbench, and Restaurant API tags.
+  Publication jobs use the deployment-scoped `release` environment.
 
 `tests/test_repository_security.py` validates the security policy represented
 by tracked repository files. It cannot prove GitHub-hosted settings such as

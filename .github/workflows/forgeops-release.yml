@@ -90,6 +90,7 @@ jobs:
     name: Publish approved GitHub Release
     needs: [test, build, install]
     runs-on: ubuntu-latest
+    environment: release
     permissions:
       contents: write
     steps:

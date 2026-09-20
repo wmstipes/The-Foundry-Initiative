@@ -31,8 +31,9 @@ env:
   IMAGE_NAME: wmstipes/signalforge-yaml-workbench
 
 jobs:
-  build:
+  validate:
     name: Build AMD64 and ARM64 image
+    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && !inputs.publish) }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -47,7 +48,6 @@ jobs:
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       - name: Build and smoke test native container
-        if: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && !inputs.publish) }}
         shell: bash
         working-directory: apps/forge-yaml-workbench
         env:
@@ -102,8 +102,33 @@ jobs:
           grep --extended-regexp --ignore-case --quiet '^referrer-policy:[[:space:]]*no-referrer$' "${normalized_headers}"
           grep --extended-regexp --ignore-case --quiet '^content-security-policy:' "${normalized_headers}"
 
+      - name: Build image without publishing
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: apps/forge-yaml-workbench
+          file: apps/forge-yaml-workbench/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: ${{ env.IMAGE_NAME }}:ci-${{ github.sha }}
+
+  publish:
+    name: Publish AMD64 and ARM64 image
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
       - name: Prepare versioned publication
-        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
         id: release
         shell: bash
         env:
@@ -124,24 +149,12 @@ jobs:
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to Docker Hub
-        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build image without publishing
-        if: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && !inputs.publish) }}
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-        with:
-          context: apps/forge-yaml-workbench
-          file: apps/forge-yaml-workbench/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: false
-          tags: ${{ env.IMAGE_NAME }}:ci-${{ github.sha }}
-
       - name: Build and publish versioned image
-        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: apps/forge-yaml-workbench
