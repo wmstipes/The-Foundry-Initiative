@@ -25,8 +25,10 @@ The repository uses GitHub-hosted controls together with tracked policy:
   conversations, blocks branch deletion and non-fast-forward updates, and has
   no bypass actors. Because this is a single-maintainer project, it does not
   require an approving review count.
-- Merges require the `Validate repository security policy` status check.
-  CodeQL must report no errors and no security alert at high severity or above.
+- Merges require the always-running `Gate 4 required validation` status check,
+  which covers complete Python discovery, Workbench tests/build/audit,
+  repository and manifest validators, and dependency review. CodeQL must
+  report no errors and no security alert at high severity or above.
 
 `tests/test_repository_security.py` validates the security policy represented
 by tracked repository files. It cannot prove GitHub-hosted settings such as

@@ -12,15 +12,15 @@ is not collapsed into one misleading total.
 | Suite | Current count | Scope |
 | --- | ---: | --- |
 | ForgeOps Python tests | 151 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 217 | Everything collected below `tests/` |
+| Top-level Python tests | 220 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
-| Complete repository Python discovery | 226 | Top-level 217 plus Restaurant API 9 |
+| Complete repository Python discovery | 229 | Top-level 220 plus Restaurant API 9 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
 The Python counts are nested, not additive: the 151 ForgeOps tests are part of
-the 217 top-level tests, and the 217 plus the nine Restaurant API tests produce
-the 226-test complete Python discovery. The Workbench tests and promtool
+the 220 top-level tests, and the 220 plus the nine Restaurant API tests produce
+the 229-test complete Python discovery. The Workbench tests and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -72,8 +72,9 @@ cause, or remediation authorization.
   defaults, immutable trusted Action references, forbidden privileged pull
   request triggers, bounded write permission, complete Dependabot ecosystem
   coverage, separated security and patch-only version-update groups, the
-  Restaurant API pytest security floor, and private vulnerability-reporting
-  guidance.
+  Restaurant API pytest security floor, private vulnerability-reporting
+  guidance, the required validation/dependency-review gate, contribution
+  templates, and line-ending policy.
 - `tests/test_wiki_front_door.py` covers stable Wiki content, links, workflow
   triggers, and exact-copy publication behavior.
 - `apps/restaurant-api/tests/test_main.py` covers root metadata, health,
@@ -115,7 +116,7 @@ $env:PYTHONPATH = "$PWD\src;$PWD\apps\restaurant-api"
 Useful narrower Python suites are:
 
 ~~~powershell
-# Top-level Python suite: currently 217 tests
+# Top-level Python suite: currently 220 tests
 .\.venv\Scripts\python.exe -m pytest -q .\tests
 
 # Focused ForgeOps suite: currently 151 tests
@@ -176,6 +177,7 @@ environment setup and path triggers:
 - `.github/workflows/k8s-manifest-validation.yml`
 - `.github/workflows/alert-rule-validation.yml`
 - `.github/workflows/repository-security-validation.yml`
+- `.github/workflows/required-validation.yml`
 
 ## Evidence boundaries
 
@@ -209,7 +211,7 @@ When updating counts:
 4. keep Vitest cases, promtool scenarios, validators, builds, audits, and live
    acceptance in their own categories; and
 5. explain any surprising delta, such as the nine Restaurant API tests that
-   distinguish the 217-test top-level suite from the 226-test complete Python
+   distinguish the 220-test top-level suite from the 229-test complete Python
    discovery.
 
 Historical milestone counts remain historical evidence and must not be edited

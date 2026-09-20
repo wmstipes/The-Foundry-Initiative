@@ -1,0 +1,31 @@
+name: Feature request
+description: Propose a bounded improvement aligned with Project Forge's mission.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or opportunity
+      description: What user, operator, learning, or trust need would this address?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: Describe the observable result without prescribing unnecessary implementation detail.
+    validations:
+      required: true
+  - type: textarea
+    id: mission
+    attributes:
+      label: Mission alignment
+      description: Explain how this improves the incident-copilot demonstration, proves trustworthiness, or prepares a release.
+    validations:
+      required: true
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Boundaries and alternatives
+      description: Note important exclusions, risks, or alternatives already considered.

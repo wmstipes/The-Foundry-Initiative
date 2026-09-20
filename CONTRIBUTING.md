@@ -13,6 +13,12 @@ The Foundry Initiative currently uses a lightweight, review-first workflow.
    the applicable suites and evidence boundaries.
 5. Open pull requests as drafts until the work is ready for final review.
 
+GitHub's pull-request template records validation, documentation impact,
+security and release impact, known limitations, and follow-up work. Bug and
+feature issue forms are available for non-sensitive reports. Suspected
+vulnerabilities must use the private process in [SECURITY.md](SECURITY.md), not
+a public issue.
+
 When a change adds, removes, parameterizes, relocates, or changes discovery of
 tests, update the testing guide's dated inventory and suite description in the
 same pull request. Report named suite counts rather than an unlabeled total.
