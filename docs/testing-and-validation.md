@@ -1,6 +1,6 @@
 # Testing and validation
 
-**Inventory date:** 2026-09-19
+**Inventory date:** 2026-09-20
 
 This document defines what The Foundry Initiative means when it reports tests
 and validation results. It separates executable test cases, generated scenario
@@ -12,15 +12,15 @@ is not collapsed into one misleading total.
 | Suite | Current count | Scope |
 | --- | ---: | --- |
 | ForgeOps Python tests | 151 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 209 | Everything collected below `tests/` |
+| Top-level Python tests | 215 | Everything collected below `tests/` |
 | Restaurant API Python tests | 5 | `apps/restaurant-api/tests/test_main.py` |
-| Complete repository Python discovery | 214 | Top-level 209 plus Restaurant API 5 |
+| Complete repository Python discovery | 220 | Top-level 215 plus Restaurant API 5 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
 The Python counts are nested, not additive: the 151 ForgeOps tests are part of
-the 209 top-level tests, and the 209 plus the five Restaurant API tests produce
-the 214-test complete Python discovery. The Workbench tests and promtool
+the 215 top-level tests, and the 215 plus the five Restaurant API tests produce
+the 220-test complete Python discovery. The Workbench tests and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -68,6 +68,10 @@ cause, or remediation authorization.
   boundaries.
 - `tests/test_prometheus_alert_activation.py` covers explicit activation and
   rollback safeguards without activating anything.
+- `tests/test_repository_security.py` covers explicit read-only workflow
+  defaults, immutable trusted Action references, forbidden privileged pull
+  request triggers, bounded write permission, complete Dependabot ecosystem
+  coverage, and private vulnerability-reporting guidance.
 - `tests/test_wiki_front_door.py` covers stable Wiki content, links, workflow
   triggers, and exact-copy publication behavior.
 - `apps/restaurant-api/tests/test_main.py` covers health, version, analysis,
@@ -108,7 +112,7 @@ $env:PYTHONPATH = "$PWD\src;$PWD\apps\restaurant-api"
 Useful narrower Python suites are:
 
 ~~~powershell
-# Top-level Python suite: currently 209 tests
+# Top-level Python suite: currently 215 tests
 .\.venv\Scripts\python.exe -m pytest -q .\tests
 
 # Focused ForgeOps suite: currently 151 tests
@@ -139,6 +143,7 @@ Run the repository validators separately:
 python .\scripts\validate-k8s-manifests.py
 python .\scripts\validate-wiki-front-door.py
 python .\scripts\validate-alert-rules.py
+python -m unittest tests.test_repository_security -v
 git diff --check
 ~~~
 
@@ -156,9 +161,12 @@ environment setup and path triggers:
 - `.github/workflows/forgeops-ci.yml`
 - `.github/workflows/forgeops-release.yml`
 - `.github/workflows/restaurant-api-ci.yml`
+- `.github/workflows/restaurant-api-docker.yml`
 - `.github/workflows/forge-yaml-workbench-ci.yml`
+- `.github/workflows/forge-yaml-workbench-docker.yml`
 - `.github/workflows/k8s-manifest-validation.yml`
 - `.github/workflows/alert-rule-validation.yml`
+- `.github/workflows/repository-security-validation.yml`
 
 ## Evidence boundaries
 
@@ -192,7 +200,7 @@ When updating counts:
 4. keep Vitest cases, promtool scenarios, validators, builds, audits, and live
    acceptance in their own categories; and
 5. explain any surprising delta, such as the five Restaurant API tests that
-   distinguish the 209-test top-level suite from the 214-test complete Python
+   distinguish the 215-test top-level suite from the 220-test complete Python
    discovery.
 
 Historical milestone counts remain historical evidence and must not be edited
