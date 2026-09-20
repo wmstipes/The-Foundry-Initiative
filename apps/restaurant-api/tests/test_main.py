@@ -6,6 +6,16 @@ from main import app
 client = TestClient(app)
 
 
+def test_root():
+    response = client.get("/")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["message"] == "Welcome to the SignalForge Restaurant District."
+    assert body["restaurant"] == "SignalForge Grill"
+    assert body["version"] == "0.7.0"
+    assert body["hostname"]
+
+
 def test_health():
     response = client.get("/health")
     assert response.status_code == 200
@@ -18,6 +28,36 @@ def test_version():
     body = response.json()
     assert body["app"] == "restaurant-api"
     assert body["version"] == "0.7.0"
+
+
+def test_ready():
+    response = client.get("/ready")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ready", "service": "restaurant-api"}
+
+
+def test_menu():
+    response = client.get("/menu")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["restaurant"] == "SignalForge Grill"
+    assert body["specials"] == [
+        "Kubernetes Kettle Soup",
+        "Pod Replica Pasta",
+        "Calico Network Nachos",
+        "Containerd Club Sandwich",
+    ]
+
+
+def test_status():
+    response = client.get("/status")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "open"
+    assert body["district"] == "SignalForge Restaurant District"
+    assert body["version"] == "0.7.0"
+    assert body["analyze_enabled"] is False
+    assert body["hostname"]
 
 
 def test_analyze():
