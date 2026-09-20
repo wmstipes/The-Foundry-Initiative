@@ -8,6 +8,31 @@ version of each component. Older images, packages, tags, and milestone states
 are retained as historical evidence and are not maintained as supported
 releases.
 
+## Repository security controls
+
+The repository uses GitHub-hosted controls together with tracked policy:
+
+- Dependency graph, Dependabot alerts, security updates, grouped security
+  updates, secret scanning, push protection, and private vulnerability
+  reporting are enabled.
+- Dependabot checks GitHub Actions, Python, npm, and Docker dependencies on a
+  weekly schedule. Security updates are separated from patch-only version
+  groups so higher-risk minor and major upgrades can be reviewed individually.
+- Trusted reusable GitHub Actions are pinned to full commit SHAs, workflows
+  declare read-only repository contents by default, and privileged
+  `pull_request_target` execution is forbidden.
+- The active `Protect main` ruleset requires pull requests and resolved review
+  conversations, blocks branch deletion and non-fast-forward updates, and has
+  no bypass actors. Because this is a single-maintainer project, it does not
+  require an approving review count.
+- Merges require the `Validate repository security policy` status check.
+  CodeQL must report no errors and no security alert at high severity or above.
+
+`tests/test_repository_security.py` validates the security policy represented
+by tracked repository files. It cannot prove GitHub-hosted settings such as
+secret scanning, push protection, or ruleset enforcement; those settings must
+also be reviewed in the repository's GitHub configuration.
+
 ## Reporting a vulnerability
 
 Use GitHub's [private vulnerability reporting](https://github.com/wmstipes/The-Foundry-Initiative/security/advisories/new)
