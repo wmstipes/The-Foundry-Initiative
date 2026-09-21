@@ -20,6 +20,7 @@ import (
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/broker"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/cluster"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/config"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/diagnostics"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/plugins"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/resources"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/session"
@@ -33,7 +34,7 @@ func testHandler(t *testing.T) http.Handler {
 	if err != nil {
 		t.Fatal(err)
 	}
-	registry, err := plugins.NewRegistry(plugins.ExampleManifest(), plugins.ResourcesManifest())
+	registry, err := plugins.NewRegistry(plugins.ExampleManifest(), plugins.ResourcesManifest(), plugins.DiagnosticsManifest())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,6 +65,13 @@ func testHandler(t *testing.T) http.Handler {
 		}
 		return broker.Response{Result: &result}, nil
 	}); err != nil {
+		t.Fatal(err)
+	}
+	diagnosticService, err := diagnostics.New(raw, state, cluster.OfflineFactory{}, nil, resourceService.RecordDiagnostic)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = capabilityBroker.RegisterDiagnostics(diagnosticService); err != nil {
 		t.Fatal(err)
 	}
 	static := fstest.MapFS{
@@ -121,8 +129,51 @@ func TestBootstrapIsSanitizedAndStartsUnselected(t *testing.T) {
 	if err := json.Unmarshal(response.Body.Bytes(), &bootstrap); err != nil {
 		t.Fatal(err)
 	}
-	if bootstrap.Mode != "synthetic-demo" || bootstrap.SelectedContext != "" || bootstrap.SessionNonce != "test-nonce" || len(bootstrap.Plugins) != 2 {
+	if bootstrap.Mode != "synthetic-demo" || bootstrap.SelectedContext != "" || bootstrap.SessionNonce != "test-nonce" || len(bootstrap.Plugins) != 3 {
 		t.Fatalf("unexpected bootstrap %#v", bootstrap)
+	}
+}
+
+func TestDiagnosticRouteSecurityAndStrictShape(t *testing.T) {
+	handler := testHandler(t)
+	endpoint := "http://" + testHost + "/api/v1/plugins/forge.diagnostics/query"
+	body := `{"generation":2,"operation":"logs","pod":"api","container":"api"}`
+	headers := map[string]string{"X-ForgeOps-Session": "test-nonce"}
+	if got := request(t, handler, http.MethodPost, endpoint, body, nil); got.Code != 403 {
+		t.Fatalf("nonce %d", got.Code)
+	}
+	for _, payload := range []string{`{"operation":"exec"}`, `{"operation":"logs","pod":"api","command":"evil"}`, body + `{}`, strings.Repeat("x", 5000)} {
+		if got := request(t, handler, http.MethodPost, endpoint, payload, headers); got.Code != 400 {
+			t.Fatalf("strict decode %d", got.Code)
+		}
+	}
+	if got := request(t, handler, http.MethodPost, endpoint+"?pod=api", body, headers); got.Code != 400 {
+		t.Fatalf("URL data %d", got.Code)
+	}
+	if got := request(t, handler, http.MethodPost, endpoint, body, map[string]string{"X-ForgeOps-Session": "test-nonce", "Origin": "http://evil.example"}); got.Code != 403 {
+		t.Fatalf("origin %d", got.Code)
+	}
+	if got := request(t, handler, http.MethodGet, endpoint, "", headers); got.Code != 404 && got.Code != 405 {
+		t.Fatalf("method %d", got.Code)
+	}
+	if got := request(t, handler, http.MethodPost, endpoint, body, headers); got.Code != 409 {
+		t.Fatalf("stale %d", got.Code)
+	}
+}
+
+func TestDiagnosticPreviewRouteIsOfflineAndNoStore(t *testing.T) {
+	handler := testHandler(t)
+	headers := map[string]string{"X-ForgeOps-Session": "test-nonce"}
+	request(t, handler, "POST", "http://"+testHost+"/api/v1/context", `{"context":"dev"}`, headers)
+	request(t, handler, "POST", "http://"+testHost+"/api/v1/plugins/forge.resources/query", `{"generation":1,"operation":"list","resource":"namespaces"}`, headers)
+	request(t, handler, "POST", "http://"+testHost+"/api/v1/namespace", `{"generation":1,"namespace":"default"}`, headers)
+	got := request(t, handler, "POST", "http://"+testHost+"/api/v1/plugins/forge.diagnostics/query", `{"generation":2,"operation":"preview","target":"events","pod":"api"}`, headers)
+	if got.Code != 200 || !strings.Contains(got.Body.String(), "Explanation only") || got.Header().Get("Cache-Control") != "no-store" {
+		t.Fatalf("preview %d %s", got.Code, got.Body.String())
+	}
+	got = request(t, handler, "POST", "http://"+testHost+"/api/v1/plugins/forge.diagnostics/query", `{"generation":2,"operation":"events","pod":"api"}`, headers)
+	if got.Code != 503 || strings.Contains(got.Body.String(), "offline mode") {
+		t.Fatalf("upstream detail %d %s", got.Code, got.Body.String())
 	}
 }
 

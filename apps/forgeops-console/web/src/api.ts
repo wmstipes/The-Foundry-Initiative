@@ -1,4 +1,4 @@
-import type { ActivityEntry, Bootstrap, PluginStatus, ResourceKind, ResourceResult, Scope } from "./types";
+import type { ActivityEntry, Bootstrap, PluginStatus, ResourceKind, ResourceResult, Scope, DiagnosticQuery, DiagnosticResult } from "./types";
 
 let sessionNonce = "";
 
@@ -66,4 +66,14 @@ export async function exampleStatus(): Promise<PluginStatus> {
 
 export function clearSessionForTests(): void {
   sessionNonce = "";
+}
+
+export async function queryDiagnostics(query: DiagnosticQuery, signal: AbortSignal): Promise<DiagnosticResult> {
+  const result = await expectJSON<DiagnosticResult>(await fetch("/api/v1/plugins/forge.diagnostics/query", {
+    method: "POST", credentials: "same-origin", signal,
+    headers: { "Content-Type": "application/json", "X-ForgeOps-Session": sessionNonce },
+    body: JSON.stringify(query),
+  }));
+  if (signal.aborted || result.scope.generation !== query.generation) throw new Error("stale_scope");
+  return result;
 }

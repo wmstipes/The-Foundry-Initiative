@@ -216,6 +216,9 @@ func (s *Service) record(entry Activity) {
 	}
 }
 
+// RecordDiagnostic retains only fixed metadata, never logs, Events or previews.
+func (s *Service) RecordDiagnostic(entry Activity) { s.record(entry) }
+
 func (s *Service) Activity() []Activity {
 	s.mu.Lock()
 	defer s.mu.Unlock()

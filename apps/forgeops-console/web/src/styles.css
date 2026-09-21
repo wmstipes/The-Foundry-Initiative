@@ -60,3 +60,8 @@ h2, h3 { margin: 0; letter-spacing: -0.025em; }
   select { min-width: 0; width: 100%; }
   .resource-nav { position: static; grid-template-columns: repeat(2, 1fr); }.resource-nav .eyebrow { grid-column: 1 / -1; }.resource-table { border-right: 0; }.inline-control { flex-direction: column; }
 }
+/* Cluster text remains inert, wrapped, bounded in memory, and selectable. */
+.diagnostics { margin-top: 1.5rem; }
+.diagnostic-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-top: 1rem; }
+.diagnostics input[type="checkbox"] { width: auto; margin-right: .5rem; }
+.diagnostic-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 28rem; overflow: auto; unicode-bidi: plaintext; }

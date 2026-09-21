@@ -15,6 +15,7 @@ import (
 
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/broker"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/config"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/diagnostics"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/plugins"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/resources"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/session"
@@ -75,6 +76,7 @@ func New(options Options) (http.Handler, error) {
 	mux.HandleFunc("POST /api/v1/plugins/forge.example/status", application.exampleStatus)
 	mux.HandleFunc("POST /api/v1/plugins/forge.resources/query", application.resourceQuery)
 	mux.HandleFunc("POST /api/v1/activity", application.activity)
+	mux.HandleFunc("POST /api/v1/plugins/forge.diagnostics/query", application.diagnosticQuery)
 	mux.HandleFunc("/", application.static)
 	return application.security(mux), nil
 }
@@ -147,11 +149,11 @@ func (a *api) selectNamespace(writer http.ResponseWriter, request *http.Request)
 	if err := decodeJSON(writer, request, &input); err != nil {
 		return
 	}
-	if current := a.options.State.Current(); current.Generation != input.Generation {
+	scope, err := a.options.State.SelectNamespaceAt(input.Namespace, input.Generation)
+	if errors.Is(err, session.ErrStaleScope) {
 		writeJSON(writer, http.StatusConflict, map[string]string{"error": "stale_scope"})
 		return
 	}
-	scope, err := a.options.State.SelectNamespace(input.Namespace)
 	if err != nil {
 		writeJSON(writer, http.StatusBadRequest, map[string]string{"error": "unknown_namespace"})
 		return
@@ -200,6 +202,37 @@ func (a *api) activity(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	writeJSON(writer, http.StatusOK, map[string]any{"activity": a.options.Resources.Activity()})
+}
+
+func (a *api) diagnosticQuery(writer http.ResponseWriter, request *http.Request) {
+	if !a.validNonce(request) {
+		http.Error(writer, "session denied", http.StatusForbidden)
+		return
+	}
+	if request.URL.RawQuery != "" {
+		writeJSON(writer, 400, map[string]string{"error": "invalid_request"})
+		return
+	}
+	var query diagnostics.Query
+	if decodeJSON(writer, request, &query) != nil {
+		return
+	}
+	capability, ok := map[string]string{"logs": "pods.logs.read", "events": "events.read", "preview": "command.preview"}[query.Operation]
+	if !ok {
+		writeJSON(writer, 400, map[string]string{"error": "invalid_request"})
+		return
+	}
+	response, err := a.options.Broker.Invoke(request.Context(), plugins.DiagnosticsPluginID, capability, broker.Request{Diagnostic: &query})
+	if err != nil {
+		var mapped *resources.APIError
+		if errors.As(err, &mapped) {
+			writeJSON(writer, mapped.Status, map[string]string{"error": mapped.Code})
+			return
+		}
+		writeJSON(writer, 403, map[string]string{"error": "capability_denied"})
+		return
+	}
+	writeJSON(writer, 200, response.Diagnostic)
 }
 
 func (a *api) validNonce(request *http.Request) bool {

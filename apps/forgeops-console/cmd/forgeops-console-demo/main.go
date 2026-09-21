@@ -5,10 +5,12 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -26,6 +28,7 @@ import (
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/broker"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/cluster"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/config"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/diagnostics"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/plugins"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/resources"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/server"
@@ -58,7 +61,7 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("create session nonce: %w", err)
 	}
-	registry, err := plugins.NewRegistry(plugins.ExampleManifest(), plugins.ResourcesManifest())
+	registry, err := plugins.NewRegistry(plugins.ExampleManifest(), plugins.ResourcesManifest(), plugins.DiagnosticsManifest())
 	if err != nil {
 		return err
 	}
@@ -66,7 +69,14 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	client := fake.NewSimpleClientset(demoObjects()...)
+	objects := demoObjects()
+	for _, object := range objects {
+		if pod, ok := object.(*corev1.Pod); ok {
+			pod.UID = types.UID("demo-" + pod.Name)
+		}
+	}
+	objects = append(objects, &corev1.Event{ObjectMeta: metav1.ObjectMeta{Name: "synthetic-started", Namespace: "signalforge"}, InvolvedObject: corev1.ObjectReference{Kind: "Pod", Name: "signalforge-api-7f8b9-a1", Namespace: "signalforge", UID: "demo-signalforge-api-7f8b9-a1"}, Type: "Normal", Reason: "Started", Message: "Synthetic example: container started; no cluster connection.", Count: 1})
+	client := fake.NewSimpleClientset(objects...)
 	factory := cluster.ClientFactoryFunc(func(context.Context, *clientcmdapi.Config, string) (kubernetes.Interface, error) { return client, nil })
 	resourceService, err := resources.New(raw, state, factory)
 	if err != nil {
@@ -89,6 +99,15 @@ func run() error {
 	}); err != nil {
 		return err
 	}
+	diagnosticService, err := diagnostics.New(raw, state, factory, func(context.Context, kubernetes.Interface, string, string, *corev1.PodLogOptions) (io.ReadCloser, error) {
+		return io.NopCloser(strings.NewReader("SYNTHETIC LOG — no cluster connection\nGET /healthz 200\nExample terminal control: \x1b[31m rendered as inert text\n")), nil
+	}, resourceService.RecordDiagnostic)
+	if err != nil {
+		return err
+	}
+	if err = capabilityBroker.RegisterDiagnostics(diagnosticService); err != nil {
+		return err
+	}
 	handler, err := server.New(server.Options{
 		AllowedHost: *listenAddress,
 		Contexts:    []config.ContextSummary{{Name: "synthetic-demo", ClusterName: "synthetic", AuthInfoName: "none"}},
@@ -107,7 +126,7 @@ func run() error {
 		defer cancel()
 		_ = httpServer.Shutdown(ctx)
 	}()
-	log.Printf("ForgeOps Console C3 demo at http://%s (synthetic data only)", *listenAddress)
+	log.Printf("ForgeOps Console C4 demo at http://%s (synthetic data only)", *listenAddress)
 	if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}

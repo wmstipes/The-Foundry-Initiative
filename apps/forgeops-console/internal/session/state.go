@@ -84,6 +84,20 @@ func (s *State) AllowNamespaces(generation uint64, names []string) error {
 func (s *State) SelectNamespace(name string) (Scope, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	return s.selectNamespaceLocked(name)
+}
+
+// SelectNamespaceAt checks generation and changes scope under one lock.
+func (s *State) SelectNamespaceAt(name string, generation uint64) (Scope, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if generation == 0 || generation != s.scope.Generation {
+		return Scope{}, ErrStaleScope
+	}
+	return s.selectNamespaceLocked(name)
+}
+
+func (s *State) selectNamespaceLocked(name string) (Scope, error) {
 	if _, ok := s.allowedNamespaces[name]; !ok {
 		return Scope{}, ErrUnknownNamespace
 	}

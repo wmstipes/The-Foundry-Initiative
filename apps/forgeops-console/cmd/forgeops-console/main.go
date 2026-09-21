@@ -15,6 +15,7 @@ import (
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/broker"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/cluster"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/config"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/diagnostics"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/plugins"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/resources"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/server"
@@ -56,7 +57,7 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("create session nonce: %w", err)
 	}
-	registry, err := plugins.NewRegistry(plugins.ExampleManifest(), plugins.ResourcesManifest())
+	registry, err := plugins.NewRegistry(plugins.ExampleManifest(), plugins.ResourcesManifest(), plugins.DiagnosticsManifest())
 	if err != nil {
 		return err
 	}
@@ -65,7 +66,7 @@ func run() error {
 		return err
 	}
 	if err := capabilityBroker.Register(plugins.ExamplePluginID, plugins.ExampleStatusCapability, func(context.Context, broker.Request) (broker.Response, error) {
-		return broker.Response{Message: "The example plugin has no cluster capability.", Mode: "read-only-c3"}, nil
+		return broker.Response{Message: "The example plugin has no cluster capability.", Mode: "read-only-c4"}, nil
 	}); err != nil {
 		return err
 	}
@@ -85,6 +86,13 @@ func run() error {
 	}); err != nil {
 		return err
 	}
+	diagnosticService, err := diagnostics.New(loaded.Config, state, cluster.LiveFactory{}, nil, resourceService.RecordDiagnostic)
+	if err != nil {
+		return err
+	}
+	if err = capabilityBroker.RegisterDiagnostics(diagnosticService); err != nil {
+		return err
+	}
 	handler, err := server.New(server.Options{
 		AllowedHost: *listenAddress,
 		Contexts:    loaded.Contexts,
@@ -94,7 +102,7 @@ func run() error {
 		Resources:   resourceService,
 		Static:      os.DirFS(*webDirectory),
 		Nonce:       nonce,
-		Mode:        "read-only-c3",
+		Mode:        "read-only-c4",
 	})
 	if err != nil {
 		return err
@@ -117,7 +125,7 @@ func run() error {
 		_ = httpServer.Shutdown(ctx)
 	}()
 
-	log.Printf("ForgeOps Console C3 listening at http://%s (read-only mode)", *listenAddress)
+	log.Printf("ForgeOps Console C4 listening at http://%s (read-only mode)", *listenAddress)
 	if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}

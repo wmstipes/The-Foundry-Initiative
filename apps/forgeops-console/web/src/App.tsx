@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { activity, bootstrap, queryResources, selectContext, selectNamespace } from "./api";
 import { renderPluginCard } from "./plugin-sdk";
 import ResourceBrowser from "./plugins/resources";
+import Diagnostics from "./plugins/diagnostics";
 import type { ActivityEntry, Bootstrap, ResourceKind, ResourceRecord, ResourceResult, Scope } from "./types";
 import "./plugins/example";
 
@@ -61,7 +62,7 @@ export default function App() {
   const resourcePluginLoaded = data?.plugins.some((plugin) => plugin.id === "forge.resources") ?? false;
   return (
     <div className="app-shell">
-      <header className="topbar"><div><p className="brand">FORGEOPS</p><h1>Console</h1></div><div className={`mode-pill ${data?.mode === "synthetic-demo" ? "demo" : ""}`}><span /> {data?.mode === "synthetic-demo" ? "Synthetic demo" : "Read-only C3"}</div></header>
+      <header className="topbar"><div><p className="brand">FORGEOPS</p><h1>Console</h1></div><div className={`mode-pill ${data?.mode === "synthetic-demo" ? "demo" : ""}`}><span /> {data?.mode === "synthetic-demo" ? "Synthetic demo" : "Read-only C4"}</div></header>
       <div className="scope-banner" role="status">
         <strong>{data?.mode === "synthetic-demo" ? "SYNTHETIC DATA — NO CLUSTER CONNECTION" : "Read-only cluster access"}</strong>
         <span>Context: {scope.context || "none"}</span><span>Namespace: {scope.namespace || "none"}</span><span>Generation: {scope.generation || "—"}</span>
@@ -78,7 +79,8 @@ export default function App() {
             </div>
           </section>
           {resourcePluginLoaded && <ResourceBrowser scope={scope} kind={kind} result={result} selected={selected} busy={busy} history={history} onKind={(next) => void loadResources(next)} onRefresh={() => void loadResources()} onSelect={setSelected} />}
-          <section><div className="section-heading"><p className="eyebrow">Capability broker</p><h2>First-party extensions</h2></div><div className="plugin-grid">{data.plugins.filter((plugin) => plugin.id !== "forge.resources").map((manifest) => <div key={manifest.id}>{renderPluginCard(manifest)}</div>)}</div></section>
+          {selected?.kind === "Pod" && scope.namespace && data.plugins.some((plugin) => plugin.id === "forge.diagnostics") && <Diagnostics key={`${scope.generation}/${selected.namespace}/${selected.name}`} scope={scope} pod={selected} onComplete={() => { void activity().then(setHistory).catch(showError); }} />}
+          <section><div className="section-heading"><p className="eyebrow">Capability broker</p><h2>First-party extensions</h2></div><div className="plugin-grid">{data.plugins.filter((plugin) => plugin.id !== "forge.resources" && plugin.id !== "forge.diagnostics").map((manifest) => <div key={manifest.id}>{renderPluginCard(manifest)}</div>)}</div></section>
         </>}
       </main>
     </div>

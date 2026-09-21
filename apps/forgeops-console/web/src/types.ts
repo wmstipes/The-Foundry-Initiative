@@ -22,7 +22,7 @@ export interface PluginManifest {
 }
 
 export interface Bootstrap {
-  mode: "read-only-c3" | "synthetic-demo";
+  mode: "read-only-c4" | "synthetic-demo";
   sessionNonce: string;
   selectedContext: string;
   scope: Scope;
@@ -42,3 +42,6 @@ export interface PluginStatus {
   message: string;
   mode: string;
 }
+
+export interface DiagnosticQuery { generation: number; operation: "logs" | "events" | "preview"; pod: string; container?: string; previous?: boolean; target?: "logs" | "events" }
+export interface DiagnosticResult { scope: Scope; operation: string; text: string; events: Array<{ name: string; type: string; reason: string; message: string; count: number }>; truncated: boolean; warning: string; preview?: { powershell: string; posix: string; note: string } }

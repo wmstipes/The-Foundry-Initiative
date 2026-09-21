@@ -11,18 +11,18 @@ is not collapsed into one misleading total.
 
 | Suite | Current count | Scope |
 | --- | ---: | --- |
-| ForgeOps Python tests | 174 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 244 | Everything collected below `tests/` |
+| ForgeOps Python tests | 178 | `tests/test_forgeops*.py`; included in both Python totals below |
+| Top-level Python tests | 248 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
-| Complete repository Python discovery | 253 | Top-level 244 plus Restaurant API 9 |
+| Complete repository Python discovery | 257 | Top-level 248 plus Restaurant API 9 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
-| ForgeOps Console Go tests | 31 | Test functions across seven core packages; separate from Python totals |
-| ForgeOps Console Vitest tests | 4 | In-memory browser API, generation, and error-boundary checks; separate from Python totals |
+| ForgeOps Console Go tests | 47 | Test functions across eight core packages; table subtests not added to this count; separate from Python totals |
+| ForgeOps Console Vitest tests | 12 | API tests plus Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
-The Python counts are nested, not additive: the 174 ForgeOps tests are part of
-the 244 top-level tests, and the 244 plus the nine Restaurant API tests produce
-the 253-test complete Python discovery. The browser, Go, and promtool
+The Python counts are nested, not additive: the 178 ForgeOps tests are part of
+the 248 top-level tests, and the 248 plus the nine Restaurant API tests produce
+the 257-test complete Python discovery. The browser, Go, and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -38,7 +38,7 @@ On 2026-09-21, after explicit authorization, the operator built accepted source
 and browser screenshots for a bounded read-only SignalForge walkthrough.
 The four Vitest API tests, browser production build, Go package tests, and Go
 production binary build passed on the laptop. These are additional executions,
-not new test cases; inventory counts above are unchanged.
+not new test cases; that walkthrough did not increase the inventory.
 
 All six resource views, their displayed relationships, and explicit scope
 reset/reselection were observed successfully. Namespace discovery supplied the
@@ -48,6 +48,27 @@ cancellation, every security/error path, or application network reachability.
 The [C3 milestone](milestones/forgeops-console-c3-read-only-resource-browser.md#live-read-only-walkthrough--2026-09-21)
 records the observations, limits, and open scheduling-label follow-up. Screenshots
 and kubeconfig contents are not committed as part of this reconciliation.
+
+## Console C4 validation
+
+C4 adds 16 Go test functions, eight Vitest cases, and four Python policy tests.
+The 47 Go functions pass under the race detector, with `go vet`, formatting,
+unchanged locked module graph after tidy, and both Go entry-point builds.
+All 12 Vitest cases, TypeScript/Vite build, and production dependency audit
+(zero vulnerabilities) pass. Top-level unittest passes 248 cases; full pytest
+passes 257 using `PYTHONPATH=src:apps/restaurant-api` on Linux. Pytest reports an
+existing Starlette/AnyIO deprecation warning; this is not a test failure.
+
+New coverage includes diagnostic capability isolation, atomic namespace scope
+selection, fixed typed GETs against a loopback test server, bounds, error
+mapping, cancellation/deadline stream closure, stale generations, hostile text,
+offline preview quoting, sensitive-data acknowledgement, and late UI responses.
+The synthetic HTTP demo smoke passes bootstrap, log/Event reads, preview,
+metadata-only activity, no-store headers, and stale-generation rejection.
+These checks contact no live cluster. DOM tests do not establish real-browser
+accessibility or Windows shell equivalence; previews are never executed.
+
+See the [C4 contract and gate status](milestones/forgeops-console-c4-pod-diagnostics.md).
 
 ## What the suites cover
 
@@ -142,10 +163,10 @@ $env:PYTHONPATH = "$PWD\src;$PWD\apps\restaurant-api"
 Useful narrower Python suites are:
 
 ~~~powershell
-# Top-level Python suite: currently 239 tests
+# Top-level Python suite: currently 248 tests
 .\.venv\Scripts\python.exe -m pytest -q .\tests
 
-# Focused ForgeOps suite: currently 169 tests
+# Focused ForgeOps suite: currently 178 tests
 .\.venv\Scripts\python.exe -m unittest discover `
   -s tests -p 'test_forgeops*.py' -v
 
@@ -252,7 +273,7 @@ When updating counts:
 4. keep Vitest cases, promtool scenarios, validators, builds, audits, and live
    acceptance in their own categories; and
 5. explain any surprising delta, such as the nine Restaurant API tests that
-   distinguish the 239-test top-level suite from the 248-test complete Python
+   distinguish the 248-test top-level suite from the 257-test complete Python
    discovery.
 
 Historical milestone counts remain historical evidence and must not be edited
