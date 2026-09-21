@@ -2,8 +2,6 @@ from pathlib import Path
 import json
 import unittest
 
-import yaml
-
 
 ROOT = Path(__file__).resolve().parents[1]
 CONSOLE = ROOT / "apps" / "forgeops-console"
@@ -67,24 +65,20 @@ class ForgeOpsConsoleC2PolicyTests(unittest.TestCase):
         self.assertNotIn("NewForConfigOrDie", factory)
 
     def test_fixture_points_only_to_a_closed_loopback_port(self) -> None:
-        fixture = yaml.safe_load(self.read("fixtures/kubeconfig.yaml"))
-        self.assertEqual(
-            fixture["clusters"][0]["cluster"]["server"],
-            "https://127.0.0.1:65535",
-        )
-        self.assertIn("synthetic", fixture["users"][0]["user"]["token"])
+        fixture = self.read("fixtures/kubeconfig.yaml")
+        self.assertIn("server: https://127.0.0.1:65535", fixture)
+        self.assertIn("token: synthetic-c2-token-not-a-secret", fixture)
 
     def test_required_validation_gates_both_console_halves(self) -> None:
-        workflow = yaml.safe_load(
-            (ROOT / ".github" / "workflows" / "required-validation.yml").read_text(
-                encoding="utf-8"
-            )
+        workflow = (ROOT / ".github" / "workflows" / "required-validation.yml").read_text(
+            encoding="utf-8"
         )
-        self.assertIn("console-go", workflow["jobs"])
-        self.assertIn("console-web", workflow["jobs"])
-        needs = workflow["jobs"]["required"]["needs"]
-        self.assertIn("console-go", needs)
-        self.assertIn("console-web", needs)
+        self.assertIn("  console-go:\n", workflow)
+        self.assertIn("  console-web:\n", workflow)
+        self.assertIn(
+            "needs: [python, workbench, console-go, console-web, repository, dependencies]",
+            workflow,
+        )
 
 
 if __name__ == "__main__":

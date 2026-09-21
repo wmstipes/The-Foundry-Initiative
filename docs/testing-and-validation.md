@@ -11,7 +11,7 @@ is not collapsed into one misleading total.
 
 | Suite | Current count | Scope |
 | --- | ---: | --- |
-| ForgeOps Python tests | 161 | `tests/test_forgeops*.py`; included in both Python totals below |
+| ForgeOps Python tests | 169 | `tests/test_forgeops*.py`; included in both Python totals below |
 | Top-level Python tests | 239 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
 | Complete repository Python discovery | 248 | Top-level 239 plus Restaurant API 9 |
@@ -20,7 +20,7 @@ is not collapsed into one misleading total.
 | ForgeOps Console Vitest tests | 2 | In-memory browser API and session-boundary checks; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
-The Python counts are nested, not additive: the 161 ForgeOps tests are part of
+The Python counts are nested, not additive: the 169 ForgeOps tests are part of
 the 239 top-level tests, and the 239 plus the nine Restaurant API tests produce
 the 248-test complete Python discovery. The browser, Go, and promtool
 scenarios use different runners and must be reported separately rather than as
@@ -127,7 +127,7 @@ Useful narrower Python suites are:
 # Top-level Python suite: currently 239 tests
 .\.venv\Scripts\python.exe -m pytest -q .\tests
 
-# Focused ForgeOps suite: currently 161 tests
+# Focused ForgeOps suite: currently 169 tests
 .\.venv\Scripts\python.exe -m unittest discover `
   -s tests -p 'test_forgeops*.py' -v
 
