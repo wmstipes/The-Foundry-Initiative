@@ -7,15 +7,19 @@ import (
 	"sync"
 
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/plugins"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/resources"
 )
 
 var ErrDenied = errors.New("capability denied")
 
-type Request struct{}
+type Request struct {
+	Query *resources.Query
+}
 
 type Response struct {
-	Message string `json:"message"`
-	Mode    string `json:"mode"`
+	Message string            `json:"message,omitempty"`
+	Mode    string            `json:"mode,omitempty"`
+	Result  *resources.Result `json:"result,omitempty"`
 }
 
 type Handler func(context.Context, Request) (Response, error)

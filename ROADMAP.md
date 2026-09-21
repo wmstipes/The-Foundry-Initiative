@@ -27,10 +27,12 @@ deferred because the final demonstration identified no concrete operator
 question unmet by the deterministic brief.
 
 ForgeOps Console C1 and the C2 offline walking skeleton are accepted parallel
-work packages. The Console defines a
+work packages, and the approved C3 read-only resource-browser candidate is
+under validation. The Console defines a
 local, browser-based, plugin-ready Kubernetes inspection surface intended to
 make context, scope, equivalent commands, and future evidence selection more
-visible. C2 adds no Kubernetes client authority or cluster access. Its independently
+visible. C3 adds bounded typed read authority while preserving a separate
+synthetic progress demo and separately gated live feasibility check. Its independently
 gated C1-C7 sequence is maintained in the
 [ForgeOps Console roadmap](docs/roadmaps/forgeops-console-roadmap.md) without
 renumbering ForgeOps Milestones 066-088 or Workbench work packages W1-W7.

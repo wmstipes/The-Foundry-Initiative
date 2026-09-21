@@ -1,24 +1,30 @@
 # ForgeOps Console
 
-ForgeOps Console C2 is an offline walking skeleton for the planned local,
-browser-based Kubernetes inspection tool. It proves the loopback HTTP boundary,
-explicit kubeconfig parsing, in-memory context selection, compiled first-party
-plugin registration, and deny-by-default capability broker without contacting a
-cluster.
+ForgeOps Console C3 is a local, browser-based, read-only Kubernetes resource
+viewer. Its Go core owns explicit kubeconfig handling, typed client access,
+scope generations, strict resource projections, limits, and the compiled
+first-party plugin broker. The browser receives no raw Kubernetes objects or
+credentials.
 
-## C2 boundary
+## C3 boundary
 
 - one explicit regular kubeconfig file is required;
 - the listener must be a literal loopback address;
 - parsed context metadata is sanitized before it reaches the browser;
-- context selection and the session nonce remain in memory;
-- only the compiled `forge.example` plugin is registered;
-- the example capability returns a fixed offline status;
-- there are no Kubernetes reads, mutations, streams, logs, exec operations,
-  dynamic plugins, persistence, packaging, images, or deployments.
+- context, namespace, generation, activity, and the session nonce remain in
+  memory;
+- the compiled `forge.resources` plugin can list or read only Namespaces,
+  Nodes, Deployments, ReplicaSets, Pods, Services, and EndpointSlices;
+- responses are fixed projections bounded to 200 objects and 1 MiB;
+- requests have a five-second timeout and a four-request concurrency cap; and
+- there are no Secrets, ConfigMap values, Events, logs, watches, mutations,
+  exec, attach, proxy, port-forward, dynamic plugins, persistence, packaging,
+  images, or deployments.
 
-The `internal/cluster.OfflineFactory` seam deliberately refuses to construct a
-Kubernetes client. Replacing it requires the separately approved C3 boundary.
+The production client accepts only embedded kubeconfig material and rejects
+exec plugins, auth-provider plugins, secondary credential files, proxies,
+insecure TLS, and impersonation. A separate synthetic-demo entry point uses a
+fake client and never loads kubeconfig.
 
 ## Local developer validation
 
@@ -36,16 +42,18 @@ npm run build
 npm audit --omit=dev --audit-level=high
 ```
 
-After building the browser shell, the fixture-only application can be started
-locally with:
+After building the browser, start the progress demo with:
 
 ```text
-go run ./cmd/forgeops-console \
-  --kubeconfig ./fixtures/kubeconfig.yaml \
+go run ./cmd/forgeops-console-demo \
   --web-dir ./web/dist \
   --listen 127.0.0.1:9090
 ```
 
-Opening `http://127.0.0.1:9090` displays the shell. Selecting the fixture
-context changes only local in-memory state; it does not use the fixture server
-address or token.
+Open `http://127.0.0.1:9090`, activate `synthetic-demo`, choose the
+`signalforge` namespace, and select a resource. The permanent synthetic banner
+and separate binary make clear that no cluster connection exists.
+
+The production entry point is `./cmd/forgeops-console` and requires an explicit
+`--kubeconfig`. Do not use it for a live check until that separately approved
+C3 acceptance step is authorized.

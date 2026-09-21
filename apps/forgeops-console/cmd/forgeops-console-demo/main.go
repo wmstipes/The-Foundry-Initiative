@@ -1,0 +1,149 @@
+package main
+
+import (
+	"context"
+	"errors"
+	"flag"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	discoveryv1 "k8s.io/api/discovery/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/fake"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/broker"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/cluster"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/config"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/plugins"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/resources"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/server"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/session"
+)
+
+func main() {
+	if err := run(); err != nil {
+		log.Printf("ForgeOps Console demo stopped: %v", err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
+	listenAddress := flag.String("listen", "127.0.0.1:9090", "literal loopback listen address")
+	webDirectory := flag.String("web-dir", "", "path to the built browser assets")
+	flag.Parse()
+	if *webDirectory == "" {
+		return errors.New("--web-dir is required")
+	}
+	if err := server.ValidateListenAddress(*listenAddress); err != nil {
+		return err
+	}
+	raw := demoConfig()
+	state, err := session.New([]string{"synthetic-demo"})
+	if err != nil {
+		return err
+	}
+	nonce, err := session.NewNonce()
+	if err != nil {
+		return fmt.Errorf("create session nonce: %w", err)
+	}
+	registry, err := plugins.NewRegistry(plugins.ExampleManifest(), plugins.ResourcesManifest())
+	if err != nil {
+		return err
+	}
+	capabilityBroker, err := broker.New(registry)
+	if err != nil {
+		return err
+	}
+	client := fake.NewSimpleClientset(demoObjects()...)
+	factory := cluster.ClientFactoryFunc(func(context.Context, *clientcmdapi.Config, string) (kubernetes.Interface, error) { return client, nil })
+	resourceService, err := resources.New(raw, state, factory)
+	if err != nil {
+		return err
+	}
+	if err := capabilityBroker.Register(plugins.ExamplePluginID, plugins.ExampleStatusCapability, func(context.Context, broker.Request) (broker.Response, error) {
+		return broker.Response{Message: "Synthetic data only; no cluster connection exists.", Mode: "synthetic-demo"}, nil
+	}); err != nil {
+		return err
+	}
+	if err := capabilityBroker.Register(plugins.ResourcesPluginID, plugins.ResourcesReadCapability, func(ctx context.Context, request broker.Request) (broker.Response, error) {
+		if request.Query == nil {
+			return broker.Response{}, &resources.APIError{Code: "invalid_request", Status: http.StatusBadRequest}
+		}
+		result, err := resourceService.Execute(ctx, *request.Query)
+		if err != nil {
+			return broker.Response{}, err
+		}
+		return broker.Response{Result: &result}, nil
+	}); err != nil {
+		return err
+	}
+	handler, err := server.New(server.Options{
+		AllowedHost: *listenAddress,
+		Contexts:    []config.ContextSummary{{Name: "synthetic-demo", ClusterName: "synthetic", AuthInfoName: "none"}},
+		State:       state, Registry: registry, Broker: capabilityBroker, Resources: resourceService,
+		Static: os.DirFS(*webDirectory), Nonce: nonce, Mode: "synthetic-demo",
+	})
+	if err != nil {
+		return err
+	}
+	httpServer := &http.Server{Addr: *listenAddress, Handler: handler, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 30 * time.Second}
+	shutdownContext, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	go func() {
+		<-shutdownContext.Done()
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_ = httpServer.Shutdown(ctx)
+	}()
+	log.Printf("ForgeOps Console C3 demo at http://%s (synthetic data only)", *listenAddress)
+	if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
+	return nil
+}
+
+func demoConfig() *clientcmdapi.Config {
+	return &clientcmdapi.Config{
+		Contexts:  map[string]*clientcmdapi.Context{"synthetic-demo": {Cluster: "synthetic", AuthInfo: "none"}},
+		Clusters:  map[string]*clientcmdapi.Cluster{"synthetic": {Server: "https://synthetic.invalid", CertificateAuthorityData: []byte("synthetic")}},
+		AuthInfos: map[string]*clientcmdapi.AuthInfo{"none": {}},
+	}
+}
+
+func demoObjects() []runtime.Object {
+	replicas := int32(3)
+	controller := true
+	ready := true
+	serviceName := "signalforge-api"
+	portName := "http"
+	port := int32(8000)
+	protocol := corev1.ProtocolTCP
+	deploymentUID := "demo-deployment"
+	rsUID := "demo-replicaset"
+	return []runtime.Object{
+		&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "signalforge"}, Status: corev1.NamespaceStatus{Phase: corev1.NamespaceActive}},
+		&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "observability"}, Status: corev1.NamespaceStatus{Phase: corev1.NamespaceActive}},
+		&corev1.Node{ObjectMeta: metav1.ObjectMeta{Name: "forge-control-1", Labels: map[string]string{"node-role.kubernetes.io/control-plane": ""}}, Status: corev1.NodeStatus{Conditions: []corev1.NodeCondition{{Type: corev1.NodeReady, Status: corev1.ConditionTrue}}, NodeInfo: corev1.NodeSystemInfo{KubeletVersion: "v1.34.0"}}},
+		&appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: "signalforge-api", Namespace: "signalforge", UID: typesUID(deploymentUID)}, Spec: appsv1.DeploymentSpec{Replicas: &replicas, Selector: &metav1.LabelSelector{MatchLabels: map[string]string{"app": "signalforge-api"}}}, Status: appsv1.DeploymentStatus{Replicas: 3, ReadyReplicas: 2, AvailableReplicas: 2}},
+		&appsv1.ReplicaSet{ObjectMeta: metav1.ObjectMeta{Name: "signalforge-api-7f8b9", Namespace: "signalforge", UID: typesUID(rsUID), OwnerReferences: []metav1.OwnerReference{{APIVersion: "apps/v1", Kind: "Deployment", Name: "signalforge-api", UID: typesUID(deploymentUID), Controller: &controller}}}, Spec: appsv1.ReplicaSetSpec{Replicas: &replicas, Selector: &metav1.LabelSelector{MatchLabels: map[string]string{"app": "signalforge-api"}}}, Status: appsv1.ReplicaSetStatus{Replicas: 3, ReadyReplicas: 2, AvailableReplicas: 2}},
+		&corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "signalforge-api-7f8b9-a1", Namespace: "signalforge", Labels: map[string]string{"app": "signalforge-api"}, OwnerReferences: []metav1.OwnerReference{{APIVersion: "apps/v1", Kind: "ReplicaSet", Name: "signalforge-api-7f8b9", UID: typesUID(rsUID), Controller: &controller}}}, Spec: corev1.PodSpec{NodeName: "forge-control-1", Containers: []corev1.Container{{Name: "api", Image: "synthetic/signalforge:demo"}}}, Status: corev1.PodStatus{Phase: corev1.PodRunning, ContainerStatuses: []corev1.ContainerStatus{{Name: "api", Ready: true}}}},
+		&corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "signalforge-api-7f8b9-b2", Namespace: "signalforge", Labels: map[string]string{"app": "signalforge-api"}, OwnerReferences: []metav1.OwnerReference{{APIVersion: "apps/v1", Kind: "ReplicaSet", Name: "signalforge-api-7f8b9", UID: typesUID(rsUID), Controller: &controller}}}, Spec: corev1.PodSpec{NodeName: "forge-control-1", Containers: []corev1.Container{{Name: "api", Image: "synthetic/signalforge:demo"}}}, Status: corev1.PodStatus{Phase: corev1.PodPending, ContainerStatuses: []corev1.ContainerStatus{{Name: "api", Ready: false, RestartCount: 2}}}},
+		&corev1.Service{ObjectMeta: metav1.ObjectMeta{Name: serviceName, Namespace: "signalforge"}, Spec: corev1.ServiceSpec{Type: corev1.ServiceTypeClusterIP, Selector: map[string]string{"app": "signalforge-api"}, Ports: []corev1.ServicePort{{Name: portName, Port: 80, Protocol: protocol, TargetPort: intstr.FromInt32(port)}}}},
+		&discoveryv1.EndpointSlice{ObjectMeta: metav1.ObjectMeta{Name: "signalforge-api-demo", Namespace: "signalforge", Labels: map[string]string{discoveryv1.LabelServiceName: serviceName}}, AddressType: discoveryv1.AddressTypeIPv4, Ports: []discoveryv1.EndpointPort{{Name: &portName, Port: &port, Protocol: &protocol}}, Endpoints: []discoveryv1.Endpoint{{Addresses: []string{"10.42.0.8"}, Conditions: discoveryv1.EndpointConditions{Ready: &ready}}, {Addresses: []string{"10.42.0.9"}, Conditions: discoveryv1.EndpointConditions{Ready: boolPointer(false)}}}},
+	}
+}
+
+func boolPointer(value bool) *bool    { return &value }
+func typesUID(value string) types.UID { return types.UID(value) }

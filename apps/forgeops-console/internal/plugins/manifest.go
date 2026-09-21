@@ -10,6 +10,7 @@ const (
 	SDKVersion             = "0.1.0"
 	SupportedSDKConstraint = ">=0.1.0 <0.2.0"
 	DashboardCard          = "dashboardCard"
+	ResourceBrowser        = "resourceBrowser"
 )
 
 var (
@@ -67,7 +68,7 @@ func (m Manifest) Validate() error {
 			return errors.New("contribution IDs must be unique")
 		}
 		contributions[contribution.ID] = struct{}{}
-		if contribution.Type != DashboardCard {
+		if contribution.Type != DashboardCard && contribution.Type != ResourceBrowser {
 			return fmt.Errorf("unsupported contribution type %q", contribution.Type)
 		}
 		if contribution.Title == "" {
