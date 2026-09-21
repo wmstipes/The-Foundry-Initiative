@@ -31,7 +31,10 @@ parallel work packages. The Console defines a
 local, browser-based, plugin-ready Kubernetes inspection surface intended to
 make context, scope, equivalent commands, and future evidence selection more
 visible. C3 adds bounded typed read authority while preserving a separate
-synthetic progress demo and separately gated live feasibility check. Its independently
+synthetic progress demo. The separately authorized read-only SignalForge walkthrough
+passed on 2026-09-21: all six resource views and explicit scope reset/reselection
+were observed. This is bounded UI evidence, not exhaustive security acceptance.
+Its independently
 gated C1-C7 sequence is maintained in the
 [ForgeOps Console roadmap](docs/roadmaps/forgeops-console-roadmap.md) without
 renumbering ForgeOps Milestones 066-088 or Workbench work packages W1-W7.

@@ -24,15 +24,21 @@ historical evidence rather than being rewritten when the suite grows.
 - Configuration: one explicit kubeconfig path and one operator-selected context;
   no ambient or in-cluster credential fallback
 - Current authority: fixed typed list/read projections for Namespace, Node,
-  Deployment, ReplicaSet, Pod, Service, and EndpointSlice; the separately gated
-  live acceptance check has not been performed
+  Deployment, ReplicaSet, Pod, Service, and EndpointSlice
+- Live evidence: separately authorized, operator-run SignalForge walkthrough
+  passed on 2026-09-21 against laptop source `82741388`; all six resource views,
+  owner/selector relationships, and scope reset/reselection were observed.
+  This does not establish concurrent cancellation, every error/security path,
+  or application network reachability; see the [C3 milestone](milestones/forgeops-console-c3-read-only-resource-browser.md#live-read-only-walkthrough--2026-09-21)
 - Plugin boundary: inert example and resource-browser compiled first-party
   plugins constrained by a strict, versioned, deny-by-default capability broker
 - ForgeOps boundary: v1.0.0 remains unchanged and independently usable;
   Console activity is not ForgeOps evidence
-- Runtime impact: merged source and synthetic fake-client demo only; no package,
-  image, deployment, live cluster request, application access, or persistent
-  state
+- Runtime impact: local Windows build and loopback Console performed approved
+  live Kubernetes reads; no package/image publication, deployment, application
+  endpoint check, or cluster mutation was part of this walkthrough
+- Open usability follow-up: C3-UX-01, clarify the Node `Scheduling` label;
+  implementation is deferred and tracked in the C3 milestone
 - Direction: the separately gated C1-C7 sequence is documented in
   `docs/roadmaps/forgeops-console-roadmap.md`
 

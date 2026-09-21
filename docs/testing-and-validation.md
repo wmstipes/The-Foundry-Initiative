@@ -31,6 +31,24 @@ of assertions or behaviors. One test may verify several invariants or iterate
 over a reviewed scenario corpus. For example, one Milestone 061 test executes
 all nine adversarial incident-brief cases.
 
+## Console C3 live walkthrough evidence
+
+On 2026-09-21, after explicit authorization, the operator built accepted source
+`82741388f6b2c79a381ac35b6c7bf4e4ecbf90b5` on Windows and supplied terminal output
+and browser screenshots for a bounded read-only SignalForge walkthrough.
+The four Vitest API tests, browser production build, Go package tests, and Go
+production binary build passed on the laptop. These are additional executions,
+not new test cases; inventory counts above are unchanged.
+
+All six resource views, their displayed relationships, and explicit scope
+reset/reselection were observed successfully. Namespace discovery supplied the
+selection control. This manual happy-path evidence is separate from synthetic
+demo checks and automated tests; it does not prove concurrent in-flight
+cancellation, every security/error path, or application network reachability.
+The [C3 milestone](milestones/forgeops-console-c3-read-only-resource-browser.md#live-read-only-walkthrough--2026-09-21)
+records the observations, limits, and open scheduling-label follow-up. Screenshots
+and kubeconfig contents are not committed as part of this reconciliation.
+
 ## What the suites cover
 
 ### ForgeOps

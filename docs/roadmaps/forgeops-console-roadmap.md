@@ -85,13 +85,19 @@ Implement bounded namespace, Node, Deployment, ReplicaSet, Pod, Service, and
 EndpointSlice views through first-party plugins and core-owned capabilities.
 Show owner and selector relationships and exact context/namespace scope.
 
-Offline fake-client acceptance precedes a separately approved read-only
-SignalForge feasibility check. No general API discovery or ConfigMap values are
-included.
+Offline fake-client acceptance was followed by a separately authorized,
+operator-run read-only SignalForge walkthrough on 2026-09-21. All six resource
+views and explicit scope reset/reselection passed the observed happy path;
+concurrent cancellation and exhaustive security/error paths were not exercised.
+No general API discovery or ConfigMap values are included. See the
+[C3 evidence and open C3-UX-01 labeling follow-up](../milestones/forgeops-console-c3-read-only-resource-browser.md#live-read-only-walkthrough--2026-09-21).
 
 ### C4 — Logs, Events, and command explanation
 
 **Purpose:** Improve the demonstration and prove trustworthiness.
+
+**Status:** Not started; requires separate approval. The C3 live walkthrough
+does not authorize C4 implementation or expanded live access.
 
 Add bounded Events and Pod/container log reading, cancellation, stream limits,
 control-character handling, sensitive-data warnings, and deterministic
