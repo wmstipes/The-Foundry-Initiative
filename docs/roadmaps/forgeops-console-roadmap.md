@@ -1,6 +1,6 @@
 # ForgeOps Console roadmap
 
-**Status:** C1, C2, and C3 accepted; C4 requires separate approval
+**Status:** C1-C3 accepted; C4 approved and implemented as a candidate pending CI/review/merge
 
 **Baseline:** ForgeOps v1.0.0; C1 was admitted from repository commit
 `8008f6934a0c1bd34a63d6a86a9ad74d170a7671` and merged at
@@ -96,8 +96,8 @@ No general API discovery or ConfigMap values are included. See the
 
 **Purpose:** Improve the demonstration and prove trustworthiness.
 
-**Status:** Not started; requires separate approval. The C3 live walkthrough
-does not authorize C4 implementation or expanded live access.
+**Status:** Approved with all related gates; implementation candidate pending
+CI, review, and merge. Live log/Event access still requires separate approval.
 
 Add bounded Events and Pod/container log reading, cancellation, stream limits,
 control-character handling, sensitive-data warnings, and deterministic
@@ -105,6 +105,12 @@ equivalent-command previews. Preview text remains non-executable.
 
 Acceptance must include oversized, hostile, stale-context, unavailable,
 denied, disconnected, and cancellation cases.
+
+The candidate provides selected-Pod Event snapshots and current/previous
+container log snapshots, not continuous follow or Event watch. It uses a
+compiled diagnostics plugin, fixed budgets, sensitive-data acknowledgement,
+inert text rendering, cancellation, and offline PowerShell/POSIX previews.
+See the [C4 milestone](../milestones/forgeops-console-c4-pod-diagnostics.md).
 
 ### C5 — Reviewed ForgeOps evidence boundary
 

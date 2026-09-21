@@ -17,9 +17,9 @@ historical evidence rather than being rewritten when the suite grows.
 
 ## Current ForgeOps Console state
 
-- Work package: C3 read-only resource browser
-- Status: accepted and merged through PR #100 at `4cf801b`; the accepted head
-  and merge commit share tree `8a97af8`
+- Work package: C4 bounded Pod diagnostics
+- Status: approved implementation candidate, pending CI/review/merge; C3 remains
+  accepted through PR #100, with live evidence reconciled through PR #102
 - Intended form: local browser application served by a loopback-only Go core
 - Configuration: one explicit kubeconfig path and one operator-selected context;
   no ambient or in-cluster credential fallback
@@ -39,6 +39,12 @@ historical evidence rather than being rewritten when the suite grows.
   endpoint check, or cluster mutation was part of this walkthrough
 - Open usability follow-up: C3-UX-01, clarify the Node `Scheduling` label;
   implementation is deferred and tracked in the C3 milestone
+- C4 candidate authority: selected-Pod bounded log/Event snapshots and offline
+  PowerShell/POSIX command previews through `forge.diagnostics`; no commands
+  are executed. Live log/Event access has not been authorized or performed.
+- C4 validation and gate disposition: see the
+  [C4 milestone](milestones/forgeops-console-c4-pod-diagnostics.md); no release,
+  image, deployment, persistent state, or ForgeOps evidence integration added
 - Direction: the separately gated C1-C7 sequence is documented in
   `docs/roadmaps/forgeops-console-roadmap.md`
 

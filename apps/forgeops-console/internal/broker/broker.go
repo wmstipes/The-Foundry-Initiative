@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/diagnostics"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/plugins"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/resources"
 )
@@ -13,16 +14,36 @@ import (
 var ErrDenied = errors.New("capability denied")
 
 type Request struct {
-	Query *resources.Query
+	Query      *resources.Query
+	Diagnostic *diagnostics.Query
 }
 
 type Response struct {
-	Message string            `json:"message,omitempty"`
-	Mode    string            `json:"mode,omitempty"`
-	Result  *resources.Result `json:"result,omitempty"`
+	Message    string              `json:"message,omitempty"`
+	Mode       string              `json:"mode,omitempty"`
+	Result     *resources.Result   `json:"result,omitempty"`
+	Diagnostic *diagnostics.Result `json:"diagnostic,omitempty"`
 }
 
 type Handler func(context.Context, Request) (Response, error)
+
+func (b *Broker) RegisterDiagnostics(service *diagnostics.Service) error {
+	for operation, capability := range map[string]string{"logs": "pods.logs.read", "events": "events.read", "preview": "command.preview"} {
+		if err := b.Register(plugins.DiagnosticsPluginID, capability, func(ctx context.Context, request Request) (Response, error) {
+			if request.Diagnostic == nil || request.Diagnostic.Operation != operation {
+				return Response{}, ErrDenied
+			}
+			result, err := service.Execute(ctx, *request.Diagnostic)
+			if err != nil {
+				return Response{}, err
+			}
+			return Response{Diagnostic: &result}, nil
+		}); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 type Broker struct {
 	mu       sync.RWMutex

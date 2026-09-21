@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/diagnostics"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/plugins"
 )
 
@@ -19,6 +20,29 @@ func newBroker(t *testing.T) *Broker {
 		t.Fatal(err)
 	}
 	return result
+}
+
+func TestDiagnosticsCannotCrossCapabilityOrPluginIdentity(t *testing.T) {
+	registry, err := plugins.NewRegistry(plugins.DiagnosticsManifest(), plugins.ExampleManifest())
+	if err != nil {
+		t.Fatal(err)
+	}
+	b, _ := New(registry)
+	// A nil service is safe here because each call must be denied before dispatch.
+	if err = b.RegisterDiagnostics(nil); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct{ plugin, capability, operation string }{
+		{plugins.ExamplePluginID, "pods.logs.read", "logs"},
+		{plugins.DiagnosticsPluginID, "command.preview", "logs"},
+		{plugins.DiagnosticsPluginID, "pods.logs.read", "events"},
+		{plugins.DiagnosticsPluginID, "pods.exec", "exec"},
+	} {
+		_, err = b.Invoke(context.Background(), tc.plugin, tc.capability, Request{Diagnostic: &diagnostics.Query{Operation: tc.operation}})
+		if !errors.Is(err, ErrDenied) {
+			t.Fatalf("cross-capability request accepted: %v", err)
+		}
+	}
 }
 
 func TestBrokerDeniesUnknownAndUnregisteredCapabilities(t *testing.T) {

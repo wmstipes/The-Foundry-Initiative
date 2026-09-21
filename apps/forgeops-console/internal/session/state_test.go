@@ -79,3 +79,19 @@ func TestNonceIsRandomAndURLSafe(t *testing.T) {
 		t.Fatalf("nonces are not suitably distinct: %q %q", first, second)
 	}
 }
+
+func TestNamespaceSelectionRejectsOldGenerationWithoutChangingScope(t *testing.T) {
+	state, _ := New([]string{"dev"})
+	first, _ := state.SelectContext("dev")
+	_ = state.AllowNamespaces(first.Generation, []string{"team"})
+	second, err := state.SelectNamespaceAt("team", first.Generation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = state.SelectNamespaceAt("team", first.Generation); err != ErrStaleScope {
+		t.Fatal("old namespace selection accepted")
+	}
+	if state.Current() != second {
+		t.Fatal("rejection changed scope")
+	}
+}
