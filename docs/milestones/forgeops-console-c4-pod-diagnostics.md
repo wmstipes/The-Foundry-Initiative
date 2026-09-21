@@ -8,9 +8,10 @@ C4 improves the demonstration by connecting a selected Pod to bounded logs,
 Events, and command explanation without executing commands or expanding
 ForgeOps v1.0.0 evidence authority.
 
-This implementation is a candidate pending published CI, PR review, and merge.
-Live log/Event access requires separate authorization; none was performed during
-implementation. C3's approved resource reads do not authorize these new data.
+The implementation is accepted through PR #103 at
+`7910f0a4e9cb66e4e54014cfbf9d817181401ec2`. Live log/Event access required
+separate authorization and was not performed during implementation. The later
+authorized walkthrough is recorded below; it grants no ongoing live authority.
 
 ## Implemented contract
 
@@ -75,15 +76,66 @@ unittest cases and 257 full-discovery pytest cases. A synthetic loopback HTTP
 smoke passed log/Event reads, offline preview, metadata activity, no-store headers,
 and stale-generation rejection. No live cluster was used.
 
+## Published acceptance
+
+Published head `35005f9008a9a184fa1c9f34fa29109a3c64c67d`, locally tested commit
+`75a95719c19a5c9f03e9fd6bc8577b344984b20b`, and the PR #103 merge share tree
+`1f5a19908a1727c335a451cedf1b8c7d0bb4bdbe`.
+The published-head PR workflows completed successfully:
+
+- Required Validation: `35647386610`.
+- Repository Security Validation: `35647386668`.
+- ForgeOps CI: `35647386714`.
+
+The operator separately reported green post-merge workflows. The connector's
+workflow query verifies PR-triggered runs, not independent post-merge runs.
+
+## Bounded live walkthrough — 2026-09-21
+
+After explicit authorization, the operator used the production Console on the
+Windows laptop at merged source `7910f0a4e9cb66e4e54014cfbf9d817181401ec2`.
+Terminal output confirmed all 12 Vitest cases, the web production build, all Go
+package tests, and the production Go build passed; npm installation reported
+zero vulnerabilities. These repeat runs do not increase suite counts or prove
+Windows race-detector acceptance.
+
+The server used an explicit existing kubeconfig and loopback `127.0.0.1:9090`.
+The selected context was `kubernetes-admin@kubernetes`, namespace
+`forge-restaurant`, Pod `restaurant-api-6dfbf8dd9b-4nnlb`, and container
+`restaurant-api`. The context name does not establish least-privilege RBAC.
+Evidence was operator-supplied screenshots, terminal output, and confirmation,
+not an independently executed audit or signed runtime provenance record.
+
+| Check | Observed result |
+| --- | --- |
+| Read controls | Sensitive-data warning acknowledged; log controls unavailable before explicit container selection; previous-instance option unchecked. |
+| Current logs | Snapshot displayed with the safety-limit/incompleteness warning. The exact triggering bound was not determined from the screenshot. |
+| Pod Events | Request completed with no matching Events; the UI explicitly avoided claiming no Events had occurred. |
+| Log preview | Both shell variants displayed the selected context, namespace, Pod and container; tail 500, limit 65536 bytes, timeout 5s, follow=false, previous=false, and manual kubeconfig placeholder. |
+| Event preview | Both shell variants displayed the selected scope and Pod name/kind selector with timeout 5s; the UI explained the actual read's additional UID matching. |
+| Preview authority | Both were labeled explanation only / not executed, with non-equivalence and permission caveats; no preview command was executed. |
+| Clear and reset | Operator confirmed Clear diagnostics removed the preview, regeneration worked, and reactivating the same context cleared the namespace and removed the diagnostics panel. |
+| Shutdown | Operator explicitly confirmed the Console stopped after the walkthrough. |
+
+Disposition: bounded current-log/Event and preview happy paths plus visible
+clearing/reset passed. No previous-container read, in-flight cancellation,
+hostile-data injection, error-path exhaustion, network-reachability validation,
+or cluster mutation was part of this live check. Synthetic/unit evidence for
+those implemented boundaries remains separate. No raw log/Event text,
+screenshots, private addresses from log contents, or credential files are
+published in this closeout.
+
 ## Gates
 
 1. Contract and disclosure bounds — approved and implemented as above.
 2. Core capabilities and lifecycle — implemented; offline tests passed.
 3. Compiled plugin and UI — implemented; DOM/API tests and synthetic smoke passed.
 4. Adversarial, cancellation, race, and build validation — local checks passed.
-5. Documentation, publication, CI, and review — pending.
-6. Merge and reconciliation — pending operator review/merge; no release or
-   deployment implied. A live check remains separately authorized.
+5. Documentation, publication, CI, and review — implementation accepted through
+   PR #103 with the successful published workflow runs above.
+6. Merge and reconciliation — implementation merged; authorized live walkthrough
+   and shutdown confirmed. This documentation-only closeout awaits its own
+   review/merge. No release, deployment, or ongoing live access is implied.
 
 ## Deferred work
 

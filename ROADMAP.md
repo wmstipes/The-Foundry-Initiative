@@ -39,9 +39,11 @@ gated C1-C7 sequence is maintained in the
 [ForgeOps Console roadmap](docs/roadmaps/forgeops-console-roadmap.md) without
 renumbering ForgeOps Milestones 066-088 or Workbench work packages W1-W7.
 
-C4 is approved and implemented as a candidate pending CI/review/merge. It adds
+C4 is accepted through PR #103 at `7910f0a`. It adds
 bounded selected-Pod log/Event snapshots and non-executable command previews;
-live access is separately gated. See the
+the separately authorized bounded SignalForge walkthrough passed on 2026-09-21,
+and the operator confirmed the Console stopped. This is happy-path evidence,
+not exhaustive live security or cancellation acceptance. See the
 [C4 milestone](docs/milestones/forgeops-console-c4-pod-diagnostics.md).
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
