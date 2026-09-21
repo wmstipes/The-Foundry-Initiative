@@ -26,10 +26,12 @@ adversarial trust-boundary evaluation. Model and retrieval integration remain
 deferred because the final demonstration identified no concrete operator
 question unmet by the deterministic brief.
 
-ForgeOps Console C1 is an accepted parallel design work package. It defines a
+ForgeOps Console C1 is an accepted parallel design work package, and the
+approved C2 offline walking skeleton is now an implementation candidate under
+review. The Console defines a
 local, browser-based, plugin-ready Kubernetes inspection surface intended to
 make context, scope, equivalent commands, and future evidence selection more
-visible. C1 adds no application code or cluster authority. Its independently
+visible. C2 adds no Kubernetes client authority or cluster access. Its independently
 gated C1-C7 sequence is maintained in the
 [ForgeOps Console roadmap](docs/roadmaps/forgeops-console-roadmap.md) without
 renumbering ForgeOps Milestones 066-088 or Workbench work packages W1-W7.

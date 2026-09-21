@@ -56,6 +56,47 @@ jobs:
       - run: npm run csp:check
       - run: npm audit
 
+  console-go:
+    name: ForgeOps Console Go validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/forgeops-console
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: "1.27.x"
+          cache: false
+      - name: Verify Go formatting
+        run: test -z "$(gofmt -l .)"
+      - name: Verify locked Go module graph
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
+      - run: go test ./...
+      - run: go vet ./...
+
+  console-web:
+    name: ForgeOps Console browser validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/forgeops-console/web
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/forgeops-console/web/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high
+
   repository:
     name: Repository and manifest validation
     runs-on: ubuntu-latest
@@ -87,7 +128,7 @@ jobs:
   required:
     name: Gate 4 required validation
     if: always()
-    needs: [python, workbench, repository, dependencies]
+    needs: [python, workbench, console-go, console-web, repository, dependencies]
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
@@ -95,10 +136,14 @@ jobs:
         env:
           PYTHON_RESULT: ${{ needs.python.result }}
           WORKBENCH_RESULT: ${{ needs.workbench.result }}
+          CONSOLE_GO_RESULT: ${{ needs.console-go.result }}
+          CONSOLE_WEB_RESULT: ${{ needs.console-web.result }}
           REPOSITORY_RESULT: ${{ needs.repository.result }}
           DEPENDENCY_RESULT: ${{ needs.dependencies.result }}
         run: |
           test "$PYTHON_RESULT" = success
           test "$WORKBENCH_RESULT" = success
+          test "$CONSOLE_GO_RESULT" = success
+          test "$CONSOLE_WEB_RESULT" = success
           test "$REPOSITORY_RESULT" = success
           test "$DEPENDENCY_RESULT" = success -o "$DEPENDENCY_RESULT" = skipped

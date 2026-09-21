@@ -11,16 +11,18 @@ is not collapsed into one misleading total.
 
 | Suite | Current count | Scope |
 | --- | ---: | --- |
-| ForgeOps Python tests | 151 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 229 | Everything collected below `tests/` |
+| ForgeOps Python tests | 169 | `tests/test_forgeops*.py`; included in both Python totals below |
+| Top-level Python tests | 239 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
-| Complete repository Python discovery | 238 | Top-level 229 plus Restaurant API 9 |
+| Complete repository Python discovery | 248 | Top-level 239 plus Restaurant API 9 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
+| ForgeOps Console Go tests | 24 | Test functions across six core packages; separate from Python totals |
+| ForgeOps Console Vitest tests | 2 | In-memory browser API and session-boundary checks; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
-The Python counts are nested, not additive: the 151 ForgeOps tests are part of
-the 229 top-level tests, and the 229 plus the nine Restaurant API tests produce
-the 238-test complete Python discovery. The Workbench tests and promtool
+The Python counts are nested, not additive: the 169 ForgeOps tests are part of
+the 239 top-level tests, and the 239 plus the nine Restaurant API tests produce
+the 248-test complete Python discovery. The browser, Go, and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -122,10 +124,10 @@ $env:PYTHONPATH = "$PWD\src;$PWD\apps\restaurant-api"
 Useful narrower Python suites are:
 
 ~~~powershell
-# Top-level Python suite: currently 229 tests
+# Top-level Python suite: currently 239 tests
 .\.venv\Scripts\python.exe -m pytest -q .\tests
 
-# Focused ForgeOps suite: currently 151 tests
+# Focused ForgeOps suite: currently 169 tests
 .\.venv\Scripts\python.exe -m unittest discover `
   -s tests -p 'test_forgeops*.py' -v
 
@@ -144,6 +146,21 @@ npm test
 npm run build
 npm run csp:check
 npm audit
+Pop-Location
+~~~
+
+Run the ForgeOps Console suites from their respective module directories:
+
+~~~powershell
+Push-Location .\apps\forgeops-console
+go test ./...
+go vet ./...
+Push-Location .\web
+npm ci
+npm test
+npm run build
+npm audit --omit=dev --audit-level=high
+Pop-Location
 Pop-Location
 ~~~
 
@@ -217,7 +234,7 @@ When updating counts:
 4. keep Vitest cases, promtool scenarios, validators, builds, audits, and live
    acceptance in their own categories; and
 5. explain any surprising delta, such as the nine Restaurant API tests that
-   distinguish the 229-test top-level suite from the 238-test complete Python
+   distinguish the 239-test top-level suite from the 248-test complete Python
    discovery.
 
 Historical milestone counts remain historical evidence and must not be edited

@@ -17,20 +17,20 @@ historical evidence rather than being rewritten when the suite grows.
 
 ## Current ForgeOps Console state
 
-- Work package: C1 architecture and plugin boundary
-- Status: accepted and merged through PR #96 at `d363b21`; no implementation
-  exists and C2 remains separately gated
+- Work package: C2 offline walking skeleton
+- Status: approved implementation candidate under review; C1 was accepted and
+  merged through PR #96 at `d363b21`
 - Intended form: local browser application served by a loopback-only Go core
 - Configuration: one explicit kubeconfig path and one operator-selected context;
   no ambient or in-cluster credential fallback
-- Initial authority: bounded read-only resources and streams; no Secrets,
-  mutation, exec, attach, proxy, port-forward, or arbitrary API paths
-- Plugin boundary: reviewed first-party modules compiled with the Console and
-  constrained by a strict versioned capability broker
+- Current authority: offline fixture parsing and in-memory context-label
+  selection only; the client factory refuses to construct a Kubernetes client
+- Plugin boundary: one inert compiled first-party plugin constrained by a
+  strict, versioned, deny-by-default capability broker
 - ForgeOps boundary: v1.0.0 remains unchanged and independently usable;
   Console activity is not ForgeOps evidence
-- Runtime impact: none; C1 adds documentation policy tests only and performs no
-  cluster or application access
+- Runtime impact: local candidate only; no package, image, deployment, cluster
+  request, application access, or persistent state
 - Direction: the separately gated C1-C7 sequence is documented in
   `docs/roadmaps/forgeops-console-roadmap.md`
 
