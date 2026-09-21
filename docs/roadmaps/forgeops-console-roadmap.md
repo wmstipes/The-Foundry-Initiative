@@ -64,7 +64,7 @@ policy tests without adding application code or cluster access.
 
 **Purpose:** Prove trustworthiness and prepare implementation.
 
-**Status:** Approved implementation candidate under review.
+**Status:** Complete and accepted through PR #98 at `72288e8`.
 
 Create a loopback-only local core, static browser shell, strict configuration
 loader seam, context-selection state machine, capability broker, and one inert
@@ -73,8 +73,8 @@ clients only.
 
 Acceptance must prove no ambient kubeconfig, network, cluster, persistence,
 credential disclosure, dynamic plugin, or mutation path. Technology and
-dependency choices were reviewed before implementation. Final acceptance
-depends on published required-workflow evidence and PR review.
+dependency choices were reviewed before implementation. Published required-
+workflow evidence and PR review passed before merge.
 
 ### C3 — Read-only resource browser
 

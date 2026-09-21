@@ -26,9 +26,8 @@ adversarial trust-boundary evaluation. Model and retrieval integration remain
 deferred because the final demonstration identified no concrete operator
 question unmet by the deterministic brief.
 
-ForgeOps Console C1 is an accepted parallel design work package, and the
-approved C2 offline walking skeleton is now an implementation candidate under
-review. The Console defines a
+ForgeOps Console C1 and the C2 offline walking skeleton are accepted parallel
+work packages. The Console defines a
 local, browser-based, plugin-ready Kubernetes inspection surface intended to
 make context, scope, equivalent commands, and future evidence selection more
 visible. C2 adds no Kubernetes client authority or cluster access. Its independently
