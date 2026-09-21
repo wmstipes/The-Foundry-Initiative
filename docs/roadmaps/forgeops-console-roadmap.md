@@ -1,10 +1,11 @@
 # ForgeOps Console roadmap
 
-**Status:** C1 architecture accepted; implementation requires separate work
-package approval
+**Status:** C1 architecture accepted and merged through PR #96; implementation
+requires separate work package approval
 
-**Baseline:** ForgeOps v1.0.0 and repository `main` at C1 admission commit
-`8008f6934a0c1bd34a63d6a86a9ad74d170a7671`
+**Baseline:** ForgeOps v1.0.0; C1 was admitted from repository commit
+`8008f6934a0c1bd34a63d6a86a9ad74d170a7671` and merged at
+`d363b21d4338849f7063cabeb46fbf1ecc6b65ab`
 
 ## Purpose
 
