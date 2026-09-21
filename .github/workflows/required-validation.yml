@@ -69,17 +69,10 @@ jobs:
         with:
           go-version: "1.27.x"
           cache: false
-      - name: Resolve exact Go module graph
-        run: go mod tidy
-      - name: Preserve the generated module lock
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: forgeops-console-go-lock
-          path: |
-            apps/forgeops-console/go.mod
-            apps/forgeops-console/go.sum
-          if-no-files-found: error
-          retention-days: 2
+      - name: Verify locked Go module graph
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
       - run: go test ./...
       - run: go vet ./...
 

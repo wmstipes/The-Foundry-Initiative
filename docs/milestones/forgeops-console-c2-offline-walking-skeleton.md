@@ -75,9 +75,13 @@ browser tests and production build, a production dependency audit, the complete
 Python suite, and existing repository gates.
 
 Local browser validation passed with Vitest 5.0.1, Vite 8.3.0, Node.js 24, and
-zero reported production dependency vulnerabilities. Go execution and the
-complete repository result are recorded from the published required workflow
-because the implementation environment does not provide a Go toolchain.
+zero reported production dependency vulnerabilities. Required Validation run
+`35630094825` passed Go 1.27 tests and vet, the browser checks, the 248-test
+complete Python discovery, dependency review, and the aggregate required gate.
+ForgeOps CI run `35630094636` and Repository Security Validation run
+`35630094717` also passed on the same published head. The exact Go module graph
+captured by that run is committed and subsequent validation rejects any change
+produced by `go mod tidy`.
 
 ## Gate status
 
@@ -88,8 +92,8 @@ because the implementation environment does not provide a Go toolchain.
    candidate.
 4. Loopback HTTP and browser shell boundary — approved and implemented in the
    candidate.
-5. Offline and regression validation — approved; final published workflow
-   evidence pending.
+5. Offline and regression validation — approved and passed on the published
+   candidate.
 6. Review, merge, reconciliation, and cleanup — approved; pending successful
    final-head validation and Mike's PR review.
 
