@@ -1,6 +1,6 @@
 # Testing and validation
 
-**Inventory date:** 2026-09-20
+**Inventory date:** 2026-09-21
 
 This document defines what The Foundry Initiative means when it reports tests
 and validation results. It separates executable test cases, generated scenario
@@ -12,15 +12,15 @@ is not collapsed into one misleading total.
 | Suite | Current count | Scope |
 | --- | ---: | --- |
 | ForgeOps Python tests | 151 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 221 | Everything collected below `tests/` |
+| Top-level Python tests | 229 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
-| Complete repository Python discovery | 230 | Top-level 221 plus Restaurant API 9 |
+| Complete repository Python discovery | 238 | Top-level 229 plus Restaurant API 9 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
 The Python counts are nested, not additive: the 151 ForgeOps tests are part of
-the 221 top-level tests, and the 221 plus the nine Restaurant API tests produce
-the 230-test complete Python discovery. The Workbench tests and promtool
+the 229 top-level tests, and the 229 plus the nine Restaurant API tests produce
+the 238-test complete Python discovery. The Workbench tests and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -76,6 +76,11 @@ cause, or remediation authorization.
   guidance, the required validation/dependency-review gate, contribution
   templates, line-ending policy, and release-environment use by every
   publication job.
+- `tests/test_forgeops_console_design.py` covers the C1 documentation contract:
+  explicit local configuration, loopback-only intent, absent shell and mutation
+  authority, strict brokered plugin capabilities, deferred third-party plugin
+  loading, primary threat classes, preserved roadmap numbering, and ForgeOps v1
+  independence.
 - `tests/test_wiki_front_door.py` covers stable Wiki content, links, workflow
   triggers, and exact-copy publication behavior.
 - `apps/restaurant-api/tests/test_main.py` covers root metadata, health,
@@ -117,7 +122,7 @@ $env:PYTHONPATH = "$PWD\src;$PWD\apps\restaurant-api"
 Useful narrower Python suites are:
 
 ~~~powershell
-# Top-level Python suite: currently 221 tests
+# Top-level Python suite: currently 229 tests
 .\.venv\Scripts\python.exe -m pytest -q .\tests
 
 # Focused ForgeOps suite: currently 151 tests
@@ -212,7 +217,7 @@ When updating counts:
 4. keep Vitest cases, promtool scenarios, validators, builds, audits, and live
    acceptance in their own categories; and
 5. explain any surprising delta, such as the nine Restaurant API tests that
-   distinguish the 221-test top-level suite from the 230-test complete Python
+   distinguish the 229-test top-level suite from the 238-test complete Python
    discovery.
 
 Historical milestone counts remain historical evidence and must not be edited

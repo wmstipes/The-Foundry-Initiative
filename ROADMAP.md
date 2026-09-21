@@ -1,6 +1,6 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-19
+**Last updated:** 2026-09-21
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
@@ -25,6 +25,14 @@ runbook knowledge, grounded mapping, deterministic incident briefs, and
 adversarial trust-boundary evaluation. Model and retrieval integration remain
 deferred because the final demonstration identified no concrete operator
 question unmet by the deterministic brief.
+
+ForgeOps Console C1 is an accepted parallel design work package. It defines a
+local, browser-based, plugin-ready Kubernetes inspection surface intended to
+make context, scope, equivalent commands, and future evidence selection more
+visible. C1 adds no application code or cluster authority. Its independently
+gated C1-C7 sequence is maintained in the
+[ForgeOps Console roadmap](docs/roadmaps/forgeops-console-roadmap.md) without
+renumbering ForgeOps Milestones 066-088 or Workbench work packages W1-W7.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
