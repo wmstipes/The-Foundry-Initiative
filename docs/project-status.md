@@ -1,6 +1,6 @@
 # Project Status
 
-**Last updated:** 2026-09-19
+**Last updated:** 2026-09-21
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
@@ -14,6 +14,24 @@ The [testing and validation guide](testing-and-validation.md) defines current
 suite counts, collection scope, commands, offline and live boundaries, and the
 maintenance rule for future test changes. Historical milestone counts remain
 historical evidence rather than being rewritten when the suite grows.
+
+## Current ForgeOps Console state
+
+- Work package: C1 architecture and plugin boundary
+- Status: design candidate under repository review; no implementation exists
+- Intended form: local browser application served by a loopback-only Go core
+- Configuration: one explicit kubeconfig path and one operator-selected context;
+  no ambient or in-cluster credential fallback
+- Initial authority: bounded read-only resources and streams; no Secrets,
+  mutation, exec, attach, proxy, port-forward, or arbitrary API paths
+- Plugin boundary: reviewed first-party modules compiled with the Console and
+  constrained by a strict versioned capability broker
+- ForgeOps boundary: v1.0.0 remains unchanged and independently usable;
+  Console activity is not ForgeOps evidence
+- Runtime impact: none; C1 adds documentation policy tests only and performs no
+  cluster or application access
+- Direction: the separately gated C1-C7 sequence is documented in
+  `docs/roadmaps/forgeops-console-roadmap.md`
 
 ## Current application
 
