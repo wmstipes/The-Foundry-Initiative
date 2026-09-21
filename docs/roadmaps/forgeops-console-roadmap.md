@@ -64,6 +64,8 @@ policy tests without adding application code or cluster access.
 
 **Purpose:** Prove trustworthiness and prepare implementation.
 
+**Status:** Approved implementation candidate under review.
+
 Create a loopback-only local core, static browser shell, strict configuration
 loader seam, context-selection state machine, capability broker, and one inert
 first-party example plugin. Use fixture configuration and Kubernetes fake
@@ -71,7 +73,8 @@ clients only.
 
 Acceptance must prove no ambient kubeconfig, network, cluster, persistence,
 credential disclosure, dynamic plugin, or mutation path. Technology and
-dependency choices require their own review before implementation.
+dependency choices were reviewed before implementation. Final acceptance
+depends on published required-workflow evidence and PR review.
 
 ### C3 — Read-only resource browser
 
