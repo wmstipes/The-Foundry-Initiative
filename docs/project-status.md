@@ -18,8 +18,8 @@ historical evidence rather than being rewritten when the suite grows.
 ## Current ForgeOps Console state
 
 - Work package: C2 offline walking skeleton
-- Status: approved implementation candidate under review; C1 was accepted and
-  merged through PR #96 at `d363b21`
+- Status: accepted and merged through PR #98 at `72288e8`; the accepted head
+  and merge commit share tree `7f0d7c6`
 - Intended form: local browser application served by a loopback-only Go core
 - Configuration: one explicit kubeconfig path and one operator-selected context;
   no ambient or in-cluster credential fallback
@@ -29,7 +29,7 @@ historical evidence rather than being rewritten when the suite grows.
   strict, versioned, deny-by-default capability broker
 - ForgeOps boundary: v1.0.0 remains unchanged and independently usable;
   Console activity is not ForgeOps evidence
-- Runtime impact: local candidate only; no package, image, deployment, cluster
+- Runtime impact: local source only; no package, image, deployment, cluster
   request, application access, or persistent state
 - Direction: the separately gated C1-C7 sequence is documented in
   `docs/roadmaps/forgeops-console-roadmap.md`
