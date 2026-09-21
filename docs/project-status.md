@@ -18,19 +18,19 @@ historical evidence rather than being rewritten when the suite grows.
 ## Current ForgeOps Console state
 
 - Work package: C3 read-only resource browser
-- Status: approved implementation candidate; local validation is passing and
-  publication, required CI, review, and merge remain pending
+- Status: accepted and merged through PR #100 at `4cf801b`; the accepted head
+  and merge commit share tree `8a97af8`
 - Intended form: local browser application served by a loopback-only Go core
 - Configuration: one explicit kubeconfig path and one operator-selected context;
   no ambient or in-cluster credential fallback
 - Current authority: fixed typed list/read projections for Namespace, Node,
-  Deployment, ReplicaSet, Pod, Service, and EndpointSlice; no live acceptance
-  check has been performed
+  Deployment, ReplicaSet, Pod, Service, and EndpointSlice; the separately gated
+  live acceptance check has not been performed
 - Plugin boundary: inert example and resource-browser compiled first-party
   plugins constrained by a strict, versioned, deny-by-default capability broker
 - ForgeOps boundary: v1.0.0 remains unchanged and independently usable;
   Console activity is not ForgeOps evidence
-- Runtime impact: local source and synthetic fake-client demo only; no package,
+- Runtime impact: merged source and synthetic fake-client demo only; no package,
   image, deployment, live cluster request, application access, or persistent
   state
 - Direction: the separately gated C1-C7 sequence is documented in

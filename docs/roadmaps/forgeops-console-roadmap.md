@@ -1,7 +1,6 @@
 # ForgeOps Console roadmap
 
-**Status:** C1 and C2 accepted; C3 read-only resource-browser candidate under
-validation
+**Status:** C1, C2, and C3 accepted; C4 requires separate approval
 
 **Baseline:** ForgeOps v1.0.0; C1 was admitted from repository commit
 `8008f6934a0c1bd34a63d6a86a9ad74d170a7671` and merged at
@@ -80,8 +79,7 @@ workflow evidence and PR review passed before merge.
 
 **Purpose:** Improve the demonstration.
 
-**Status:** Approved and implemented as an offline candidate; publication,
-required validation, review, and merge remain pending.
+**Status:** Complete and accepted through PR #100 at `4cf801b`.
 
 Implement bounded namespace, Node, Deployment, ReplicaSet, Pod, Service, and
 EndpointSlice views through first-party plugins and core-owned capabilities.

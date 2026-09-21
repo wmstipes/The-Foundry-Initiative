@@ -26,9 +26,8 @@ adversarial trust-boundary evaluation. Model and retrieval integration remain
 deferred because the final demonstration identified no concrete operator
 question unmet by the deterministic brief.
 
-ForgeOps Console C1 and the C2 offline walking skeleton are accepted parallel
-work packages, and the approved C3 read-only resource-browser candidate is
-under validation. The Console defines a
+ForgeOps Console C1, C2, and the C3 read-only resource browser are accepted
+parallel work packages. The Console defines a
 local, browser-based, plugin-ready Kubernetes inspection surface intended to
 make context, scope, equivalent commands, and future evidence selection more
 visible. C3 adds bounded typed read authority while preserving a separate
