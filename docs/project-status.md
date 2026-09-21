@@ -18,7 +18,8 @@ historical evidence rather than being rewritten when the suite grows.
 ## Current ForgeOps Console state
 
 - Work package: C1 architecture and plugin boundary
-- Status: design candidate under repository review; no implementation exists
+- Status: accepted and merged through PR #96 at `d363b21`; no implementation
+  exists and C2 remains separately gated
 - Intended form: local browser application served by a loopback-only Go core
 - Configuration: one explicit kubeconfig path and one operator-selected context;
   no ambient or in-cluster credential fallback

@@ -57,5 +57,13 @@ plugin loader, or live cluster connection because none exists in C1.
 3. Validation — complete against the final local candidate.
 4. Review PR — published as PR #96; all 19 GitHub checks passed on the
    reviewed candidate.
-5. Merge and reconciliation — pending review and merge.
+5. Merge and reconciliation — PR #96 merged into `main` at
+   `d363b21d4338849f7063cabeb46fbf1ecc6b65ab`; Required Validation, ForgeOps
+   CI, Repository Security Validation, and CodeQL passed on the merge commit.
 6. C2 admission — intentionally separate; C1 approval does not authorize code.
+
+## Closeout
+
+C1 is complete. The accepted architecture and policy tests are now part of
+`main`, the merge introduced no runtime or cluster change, and the Console has
+no implementation authority until C2 receives separate approval.
