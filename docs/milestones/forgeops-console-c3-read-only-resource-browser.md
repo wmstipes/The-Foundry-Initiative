@@ -54,9 +54,18 @@ Deployment projection, and two selector-derived Pod relationships. No
 kubeconfig was loaded and no network target beyond the loopback demo server was
 contacted.
 
-Required GitHub validation and dependency review remain pending publication.
-The separately gated SignalForge read-only feasibility check has not been
-authorized or performed.
+Published-head Required Validation run `35639420344`, ForgeOps CI run
+`35639420138`, and Repository Security Validation run `35639420345` completed
+successfully. Required Validation included dependency review, the locked Go
+module graph, Go formatting/tests/vet, browser tests/build/audit, the 253-test
+Python discovery, repository validators, and its aggregate gate.
+
+PR #100 merged at `4cf801b5d3a1e285834646880193152a9da6dc2b`.
+Its published head `be773da3c694e545165c42f727ab7fcbca3f7098`,
+merge commit, and locally reviewed commit share exact tree
+`8a97af8fdd0c01e55c7c2fef3624a2652b0bcbc5`. GitHub removed the remote
+implementation branch after merge. The separately gated SignalForge read-only
+feasibility check has not been authorized or performed.
 
 ## Gate status
 
@@ -66,5 +75,6 @@ authorized or performed.
 4. Compiled resource plugin and synthetic browser demo — approved and
    implemented; local smoke exercise passed.
 5. Adversarial, race, build, audit, repository, and required CI validation —
-   local checks passing; publication and required CI pending.
-6. Review, merge, reconciliation, and cleanup — pending Gate 5 publication.
+   passed on the published accepted head.
+6. Review, merge, reconciliation, and cleanup — complete through PR #100 and
+   this closeout reconciliation.
