@@ -55,6 +55,7 @@ plugin loader, or live cluster connection because none exists in C1.
 2. Documentation implementation — complete on
    `codex/forgeops-console-c1`.
 3. Validation — complete against the final local candidate.
-4. Review PR — pending final candidate.
+4. Review PR — published as PR #96; all 19 GitHub checks passed on the
+   reviewed candidate.
 5. Merge and reconciliation — pending review and merge.
 6. C2 admission — intentionally separate; C1 approval does not authorize code.
