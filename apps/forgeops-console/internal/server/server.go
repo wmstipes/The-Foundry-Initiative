@@ -16,6 +16,7 @@ import (
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/broker"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/config"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/plugins"
+	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/resources"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/session"
 )
 
@@ -27,8 +28,10 @@ type Options struct {
 	State       *session.State
 	Registry    *plugins.Registry
 	Broker      *broker.Broker
+	Resources   *resources.Service
 	Static      fs.FS
 	Nonce       string
+	Mode        string
 }
 
 type api struct {
@@ -39,6 +42,7 @@ type bootstrapResponse struct {
 	Mode            string                  `json:"mode"`
 	SessionNonce    string                  `json:"sessionNonce"`
 	SelectedContext string                  `json:"selectedContext"`
+	Scope           session.Scope           `json:"scope"`
 	Contexts        []config.ContextSummary `json:"contexts"`
 	Plugins         []plugins.Manifest      `json:"plugins"`
 }
@@ -59,7 +63,7 @@ func New(options Options) (http.Handler, error) {
 	if err := ValidateListenAddress(options.AllowedHost); err != nil {
 		return nil, err
 	}
-	if options.State == nil || options.Registry == nil || options.Broker == nil || options.Static == nil || options.Nonce == "" {
+	if options.State == nil || options.Registry == nil || options.Broker == nil || options.Resources == nil || options.Static == nil || options.Nonce == "" || options.Mode == "" {
 		return nil, errors.New("server options are incomplete")
 	}
 	application := &api{options: options}
@@ -67,7 +71,10 @@ func New(options Options) (http.Handler, error) {
 	mux.HandleFunc("GET /healthz", application.health)
 	mux.HandleFunc("GET /api/v1/bootstrap", application.bootstrap)
 	mux.HandleFunc("POST /api/v1/context", application.selectContext)
+	mux.HandleFunc("POST /api/v1/namespace", application.selectNamespace)
 	mux.HandleFunc("POST /api/v1/plugins/forge.example/status", application.exampleStatus)
+	mux.HandleFunc("POST /api/v1/plugins/forge.resources/query", application.resourceQuery)
+	mux.HandleFunc("POST /api/v1/activity", application.activity)
 	mux.HandleFunc("/", application.static)
 	return application.security(mux), nil
 }
@@ -95,14 +102,15 @@ func (a *api) validOrigin(raw string) bool {
 }
 
 func (a *api) health(writer http.ResponseWriter, _ *http.Request) {
-	writeJSON(writer, http.StatusOK, map[string]string{"status": "ok", "mode": "offline-c2"})
+	writeJSON(writer, http.StatusOK, map[string]string{"status": "ok", "mode": a.options.Mode})
 }
 
 func (a *api) bootstrap(writer http.ResponseWriter, _ *http.Request) {
 	writeJSON(writer, http.StatusOK, bootstrapResponse{
-		Mode:            "offline-c2",
+		Mode:            a.options.Mode,
 		SessionNonce:    a.options.Nonce,
 		SelectedContext: a.options.State.Selected(),
+		Scope:           a.options.State.Current(),
 		Contexts:        a.options.Contexts,
 		Plugins:         a.options.Registry.Manifests(),
 	})
@@ -119,11 +127,36 @@ func (a *api) selectContext(writer http.ResponseWriter, request *http.Request) {
 	if err := decodeJSON(writer, request, &input); err != nil {
 		return
 	}
-	if err := a.options.State.Select(input.Context); err != nil {
+	scope, err := a.options.State.SelectContext(input.Context)
+	if err != nil {
 		writeJSON(writer, http.StatusBadRequest, map[string]string{"error": "unknown context"})
 		return
 	}
-	writeJSON(writer, http.StatusOK, map[string]string{"selectedContext": a.options.State.Selected()})
+	writeJSON(writer, http.StatusOK, scope)
+}
+
+func (a *api) selectNamespace(writer http.ResponseWriter, request *http.Request) {
+	if !a.validNonce(request) {
+		http.Error(writer, "session denied", http.StatusForbidden)
+		return
+	}
+	var input struct {
+		Namespace  string `json:"namespace"`
+		Generation uint64 `json:"generation"`
+	}
+	if err := decodeJSON(writer, request, &input); err != nil {
+		return
+	}
+	if current := a.options.State.Current(); current.Generation != input.Generation {
+		writeJSON(writer, http.StatusConflict, map[string]string{"error": "stale_scope"})
+		return
+	}
+	scope, err := a.options.State.SelectNamespace(input.Namespace)
+	if err != nil {
+		writeJSON(writer, http.StatusBadRequest, map[string]string{"error": "unknown_namespace"})
+		return
+	}
+	writeJSON(writer, http.StatusOK, scope)
 }
 
 func (a *api) exampleStatus(writer http.ResponseWriter, request *http.Request) {
@@ -137,6 +170,36 @@ func (a *api) exampleStatus(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	writeJSON(writer, http.StatusOK, response)
+}
+
+func (a *api) resourceQuery(writer http.ResponseWriter, request *http.Request) {
+	if !a.validNonce(request) {
+		http.Error(writer, "session denied", http.StatusForbidden)
+		return
+	}
+	var query resources.Query
+	if err := decodeJSON(writer, request, &query); err != nil {
+		return
+	}
+	response, err := a.options.Broker.Invoke(request.Context(), plugins.ResourcesPluginID, plugins.ResourcesReadCapability, broker.Request{Query: &query})
+	if err != nil {
+		var apiError *resources.APIError
+		if errors.As(err, &apiError) {
+			writeJSON(writer, apiError.Status, map[string]string{"error": apiError.Code})
+			return
+		}
+		writeJSON(writer, http.StatusForbidden, map[string]string{"error": "capability_denied"})
+		return
+	}
+	writeJSON(writer, http.StatusOK, response.Result)
+}
+
+func (a *api) activity(writer http.ResponseWriter, request *http.Request) {
+	if !a.validNonce(request) {
+		http.Error(writer, "session denied", http.StatusForbidden)
+		return
+	}
+	writeJSON(writer, http.StatusOK, map[string]any{"activity": a.options.Resources.Activity()})
 }
 
 func (a *api) validNonce(request *http.Request) bool {

@@ -58,11 +58,14 @@ class ForgeOpsConsoleC2PolicyTests(unittest.TestCase):
         self.assertNotIn("import(", sdk)
         self.assertNotIn("fetch(", sdk)
 
-    def test_cluster_factory_is_deliberately_offline(self) -> None:
+    def test_cluster_factory_preserves_offline_seam_and_hardens_live_auth(self) -> None:
         factory = self.read("internal/cluster/factory.go")
         self.assertIn("ErrOfflineOnly", factory)
-        self.assertNotIn("NewForConfig", factory)
         self.assertNotIn("NewForConfigOrDie", factory)
+        self.assertIn("NewNonInteractiveClientConfig", factory)
+        self.assertIn("identity.Exec != nil", factory)
+        self.assertIn("identity.TokenFile !=", factory)
+        self.assertIn("cluster.ProxyURL !=", factory)
 
     def test_fixture_points_only_to_a_closed_loopback_port(self) -> None:
         fixture = self.read("fixtures/kubeconfig.yaml")
