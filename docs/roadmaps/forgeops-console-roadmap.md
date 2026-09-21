@@ -1,6 +1,6 @@
 # ForgeOps Console roadmap
 
-**Status:** C1-C3 accepted; C4 approved and implemented as a candidate pending CI/review/merge
+**Status:** C1-C4 accepted; C5 requires separate approval
 
 **Baseline:** ForgeOps v1.0.0; C1 was admitted from repository commit
 `8008f6934a0c1bd34a63d6a86a9ad74d170a7671` and merged at
@@ -96,8 +96,9 @@ No general API discovery or ConfigMap values are included. See the
 
 **Purpose:** Improve the demonstration and prove trustworthiness.
 
-**Status:** Approved with all related gates; implementation candidate pending
-CI, review, and merge. Live log/Event access still requires separate approval.
+**Status:** Accepted through PR #103 at `7910f0a`, with successful published CI
+and a separately authorized bounded live walkthrough on 2026-09-21. The
+operator confirmed shutdown; this does not grant ongoing live access.
 
 Add bounded Events and Pod/container log reading, cancellation, stream limits,
 control-character handling, sensitive-data warnings, and deterministic
@@ -106,11 +107,15 @@ equivalent-command previews. Preview text remains non-executable.
 Acceptance must include oversized, hostile, stale-context, unavailable,
 denied, disconnected, and cancellation cases.
 
-The candidate provides selected-Pod Event snapshots and current/previous
+The implementation provides selected-Pod Event snapshots and current/previous
 container log snapshots, not continuous follow or Event watch. It uses a
 compiled diagnostics plugin, fixed budgets, sensitive-data acknowledgement,
 inert text rendering, cancellation, and offline PowerShell/POSIX previews.
 See the [C4 milestone](../milestones/forgeops-console-c4-pod-diagnostics.md).
+
+Live evidence covered one current-container log snapshot with an incompleteness
+warning, an empty Event result, both shell previews, and visible clearing/reset.
+Previous-container reads and in-flight cancellation were not exercised live.
 
 ### C5 — Reviewed ForgeOps evidence boundary
 

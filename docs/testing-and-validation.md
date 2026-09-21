@@ -68,6 +68,20 @@ metadata-only activity, no-store headers, and stale-generation rejection.
 These checks contact no live cluster. DOM tests do not establish real-browser
 accessibility or Windows shell equivalence; previews are never executed.
 
+Separately, the operator validated merged source `7910f0a` on Windows: 12 Vitest
+cases, all Go package tests, web production build, and production Go binary
+build passed; `npm.cmd ci` reported zero vulnerabilities. This was not a Windows
+race-detector run. These are repeat executions, not additional test cases.
+
+The authorized SignalForge walkthrough on 2026-09-21 observed one current
+container log snapshot with an incompleteness warning, no matching Pod Events,
+PowerShell/POSIX previews for logs and Events (not executed), and successful
+clear and scope-reset behavior. The operator confirmed shutdown. The precise
+log limit triggering the warning was not determined; an empty Event result is
+not proof no Events occurred. No previous-instance read, live in-flight
+cancellation, hostile-data injection, or exhaustive error/security testing was
+performed. No raw logs, screenshots, or credentials are committed.
+
 See the [C4 contract and gate status](milestones/forgeops-console-c4-pod-diagnostics.md).
 
 ## What the suites cover
