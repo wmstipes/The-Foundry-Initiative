@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
-	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 	"k8s.io/client-go/tools/clientcmd"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
 const MaxKubeconfigBytes int64 = 1 << 20
