@@ -2,6 +2,11 @@
 
 # Repository-authored source and configuration use stable LF endings.
 *.css text eol=lf
+*.go text eol=lf
+*.mod text eol=lf
+*.sum text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
 *.html text eol=lf
 *.js text eol=lf
 *.json text eol=lf
