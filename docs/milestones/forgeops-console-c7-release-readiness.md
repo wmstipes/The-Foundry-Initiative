@@ -18,12 +18,12 @@ package label. A public release is held when evidence is incomplete.
 
 | Gate | Exit evidence | Current disposition |
 | --- | --- | --- |
-| 1 — Scope and support | Separate candidate targets from supported OS/browser/Kubernetes claims; record exclusions | Defined below; no public support claim |
-| 2 — Security and dependencies | Audit credential, loopback and plugin boundaries; locked dependencies and notices; review vulnerability results | Existing protections inspected; installed boundary checks added; final release security review remains open |
+| 1 — Scope and support | Separate candidate targets from supported OS/browser/Kubernetes claims; record exclusions | Narrow Windows engineering preview scope approved; see final decision below |
+| 2 — Security and dependencies | Audit credential, loopback and plugin boundaries; locked dependencies and notices; review vulnerability results | Exact-source dependency review reconciled on 2026-09-22; limitations retained |
 | 3 — Candidate packaging | Build committed source, pair both executables/browser, identify exact inputs and hash packaged bytes | Native builder and informational `--build-info` implemented; unsigned, no publisher attestation |
 | 4 — Installed acceptance and rollback | Execute extracted files outside checkout, reject damaged pairs, restore complete pair; operator checks exact archive | Automated verifier and Windows synthetic/live UI/Ctrl+C checks passed on 2026-09-22; historical-release rollback is not applicable to the first Console release (see disposition below) |
 | 5 — Usability and accessibility | Labels, native semantics, keyboard focus and responsive layout checked; operator keyboard/zoom/screen-reader evidence | Edge keyboard/focus, zoom/narrow-window and focused Narrator checks passed; no accessibility conformance claim |
-| 6 — Review and release decision | Review PR checks, exact candidate hashes, support matrix and unresolved risks; publish only accepted assets | Candidate review; public version, tag and release held pending evidence |
+| 6 — Review and release decision | Review PR checks, exact candidate hashes, support matrix and unresolved risks; publish only accepted assets | Windows v0.1.0-rc.1 prerelease approved; exact-asset publication and verification pending |
 
 ## Architecture and security assessment
 
@@ -133,9 +133,8 @@ Linux execution. PR checks/merge and operator archive acceptance remain separate
 
 See [testing and validation](../testing-and-validation.md) and the
 [packaged candidate instructions](../releases/forgeops-console-candidate.md).
-The release decision remains **HOLD** until the remaining gate evidence above
-is recorded; approved work may continue without treating missing evidence as
-an additional permission request.
+The earlier release hold is superseded only for the narrow Windows preview by
+the final decision below. Broader support remains unestablished.
 
 ## Post-merge validation follow-up — 2026-09-22
 
@@ -250,8 +249,42 @@ execution limitation. It does not negate the successful installed candidate.
 Any initial preview must retain the unsigned-package and narrowly tested
 environment disclosures; broad Windows support remains unestablished.
 
-No repeat of the accepted operator checks is required for this documentation
-update. Final release work is to reconcile the exact candidate's dependency
-review, define the public preview's version/support scope, and review the exact
-assets for publication. Public version/tag/release remains **HOLD** pending that
-decision; this record does not publish assets or certify untested environments.
+No repeat of accepted operator checks is required for documentation changes.
+The following final decision resolves the remaining scope/dependency review.
+This record does not itself publish assets or certify untested environments.
+
+## Final prerelease decision — 2026-09-22
+
+The operator approved the narrowly scoped Windows engineering prerelease.
+Disposition: **GO for preparation and publication of the exact accepted Windows
+archive; publication not yet verified**.
+
+- Version/tag: `forgeops-console-v0.1.0-rc.1`, marked prerelease and not Latest.
+- Tag target: accepted source `af0f3ec54d842c876e63ccc6cba9c7029756d2f0`,
+  not a later documentation-only main commit.
+- Assets: the unchanged accepted Windows ZIP and a SHA256SUMS file containing
+  its recorded digest. Linux remains CI-validated and is not published here.
+- Tested environment and limitations: the Windows/Edge/Narrator and SignalForge
+  observations above; no broad OS, Kubernetes or accessibility support claim.
+- Security review: PR #110 records govulncheck v1.8.0 with no findings and
+  production npm audit with zero vulnerabilities on 2026-09-22. Comparison of
+  reviewed source `916c9d747153b8058661444007f98a7c70a229cf` with the accepted
+  candidate shows only workflow, verifier and documentation changes; application
+  source and Go/npm dependency locks are unchanged. These results are applicable
+  point-in-time evidence, not a new scan or a vulnerability guarantee.
+- Required Validation run 35768592178 passed for the exact accepted source.
+  Subsequent acceptance-record changes are documentation only.
+- The assistant could retrieve the artifact reference, but the download URL
+  returned HTTP 403, so it did not independently rehash the archive. The
+  publication procedure checks the operator's archive against the recorded
+  digest, then downloads and verifies draft assets before publishing.
+
+The accepted ZIP's candidate label and historical packaged release-hold text
+remain unchanged to preserve its identity. The scoped release notes explain
+the later prerelease decision; this does not turn the package into a generally
+supported stable release.
+
+See [release notes](../releases/forgeops-console-v0.1.0-rc.1.md) and
+[publication procedure](../releases/forgeops-console-v0.1.0-rc.1-publish.md).
+Publication completion requires the actual release URL, prerelease state,
+tag target and asset evidence; do not infer completion from this PR's merge.
