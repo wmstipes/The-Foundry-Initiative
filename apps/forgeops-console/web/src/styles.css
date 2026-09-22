@@ -40,6 +40,8 @@ h2, h3 { margin: 0; letter-spacing: -0.025em; }
 .resource-nav button { text-align: left; color: #cbd0c4; background: transparent; border: 1px solid transparent; }
 .resource-nav button.active { color: #11130f; background: #d6ff5f; }
 .resource-main, .activity-panel { padding: 1.25rem; }
+.activity-panel summary { cursor: pointer; font-weight: 750; }
+.activity-panel summary span { color: #aeb4a7; font-weight: 400; }
 .resource-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
 .resource-grid { display: grid; grid-template-columns: minmax(14rem, 0.9fr) minmax(17rem, 1.1fr); min-height: 26rem; border-top: 1px solid #363b32; }
 .resource-table { max-height: 34rem; overflow: auto; border-right: 1px solid #363b32; }
@@ -68,7 +70,7 @@ h2, h3 { margin: 0; letter-spacing: -0.025em; }
 
 /* Native list semantics and visible keyboard selection for candidate review. */
 .resource-table { list-style: none; margin: 0; padding: 0; }
-button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid #ffffff; outline-offset: 3px; }
+button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid #ffffff; outline-offset: 3px; }
 @media (min-width: 761px) and (max-width: 1100px) {
   .context-panel, .resource-shell, .resource-grid { grid-template-columns: 1fr; }
   .resource-nav { position: static; grid-template-columns: repeat(3, 1fr); }
