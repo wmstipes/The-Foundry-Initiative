@@ -1,6 +1,6 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-21
+**Last updated:** 2026-09-22
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
@@ -38,6 +38,13 @@ Its independently
 gated C1-C7 sequence is maintained in the
 [ForgeOps Console roadmap](docs/roadmaps/forgeops-console-roadmap.md) without
 renumbering ForgeOps Milestones 066-088 or Workbench work packages W1-W7.
+
+C6 closed the compiled-plugin compatibility and lifecycle work. C7 published
+[Console v0.1.0-rc.1](https://github.com/wmstipes/The-Foundry-Initiative/releases/tag/forgeops-console-v0.1.0-rc.1)
+as an unsigned Windows engineering preview with exact-package acceptance;
+see the [C7 release record](docs/milestones/forgeops-console-c7-release-readiness.md).
+This is separate from the stable ForgeOps v1 release and does not admit C5
+export/intake, third-party plugins, cloud authentication or mesh integration.
 
 C4 is accepted through PR #103 at `7910f0a`. It adds
 bounded selected-Pod log/Event snapshots and non-executable command previews;

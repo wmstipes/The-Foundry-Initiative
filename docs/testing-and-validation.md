@@ -169,7 +169,20 @@ release. A passing hosted Windows runner does not resolve the laptop's Smart
 App Control block or prove public OS/Kubernetes support.
 
 See the [C7 gate record](milestones/forgeops-console-c7-release-readiness.md)
-for release holds and operator acceptance. No live cluster access is involved.
+for exact-archive operator acceptance and publication verification. The automated
+rehearsal contacts no live cluster. Separately, the operator accepted the same
+Windows package with bounded SignalForge namespace/Pod/Service reads, clearing
+old selection and Ctrl+C. Edge keyboard/focus, 200% zoom/narrow-window and three
+focused Narrator areas passed. These observations add no automated test cases
+and establish no broad compatibility or accessibility conformance.
+
+The accepted Windows archive was subsequently published unchanged as
+`forgeops-console-v0.1.0-rc.1`; GitHub's reported asset digest matches the recorded
+operator hash. Linux has native CI evidence but no binary in this first preview.
+Historical-release rollback is not applicable to this first Console release;
+same-pair restoration remains the actual automated evidence. The earlier local
+Go test-execution block remains disclosed and does not invalidate the accepted
+packaged runtime.
 
 ## What the suites cover
 

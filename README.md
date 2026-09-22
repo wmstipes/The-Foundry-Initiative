@@ -71,6 +71,23 @@ Milestone 036 recovered from the rejected `0.4.0` browser startup defect without
 
 Milestone 042 adds one-file YAML drag-and-drop with visible and accessible target states, shared unsaved-change protection, deterministic state boundaries, and no upload or persistence path. Immutable `0.10.0` is published, digest-pinned, deployed, runtime-verified, live browser-accepted, and merged through PR #23 at `020d5e7`.
 
+## ForgeOps Console
+
+[ForgeOps Console v0.1.0-rc.1](https://github.com/wmstipes/The-Foundry-Initiative/releases/tag/forgeops-console-v0.1.0-rc.1)
+is a published Windows amd64 engineering preview: a local browser interface
+served by a loopback-only Go core. It provides bounded Kubernetes resource
+reads, selected-Pod diagnostic snapshots and non-executable command previews.
+It uses one explicit kubeconfig and three compiled first-party plugins.
+
+The accepted Windows/Edge package passed synthetic and bounded SignalForge
+reads, keyboard/zoom/Narrator checks and operator shutdown. It is unsigned;
+Linux has CI evidence but no binary in this preview. No broad Kubernetes,
+Windows or accessibility support claim is made. Console remains separate from
+ForgeOps v1: evidence export/intake and third-party plugins are not implemented.
+See the [Console guide](apps/forgeops-console/README.md),
+[roadmap](docs/roadmaps/forgeops-console-roadmap.md) and
+[acceptance record](docs/milestones/forgeops-console-c7-release-readiness.md).
+
 ## ForgeOps snapshot
 
 ForgeOps now has a local deterministic snapshot command. It checks a fixed allowlist of SignalForge Nodes, Deployments, selected Pods, EndpointSlices, and Metrics APIService availability. Optional Restaurant API and Workbench checks run only against explicit operator-provided URLs.
@@ -235,6 +252,7 @@ The-Foundry-Initiative/
   apps/
     restaurant-api/        FastAPI application source, Dockerfile, and tests
     forge-yaml-workbench/  Browser-local YAML inspector, container, and tests
+    forgeops-console/      Local Go/browser Kubernetes inspector and synthetic demo
 
   k8s/
     fastapi-restaurant/    Kubernetes manifests for the Restaurant API

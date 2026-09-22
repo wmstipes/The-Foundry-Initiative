@@ -7,7 +7,20 @@ first-party plugin broker. The browser receives no raw Kubernetes objects or
 credentials from kubeconfig. Application-authored logs and Events can themselves
 contain sensitive data; they are not guaranteed redacted.
 
-## C4 boundary
+## Published Windows preview
+
+[Console v0.1.0-rc.1](https://github.com/wmstipes/The-Foundry-Initiative/releases/tag/forgeops-console-v0.1.0-rc.1)
+publishes the accepted Windows amd64 candidate unchanged, with its checksum.
+Download the named candidate ZIP and keep both executables and the complete
+`web` directory together. The [release notes](../../docs/releases/forgeops-console-v0.1.0-rc.1.md)
+define the narrowly tested Windows/Edge/SignalForge scope and limitations.
+Linux is CI-validated but is not a binary asset in this preview.
+
+The archive's candidate filename and historical README release hold are retained
+as build metadata; the later release decision is recorded in the release notes.
+Packages are unsigned. Do not bypass Windows application control if blocked.
+
+## Current runtime boundary
 
 - one explicit regular kubeconfig file is required;
 - the listener must be a literal loopback address;
@@ -21,7 +34,7 @@ contain sensitive data; they are not guaranteed redacted.
 - the compiled `forge.diagnostics` plugin adds bounded selected-Pod logs and
   Events, plus offline explanatory command previews; and
 - there are no Secrets, ConfigMap values, watches, mutations,
-  exec, attach, proxy, port-forward, dynamic plugins, persistence, public releases,
+  exec, attach, proxy, port-forward, dynamic plugins, persistence,
   images, or deployments.
 
 The production client accepts only embedded kubeconfig material and rejects
@@ -46,7 +59,7 @@ session and waits for bounded cleanup before exit; arbitrary Go code is not
 sandboxed or forcibly interrupted.
 
 See the [supported set, version policy, limits, upgrade and rollback procedure](../../docs/design/forgeops-console-c6-compatibility-lifecycle.md).
-C5 export remains unimplemented. Public release acceptance belongs to C7. See the [C7 candidate and gate record](../../docs/milestones/forgeops-console-c7-release-readiness.md).
+C5 export remains unimplemented. C7 accepted and published the narrow Windows preview. See the [C7 acceptance and release record](../../docs/milestones/forgeops-console-c7-release-readiness.md).
 The native candidate archive includes complete startup and verification instructions;
 `--build-info` prints identity without loading kubeconfig or starting a listener.
 
@@ -127,9 +140,11 @@ Open `http://127.0.0.1:9090`, activate `synthetic-demo`, choose the
 and separate binary make clear that no cluster connection exists.
 
 The production entry point is `./cmd/forgeops-console` and requires an explicit
-`--kubeconfig`. Do not use it for a live check until that separately approved
-C4 live acceptance step is authorized. The earlier C3 read-only walkthrough
-does not authorize log or Event disclosure.
+`--kubeconfig`. Select an intentional cluster and read scope before activation;
+previous acceptance does not grant ongoing cluster or diagnostic access.
+The C7 package passed bounded SignalForge namespace/Pod/Service reads.
+Live logs/Events were not part of that C7 check; their sensitive-data boundary
+remains explicit.
 
 For the cross-language bundle rehearsal on Linux, build the synthetic executable
 and run from the repository root:

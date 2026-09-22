@@ -103,6 +103,25 @@ identity, version, supported Python range, license, entry point, package scope,
 runtime dependencies, and exact digest. These helpers do not publish, deploy,
 or access a live system. See the [release guide](../docs/guides/forgeops-release.md).
 
+## ForgeOps Console candidate helpers
+
+- `build-forgeops-console-candidate.py --output-dir <new-directory>` builds a
+  native Linux/Windows amd64 candidate from committed inputs, including both
+  executables, paired browser assets, notices, manifest and SHA256SUMS.
+- `verify-forgeops-console-candidate.py --archive <zip> --sha256 <expected-digest>`
+  validates archive safety/integrity and exercises installed binaries with
+  synthetic inputs only. Run it on the matching native platform. Windows
+  process cleanup is forced; operator Ctrl+C is separate evidence.
+- `verify-forgeops-console-bundle.py --binary <demo-binary> --web-dir <web-dist>`
+  rehearses source-bundle matching, rejection and restoration on Linux.
+
+These helpers do not publish or access a live cluster. Published artifacts are
+separate from CI's expiring candidates. See the
+[Console README](../apps/forgeops-console/README.md),
+[C7 acceptance record](../docs/milestones/forgeops-console-c7-release-readiness.md)
+and [completed first-preview publication procedure](../docs/releases/forgeops-console-v0.1.0-rc.1-publish.md).
+Do not rerun the publication procedure for an existing immutable tag.
+
 ## Manifest validation
 
 ```powershell

@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-19
+**Last updated:** 2026-09-22
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -66,6 +66,24 @@ flowchart TD
 - Identity: no RBAC, Kubernetes API access, or mounted ServiceAccount token
 - Security: restricted Pod Security labels, non-root execution, RuntimeDefault seccomp, read-only root filesystem, dropped capabilities, and bounded writable `/tmp`
 - Delivery: guarded version tags publish AMD64 and ARM64 images; the Deployment pins both version and OCI index digest
+
+### ForgeOps Console on the operator workstation
+
+- Source: `apps/forgeops-console`; published as the Windows engineering preview
+  [v0.1.0-rc.1](https://github.com/wmstipes/The-Foundry-Initiative/releases/tag/forgeops-console-v0.1.0-rc.1).
+- Browser-to-core traffic stays on the configured loopback listener. The Go core
+  alone loads one explicit kubeconfig and contacts the selected Kubernetes API.
+- The browser receives bounded projections and metadata, not kubeconfig
+  credentials. Logs/Events can contain application secrets and are not guaranteed
+  redacted. Host/Origin/nonce checks and scope generations constrain requests.
+- Example, resources and diagnostics are compiled first-party plugins; they are
+  trusted code, not isolated third-party modules. Read-only routes do not reduce
+  the Kubernetes permissions of the supplied identity.
+- Console runs outside Kubernetes and is independent of the ForgeOps CLI and
+  Workbench. There is no Console-to-ForgeOps evidence export/intake connection.
+
+See the [implemented compatibility/lifecycle boundary](design/forgeops-console-c6-compatibility-lifecycle.md)
+and [C7 acceptance record](milestones/forgeops-console-c7-release-readiness.md).
 
 ### Metrics collection
 

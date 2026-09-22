@@ -27,11 +27,16 @@ The repository uses GitHub-hosted controls together with tracked policy:
   require an approving review count.
 - Merges require the always-running `Gate 4 required validation` status check,
   which covers complete Python discovery, Workbench tests/build/audit,
+  native Linux/Windows Console tests/build/installed verification,
   repository and manifest validators, and dependency review. CodeQL must
   report no errors and no security alert at high severity or above.
 - Published GitHub releases are immutable. Release-tag rules block updates,
   deletion, and force pushes for ForgeOps, Workbench, and Restaurant API tags.
-  Publication jobs use the deployment-scoped `release` environment.
+  GitHub Actions publication jobs use the deployment-scoped `release`
+  environment. The Console preview was published manually through the reviewed
+  [exact-asset procedure](docs/releases/forgeops-console-v0.1.0-rc.1-publish.md),
+  which verifies draft downloads before publication; that CLI operation is not
+  governed by an Actions environment approval. Release immutability still applies.
 
 `tests/test_repository_security.py` validates the security policy represented
 by tracked repository files. It cannot prove GitHub-hosted settings such as
@@ -41,7 +46,7 @@ also be reviewed in the repository's GitHub configuration.
 ## Reporting a vulnerability
 
 Use GitHub's [private vulnerability reporting](https://github.com/wmstipes/The-Foundry-Initiative/security/advisories/new)
-for suspected vulnerabilities in ForgeOps, the Restaurant API, Forge YAML
+for suspected vulnerabilities in ForgeOps, ForgeOps Console, the Restaurant API, Forge YAML
 Workbench, Kubernetes manifests, automation, or release workflows.
 
 Please do not open a public issue for an undisclosed vulnerability and do not

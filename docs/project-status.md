@@ -17,47 +17,33 @@ historical evidence rather than being rewritten when the suite grows.
 
 ## Current ForgeOps Console state
 
-- Active work package: [C5 reviewed evidence boundary](milestones/forgeops-console-c5-evidence-boundary-planning.md);
-  planned work and all six gates approved; offline rehearsal passed and the
-  [handoff contract](design/forgeops-console-observation-contract.md) is ready
-  for review. Export implementation and automatic ForgeOps intake are deferred;
-  comparative operator acceptance is unproven. ForgeFire is captured
-  as a separate future proposal; no fault injection is authorized.
-- Accepted work package: C4 bounded Pod diagnostics
-- Status: accepted through PR #103 at `7910f0a`; published CI passed and the
-  separately authorized bounded live walkthrough passed on 2026-09-21
-- Intended form: local browser application served by a loopback-only Go core
-- Configuration: one explicit kubeconfig path and one operator-selected context;
-  no ambient or in-cluster credential fallback
-- Current authority: fixed typed list/read projections for Namespace, Node,
-  Deployment, ReplicaSet, Pod, Service, and EndpointSlice
-- C3 live evidence: separately authorized, operator-run SignalForge walkthrough
-  passed on 2026-09-21 against laptop source `82741388`; all six resource views,
-  owner/selector relationships, and scope reset/reselection were observed.
-  This does not establish concurrent cancellation, every error/security path,
-  or application network reachability; see the [C3 milestone](milestones/forgeops-console-c3-read-only-resource-browser.md#live-read-only-walkthrough--2026-09-21)
-- Plugin boundary: inert example, resource-browser, and diagnostics compiled first-party
-  plugins constrained by a strict, versioned, deny-by-default capability broker
-- ForgeOps boundary: v1.0.0 remains unchanged and independently usable;
-  Console activity is not ForgeOps evidence
-- Runtime impact: local Windows build and loopback Console performed approved
-  live Kubernetes reads; no package/image publication, deployment, application
-  endpoint check, or cluster mutation was part of this walkthrough
-- Open usability follow-up: C3-UX-01, clarify the Node `Scheduling` label;
-  implementation is deferred and tracked in the C3 milestone
-- C4 authority: selected-Pod bounded log/Event snapshots and offline
-  PowerShell/POSIX command previews through `forge.diagnostics`; no commands
-  are executed
-- C4 live evidence: operator-tested Windows build at `7910f0a`; one current
-  container log snapshot displayed with a safety-limit warning; Pod Events
-  returned no matches; both previews and clear/scope-reset checks passed.
-  The operator confirmed the Console stopped. No raw logs or screenshots are
-  committed; this does not prove every error path or in-flight cancellation.
-- C4 validation and gate disposition: see the
-  [C4 milestone](milestones/forgeops-console-c4-pod-diagnostics.md); no release,
-  image, deployment, persistent state, or ForgeOps evidence integration added
-- Direction: the separately gated C1-C7 sequence is documented in
-  `docs/roadmaps/forgeops-console-roadmap.md`
+- Published preview: [Console v0.1.0-rc.1](https://github.com/wmstipes/The-Foundry-Initiative/releases/tag/forgeops-console-v0.1.0-rc.1),
+  Windows amd64, immutable prerelease; ForgeOps v1.0.0 remains the latest stable release.
+- Accepted source: `af0f3ec54d842c876e63ccc6cba9c7029756d2f0`; the
+  [C7 record](milestones/forgeops-console-c7-release-readiness.md) contains the
+  archive checksum, CI run and publication verification.
+- Work packages: C1-C4 accepted, C6 compatibility/lifecycle closed, C7 preview
+  published. C5's [handoff design](design/forgeops-console-observation-contract.md)
+  remains design-only: no exporter or automatic ForgeOps intake is implemented.
+- Runtime: local browser interface and loopback-only Go core; one explicit
+  kubeconfig, selected context/namespace, fixed typed reads, three compiled
+  first-party plugins and bounded selected-Pod diagnostics. No mutation,
+  executable command preview, persistence or third-party loader is provided.
+- Accepted package environment: Windows 11 Pro 25H2 build 26200.9457, x64;
+  Edge 153.0.4234.48; keyboard/focus, zoom/narrow-window, focused Narrator,
+  synthetic and bounded live SignalForge namespace/Pod/Service reads, and Ctrl+C.
+  The live check did not re-measure the server version or read logs/Events.
+- Earlier C3/C4 records retain the separate all-resource and diagnostic
+  walkthrough evidence; those observations are not generalized to every error,
+  cancellation path or future live operation.
+- C3-UX-01 is resolved: Node details now say `Unschedulable (cordoned)` with
+  both-boolean regression coverage. The old `Scheduling` label is not current.
+- Limits: unsigned archive, no broad OS/Kubernetes/accessibility claim, no
+  accepted EKS exec authentication or mesh integration. Linux has CI evidence
+  but no asset in this Windows preview. The earlier laptop resources-test
+  Application Control block remains a development-test limitation, not a pass.
+- Direction: use the [Console roadmap](roadmaps/forgeops-console-roadmap.md).
+  ForgeFire, mesh work and evidence integration remain separate proposals.
 
 ## Current application
 
