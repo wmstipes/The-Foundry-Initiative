@@ -3,7 +3,6 @@ package broker
 import (
 	"context"
 	"errors"
-	"fmt"
 	"sync"
 
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/diagnostics"
@@ -12,6 +11,7 @@ import (
 )
 
 var ErrDenied = errors.New("capability denied")
+var ErrInternal = errors.New("internal capability failure")
 
 type Request struct {
 	Query      *resources.Query
@@ -92,8 +92,22 @@ func (b *Broker) Invoke(ctx context.Context, pluginID, capability string, reques
 	defer func() {
 		if recovered := recover(); recovered != nil {
 			response = Response{}
-			err = fmt.Errorf("plugin capability panicked: %v", recovered)
+			err = ErrInternal
 		}
 	}()
 	return handler(ctx, request)
+}
+
+// ValidateComplete is called after startup registration, before serving requests.
+func (b *Broker) ValidateComplete() error {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+	for _, manifest := range b.registry.Manifests() {
+		for _, capability := range manifest.Capabilities {
+			if b.handlers[manifest.ID][capability] == nil {
+				return errors.New("compiled capability handler missing")
+			}
+		}
+	}
+	return nil
 }

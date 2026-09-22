@@ -17,6 +17,7 @@ import (
 	"k8s.io/client-go/kubernetes/fake"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 
+	console "github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/broker"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/cluster"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/config"
@@ -29,6 +30,10 @@ import (
 const testHost = "127.0.0.1:9090"
 
 func testHandler(t *testing.T) http.Handler {
+	return testHandlerWithDiagnosticFactory(t, cluster.OfflineFactory{})
+}
+
+func testHandlerWithDiagnosticFactory(t *testing.T, diagnosticFactory cluster.ClientFactory) http.Handler {
 	t.Helper()
 	state, err := session.New([]string{"dev", "prod"})
 	if err != nil {
@@ -67,16 +72,18 @@ func testHandler(t *testing.T) http.Handler {
 	}); err != nil {
 		t.Fatal(err)
 	}
-	diagnosticService, err := diagnostics.New(raw, state, cluster.OfflineFactory{}, nil, resourceService.RecordDiagnostic)
+	diagnosticService, err := diagnostics.New(raw, state, diagnosticFactory, nil, resourceService.RecordDiagnostic)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if err = capabilityBroker.RegisterDiagnostics(diagnosticService); err != nil {
 		t.Fatal(err)
 	}
+	identity, _ := json.Marshal(console.Bundle())
 	static := fstest.MapFS{
-		"index.html": &fstest.MapFile{Data: []byte("<html>shell</html>")},
-		"app.js":     &fstest.MapFile{Data: []byte("console.log('local')")},
+		"forgeops-bundle.json": &fstest.MapFile{Data: identity},
+		"index.html":           &fstest.MapFile{Data: []byte("<html>shell</html>")},
+		"app.js":               &fstest.MapFile{Data: []byte("console.log('local')")},
 	}
 	handler, err := New(Options{
 		AllowedHost: testHost,
@@ -263,5 +270,55 @@ func TestKnownRoutesRejectUnsupportedMethods(t *testing.T) {
 	response := request(t, testHandler(t), http.MethodDelete, "http://"+testHost+"/api/v1/context", "", nil)
 	if response.Code != http.StatusMethodNotAllowed {
 		t.Fatalf("expected method rejection, got %d", response.Code)
+	}
+}
+
+func TestDiagnosticPanicIsSanitizedAndRecordedAsFailure(t *testing.T) {
+	handler := testHandlerWithDiagnosticFactory(t, cluster.ClientFactoryFunc(func(context.Context, *clientcmdapi.Config, string) (kubernetes.Interface, error) {
+		panic("synthetic-sensitive-detail")
+	}))
+	headers := map[string]string{"X-ForgeOps-Session": "test-nonce"}
+	base := "http://" + testHost
+	request(t, handler, "POST", base+"/api/v1/context", `{"context":"dev"}`, headers)
+	request(t, handler, "POST", base+"/api/v1/plugins/forge.resources/query", `{"generation":1,"operation":"list","resource":"namespaces"}`, headers)
+	request(t, handler, "POST", base+"/api/v1/namespace", `{"generation":1,"namespace":"default"}`, headers)
+	got := request(t, handler, "POST", base+"/api/v1/plugins/forge.diagnostics/query", `{"generation":2,"operation":"events","pod":"api"}`, headers)
+	if got.Code != 500 || strings.TrimSpace(got.Body.String()) != `{"error":"internal_error"}` {
+		t.Fatalf("panic response: %d %s", got.Code, got.Body.String())
+	}
+	activity := request(t, handler, "POST", base+"/api/v1/activity", "", headers)
+	var decoded struct {
+		Activity []resources.Activity `json:"activity"`
+	}
+	if err := json.Unmarshal(activity.Body.Bytes(), &decoded); err != nil {
+		t.Fatal(err)
+	}
+	last := decoded.Activity[len(decoded.Activity)-1]
+	if last.Capability != "events.read" || last.Outcome != "internal_error" || last.ItemCount != 0 || strings.Contains(activity.Body.String(), "synthetic-sensitive-detail") {
+		t.Fatalf("incorrect panic activity: %s", activity.Body.String())
+	}
+}
+
+func TestBundleRejectsMissingMalformedAndMismatchedAssets(t *testing.T) {
+	good, _ := json.Marshal(console.Bundle())
+	bad := console.Bundle()
+	bad.SourceDigest = "mismatched"
+	mismatched, _ := json.Marshal(bad)
+	for _, tc := range []struct {
+		name  string
+		data  []byte
+		valid bool
+	}{
+		{"matching", good, true}, {"mismatched", mismatched, false}, {"malformed", []byte("{"), false}, {"trailing", append(append([]byte{}, good...), []byte("{}")...), false}, {"oversized", []byte(strings.Repeat("x", 5000)), false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			err := validateBundle(fstest.MapFS{"forgeops-bundle.json": &fstest.MapFile{Data: tc.data}})
+			if (err == nil) != tc.valid {
+				t.Fatalf("bundle validity: %v", err)
+			}
+		})
+	}
+	if validateBundle(fstest.MapFS{}) == nil {
+		t.Fatal("missing bundle accepted")
 	}
 }

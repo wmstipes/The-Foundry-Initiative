@@ -12,6 +12,7 @@ import (
 var (
 	ErrUnknownContext   = errors.New("unknown context")
 	ErrUnknownNamespace = errors.New("unknown namespace")
+	ErrClosed           = errors.New("session closed")
 	ErrStaleScope       = errors.New("stale scope generation")
 )
 
@@ -23,6 +24,7 @@ type Scope struct {
 
 type State struct {
 	mu                sync.RWMutex
+	closed            bool
 	allowedContexts   map[string]struct{}
 	allowedNamespaces map[string]struct{}
 	scope             Scope
@@ -55,6 +57,9 @@ func (s *State) Select(name string) error {
 func (s *State) SelectContext(name string) (Scope, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if s.closed {
+		return Scope{}, ErrClosed
+	}
 	if _, ok := s.allowedContexts[name]; !ok {
 		return Scope{}, ErrUnknownContext
 	}
@@ -68,7 +73,7 @@ func (s *State) SelectContext(name string) (Scope, error) {
 func (s *State) AllowNamespaces(generation uint64, names []string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if generation != s.scope.Generation || s.scope.Context == "" {
+	if s.closed || generation != s.scope.Generation || s.scope.Context == "" {
 		return ErrStaleScope
 	}
 	allowed := make(map[string]struct{}, len(names))
@@ -98,6 +103,9 @@ func (s *State) SelectNamespaceAt(name string, generation uint64) (Scope, error)
 }
 
 func (s *State) selectNamespaceLocked(name string) (Scope, error) {
+	if s.closed {
+		return Scope{}, ErrClosed
+	}
 	if _, ok := s.allowedNamespaces[name]; !ok {
 		return Scope{}, ErrUnknownNamespace
 	}
@@ -117,7 +125,7 @@ func (s *State) advanceLocked() {
 func (s *State) RequestContext(parent context.Context, generation uint64) (context.Context, context.CancelFunc, Scope, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	if generation == 0 || generation != s.scope.Generation || s.scope.Context == "" || s.scopeContext == nil {
+	if s.closed || generation == 0 || generation != s.scope.Generation || s.scope.Context == "" || s.scopeContext == nil {
 		return nil, nil, Scope{}, ErrStaleScope
 	}
 	requestContext, cancel := context.WithCancel(parent)
@@ -157,4 +165,21 @@ func NewNonce() (string, error) {
 		return "", err
 	}
 	return base64.RawURLEncoding.EncodeToString(buffer), nil
+}
+
+// Close permanently rejects new session work and cancels active scope requests.
+func (s *State) Close() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.closed {
+		return
+	}
+	s.closed = true
+	if s.cancelScope != nil {
+		s.cancelScope()
+	}
+	s.scope.Generation++
+	s.scope.Context = ""
+	s.scope.Namespace = ""
+	s.allowedNamespaces = make(map[string]struct{})
 }

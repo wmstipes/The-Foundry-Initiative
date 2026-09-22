@@ -1,6 +1,9 @@
 # ForgeOps Console plugin contract
 
-**Status:** C1 design contract; no plugin runtime is implemented
+**Status:** Historical C1 design contract. C2–C6 implement a smaller compiled
+first-party contract; see the [C6 supported set and lifecycle](forgeops-console-c6-compatibility-lifecycle.md).
+The YAML schema and broader capabilities below remain design proposals, not
+a runtime manifest loader or an external SDK.
 
 ## Design objective
 

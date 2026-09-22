@@ -120,17 +120,9 @@ func run() error {
 	httpServer := &http.Server{Addr: *listenAddress, Handler: handler, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 30 * time.Second}
 	shutdownContext, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
-	go func() {
-		<-shutdownContext.Done()
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		_ = httpServer.Shutdown(ctx)
-	}()
+
 	log.Printf("ForgeOps Console C4 demo at http://%s (synthetic data only)", *listenAddress)
-	if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		return err
-	}
-	return nil
+	return server.ListenAndServe(shutdownContext, httpServer, state)
 }
 
 func demoConfig() *clientcmdapi.Config {

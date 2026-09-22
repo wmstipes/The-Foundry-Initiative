@@ -1,6 +1,8 @@
 package server
 
 import (
+	"bytes"
+	"context"
 	"crypto/subtle"
 	"encoding/json"
 	"errors"
@@ -13,6 +15,7 @@ import (
 	"path"
 	"strings"
 
+	console "github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/broker"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/config"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/diagnostics"
@@ -40,6 +43,7 @@ type api struct {
 }
 
 type bootstrapResponse struct {
+	Bundle          console.BundleIdentity  `json:"bundle"`
 	Mode            string                  `json:"mode"`
 	SessionNonce    string                  `json:"sessionNonce"`
 	SelectedContext string                  `json:"selectedContext"`
@@ -66,6 +70,12 @@ func New(options Options) (http.Handler, error) {
 	}
 	if options.State == nil || options.Registry == nil || options.Broker == nil || options.Resources == nil || options.Static == nil || options.Nonce == "" || options.Mode == "" {
 		return nil, errors.New("server options are incomplete")
+	}
+	if err := validateBundle(options.Static); err != nil {
+		return nil, err
+	}
+	if err := options.Broker.ValidateComplete(); err != nil {
+		return nil, err
 	}
 	application := &api{options: options}
 	mux := http.NewServeMux()
@@ -109,6 +119,7 @@ func (a *api) health(writer http.ResponseWriter, _ *http.Request) {
 
 func (a *api) bootstrap(writer http.ResponseWriter, _ *http.Request) {
 	writeJSON(writer, http.StatusOK, bootstrapResponse{
+		Bundle:          console.Bundle(),
 		Mode:            a.options.Mode,
 		SessionNonce:    a.options.Nonce,
 		SelectedContext: a.options.State.Selected(),
@@ -168,7 +179,7 @@ func (a *api) exampleStatus(writer http.ResponseWriter, request *http.Request) {
 	}
 	response, err := a.options.Broker.Invoke(request.Context(), plugins.ExamplePluginID, plugins.ExampleStatusCapability, broker.Request{})
 	if err != nil {
-		writeJSON(writer, http.StatusForbidden, map[string]string{"error": "capability denied"})
+		writeBrokerError(writer, err)
 		return
 	}
 	writeJSON(writer, http.StatusOK, response)
@@ -190,7 +201,7 @@ func (a *api) resourceQuery(writer http.ResponseWriter, request *http.Request) {
 			writeJSON(writer, apiError.Status, map[string]string{"error": apiError.Code})
 			return
 		}
-		writeJSON(writer, http.StatusForbidden, map[string]string{"error": "capability_denied"})
+		writeBrokerError(writer, err)
 		return
 	}
 	writeJSON(writer, http.StatusOK, response.Result)
@@ -229,7 +240,7 @@ func (a *api) diagnosticQuery(writer http.ResponseWriter, request *http.Request)
 			writeJSON(writer, mapped.Status, map[string]string{"error": mapped.Code})
 			return
 		}
-		writeJSON(writer, 403, map[string]string{"error": "capability_denied"})
+		writeBrokerError(writer, err)
 		return
 	}
 	writeJSON(writer, 200, response.Diagnostic)
@@ -287,4 +298,41 @@ func writeJSON(writer http.ResponseWriter, status int, value any) {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(status)
 	_ = json.NewEncoder(writer).Encode(value)
+}
+
+// This is compatibility checking of trusted local assets, not a signature check.
+func validateBundle(static fs.FS) error {
+	const message = "incompatible browser bundle: rebuild core and browser from the same source"
+	file, err := static.Open("forgeops-bundle.json")
+	if err != nil {
+		return errors.New(message)
+	}
+	defer file.Close()
+	data, err := io.ReadAll(io.LimitReader(file, maxRequestBytes+1))
+	if err != nil || len(data) > int(maxRequestBytes) {
+		return errors.New(message)
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	var identity console.BundleIdentity
+	if decoder.Decode(&identity) != nil || identity != console.Bundle() {
+		return errors.New(message)
+	}
+	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
+		return errors.New(message)
+	}
+	return nil
+}
+
+func writeBrokerError(writer http.ResponseWriter, err error) {
+	status, code := http.StatusInternalServerError, "internal_error"
+	switch {
+	case errors.Is(err, broker.ErrDenied):
+		status, code = http.StatusForbidden, "capability_denied"
+	case errors.Is(err, context.Canceled):
+		status, code = http.StatusConflict, "cancelled"
+	case errors.Is(err, context.DeadlineExceeded):
+		status, code = http.StatusGatewayTimeout, "timeout"
+	}
+	writeJSON(writer, status, map[string]string{"error": code})
 }

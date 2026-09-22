@@ -77,8 +77,8 @@ func TestBrokerContainsPluginPanic(t *testing.T) {
 	}); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := b.Invoke(context.Background(), plugins.ExamplePluginID, plugins.ExampleStatusCapability, Request{}); err == nil {
-		t.Fatal("expected contained panic error")
+	if _, err := b.Invoke(context.Background(), plugins.ExamplePluginID, plugins.ExampleStatusCapability, Request{}); !errors.Is(err, ErrInternal) {
+		t.Fatal("expected sanitized contained panic error")
 	}
 }
 
@@ -93,5 +93,18 @@ func TestBrokerHonorsCancelledContext(t *testing.T) {
 	cancel()
 	if _, err := b.Invoke(ctx, plugins.ExamplePluginID, plugins.ExampleStatusCapability, Request{}); !errors.Is(err, context.Canceled) {
 		t.Fatalf("expected cancellation, got %v", err)
+	}
+}
+
+func TestStartupRejectsMissingDeclaredHandler(t *testing.T) {
+	b := newBroker(t)
+	if b.ValidateComplete() == nil {
+		t.Fatal("incomplete registration accepted")
+	}
+	if err := b.Register(plugins.ExamplePluginID, plugins.ExampleStatusCapability, func(context.Context, Request) (Response, error) { return Response{}, nil }); err != nil {
+		t.Fatal(err)
+	}
+	if err := b.ValidateComplete(); err != nil {
+		t.Fatal(err)
 	}
 }

@@ -8,6 +8,7 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	discoveryv1 "k8s.io/api/discovery/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -126,5 +127,85 @@ func TestForbiddenErrorIsSanitized(t *testing.T) {
 	var apiError *APIError
 	if _, err := service.Execute(context.Background(), Query{Generation: scope.Generation, Operation: "list", Resource: "pods"}); !errors.As(err, &apiError) || apiError.Code != "forbidden" || apiError.Error() != "forbidden" {
 		t.Fatalf("unexpected mapped error %v", err)
+	}
+}
+
+func TestRelationshipCompletenessSurvivesListAndRead(t *testing.T) {
+	for _, resource := range []string{"deployments", "replicasets", "services"} {
+		for _, operation := range []string{"list", "read"} {
+			for _, mode := range []string{"pod-page", "pod-limit", "slice-page", "combined-limit", "complete"} {
+				if resource != "services" && (mode == "slice-page" || mode == "combined-limit") {
+					continue
+				}
+				t.Run(resource+"/"+operation+"/"+mode, func(t *testing.T) {
+					selector := &metav1.LabelSelector{MatchLabels: map[string]string{"app": "api"}}
+					objects := []runtime.Object{&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "team"}},
+						&appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: "api", Namespace: "team"}, Spec: appsv1.DeploymentSpec{Selector: selector}},
+						&appsv1.ReplicaSet{ObjectMeta: metav1.ObjectMeta{Name: "api", Namespace: "team"}, Spec: appsv1.ReplicaSetSpec{Selector: selector}},
+						&corev1.Service{ObjectMeta: metav1.ObjectMeta{Name: "api", Namespace: "team"}, Spec: corev1.ServiceSpec{Selector: map[string]string{"app": "api"}}},
+					}
+					count := 1
+					if mode == "pod-limit" {
+						count = MaxObjects + 1
+					}
+					if mode == "combined-limit" {
+						count = MaxObjects
+					}
+					for i := 0; i < count; i++ {
+						objects = append(objects, &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: fmt.Sprintf("pod-%03d", i), Namespace: "team", Labels: map[string]string{"app": "api"}}})
+					}
+					if mode == "combined-limit" {
+						objects = append(objects, &discoveryv1.EndpointSlice{ObjectMeta: metav1.ObjectMeta{Name: "slice", Namespace: "team", Labels: map[string]string{discoveryv1.LabelServiceName: "api"}}})
+					}
+					service, state, client := fixture(t, objects...)
+					scope := selectNamespace(t, service, state, "team")
+					if mode == "pod-page" {
+						client.PrependReactor("list", "pods", func(clienttesting.Action) (bool, runtime.Object, error) {
+							return true, &corev1.PodList{ListMeta: metav1.ListMeta{Continue: "next"}}, nil
+						})
+					}
+					if mode == "slice-page" {
+						client.PrependReactor("list", "endpointslices", func(clienttesting.Action) (bool, runtime.Object, error) {
+							return true, &discoveryv1.EndpointSliceList{ListMeta: metav1.ListMeta{Continue: "next"}}, nil
+						})
+					}
+					query := Query{Generation: scope.Generation, Operation: operation, Resource: resource}
+					if operation == "read" {
+						query.Name = "api"
+					}
+					got, err := service.Execute(context.Background(), query)
+					if err != nil {
+						t.Fatal(err)
+					}
+					if len(got.Items) != 1 || got.Truncated != (mode != "complete") || len(got.Items[0].Related) > MaxObjects {
+						t.Fatalf("incorrect completeness: %#v", got)
+					}
+				})
+			}
+		}
+	}
+}
+
+func TestPrimaryPaginationAndLateCancellation(t *testing.T) {
+	for _, mode := range []string{"page", "cancel"} {
+		t.Run(mode, func(t *testing.T) {
+			service, state, client := fixture(t, &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "team"}})
+			scope := selectNamespace(t, service, state, "team")
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			client.PrependReactor("list", "pods", func(clienttesting.Action) (bool, runtime.Object, error) {
+				if mode == "cancel" {
+					cancel()
+				}
+				return true, &corev1.PodList{ListMeta: metav1.ListMeta{Continue: "next"}, Items: []corev1.Pod{{ObjectMeta: metav1.ObjectMeta{Name: "api", Namespace: "team"}}}}, nil
+			})
+			got, err := service.Execute(ctx, Query{Generation: scope.Generation, Operation: "list", Resource: "pods"})
+			if mode == "page" && (err != nil || !got.Truncated) {
+				t.Fatalf("page lost: %#v %v", got, err)
+			}
+			if mode == "cancel" && (err == nil || len(got.Items) != 0) {
+				t.Fatalf("cancelled result escaped: %#v %v", got, err)
+			}
+		})
 	}
 }

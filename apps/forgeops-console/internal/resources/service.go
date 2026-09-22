@@ -152,7 +152,6 @@ func (s *Service) Execute(parent context.Context, query Query) (Result, error) {
 			}
 		}
 		items = exact
-		truncated = false
 	}
 	if current := s.state.Current(); current.Generation != scope.Generation {
 		return Result{}, s.finishError(scope, query, session.ErrStaleScope)
@@ -170,6 +169,9 @@ func (s *Service) Execute(parent context.Context, query Query) (Result, error) {
 		if items[index].Related == nil {
 			items[index].Related = []Reference{}
 		}
+	}
+	if ctx.Err() != nil {
+		return Result{}, s.finishError(scope, query, ctx.Err())
 	}
 	result := Result{Resource: query.Resource, Operation: query.Operation, Scope: scope, Items: items, Truncated: truncated}
 	encoded, err := json.Marshal(result)
@@ -234,12 +236,18 @@ func listOptions(query Query) metav1.ListOptions {
 	return options
 }
 
-func trim(records []Record) ([]Record, bool, error) {
+func trim(records []Record, incomplete bool) ([]Record, bool, error) {
+	for i := range records {
+		if len(records[i].Related) > MaxObjects {
+			records[i].Related = records[i].Related[:MaxObjects]
+			incomplete = true
+		}
+	}
 	sort.Slice(records, func(i, j int) bool { return records[i].Name < records[j].Name })
 	if len(records) > MaxObjects {
 		return records[:MaxObjects], true, nil
 	}
-	return records, false, nil
+	return records, incomplete, nil
 }
 
 func owners(namespace string, references []metav1.OwnerReference) []Reference {
@@ -262,7 +270,7 @@ func (s *Service) project(ctx context.Context, client kubernetes.Interface, scop
 		for _, item := range list.Items {
 			records = append(records, Record{Kind: "Namespace", Name: item.Name, Status: string(item.Status.Phase), Fields: []Field{{Label: "Phase", Value: string(item.Status.Phase)}}})
 		}
-		records, truncated, _ := trim(records)
+		records, truncated, _ := trim(records, list.Continue != "")
 		names := make([]string, 0, len(records))
 		for _, item := range records {
 			names = append(names, item.Name)
@@ -282,7 +290,7 @@ func (s *Service) project(ctx context.Context, client kubernetes.Interface, scop
 		for _, item := range list.Items {
 			records = append(records, projectNode(item))
 		}
-		return trim(records)
+		return trim(records, list.Continue != "")
 	case "pods":
 		list, err := client.CoreV1().Pods(scope.Namespace).List(ctx, options)
 		if err != nil {
@@ -292,7 +300,7 @@ func (s *Service) project(ctx context.Context, client kubernetes.Interface, scop
 		for _, item := range list.Items {
 			records = append(records, projectPod(item))
 		}
-		return trim(records)
+		return trim(records, list.Continue != "")
 	case "deployments":
 		list, err := client.AppsV1().Deployments(scope.Namespace).List(ctx, options)
 		if err != nil {
@@ -306,7 +314,7 @@ func (s *Service) project(ctx context.Context, client kubernetes.Interface, scop
 		for _, item := range list.Items {
 			records = append(records, projectDeployment(item, pods.Items))
 		}
-		return trim(records)
+		return trim(records, list.Continue != "" || pods.Continue != "" || len(pods.Items) > MaxObjects)
 	case "replicasets":
 		list, err := client.AppsV1().ReplicaSets(scope.Namespace).List(ctx, options)
 		if err != nil {
@@ -320,7 +328,7 @@ func (s *Service) project(ctx context.Context, client kubernetes.Interface, scop
 		for _, item := range list.Items {
 			records = append(records, projectReplicaSet(item, pods.Items))
 		}
-		return trim(records)
+		return trim(records, list.Continue != "" || pods.Continue != "" || len(pods.Items) > MaxObjects)
 	case "services":
 		list, err := client.CoreV1().Services(scope.Namespace).List(ctx, options)
 		if err != nil {
@@ -338,7 +346,7 @@ func (s *Service) project(ctx context.Context, client kubernetes.Interface, scop
 		for _, item := range list.Items {
 			records = append(records, projectService(item, pods.Items, slices.Items))
 		}
-		return trim(records)
+		return trim(records, list.Continue != "" || pods.Continue != "" || slices.Continue != "" || len(pods.Items) > MaxObjects || len(slices.Items) > MaxObjects)
 	case "endpointslices":
 		list, err := client.DiscoveryV1().EndpointSlices(scope.Namespace).List(ctx, options)
 		if err != nil {
@@ -348,7 +356,7 @@ func (s *Service) project(ctx context.Context, client kubernetes.Interface, scop
 		for _, item := range list.Items {
 			records = append(records, projectEndpointSlice(item))
 		}
-		return trim(records)
+		return trim(records, list.Continue != "")
 	default:
 		return nil, false, errors.New("unsupported resource")
 	}
@@ -403,7 +411,7 @@ func selectedPods(namespace string, selector *metav1.LabelSelector, pods []corev
 		if parsed.Matches(labels.Set(pod.Labels)) {
 			result = append(result, Reference{Kind: "Pod", Name: pod.Name, Namespace: namespace, Relation: "selects"})
 		}
-		if len(result) == MaxObjects {
+		if len(result) == MaxObjects+1 {
 			break
 		}
 	}
@@ -445,8 +453,8 @@ func projectService(item corev1.Service, pods []corev1.Pod, slices []discoveryv1
 			related = append(related, Reference{Kind: "EndpointSlice", Name: slice.Name, Namespace: item.Namespace, Relation: "routes-via"})
 		}
 	}
-	if len(related) > MaxObjects {
-		related = related[:MaxObjects]
+	if len(related) > MaxObjects+1 {
+		related = related[:MaxObjects+1]
 	}
 	return Record{Kind: "Service", Name: item.Name, Namespace: item.Namespace, Status: string(item.Spec.Type), Owners: owners(item.Namespace, item.OwnerReferences), Related: related, Fields: []Field{
 		{Label: "Type", Value: string(item.Spec.Type)}, {Label: "Ports", Value: strings.Join(ports, ", ")}, {Label: "Selector", Value: selector.String()},

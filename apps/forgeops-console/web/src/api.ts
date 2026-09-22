@@ -1,3 +1,4 @@
+import { validateCompatibility } from "./compatibility";
 import type { ActivityEntry, Bootstrap, PluginStatus, ResourceKind, ResourceResult, Scope, DiagnosticQuery, DiagnosticResult } from "./types";
 
 let sessionNonce = "";
@@ -12,7 +13,9 @@ async function expectJSON<T>(response: Response): Promise<T> {
 }
 
 export async function bootstrap(): Promise<Bootstrap> {
+  sessionNonce = "";
   const result = await expectJSON<Bootstrap>(await fetch("/api/v1/bootstrap", { credentials: "same-origin" }));
+  validateCompatibility(result);
   sessionNonce = result.sessionNonce;
   return result;
 }
@@ -39,12 +42,15 @@ export async function selectNamespace(namespace: string, generation: number): Pr
   }));
 }
 
-export async function queryResources(resource: ResourceKind, generation: number, name?: string): Promise<ResourceResult> {
-  return expectJSON(await fetch("/api/v1/plugins/forge.resources/query", {
-    method: "POST", credentials: "same-origin",
+export async function queryResources(resource: ResourceKind, generation: number, name?: string, signal?: AbortSignal): Promise<ResourceResult> {
+  const result = await expectJSON<ResourceResult>(await fetch("/api/v1/plugins/forge.resources/query", {
+    method: "POST", credentials: "same-origin", signal,
     headers: { "Content-Type": "application/json", "X-ForgeOps-Session": sessionNonce },
     body: JSON.stringify({ generation, operation: name ? "read" : "list", resource, ...(name ? { name } : {}) }),
   }));
+  if (signal?.aborted || result.scope?.generation !== generation) throw new Error("stale_scope");
+  if (result.resource !== resource || result.operation !== (name ? "read" : "list")) throw new Error("invalid_response");
+  return result;
 }
 
 export async function activity(): Promise<ActivityEntry[]> {

@@ -1,3 +1,4 @@
+import { bootstrapFixture } from "./test-fixtures";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { bootstrap, clearSessionForTests, exampleStatus, queryResources, queryDiagnostics, selectContext, selectNamespace } from "./api";
 
@@ -9,13 +10,7 @@ describe("ForgeOps API client", () => {
 
   it("keeps the bootstrap nonce in memory for state-changing calls", async () => {
     const fetchMock = vi.fn()
-      .mockResolvedValueOnce(new Response(JSON.stringify({
-        mode: "offline-c2",
-        sessionNonce: "memory-only",
-        selectedContext: "",
-        contexts: [],
-        plugins: [],
-      }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(bootstrapFixture()), { status: 200 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ selectedContext: "dev" }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
 
@@ -38,7 +33,7 @@ describe("ForgeOps API client", () => {
 
   it("sends a generation-bound resource request to the single compiled endpoint", async () => {
     const fetchMock = vi.fn()
-      .mockResolvedValueOnce(new Response(JSON.stringify({ mode: "synthetic-demo", sessionNonce: "memory-only", selectedContext: "", scope: { context: "", namespace: "", generation: 0 }, contexts: [], plugins: [] }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(bootstrapFixture()), { status: 200 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ context: "demo", namespace: "signalforge", generation: 2 }), { status: 200 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ resource: "pods", operation: "list", scope: { context: "demo", namespace: "signalforge", generation: 2 }, items: [], truncated: false }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
@@ -55,7 +50,7 @@ describe("ForgeOps API client", () => {
   });
 
   it("sends diagnostics through the nonce-protected fixed endpoint with cancellation", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({ sessionNonce: "memory-only" })))
+    const fetchMock = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify(bootstrapFixture())))
       .mockResolvedValueOnce(new Response(JSON.stringify({ scope: { generation: 2 } })));
     vi.stubGlobal("fetch", fetchMock); await bootstrap();
     const controller = new AbortController();
@@ -73,4 +68,32 @@ describe("ForgeOps API client", () => {
     controller.abort();
     await expect(queryDiagnostics({ generation: 1, operation: "events", pod: "api" }, controller.signal)).rejects.toThrow("stale_scope");
   });
+  it("rejects mismatched resource identity and cancellation", async () => {
+    const valid = { resource: "pods", operation: "list", scope: { generation: 2 }, items: [], truncated: false };
+    const controller = new AbortController();
+    for (const result of [{ ...valid, scope: { generation: 1 } }, { ...valid, resource: "services" }, { ...valid, operation: "read" }]) {
+      vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify(result))));
+      await expect(queryResources("pods", 2, undefined, controller.signal)).rejects.toThrow();
+    }
+    controller.abort();
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify(valid))));
+    await expect(queryResources("pods", 2, undefined, controller.signal)).rejects.toThrow("stale_scope");
+  });
+
+  it("rejects incompatible bootstrap before retaining its nonce", async () => {
+    for (const mode of ["digest", "protocol", "missing-plugin", "missing-contribution", "wrong-version"]) {
+      const fixture = bootstrapFixture();
+      if (mode === "digest") fixture.bundle.sourceDigest = "old-build";
+      if (mode === "protocol") fixture.bundle.protocol = "unsupported";
+      if (mode === "missing-plugin") fixture.plugins.pop();
+      if (mode === "missing-contribution") fixture.plugins[0].contributions = [];
+      if (mode === "wrong-version") fixture.plugins[0].version = "99.0.0";
+      const fetchMock = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify(fixture))).mockResolvedValueOnce(new Response("{}"));
+      vi.stubGlobal("fetch", fetchMock);
+      await expect(bootstrap()).rejects.toThrow("Incompatible Console bundle");
+      await selectContext("dev");
+      expect(fetchMock).toHaveBeenLastCalledWith("/api/v1/context", expect.objectContaining({ headers: expect.objectContaining({ "X-ForgeOps-Session": "" }) }));
+    }
+  });
+
 });
