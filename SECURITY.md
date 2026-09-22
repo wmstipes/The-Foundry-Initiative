@@ -31,7 +31,8 @@ The repository uses GitHub-hosted controls together with tracked policy:
   repository and manifest validators, and dependency review. CodeQL must
   report no errors and no security alert at high severity or above.
 - Published GitHub releases are immutable. Release-tag rules block updates,
-  deletion, and force pushes for ForgeOps, Workbench, and Restaurant API tags.
+  deletion, and force pushes for ForgeOps, ForgeOps Console, Workbench, and
+  Restaurant API tags.
   GitHub Actions publication jobs use the deployment-scoped `release`
   environment. The Console preview was published manually through the reviewed
   [exact-asset procedure](docs/releases/forgeops-console-v0.1.0-rc.1-publish.md),
