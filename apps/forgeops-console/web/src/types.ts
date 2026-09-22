@@ -22,6 +22,7 @@ export interface PluginManifest {
 }
 
 export interface Bootstrap {
+  bundle: { protocol: string; sourceDigest: string };
   mode: "read-only-c4" | "synthetic-demo";
   sessionNonce: string;
   selectedContext: string;

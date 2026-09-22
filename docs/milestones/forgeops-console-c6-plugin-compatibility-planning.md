@@ -12,6 +12,33 @@ prepare a future release. The recommended distribution decision is to retain
 compiled first-party plugins for the next release candidate. No concrete need
 for independently installed third-party modules has yet been established.
 
+## Assessment and review candidate — 2026-09-22
+
+After reviewing the handoff and focused architecture assessment, the operator
+asked to move forward. The resulting bounded implementation addresses five
+findings: incomplete relationships presented without warnings, stale browser
+selections, misleading panic outcomes, unjoined shutdown, and unchecked
+browser/core pairing. This is local implementation and offline verification;
+it does not treat PR #107's merge as authority for cloud/cluster access or a
+public release.
+
+The [C6 compatibility/lifecycle record](../design/forgeops-console-c6-compatibility-lifecycle.md)
+inventories actual plugins, source pairing, version policy, failure limits,
+upgrade/rollback procedure and explicitly deferred work.
+
+| Gate | Current evidence / remaining acceptance |
+| --- | --- |
+| 1 — Scope | Built-in-only decision retained in implementation; operator reviews the concrete candidate in the PR. |
+| 2 — Compatibility | Actual supported set inventoried; missing declared handlers and unsupported browser contributions rejected; exact source pairing implemented. |
+| 3 — Lifecycle | Targeted stale-state, panic, cancellation and shutdown fixes implemented with offline tests; no process isolation claimed. |
+| 4 — Packaging decision | Matched source identity and whole-pair upgrade/rollback procedure defined; no public distribution. |
+| 5 — Verification | Go race tests, browser tests/build, locked module graph, both executable builds and synthetic matched/mismatched/restored-pair rehearsal pass locally; Windows/live and historical-release acceptance remain unperformed. |
+| 6 — Review | Documentation and test inventory reconciled; PR publication/checks, operator merge and laptop sync remain separate pending steps. |
+
+The [testing guide](../testing-and-validation.md#console-c6-local-validation)
+records 54 Go test functions and 19 Vitest cases, separately from 248 existing
+top-level Python cases. No new tests merely assert planning prose.
+
 ## Baseline to evaluate
 
 The example, resource-browser, and diagnostics plugins are compiled with the

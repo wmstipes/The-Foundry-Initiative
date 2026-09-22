@@ -95,3 +95,29 @@ func TestNamespaceSelectionRejectsOldGenerationWithoutChangingScope(t *testing.T
 		t.Fatal("rejection changed scope")
 	}
 }
+
+func TestCloseCancelsAndPermanentlyRejectsSessionWork(t *testing.T) {
+	state, _ := New([]string{"dev"})
+	scope, _ := state.SelectContext("dev")
+	request, cancel, _, err := state.RequestContext(context.Background(), scope.Generation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer cancel()
+	state.Close()
+	state.Close()
+	select {
+	case <-request.Done():
+	case <-time.After(time.Second):
+		t.Fatal("close did not cancel work")
+	}
+	if _, err := state.SelectContext("dev"); err != ErrClosed {
+		t.Fatalf("closed context selection: %v", err)
+	}
+	if _, _, _, err := state.RequestContext(context.Background(), state.Current().Generation); err != ErrStaleScope {
+		t.Fatalf("closed request accepted: %v", err)
+	}
+	if state.Current().Context != "" {
+		t.Fatal("closed session retained active context")
+	}
+}

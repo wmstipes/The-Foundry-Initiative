@@ -1,6 +1,6 @@
 # ForgeOps Console
 
-ForgeOps Console C4 is a local, browser-based, read-only Kubernetes resource
+ForgeOps Console is a local, browser-based, read-only Kubernetes resource
 viewer. Its Go core owns explicit kubeconfig handling, typed client access,
 scope generations, strict resource projections, limits, and the compiled
 first-party plugin broker. The browser receives no raw Kubernetes objects or
@@ -21,13 +21,32 @@ contain sensitive data; they are not guaranteed redacted.
 - the compiled `forge.diagnostics` plugin adds bounded selected-Pod logs and
   Events, plus offline explanatory command previews; and
 - there are no Secrets, ConfigMap values, watches, mutations,
-  exec, attach, proxy, port-forward, dynamic plugins, persistence, packaging,
+  exec, attach, proxy, port-forward, dynamic plugins, persistence, public releases,
   images, or deployments.
 
 The production client accepts only embedded kubeconfig material and rejects
 exec plugins, auth-provider plugins, secondary credential files, proxies,
 insecure TLS, and impersonation. A separate synthetic-demo entry point uses a
 fake client and never loads kubeconfig.
+
+## C6 compatibility and lifecycle
+
+The compiled plugin set remains example, resources and diagnostics. Core startup
+requires all declared handlers and a browser source fingerprint matching the
+executable. The browser also validates bootstrap identity and contributions.
+Build both halves from the same source tree; mixed or missing browser bundles
+are rejected. This detects accidental mixed builds, not malicious asset
+replacement or publisher authenticity.
+
+Resource and relationship limits now carry incompleteness warnings, including
+individual reads. Resource changes clear stale rows and selections, and failed
+context discovery cannot retain the old namespace choices. Diagnostic panics
+produce sanitized internal failures and failure activity. Shutdown cancels the
+session and waits for bounded cleanup before exit; arbitrary Go code is not
+sandboxed or forcibly interrupted.
+
+See the [supported set, version policy, limits, upgrade and rollback procedure](../../docs/design/forgeops-console-c6-compatibility-lifecycle.md).
+C5 export remains unimplemented. Public release acceptance belongs to C7.
 
 ## Changing contexts
 
@@ -50,7 +69,7 @@ context may appear but its cluster reads fail. Do not remove this restriction
 or copy temporary tokens into files as a suggested workaround. Cloud
 authentication needs an explicit reviewed design. See
 [AWS EKS kubeconfig documentation](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)
-and the [C6 planning proposal](../../../docs/milestones/forgeops-console-c6-plugin-compatibility-planning.md).
+and the [C6 planning proposal](../../docs/milestones/forgeops-console-c6-plugin-compatibility-planning.md).
 
 ## Pod diagnostics
 
@@ -93,7 +112,7 @@ npm run build
 npm audit --omit=dev --audit-level=high
 ```
 
-After building the browser, start the progress demo with:
+Return to `apps/forgeops-console` after building the browser, then start the progress demo with:
 
 ```text
 go run ./cmd/forgeops-console-demo \
@@ -109,3 +128,16 @@ The production entry point is `./cmd/forgeops-console` and requires an explicit
 `--kubeconfig`. Do not use it for a live check until that separately approved
 C4 live acceptance step is authorized. The earlier C3 read-only walkthrough
 does not authorize log or Event disclosure.
+
+For the cross-language bundle rehearsal on Linux, build the synthetic executable
+and run from the repository root:
+
+```text
+go -C apps/forgeops-console build -o /tmp/forgeops-console-demo ./cmd/forgeops-console-demo
+python3 scripts/verify-forgeops-console-bundle.py --binary /tmp/forgeops-console-demo --web-dir apps/forgeops-console/web/dist
+```
+
+This checks matching and mismatched pairs, restoration, and bounded shutdown.
+It does not load kubeconfig or contact a cluster. Rebuild the browser whenever
+included Console source files change; the fingerprint intentionally rejects
+stale assets, including when only included tests changed.

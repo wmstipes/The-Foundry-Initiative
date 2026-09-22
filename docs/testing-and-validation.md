@@ -1,6 +1,6 @@
 # Testing and validation
 
-**Inventory date:** 2026-09-21
+**Inventory date:** 2026-09-22
 
 This document defines what The Foundry Initiative means when it reports tests
 and validation results. It separates executable test cases, generated scenario
@@ -16,8 +16,8 @@ is not collapsed into one misleading total.
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
 | Complete repository Python discovery | 257 | Top-level 248 plus Restaurant API 9 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
-| ForgeOps Console Go tests | 47 | Test functions across eight core packages; table subtests not added to this count; separate from Python totals |
-| ForgeOps Console Vitest tests | 12 | API tests plus Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
+| ForgeOps Console Go tests | 54 | Test functions across eight core packages; table subtests not added to this count; separate from Python totals |
+| ForgeOps Console Vitest tests | 19 | API, App resource-transition, and Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
 The Python counts are nested, not additive: the 178 ForgeOps tests are part of
@@ -102,6 +102,37 @@ future hostile-input, disclosure, lifecycle, and compatibility acceptance.
 No export implementation, candidate validator, new consumer, live access, or
 fault injection was tested or delivered. PR checks and merge remain separate
 from these local results.
+
+## Console C6 local validation
+
+C6 adds seven Go test functions (54 total) and seven Vitest cases (19 total).
+Table subcases are not added to the Go function count. Python inventory stays
+unchanged: all 248 top-level unittest cases pass, including the 27 Console
+policy checks. No new documentation-string policy tests were added.
+
+The Go package tests pass with the race detector; Go vet and formatting pass.
+Browser tests, TypeScript/Vite
+build, production dependency audit (zero reported vulnerabilities), and both
+Go executable builds pass. `go mod tidy` leaves go.mod/go.sum unchanged.
+
+The new tests exercise supporting-list pagination and relationship clipping on
+list and read, late cancellation, failed context discovery, stale browser rows,
+wrong-context responses, unmount cancellation, diagnostic panic activity and
+sanitization, missing handlers/contributions, permanent session close, joined
+shutdown and its deadline, and mismatched source identity. These are synthetic
+checks; they do not prove arbitrary-code isolation or live failure behavior.
+
+The standalone `scripts/verify-forgeops-console-bundle.py` rehearsal passes a
+matching built demo/browser pair, rejects a mismatched source fingerprint before
+startup, then restarts the valid pair and verifies bounded shutdown. It compares
+Go and Vite identities and exercises only synthetic namespace/resource reads.
+This integration check is also added to the existing Console browser CI job.
+It is one standalone rehearsal, not an additional unittest or Vitest case.
+
+The source fingerprint establishes matched inputs, not signed provenance or
+compiled-byte authenticity. No live cluster, EKS, Windows runtime, historical
+release rollback, or C5 export acceptance is claimed. PR workflow results and
+operator merge are separate evidence. See the [C6 implementation and limits](design/forgeops-console-c6-compatibility-lifecycle.md).
 
 ## What the suites cover
 

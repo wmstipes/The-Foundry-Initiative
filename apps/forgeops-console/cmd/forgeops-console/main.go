@@ -118,16 +118,7 @@ func run() error {
 	}
 	shutdownContext, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
-	go func() {
-		<-shutdownContext.Done()
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		_ = httpServer.Shutdown(ctx)
-	}()
 
 	log.Printf("ForgeOps Console C4 listening at http://%s (read-only mode)", *listenAddress)
-	if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		return err
-	}
-	return nil
+	return server.ListenAndServe(shutdownContext, httpServer, state)
 }

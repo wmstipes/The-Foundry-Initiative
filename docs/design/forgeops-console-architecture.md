@@ -1,6 +1,8 @@
 # ForgeOps Console architecture
 
-**Status:** Accepted ForgeOps Console C1 design boundary
+**Status:** Accepted ForgeOps Console C1 design boundary. For the implemented
+compiled plugin subset and its limits, see the
+[C6 compatibility/lifecycle record](forgeops-console-c6-compatibility-lifecycle.md).
 
 **Baseline:** The Foundry Initiative `main` at
 `8008f6934a0c1bd34a63d6a86a9ad74d170a7671`

@@ -119,6 +119,10 @@ func (s *Service) Execute(parent context.Context, q Query) (result Result, err e
 	defer cancelScope()
 	capability := map[string]string{"logs": "pods.logs.read", "events": "events.read", "preview": "command.preview"}[q.Operation]
 	defer func() {
+		// Recover before recording: a panic is never a successful observation.
+		if recover() != nil {
+			err = &resources.APIError{Code: "internal_error", Status: 500}
+		}
 		outcome := "ok"
 		if err != nil {
 			result = Result{}

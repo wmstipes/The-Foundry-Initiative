@@ -22,7 +22,7 @@ export function registerCompiledPlugin(plugin: CompiledPlugin): void {
 export function renderPluginCard(manifest: PluginManifest): ReactNode {
   const plugin = compiledPlugins.get(manifest.id);
   if (!plugin) {
-    return null;
+    return <p role="alert">Missing compiled view for {manifest.id}. Rebuild the matched Console bundle.</p>;
   }
   return plugin.renderCard({ manifest });
 }
