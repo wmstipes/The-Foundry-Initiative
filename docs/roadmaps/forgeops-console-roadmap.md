@@ -1,6 +1,6 @@
 # ForgeOps Console roadmap
 
-**Status:** C1-C4 accepted; C5 boundary design retained; C6 bounded closeout merged; C7 candidate preparation approved
+**Status:** C1-C4 accepted; C5 design retained without export/intake; C6 closed; C7 Windows engineering prerelease published and verified
 
 **Baseline:** ForgeOps v1.0.0; C1 was admitted from repository commit
 `8008f6934a0c1bd34a63d6a86a9ad74d170a7671` and merged at
@@ -8,7 +8,7 @@
 
 ## Purpose
 
-ForgeOps Console is a proposed local, plugin-ready Kubernetes operations
+ForgeOps Console is a local, first-party-plugin Kubernetes operations
 interface that makes cluster scope, read operations, equivalent commands, and
 eventual evidence selection visible to an operator. It directly improves the
 incident-copilot demonstration only when it shortens or clarifies the path from
@@ -162,7 +162,13 @@ is not claimed. See the [C6 closeout evidence and remaining limits](../milestone
 
 ### C7 — Console release readiness and release
 
-**Status:** C7 and all gates approved on 2026-09-22. The [C7 gate record](../milestones/forgeops-console-c7-release-readiness.md) defines native candidates, installed verification and remaining acceptance. Public release remains held pending evidence.
+**Status:** Published and verified on 2026-09-22 as
+[Console v0.1.0-rc.1](https://github.com/wmstipes/The-Foundry-Initiative/releases/tag/forgeops-console-v0.1.0-rc.1),
+an unsigned Windows amd64 engineering preview. The [C7 record](../milestones/forgeops-console-c7-release-readiness.md)
+contains the exact archive identity, Windows/Edge/Narrator and bounded live
+acceptance, dependency review, first-release rollback disposition and publication
+evidence. Linux retains native CI evidence but is not a preview release asset.
+Broader compatibility and accessibility conformance remain unclaimed.
 
 **Purpose:** Prepare a deliberate release.
 

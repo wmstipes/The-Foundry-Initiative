@@ -1,6 +1,11 @@
 # Publish the accepted Console Windows preview
 
-Run after this release-preparation PR is merged and its workflows pass.
+**Completed on 2026-09-22:** The prerelease is published and verified in the
+[C7 record](../milestones/forgeops-console-c7-release-readiness.md#published-prerelease-verification--2026-09-22).
+The commands below are retained as the executed procedure. Do not rerun them
+for the existing immutable tag.
+
+Original prerequisite: run after the release-preparation PR is merged and its workflows pass.
 The operator approved the narrow Windows prerelease on 2026-09-22.
 This procedure publishes the existing archive without rebuilding or renaming it.
 It creates a draft, verifies downloaded draft assets, then publishes.

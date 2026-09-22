@@ -23,7 +23,7 @@ package label. A public release is held when evidence is incomplete.
 | 3 — Candidate packaging | Build committed source, pair both executables/browser, identify exact inputs and hash packaged bytes | Native builder and informational `--build-info` implemented; unsigned, no publisher attestation |
 | 4 — Installed acceptance and rollback | Execute extracted files outside checkout, reject damaged pairs, restore complete pair; operator checks exact archive | Automated verifier and Windows synthetic/live UI/Ctrl+C checks passed on 2026-09-22; historical-release rollback is not applicable to the first Console release (see disposition below) |
 | 5 — Usability and accessibility | Labels, native semantics, keyboard focus and responsive layout checked; operator keyboard/zoom/screen-reader evidence | Edge keyboard/focus, zoom/narrow-window and focused Narrator checks passed; no accessibility conformance claim |
-| 6 — Review and release decision | Review PR checks, exact candidate hashes, support matrix and unresolved risks; publish only accepted assets | Windows v0.1.0-rc.1 prerelease approved; exact-asset publication and verification pending |
+| 6 — Review and release decision | Review PR checks, exact candidate hashes, support matrix and unresolved risks; publish only accepted assets | Windows v0.1.0-rc.1 prerelease published and verified; see publication evidence below |
 
 ## Architecture and security assessment
 
@@ -257,7 +257,7 @@ This record does not itself publish assets or certify untested environments.
 
 The operator approved the narrowly scoped Windows engineering prerelease.
 Disposition: **GO for preparation and publication of the exact accepted Windows
-archive; publication not yet verified**.
+archive**. Publication was subsequently verified as recorded below.
 
 - Version/tag: `forgeops-console-v0.1.0-rc.1`, marked prerelease and not Latest.
 - Tag target: accepted source `af0f3ec54d842c876e63ccc6cba9c7029756d2f0`,
@@ -288,3 +288,30 @@ See [release notes](../releases/forgeops-console-v0.1.0-rc.1.md) and
 [publication procedure](../releases/forgeops-console-v0.1.0-rc.1-publish.md).
 Publication completion requires the actual release URL, prerelease state,
 tag target and asset evidence; do not infer completion from this PR's merge.
+
+## Published prerelease verification — 2026-09-22
+
+The operator executed the reviewed procedure after PR #118 merged. The draft
+assets were downloaded and hash-checked before publication; the final command
+output reported successful publication. Independent GitHub API reads confirmed:
+
+- [Console v0.1.0-rc.1](https://github.com/wmstipes/The-Foundry-Initiative/releases/tag/forgeops-console-v0.1.0-rc.1)
+  was published at `2026-09-22T20:07:20Z`; release ID `394080963`.
+- `draft=false`, `prerelease=true`, `immutable=true`.
+- Tag object resolves directly to commit
+  `af0f3ec54d842c876e63ccc6cba9c7029756d2f0`, matching the accepted source.
+- Exactly two uploaded assets: the accepted Windows ZIP and `SHA256SUMS.txt`.
+- ZIP asset `582154691`: GitHub reports SHA-256
+  `037841539937826dc3f6094bc3fcbf29529bb4ea17948e69d94ee11246f2d801`,
+  matching the operator's archive hash.
+- Checksum asset `582154693`: GitHub reports SHA-256
+  `05b0a826a7c44af6abd87992f59ddb445a4118d75ecf3b354aad1915122a43f4`.
+- The latest stable release remains `forgeops-v1.0.0`.
+
+C7 is closed for this narrow Windows engineering preview. No release bytes,
+source tag, cluster state or acceptance claims changed during documentation
+reconciliation. API digest verification is not an independent assistant download
+and rehash; the operator's guarded draft download supplies that execution evidence.
+Broader support, signing, future upgrades and C5 integration remain outside this
+closeout. The publication procedure is retained as historical operational
+evidence and must not be rerun against the existing immutable tag.
