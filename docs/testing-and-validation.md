@@ -160,6 +160,10 @@ the checkout: metadata, synthetic reads, production synthetic-only bootstrap,
 configuration/Host/Origin/nonce denial, mismatch rejection and whole-pair
 restoration. This is one integration rehearsal per platform, not additional
 unittest or Vitest cases. Windows cleanup is forced and does not test Ctrl+C.
+After a post-merge Windows connection reset, denial probes use an explicit
+bodyless activity POST, close error responses, and repeat each boundary check
+three times. Every probe still requires HTTP 403; transport failures remain
+failures and now name the affected boundary. Test inventory is unchanged.
 Candidate artifacts are unsigned, retained for 14 days, and cannot publish a
 release. A passing hosted Windows runner does not resolve the laptop's Smart
 App Control block or prove public OS/Kubernetes support.

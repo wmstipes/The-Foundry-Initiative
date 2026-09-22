@@ -107,8 +107,8 @@ contexts:
     process = subprocess.Popen(command, cwd=working, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     nonce = ""
 
-    def request(path: str, body: dict | None = None, headers: dict | None = None) -> bytes:
-        req = urllib.request.Request(f"http://{address}{path}",
+    def request(path: str, body: dict | None = None, headers: dict | None = None, method: str | None = None) -> bytes:
+        req = urllib.request.Request(f"http://{address}{path}", method=method,
             data=None if body is None else json.dumps(body).encode(),
             headers=headers if headers is not None else {"Content-Type": "application/json", "X-ForgeOps-Session": nonce})
         with opener.open(req, timeout=3) as response:
@@ -136,14 +136,22 @@ contexts:
         assert not bootstrap["scope"]["context"]
         nonce = bootstrap["sessionNonce"]
         assert b"<html" in request("/")
-        for headers, body, path in [({"Host": "foreign.invalid"}, None, "/api/v1/bootstrap"),
-                                    ({"Origin": "https://foreign.invalid"}, None, "/api/v1/bootstrap"),
-                                    ({"Content-Type": "application/json"}, {}, "/api/v1/activity")]:
-            try:
-                request(path, body, headers)
-                raise AssertionError("installed boundary accepted denied request")
-            except urllib.error.HTTPError as error:
-                assert error.code == 403
+        # Activity has no request payload. Send an explicit empty POST so an
+        # nonce rejection does not leave an unnecessary JSON body unread.
+        for label, headers, method, path in [
+            ("Host", {"Host": "foreign.invalid"}, "GET", "/api/v1/bootstrap"),
+            ("Origin", {"Origin": "https://foreign.invalid"}, "GET", "/api/v1/bootstrap"),
+            ("nonce", {}, "POST", "/api/v1/activity"),
+        ]:
+            for _ in range(3):
+                try:
+                    request(path, headers=headers, method=method)
+                    raise AssertionError(f"installed {label} boundary accepted denied request")
+                except urllib.error.HTTPError as error:
+                    assert error.code == 403, f"installed {label} boundary returned {error.code}, expected 403"
+                    error.close()
+                except OSError as error:
+                    raise AssertionError(f"installed {label} denial transport failed") from error
         if not production:
             scope = json.loads(request("/api/v1/context", {"context": "synthetic-demo"}))
             namespaces = json.loads(request("/api/v1/plugins/forge.resources/query", {"generation": scope["generation"], "operation": "list", "resource": "namespaces"}))
