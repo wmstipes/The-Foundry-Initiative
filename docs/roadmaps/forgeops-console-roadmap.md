@@ -152,11 +152,13 @@ fixtures, lifecycle failure isolation, packaging, upgrades, and rollback.
 Separately decide whether locally installed plugins add enough value to justify
 publisher identity, signing, revocation, sandboxing, and supply-chain cost.
 
-The C6 review candidate retains built-in plugins only and addresses the five
+C6 implementation merged in PR #108 and retains built-in plugins only, addressing the five
 source-review findings. See the [compatibility/lifecycle implementation and
 remaining limits](../design/forgeops-console-c6-compatibility-lifecycle.md).
-A marketplace or remote plugin loader is not admitted. Merge and operator
-acceptance are recorded separately in the C6 milestone.
+A marketplace or remote plugin loader is not admitted. The operator approved
+bounded closeout after the Windows synthetic demo smoke check passed. Windows
+resources tests remain blocked by Application Control; full Windows validation
+is not claimed. See the [C6 closeout evidence and remaining limits](../milestones/forgeops-console-c6-plugin-compatibility-planning.md#bounded-closeout--2026-09-22).
 
 ### C7 — Console release readiness and release
 
