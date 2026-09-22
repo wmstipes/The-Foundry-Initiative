@@ -12,17 +12,17 @@ is not collapsed into one misleading total.
 | Suite | Current count | Scope |
 | --- | ---: | --- |
 | ForgeOps Python tests | 178 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 248 | Everything collected below `tests/` |
+| Top-level Python tests | 254 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
-| Complete repository Python discovery | 257 | Top-level 248 plus Restaurant API 9 |
+| Complete repository Python discovery | 263 | Top-level 254 plus Restaurant API 9 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
-| ForgeOps Console Go tests | 54 | Test functions across eight core packages; table subtests not added to this count; separate from Python totals |
+| ForgeOps Console Go tests | 55 | Test functions across eight core packages; table subtests not added to this count; separate from Python totals |
 | ForgeOps Console Vitest tests | 19 | API, App resource-transition, and Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
 The Python counts are nested, not additive: the 178 ForgeOps tests are part of
-the 248 top-level tests, and the 248 plus the nine Restaurant API tests produce
-the 257-test complete Python discovery. The browser, Go, and promtool
+the 254 top-level tests, and the 254 plus the nine Restaurant API tests produce
+the 263-test complete Python discovery. The browser, Go, and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -145,6 +145,28 @@ Full Windows support requires resolving the execution block and running that
 suite; the demo does not establish live or historical-release acceptance.
 See the [operator closeout record](milestones/forgeops-console-c6-plugin-compatibility-planning.md#bounded-closeout--2026-09-22). See the [C6 implementation and limits](design/forgeops-console-c6-compatibility-lifecycle.md).
 
+## Console C7 candidate validation
+
+Six new `tests/test_forgeops_console_candidate.py` tests cover accepted extraction,
+wrong outer digest, changed payload bytes, unsafe paths/symlinks, undeclared or
+case-colliding members, and missing required runtime files. The top-level Python
+inventory is now 254; complete discovery is 263 including Restaurant API's nine.
+One Go regression test covers the actual Node cordon flag for both boolean
+values, bringing the Go function inventory to 55. Browser tests remain 19 cases.
+
+The required Console jobs now run natively on Linux and Windows. Browser CI
+builds a committed-source archive and checks its extracted executables outside
+the checkout: metadata, synthetic reads, production synthetic-only bootstrap,
+configuration/Host/Origin/nonce denial, mismatch rejection and whole-pair
+restoration. This is one integration rehearsal per platform, not additional
+unittest or Vitest cases. Windows cleanup is forced and does not test Ctrl+C.
+Candidate artifacts are unsigned, retained for 14 days, and cannot publish a
+release. A passing hosted Windows runner does not resolve the laptop's Smart
+App Control block or prove public OS/Kubernetes support.
+
+See the [C7 gate record](milestones/forgeops-console-c7-release-readiness.md)
+for release holds and operator acceptance. No live cluster access is involved.
+
 ## What the suites cover
 
 ### ForgeOps
@@ -238,7 +260,7 @@ $env:PYTHONPATH = "$PWD\src;$PWD\apps\restaurant-api"
 Useful narrower Python suites are:
 
 ~~~powershell
-# Top-level Python suite: currently 248 tests
+# Top-level Python suite: currently 254 tests
 .\.venv\Scripts\python.exe -m pytest -q .\tests
 
 # Focused ForgeOps suite: currently 178 tests
@@ -348,7 +370,7 @@ When updating counts:
 4. keep Vitest cases, promtool scenarios, validators, builds, audits, and live
    acceptance in their own categories; and
 5. explain any surprising delta, such as the nine Restaurant API tests that
-   distinguish the 248-test top-level suite from the 257-test complete Python
+   distinguish the 254-test top-level suite from the 263-test complete Python
    discovery.
 
 Historical milestone counts remain historical evidence and must not be edited

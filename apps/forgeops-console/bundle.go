@@ -6,8 +6,11 @@ import (
 	"crypto/sha256"
 	"embed"
 	"encoding/hex"
+	"encoding/json"
 	"io"
 	"io/fs"
+	"os"
+	"runtime"
 	"sort"
 	"sync"
 )
@@ -54,4 +57,18 @@ func Bundle() BundleIdentity {
 		identity = BundleIdentity{Protocol: "forgeops.console/v1alpha1", SourceDigest: hex.EncodeToString(digest.Sum(nil))}
 	})
 	return identity
+}
+
+// BuildCommit is supplied by the committed-source candidate builder.
+// It is informational metadata, not a verified signature or release approval.
+var BuildCommit = "development"
+
+func PrintBuildInfo() error {
+	return json.NewEncoder(os.Stdout).Encode(struct {
+		Product string         `json:"product"`
+		Commit  string         `json:"commit"`
+		OS      string         `json:"os"`
+		Arch    string         `json:"arch"`
+		Bundle  BundleIdentity `json:"bundle"`
+	}{"forgeops-console", BuildCommit, runtime.GOOS, runtime.GOARCH, Bundle()})
 }

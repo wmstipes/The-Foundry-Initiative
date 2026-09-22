@@ -58,10 +58,15 @@ jobs:
 
   console-go:
     name: ForgeOps Console Go validation
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     timeout-minutes: 15
     defaults:
       run:
+        shell: bash
         working-directory: apps/forgeops-console
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -80,10 +85,15 @@ jobs:
 
   console-web:
     name: ForgeOps Console browser validation
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     timeout-minutes: 15
     defaults:
       run:
+        shell: bash
         working-directory: apps/forgeops-console/web
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -101,10 +111,24 @@ jobs:
         with:
           go-version: "1.27.x"
           cache: false
-      - name: Rehearse matched Console bundle offline
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Build and verify installed native candidate
         run: |
-          go -C .. build -o "$RUNNER_TEMP/forgeops-console-demo" ./cmd/forgeops-console-demo
-          python3 ../../../scripts/verify-forgeops-console-bundle.py --binary "$RUNNER_TEMP/forgeops-console-demo" --web-dir ./dist
+          python ../../../scripts/build-forgeops-console-candidate.py --output-dir "$RUNNER_TEMP/console-candidate"
+          python - "$RUNNER_TEMP/console-candidate" <<'PY'
+          import pathlib, subprocess, sys
+          output = pathlib.Path(sys.argv[1])
+          digest, filename = (output / "SHA256SUMS.txt").read_text().strip().split("  ")
+          subprocess.run([sys.executable, "../../../scripts/verify-forgeops-console-candidate.py", "--archive", str(output / filename), "--sha256", digest], check=True)
+          PY
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: forgeops-console-candidate-${{ matrix.os }}
+          path: ${{ runner.temp }}/console-candidate/
+          if-no-files-found: error
+          retention-days: 14
 
   repository:
     name: Repository and manifest validation

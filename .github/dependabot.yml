@@ -120,3 +120,43 @@ updates:
           - "*"
         update-types:
           - "patch"
+
+  - package-ecosystem: "gomod"
+    directory: "/apps/forgeops-console"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    groups:
+      console-go-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+      console-go-patches:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+
+  - package-ecosystem: "npm"
+    directory: "/apps/forgeops-console/web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    groups:
+      console-browser-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+      console-browser-patches:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"

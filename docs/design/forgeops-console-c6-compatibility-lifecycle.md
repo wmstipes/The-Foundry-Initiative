@@ -130,7 +130,8 @@ for review/merge boundaries. Tests are selected for the specific source findings
 relationship incompleteness, stale selections, panic reporting, shutdown drain,
 and mismatched bundles. No tests merely assert this document's prose.
 
-The existing ambiguous Node Scheduling label (C3-UX-01), unsupported-auth error
-specificity, C5 aligned operator acceptance and future evidence export remain
-open. Standard EKS credentials are still rejected and may produce a generic
+C6 left the ambiguous Node Scheduling label (C3-UX-01) open; the
+[C7 candidate](../milestones/forgeops-console-c7-release-readiness.md) now corrects
+it with both-boolean regression coverage. Unsupported-auth error specificity,
+C5 aligned operator acceptance and future evidence export remain open. Standard EKS credentials are still rejected and may produce a generic
 unavailable result; this change does not introduce cloud authentication.

@@ -1,6 +1,6 @@
 # ForgeOps Console roadmap
 
-**Status:** C1-C4 accepted; C5 boundary design ready for review
+**Status:** C1-C4 accepted; C5 boundary design retained; C6 bounded closeout merged; C7 candidate preparation approved
 
 **Baseline:** ForgeOps v1.0.0; C1 was admitted from repository commit
 `8008f6934a0c1bd34a63d6a86a9ad74d170a7671` and merged at
@@ -90,7 +90,7 @@ operator-run read-only SignalForge walkthrough on 2026-09-21. All six resource
 views and explicit scope reset/reselection passed the observed happy path;
 concurrent cancellation and exhaustive security/error paths were not exercised.
 No general API discovery or ConfigMap values are included. See the
-[C3 evidence and open C3-UX-01 labeling follow-up](../milestones/forgeops-console-c3-read-only-resource-browser.md#live-read-only-walkthrough--2026-09-21).
+[C3 evidence and C3-UX-01 labeling follow-up](../milestones/forgeops-console-c3-read-only-resource-browser.md#live-read-only-walkthrough--2026-09-21).
 
 ### C4 — Logs, Events, and command explanation
 
@@ -161,6 +161,8 @@ resources tests remain blocked by Application Control; full Windows validation
 is not claimed. See the [C6 closeout evidence and remaining limits](../milestones/forgeops-console-c6-plugin-compatibility-planning.md#bounded-closeout--2026-09-22).
 
 ### C7 — Console release readiness and release
+
+**Status:** C7 and all gates approved on 2026-09-22. The [C7 gate record](../milestones/forgeops-console-c7-release-readiness.md) defines native candidates, installed verification and remaining acceptance. Public release remains held pending evidence.
 
 **Purpose:** Prepare a deliberate release.
 

@@ -209,3 +209,25 @@ func TestPrimaryPaginationAndLateCancellation(t *testing.T) {
 		})
 	}
 }
+
+func TestNodeCordonFlagIsExplicit(t *testing.T) {
+	for _, value := range []bool{false, true} {
+		node := corev1.Node{Spec: corev1.NodeSpec{Unschedulable: value}}
+		record := projectNode(node)
+		found := false
+		for _, field := range record.Fields {
+			if field.Label == "Scheduling" {
+				t.Fatal("ambiguous scheduling label returned")
+			}
+			if field.Label == "Unschedulable (cordoned)" {
+				found = true
+				if field.Value != fmt.Sprint(value) {
+					t.Fatalf("cordon flag inverted: %v", field.Value)
+				}
+			}
+		}
+		if !found {
+			t.Fatal("explicit cordon flag missing")
+		}
+	}
+}
