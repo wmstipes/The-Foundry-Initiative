@@ -46,7 +46,9 @@ session and waits for bounded cleanup before exit; arbitrary Go code is not
 sandboxed or forcibly interrupted.
 
 See the [supported set, version policy, limits, upgrade and rollback procedure](../../docs/design/forgeops-console-c6-compatibility-lifecycle.md).
-C5 export remains unimplemented. Public release acceptance belongs to C7.
+C5 export remains unimplemented. Public release acceptance belongs to C7. See the [C7 candidate and gate record](../../docs/milestones/forgeops-console-c7-release-readiness.md).
+The native candidate archive includes complete startup and verification instructions;
+`--build-info` prints identity without loading kubeconfig or starting a listener.
 
 ## Changing contexts
 

@@ -15,7 +15,7 @@ The repository uses GitHub-hosted controls together with tracked policy:
 - Dependency graph, Dependabot alerts, security updates, grouped security
   updates, secret scanning, push protection, and private vulnerability
   reporting are enabled.
-- Dependabot checks GitHub Actions, Python, npm, and Docker dependencies on a
+- Dependabot checks GitHub Actions, Python, Go modules, npm, and Docker dependencies on a
   weekly schedule. Security updates are separated from patch-only version
   groups so higher-risk minor and major upgrades can be reviewed individually.
 - Trusted reusable GitHub Actions are pinned to full commit SHAs, workflows

@@ -111,13 +111,15 @@ shutdown confirmation was not supplied with the evidence above.
 
 ## Open usability follow-up
 
-**C3-UX-01 — Node scheduling label (open; implementation deferred).** The Node
+**C3-UX-01 — Node scheduling label (C7 fix implemented; candidate review pending).** The original Node
 projection labels `spec.unschedulable` as `Scheduling`, so the observed value
 `false` is ambiguous. It means the unschedulable flag is false, not that
 scheduling is disabled; it does not guarantee that a particular Pod can run
 there. A future approved patch should label the flag explicitly (for example,
 `Unschedulable`) or present a clear cordon state, with regression coverage for
-both boolean values. This reconciliation changes no application code.
+both boolean values. The original reconciliation changed no application code. C7 now labels the
+flag `Unschedulable (cordoned)` and adds regression coverage for both boolean
+values. See the [C7 candidate record](forgeops-console-c7-release-readiness.md).
 
 C4 remains separately gated and unstarted; this walkthrough does not authorize
 logs, Events, or any expanded live operation.

@@ -74,6 +74,8 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
                 ("pip", "/"),
                 ("pip", "/apps/restaurant-api"),
                 ("npm", "/apps/forge-yaml-workbench"),
+                ("gomod", "/apps/forgeops-console"),
+                ("npm", "/apps/forgeops-console/web"),
                 ("docker", "/apps/restaurant-api"),
                 ("docker", "/apps/forge-yaml-workbench"),
             },
@@ -83,8 +85,8 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
         self,
     ) -> None:
         config = read_text(ROOT / ".github" / "dependabot.yml")
-        self.assertEqual(config.count('applies-to: "security-updates"'), 6)
-        self.assertEqual(config.count('applies-to: "version-updates"'), 6)
+        self.assertEqual(config.count('applies-to: "security-updates"'), 8)
+        self.assertEqual(config.count('applies-to: "version-updates"'), 8)
 
         group_blocks = re.findall(
             r"(?m)^      [a-z][a-z-]+:\n(?P<body>(?:^ {8,}.*\n?)*)",
@@ -95,7 +97,7 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
             for block in group_blocks
             if 'applies-to: "version-updates"' in block
         ]
-        self.assertEqual(len(version_groups), 6)
+        self.assertEqual(len(version_groups), 8)
         for block in version_groups:
             with self.subTest(group=block.splitlines()[0]):
                 self.assertIn('update-types:\n          - "patch"', block)

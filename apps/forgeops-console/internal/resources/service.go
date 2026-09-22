@@ -377,7 +377,7 @@ func projectNode(item corev1.Node) Record {
 	}
 	sort.Strings(roles)
 	return Record{Kind: "Node", Name: item.Name, Status: "Ready=" + ready, Fields: []Field{
-		{Label: "Roles", Value: strings.Join(roles, ", ")}, {Label: "Scheduling", Value: strconv.FormatBool(item.Spec.Unschedulable)},
+		{Label: "Roles", Value: strings.Join(roles, ", ")}, {Label: "Unschedulable (cordoned)", Value: strconv.FormatBool(item.Spec.Unschedulable)},
 		{Label: "Kubelet", Value: item.Status.NodeInfo.KubeletVersion}, {Label: "CPU", Value: item.Status.Capacity.Cpu().String()},
 		{Label: "Memory", Value: item.Status.Capacity.Memory().String()}, {Label: "Pods", Value: item.Status.Capacity.Pods().String()},
 	}}

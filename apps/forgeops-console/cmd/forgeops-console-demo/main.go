@@ -25,6 +25,7 @@ import (
 	"k8s.io/client-go/kubernetes/fake"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 
+	console "github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/broker"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/cluster"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/config"
@@ -45,7 +46,11 @@ func main() {
 func run() error {
 	listenAddress := flag.String("listen", "127.0.0.1:9090", "literal loopback listen address")
 	webDirectory := flag.String("web-dir", "", "path to the built browser assets")
+	buildInfo := flag.Bool("build-info", false, "print build identity without loading configuration or starting a listener")
 	flag.Parse()
+	if *buildInfo {
+		return console.PrintBuildInfo()
+	}
 	if *webDirectory == "" {
 		return errors.New("--web-dir is required")
 	}
