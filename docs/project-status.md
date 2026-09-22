@@ -25,6 +25,10 @@ historical evidence rather than being rewritten when the suite grows.
 - Work packages: C1-C4 accepted, C6 compatibility/lifecycle closed, C7 preview
   published. C5's [handoff design](design/forgeops-console-observation-contract.md)
   remains design-only: no exporter or automatic ForgeOps intake is implemented.
+  The source demo has an aligned synthetic routing-before/after illustration;
+  [separate release-identity sources](design/forgeops-brief-release-identity-sources.md)
+  are specified but not displayed in an incident brief. Operator-assisted
+  aligned acceptance remains outstanding.
 - Runtime: local browser interface and loopback-only Go core; one explicit
   kubeconfig, selected context/namespace, fixed typed reads, three compiled
   first-party plugins and bounded selected-Pod diagnostics. No mutation,

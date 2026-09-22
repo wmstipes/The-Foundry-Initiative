@@ -70,9 +70,45 @@ Open `http://127.0.0.1:9090`, verify the synthetic banner, activate
 ownership, and diagnostics, then Service and EndpointSlice details. Record
 which views clarify an investigation question. Stop with Ctrl+C afterward.
 
-This demo has different identities and counts from the ForgeOps corpus.
+The default demo has different identities and counts from the ForgeOps corpus.
 It illustrates available UI operations only; it cannot corroborate the brief
 or measure accuracy against that scenario. Do not execute preview commands.
+
+## Aligned synthetic routing illustration
+
+The later source demo can show two explicitly selected synthetic states for
+the routing-regression fixture. This is a separate exercise from the original
+default demo above, which still has different identities and counts. Build the
+browser from this checkout first (`npm ci` and `npm run build` in
+`apps/forgeops-console/web`). Then, in PowerShell from
+`apps/forgeops-console`, start the first stage:
+
+```powershell
+& 'C:\Program Files\Go\bin\go.exe' run ./cmd/forgeops-console-demo --web-dir ./web/dist --listen 127.0.0.1:9090 --scenario routing-before
+```
+
+Open `http://127.0.0.1:9090`, verify the synthetic banner, activate
+`synthetic-routing-before`, and select `forge-restaurant`. Inspect the
+`synthetic-service` Service and `synthetic-service-demo` EndpointSlice. The
+projected slice should say `3/3 ready`. Stop with Ctrl+C. Start the same
+command with `--scenario routing-after`, activate
+`synthetic-routing-after`, and select `forge-restaurant`. The same Service and
+slice should now say `2/3 ready`. You can inspect the three selected Pods,
+generic synthetic logs and Events, but the data deliberately does not encode
+a cause. Stop with Ctrl+C when finished.
+
+The matching namespace, Service name and endpoint counts allow a bounded
+side-by-side discussion with the fixture's `PASS → FAIL` routing check. The
+Console contexts differ from the fixture's `kubernetes-admin@kubernetes` on
+purpose: these are independently constructed fake-client objects, not captured
+Kubernetes evidence, the source of the ForgeOps fixture, or a validation of
+the brief. No before/after comparison, elapsed-time benefit or operator
+acceptance is established by an automated test. Record the operator's actual
+steps and whether the UI clarified a question before claiming workflow value.
+
+The requested version, release date and verifiable hash for both products are
+separately scoped in the [release-identity source contract](../design/forgeops-brief-release-identity-sources.md).
+The synthetic image names are not release identities.
 
 ## Decision worksheet
 

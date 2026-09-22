@@ -132,9 +132,14 @@ Live access requires separate authorization.
 The later [operator exercise responses](../guides/forgeops-console-c5-operator-exercise.md)
 cover all four synthetic briefs. They identify configuration/connectivity
 inspection needs and request separate application and ForgeOps release identity
-for a stable baseline. These are not shipped features. An aligned synthetic
-Console/ForgeOps run and a source-backed identity contract are the next C5
-admission work before export implementation.
+for a stable baseline. The source demo now has explicit routing-before/after
+states with fixture-aligned Service and endpoint counts; Go tests compare its
+projected slice with the checked-in snapshot observations. The
+[exercise guide](../guides/forgeops-console-c5-operator-exercise.md#aligned-synthetic-routing-illustration)
+preserves their independent synthetic origins. The
+[release-identity source contract](../design/forgeops-brief-release-identity-sources.md)
+is design only. An operator-assisted aligned exercise and evidence of a
+repeatable workflow benefit remain open before export implementation.
 
 **Purpose:** Improve the incident-copilot demonstration and prove
 trustworthiness.

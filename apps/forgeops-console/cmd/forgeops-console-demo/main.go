@@ -47,6 +47,7 @@ func run() error {
 	listenAddress := flag.String("listen", "127.0.0.1:9090", "literal loopback listen address")
 	webDirectory := flag.String("web-dir", "", "path to the built browser assets")
 	buildInfo := flag.Bool("build-info", false, "print build identity without loading configuration or starting a listener")
+	scenario := flag.String("scenario", "default", "synthetic data set: default, routing-before, or routing-after")
 	flag.Parse()
 	if *buildInfo {
 		return console.PrintBuildInfo()
@@ -57,8 +58,12 @@ func run() error {
 	if err := server.ValidateListenAddress(*listenAddress); err != nil {
 		return err
 	}
-	raw := demoConfig()
-	state, err := session.New([]string{"synthetic-demo"})
+	contextName, objects, err := scenarioObjects(*scenario)
+	if err != nil {
+		return err
+	}
+	raw := demoConfig(contextName)
+	state, err := session.New([]string{contextName})
 	if err != nil {
 		return err
 	}
@@ -74,13 +79,18 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	objects := demoObjects()
+	var eventPod *corev1.Pod
 	for _, object := range objects {
 		if pod, ok := object.(*corev1.Pod); ok {
 			pod.UID = types.UID("demo-" + pod.Name)
+			if eventPod == nil {
+				eventPod = pod
+			}
 		}
 	}
-	objects = append(objects, &corev1.Event{ObjectMeta: metav1.ObjectMeta{Name: "synthetic-started", Namespace: "signalforge"}, InvolvedObject: corev1.ObjectReference{Kind: "Pod", Name: "signalforge-api-7f8b9-a1", Namespace: "signalforge", UID: "demo-signalforge-api-7f8b9-a1"}, Type: "Normal", Reason: "Started", Message: "Synthetic example: container started; no cluster connection.", Count: 1})
+	if eventPod != nil {
+		objects = append(objects, &corev1.Event{ObjectMeta: metav1.ObjectMeta{Name: "synthetic-started", Namespace: eventPod.Namespace}, InvolvedObject: corev1.ObjectReference{Kind: "Pod", Name: eventPod.Name, Namespace: eventPod.Namespace, UID: eventPod.UID}, Type: "Normal", Reason: "Started", Message: "Synthetic example: container started; no cluster connection.", Count: 1})
+	}
 	client := fake.NewSimpleClientset(objects...)
 	factory := cluster.ClientFactoryFunc(func(context.Context, *clientcmdapi.Config, string) (kubernetes.Interface, error) { return client, nil })
 	resourceService, err := resources.New(raw, state, factory)
@@ -115,7 +125,7 @@ func run() error {
 	}
 	handler, err := server.New(server.Options{
 		AllowedHost: *listenAddress,
-		Contexts:    []config.ContextSummary{{Name: "synthetic-demo", ClusterName: "synthetic", AuthInfoName: "none"}},
+		Contexts:    []config.ContextSummary{{Name: contextName, ClusterName: "synthetic", AuthInfoName: "none"}},
 		State:       state, Registry: registry, Broker: capabilityBroker, Resources: resourceService,
 		Static: os.DirFS(*webDirectory), Nonce: nonce, Mode: "synthetic-demo",
 	})
@@ -126,16 +136,58 @@ func run() error {
 	shutdownContext, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	log.Printf("ForgeOps Console C4 demo at http://%s (synthetic data only)", *listenAddress)
+	log.Printf("ForgeOps Console demo at http://%s (synthetic scenario %s; no cluster connection)", *listenAddress, *scenario)
 	return server.ListenAndServe(shutdownContext, httpServer, state)
 }
 
-func demoConfig() *clientcmdapi.Config {
+func scenarioObjects(scenario string) (string, []runtime.Object, error) {
+	switch scenario {
+	case "default":
+		return "synthetic-demo", demoObjects(), nil
+	case "routing-before":
+		return "synthetic-routing-before", routingRegressionObjects(false), nil
+	case "routing-after":
+		return "synthetic-routing-after", routingRegressionObjects(true), nil
+	default:
+		return "", nil, errors.New("unsupported synthetic scenario")
+	}
+}
+
+func demoConfig(contextName string) *clientcmdapi.Config {
 	return &clientcmdapi.Config{
-		Contexts:  map[string]*clientcmdapi.Context{"synthetic-demo": {Cluster: "synthetic", AuthInfo: "none"}},
+		Contexts:  map[string]*clientcmdapi.Context{contextName: {Cluster: "synthetic", AuthInfo: "none"}},
 		Clusters:  map[string]*clientcmdapi.Cluster{"synthetic": {Server: "https://synthetic.invalid", CertificateAuthorityData: []byte("synthetic")}},
 		AuthInfos: map[string]*clientcmdapi.AuthInfo{"none": {}},
 	}
+}
+
+// routingRegressionObjects deliberately shares the fixture's Service name,
+// namespace and endpoint counts, but is independent synthetic Kubernetes data.
+func routingRegressionObjects(after bool) []runtime.Object {
+	const namespace = "forge-restaurant"
+	const serviceName = "synthetic-service"
+	replicas := int32(3)
+	controller := true
+	portName := "http"
+	port := int32(8000)
+	protocol := corev1.ProtocolTCP
+	deploymentUID := typesUID("synthetic-restaurant-deployment")
+	rsUID := typesUID("synthetic-restaurant-replicaset")
+	objects := []runtime.Object{
+		&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}, Status: corev1.NamespaceStatus{Phase: corev1.NamespaceActive}},
+		&appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: "restaurant-api", Namespace: namespace, UID: deploymentUID}, Spec: appsv1.DeploymentSpec{Replicas: &replicas, Selector: &metav1.LabelSelector{MatchLabels: map[string]string{"app": "restaurant-api"}}}, Status: appsv1.DeploymentStatus{Replicas: 3, ReadyReplicas: 3, AvailableReplicas: 3}},
+		&appsv1.ReplicaSet{ObjectMeta: metav1.ObjectMeta{Name: "restaurant-api-demo", Namespace: namespace, UID: rsUID, OwnerReferences: []metav1.OwnerReference{{APIVersion: "apps/v1", Kind: "Deployment", Name: "restaurant-api", UID: deploymentUID, Controller: &controller}}}, Spec: appsv1.ReplicaSetSpec{Replicas: &replicas, Selector: &metav1.LabelSelector{MatchLabels: map[string]string{"app": "restaurant-api"}}}, Status: appsv1.ReplicaSetStatus{Replicas: 3, ReadyReplicas: 3, AvailableReplicas: 3}},
+	}
+	for i := 1; i <= 3; i++ {
+		objects = append(objects, &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: fmt.Sprintf("restaurant-api-demo-%d", i), Namespace: namespace, Labels: map[string]string{"app": "restaurant-api"}, OwnerReferences: []metav1.OwnerReference{{APIVersion: "apps/v1", Kind: "ReplicaSet", Name: "restaurant-api-demo", UID: rsUID, Controller: &controller}}}, Spec: corev1.PodSpec{Containers: []corev1.Container{{Name: "api", Image: "synthetic/restaurant-api:demo"}}}, Status: corev1.PodStatus{Phase: corev1.PodRunning, ContainerStatuses: []corev1.ContainerStatus{{Name: "api", Ready: true}}}})
+	}
+	objects = append(objects, &corev1.Service{ObjectMeta: metav1.ObjectMeta{Name: serviceName, Namespace: namespace}, Spec: corev1.ServiceSpec{Type: corev1.ServiceTypeClusterIP, Selector: map[string]string{"app": "restaurant-api"}, Ports: []corev1.ServicePort{{Name: portName, Port: 80, Protocol: protocol, TargetPort: intstr.FromInt32(port)}}}})
+	endpoints := make([]discoveryv1.Endpoint, 3)
+	for i := range endpoints {
+		endpoints[i] = discoveryv1.Endpoint{Addresses: []string{fmt.Sprintf("192.0.2.%d", i+1)}, Conditions: discoveryv1.EndpointConditions{Ready: boolPointer(!after || i < 2)}}
+	}
+	objects = append(objects, &discoveryv1.EndpointSlice{ObjectMeta: metav1.ObjectMeta{Name: "synthetic-service-demo", Namespace: namespace, Labels: map[string]string{discoveryv1.LabelServiceName: serviceName}}, AddressType: discoveryv1.AddressTypeIPv4, Ports: []discoveryv1.EndpointPort{{Name: &portName, Port: &port, Protocol: &protocol}}, Endpoints: endpoints})
+	return objects
 }
 
 func demoObjects() []runtime.Object {
