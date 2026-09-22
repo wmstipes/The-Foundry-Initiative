@@ -4,8 +4,9 @@
 
 Planning started after C5 boundary-design PR #106 merged at `c8abc6d` and the
 operator confirmed laptop sync. The operator asked to move forward and raised
-multi-context/EKS usability. This is a planning proposal, not acceptance of
-all C6 implementation gates or authority to access a cloud cluster.
+multi-context/EKS usability. The original proposal is retained below; the
+implementation and bounded closeout are recorded here. This does not authorize
+cloud cluster access or a public release.
 
 C6 should prove that the existing built-in plugins can evolve predictably and
 prepare a future release. The recommended distribution decision is to retain
@@ -18,7 +19,7 @@ After reviewing the handoff and focused architecture assessment, the operator
 asked to move forward. The resulting bounded implementation addresses five
 findings: incomplete relationships presented without warnings, stale browser
 selections, misleading panic outcomes, unjoined shutdown, and unchecked
-browser/core pairing. This is local implementation and offline verification;
+browser/core pairing. The initial evidence was local implementation and offline verification;
 it does not treat PR #107's merge as authority for cloud/cluster access or a
 public release.
 
@@ -28,16 +29,50 @@ upgrade/rollback procedure and explicitly deferred work.
 
 | Gate | Current evidence / remaining acceptance |
 | --- | --- |
-| 1 — Scope | Built-in-only decision retained in implementation; operator reviews the concrete candidate in the PR. |
+| 1 — Scope | Built-in-only decision retained in implementation; operator accepted the concrete candidate through merged PR #108. |
 | 2 — Compatibility | Actual supported set inventoried; missing declared handlers and unsupported browser contributions rejected; exact source pairing implemented. |
 | 3 — Lifecycle | Targeted stale-state, panic, cancellation and shutdown fixes implemented with offline tests; no process isolation claimed. |
 | 4 — Packaging decision | Matched source identity and whole-pair upgrade/rollback procedure defined; no public distribution. |
-| 5 — Verification | Go race tests, browser tests/build, locked module graph, both executable builds and synthetic matched/mismatched/restored-pair rehearsal pass locally; Windows/live and historical-release acceptance remain unperformed. |
-| 6 — Review | Documentation and test inventory reconciled; PR publication/checks, operator merge and laptop sync remain separate pending steps. |
+| 5 — Verification | Go race tests, browser tests/build, locked module graph, both executable builds and synthetic matched/mismatched/restored-pair rehearsal pass locally; the Windows demo smoke check also passed, but resources tests were blocked before execution. Live and historical-release acceptance remain unperformed. |
+| 6 — Review | Documentation and test inventory reconciled; PR #108 merged at `66bf21c39fb5fba08241bd4af741f7fb333a885a`; PR checks passed, operator confirmed green workflows and laptop sync, and approved closeout with the Windows test limitation. |
 
 The [testing guide](../testing-and-validation.md#console-c6-local-validation)
 records 54 Go test functions and 19 Vitest cases, separately from 248 existing
 top-level Python cases. No new tests merely assert planning prose.
+
+## Bounded closeout — 2026-09-22
+
+[PR #108](https://github.com/wmstipes/The-Foundry-Initiative/pull/108) merged
+at `66bf21c39fb5fba08241bd4af741f7fb333a885a`. Required Validation and
+Repository Security Validation passed on the PR. The operator reported green
+workflows after merge and supplied the matching laptop HEAD.
+
+Windows evidence is operator-provided terminal output and smoke-check results:
+
+- All 19 Vitest cases and the production frontend build passed.
+- The production Go executable build returned exit code 0; the operator also
+  successfully built and launched the separate synthetic demo.
+- Other Go packages passed, some from cache. `internal/resources` did not run:
+  Windows Application Control blocked the generated `resources.test.exe`
+  before execution (Code Integrity event 3077). Smart App Control was On;
+  the specific policy was not resolved from a policy-loading event.
+- The operator confirmed the synthetic banner, context activation, namespace
+  selection, Pod-to-Service transition clearing old rows and selection, and
+  prompt return after Ctrl+C, with no errors.
+
+The operator approved moving forward with this limitation recorded. C6's
+compiled-first-party scope and implementation review are closed; full Windows
+Go test validation remains incomplete. Successful compilation and the demo
+smoke check do not replace the blocked resources tests. No security settings
+were changed as part of this acceptance workflow.
+
+Before claiming full Windows support, resolve the application-control conflict
+through an approved development/signing setup and execute the blocked resources
+suite. No additional tests are justified by this OS launch block. Windows
+mismatched-bundle rejection, historical-release rollback, production startup
+with kubeconfig, and live-cluster behavior were not verified by this smoke check.
+C7 must define release acceptance independently; this closeout does not publish
+a release or complete C5 export and aligned operator acceptance.
 
 ## Baseline to evaluate
 

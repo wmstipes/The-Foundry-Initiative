@@ -130,9 +130,20 @@ This integration check is also added to the existing Console browser CI job.
 It is one standalone rehearsal, not an additional unittest or Vitest case.
 
 The source fingerprint establishes matched inputs, not signed provenance or
-compiled-byte authenticity. No live cluster, EKS, Windows runtime, historical
-release rollback, or C5 export acceptance is claimed. PR workflow results and
-operator merge are separate evidence. See the [C6 implementation and limits](design/forgeops-console-c6-compatibility-lifecycle.md).
+compiled-byte authenticity. These initial local checks did not establish live
+cluster, EKS, Windows runtime, historical-release rollback, or C5 export
+acceptance. PR #108 subsequently merged with passing PR checks.
+
+On 2026-09-22, the operator verified the merged revision on Windows: all 19
+Vitest cases, frontend build, production executable build, and synthetic-demo
+build/startup/browser transitions/Ctrl+C shutdown passed. The Go suite remained
+incomplete: Application Control blocked `internal/resources` test execution
+(event 3077), while other packages passed, some from cache. Smart App Control
+was On. This is a launch block, not a failed assertion or a passing resources
+suite. No additional tests or inventory changes result from this closeout.
+Full Windows support requires resolving the execution block and running that
+suite; the demo does not establish live or historical-release acceptance.
+See the [operator closeout record](milestones/forgeops-console-c6-plugin-compatibility-planning.md#bounded-closeout--2026-09-22). See the [C6 implementation and limits](design/forgeops-console-c6-compatibility-lifecycle.md).
 
 ## What the suites cover
 
