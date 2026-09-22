@@ -21,8 +21,8 @@ package label. A public release is held when evidence is incomplete.
 | 1 — Scope and support | Separate candidate targets from supported OS/browser/Kubernetes claims; record exclusions | Defined below; no public support claim |
 | 2 — Security and dependencies | Audit credential, loopback and plugin boundaries; locked dependencies and notices; review vulnerability results | Existing protections inspected; installed boundary checks added; final release security review remains open |
 | 3 — Candidate packaging | Build committed source, pair both executables/browser, identify exact inputs and hash packaged bytes | Native builder and informational `--build-info` implemented; unsigned, no publisher attestation |
-| 4 — Installed acceptance and rollback | Execute extracted files outside checkout, reject damaged pairs, restore complete pair; operator checks exact archive | Automated verifier and exact-archive Windows UI/Ctrl+C checks passed on 2026-09-22; historical-pair rollback remains open |
-| 5 — Usability and accessibility | Labels, native semantics, keyboard focus and responsive layout checked; operator keyboard/zoom/screen-reader evidence | Edge keyboard/focus and 200% zoom/narrow-window checks passed; screen-reader acceptance remains open |
+| 4 — Installed acceptance and rollback | Execute extracted files outside checkout, reject damaged pairs, restore complete pair; operator checks exact archive | Automated verifier and Windows synthetic/live UI/Ctrl+C checks passed on 2026-09-22; historical-release rollback is not applicable to the first Console release (see disposition below) |
+| 5 — Usability and accessibility | Labels, native semantics, keyboard focus and responsive layout checked; operator keyboard/zoom/screen-reader evidence | Edge keyboard/focus, zoom/narrow-window and focused Narrator checks passed; no accessibility conformance claim |
 | 6 — Review and release decision | Review PR checks, exact candidate hashes, support matrix and unresolved risks; publish only accepted assets | Candidate review; public version, tag and release held pending evidence |
 
 ## Architecture and security assessment
@@ -87,8 +87,8 @@ same-pair restoration check.
 | Linux amd64 | Source checks and native extracted-candidate rehearsal; distro-specific public support remains undecided |
 | Windows amd64 CI | Native tests/build/installed rehearsal required by the matrix; no Smart App Control policy equivalence claimed |
 | Mike's Windows laptop | C7 packaged verifier and five manual checks passed for run 35768592178. The earlier C6 resources-test Application Control block remains unresolved |
-| Browser | Microsoft Edge 153.0.4234.48 (Official build), 64-bit: exact-archive keyboard/focus, zoom and narrow-window checks passed; screen-reader review pending |
-| Kubernetes | client-go v0.36.4 pinned; historical SignalForge v1.36.4 walkthroughs are context, not a public compatibility range or C7 live acceptance |
+| Browser | Microsoft Edge 153.0.4234.48 (Official build), 64-bit: exact-archive keyboard/focus, zoom and narrow-window checks passed; focused Narrator walkthrough passed |
+| Kubernetes | client-go v0.36.4 pinned; exact C7 Windows candidate passed bounded SignalForge live reads; server version was not re-measured in this check and no compatibility range is claimed |
 | EKS, macOS, arm64, mesh | Not accepted or exercised in this candidate |
 
 The misleading Node `Scheduling` boolean now reads `Unschedulable (cordoned)`;
@@ -101,13 +101,16 @@ After CI and merge, download the native candidate for the exact reviewed commit,
 verify its SHA-256, and use the packaged README's synthetic keyboard/zoom and
 Ctrl+C checks. Record archive digest, OS/browser versions and failures. A policy
 block is a blocked result, never a passing test; do not bypass Windows controls.
-If the laptop resources suite remains blocked, public Windows support stays
-conditional on a reviewed resolution and execution of that suite.
+The laptop resources test remains blocked, not passed. For a narrowly scoped
+engineering preview, this is a disclosed development-test limitation rather
+than evidence of a shipped runtime failure: hosted native Windows tests and
+the installed laptop candidate passed. No blanket Windows or application-control
+policy compatibility is claimed, and no security-control bypass is prescribed.
 
-Live compatibility testing needs an explicitly selected cluster and bounded
-read scope. This work performs no cluster operation. C7 approval does not supply
-credentials or identify a live target; use synthetic fixtures until those
-concrete inputs are available. C5 export and aligned operator acceptance remain
+Live compatibility testing requires an explicitly selected cluster and bounded
+read scope. The operator subsequently supplied the SignalForge target and
+completed the installed-candidate walkthrough recorded below. Automated
+verification remains synthetic-only; the assistant performed no cluster operation. C5 export and aligned operator acceptance remain
 separate and must not be advertised as delivered.
 
 ## Validation record
@@ -170,14 +173,17 @@ separate from hosted CI and the earlier source-built C6 demo.
   `10713232162`; inner archive
   `forgeops-console-candidate-af0f3ec54d84-windows-amd64.zip`.
 - Browser: Microsoft Edge `153.0.4234.48` (Official build), 64-bit.
-- OS: Windows; exact Windows edition/build was not supplied.
+- OS: Windows 11 Pro, version 25H2, build `26200.9457`, x64 (operator screenshot).
+- Inner ZIP SHA-256, supplied by the operator using `Get-FileHash`:
+  `037841539937826dc3f6094bc3fcbf29529bb4ea17948e69d94ee11246f2d801`.
 
 The supplied command block checks the inner archive against its adjacent
 SHA256SUMS before running the verifier and stops on failure. The terminal
 output reports PASS for archive integrity, installed identity, loopback/nonce
 boundaries, synthetic reads, production offline bootstrap, mismatched-pair
-rejection and restoration. The digest itself was not printed in the submitted
-transcript; do not substitute the GitHub outer artifact digest for it.
+rejection and restoration. The operator subsequently supplied the inner ZIP
+digest above. It is distinct from the GitHub outer artifact digest; the assistant
+did not independently rehash the laptop archive.
 
 | Manual check on the extracted candidate | Operator result |
 | --- | --- |
@@ -192,9 +198,60 @@ It is not a failed check. The separate operator Ctrl+C result supplies manual
 shutdown evidence for this exact candidate; it does not turn forced automated
 termination into graceful-shutdown coverage.
 
-This accepts the bounded synthetic Windows/Edge candidate exercise. It does
-not establish screen-reader conformance, historical-release rollback, live
-Kubernetes compatibility, broad Windows support, or resolution of the earlier
-resources-test policy block. Production bootstrap used only the verifier's
-synthetic configuration; no live cluster access or diagnostic disclosure was
-performed. Public release remains held on the remaining C7 evidence.
+This initial exercise accepted bounded synthetic Windows/Edge behavior.
+Production bootstrap in the automated verifier used only synthetic configuration.
+The subsequent operator live and Narrator checks below extend that evidence;
+they do not change the verifier's coverage.
+
+## Live and Narrator operator acceptance — 2026-09-22
+
+The operator used the same installed Windows candidate from run 35768592178,
+then reported all live checks completed successfully with no errors.
+
+- Explicit configuration: `%USERPROFILE%\.kube\config-signalforge`.
+- Context: `kubernetes-admin@kubernetes`; namespace: `forge-restaurant`.
+- Production banner, context activation and namespace discovery: passed.
+- Pod listing and selected details, then Service listing with the previous Pod
+  selection cleared: passed.
+- Ctrl+C returned promptly to PowerShell: passed.
+
+This is real-cluster read acceptance for the selected SignalForge environment.
+The credential is an administrator identity; Console's read-only operation set
+does not reduce its Kubernetes permissions. No cluster writes, live logs or
+Events were requested in this walkthrough. The server version was not captured
+again, so the historical v1.36.4 record is not promoted to a fresh version check.
+No credential contents were supplied to the assistant.
+
+The operator then returned to the synthetic demo in Edge and reported each
+focused Windows Narrator area passed:
+
+| Spoken-output area | Operator result |
+| --- | --- |
+| Context/namespace labels, values and scope controls | Passed |
+| Pod name, selected state and reading object details | Passed |
+| Diagnostics checkbox/container/buttons and reading the Events command preview | Passed |
+
+These results are separate from the earlier 200% zoom/narrow-window checks.
+They establish a focused Narrator usability walkthrough, not comprehensive
+screen-reader coverage or accessibility-standard conformance. No new automated
+test was added for these operator observations.
+
+## First-release disposition and remaining release work
+
+Historical Console release rollback is **not applicable** to the first Console
+release: the existing ForgeOps v1.0.0 release is a separate product, not an older
+Console package. Keep the passed complete-pair restoration evidence and the
+documented stop/remove procedure. Do not claim that historical rollback or
+manual removal was tested. A later Console upgrade must evaluate rollback to
+its actual predecessor.
+
+The earlier local Application Control block remains an unresolved source-test
+execution limitation. It does not negate the successful installed candidate.
+Any initial preview must retain the unsigned-package and narrowly tested
+environment disclosures; broad Windows support remains unestablished.
+
+No repeat of the accepted operator checks is required for this documentation
+update. Final release work is to reconcile the exact candidate's dependency
+review, define the public preview's version/support scope, and review the exact
+assets for publication. Public version/tag/release remains **HOLD** pending that
+decision; this record does not publish assets or certify untested environments.
