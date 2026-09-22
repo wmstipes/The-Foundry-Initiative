@@ -1,6 +1,6 @@
 # Project Status
 
-**Last updated:** 2026-09-21
+**Last updated:** 2026-09-22
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
@@ -17,7 +17,10 @@ historical evidence rather than being rewritten when the suite grows.
 
 ## Current ForgeOps Console state
 
-- Work package: C4 bounded Pod diagnostics
+- Planning work package: [C5 reviewed evidence boundary](milestones/forgeops-console-c5-evidence-boundary-planning.md);
+  planning requested, implementation approval pending. ForgeFire is captured
+  as a separate future proposal; no fault injection is authorized.
+- Accepted work package: C4 bounded Pod diagnostics
 - Status: accepted through PR #103 at `7910f0a`; published CI passed and the
   separately authorized bounded live walkthrough passed on 2026-09-21
 - Intended form: local browser application served by a loopback-only Go core
