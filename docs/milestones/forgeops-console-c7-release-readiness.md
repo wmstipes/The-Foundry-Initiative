@@ -133,3 +133,27 @@ See [testing and validation](../testing-and-validation.md) and the
 The release decision remains **HOLD** until the remaining gate evidence above
 is recorded; approved work may continue without treating missing evidence as
 an additional permission request.
+
+## Post-merge validation follow-up — 2026-09-22
+
+PR #110 merged at `10cad54be5aafc89554467e3f9d89a67b1d8c9d5` after green
+PR checks. Main run 35764635209 then failed in Windows installed production
+verification: a denial request received WinError 10054 instead of a readable
+403 response. Both executables had built, and the other main validation jobs
+passed. The original log did not identify which of the three denial probes
+reset; this is a transport failure, not evidence that an unauthorized request
+was accepted.
+
+The verifier previously sent an unnecessary JSON body to the bodyless activity
+endpoint. It now sends an explicit empty POST for the nonce check, avoiding
+that early-rejection/body timing path, closes error responses, and identifies
+Host/Origin/nonce in any subsequent failure. The requirement remains exactly
+HTTP 403; resets and timeouts still fail. No application authorization check,
+security policy or test gate is weakened. Existing native installed rehearsals
+provide the relevant regression check; no extra prose tests are added.
+
+Dependabot's separate Kubernetes v0.37.0 PRs are not merged acceptance: PR #111
+hits the existing v0.36.4 policy assertion; PR #112 mixes module versions and
+fails compilation. Its attempt to update k8s.io/api alone also failed dependency
+resolution. Patch-only grouping does not prohibit individual minor/major PRs.
+Keep the accepted module set until a coordinated update is reviewed separately.
