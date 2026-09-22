@@ -14,6 +14,18 @@ EndpointSlice details. This supports designing a reviewed handoff; it does not
 prove a repeated workflow benefit, measure time saved, or establish an automated
 consumer. See the [exercise record](../guides/forgeops-console-c5-operator-exercise.md).
 
+The later exercise responses also request configuration and connectivity
+inspection, plus separately labeled release identity for the running
+application and the ForgeOps build that produced a brief. These are follow-up
+requirements, not fields of this exact `v1alpha1` candidate. The application
+image digest, a package checksum, a release tag, an observation time and a
+release date have different meanings. Any future identity display must name
+the artifact and hash algorithm, distinguish an unavailable value from a
+verified one, and define where its release date and expected digest came from.
+Do not silently copy names or image details into this disclosure-limited
+observation format or imply that a digest establishes live health or publisher
+authenticity.
+
 Decision: design a minimal human-readable handoff and a separate structured
 observation artifact. Defer automatic ForgeOps ingestion. Optional diagnostic
 excerpts belong in the human handoff only. They must never be implicitly

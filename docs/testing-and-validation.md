@@ -99,6 +99,9 @@ The [operator exercise](guides/forgeops-console-c5-operator-exercise.md) records
 actual feedback separately from unperformed comparative checks. The
 [candidate contract](design/forgeops-console-observation-contract.md) lists
 future hostile-input, disclosure, lifecycle, and compatibility acceptance.
+All four exercise prompts now have conversational operator feedback; no new
+Console fixture run, comparative timing, or release-identity verification was
+performed by that discussion.
 No export implementation, candidate validator, new consumer, live access, or
 fault injection was tested or delivered. PR checks and merge remain separate
 from these local results.

@@ -43,13 +43,16 @@ with the scenario path changed. Keep generated files outside the repository.
 | Scenario | Discussion prompt | Operator response |
 | --- | --- | --- |
 | routing-regression | What observation would help investigate the changed routing check? Is viewing enough, or does it need a consumer outside Console? | Operator would inspect Pod Events/logs first, then Service/EndpointSlice details; wants save/share support for help, incident records, and future ForgeOps use. |
-| incomplete-evidence | Can you distinguish unavailable Metrics API evidence from a proved workload failure? Current Console views do not fill this gap. | Automated rehearsal only; no separate operator response recorded. |
-| routing-recovery | What does RECOVERED tell you, and what remains unknown about cause and durability? | Automated rehearsal only; no separate operator response recorded. |
-| stable-baseline | Is STABLE useful even without a new incident? What question remains unanswered, if any? | Automated rehearsal only; no separate operator response recorded. |
+| incomplete-evidence | Can you distinguish unavailable Metrics API evidence from a proved workload failure? Current Console views do not fill this gap. | Operator would inspect logs, configuration YAML, network connections and ports; other resources might help. The synthetic Metrics API check timed out, so UNKNOWN is incomplete evidence, not a proved workload failure. Console has selected-Pod logs/Events and bounded Service/EndpointSlice projections, but no raw configuration YAML, connection tests or Metrics APIService view. |
+| routing-recovery | What does RECOVERED tell you, and what remains unknown about cause and durability? | Operator would confirm data flow, review affected Pod logs, check reachability to previously unreachable data sources, and possibly trace the network route. Console can show selected-Pod logs but does not run connectivity or traceroute tests. One point-in-time PASS does not prove durable recovery. |
+| stable-baseline | Is STABLE useful even without a new incident? What question remains unanswered, if any? | Operator wants exact version, release date and a verifiable hash for both the running application and the evidence-producing ForgeOps build, labeled separately. The current brief does not carry all of those identities. Missing values must be explicit; a digest does not prove a live workload is healthy or authenticate its publisher. |
 
 For each response record the baseline answer and steps, Console contribution
 and steps, remaining uncertainty, and disclosure concerns. Do not infer
 feedback or improved investigation speed from the successful replays.
+The three later answers were given in conversation on 2026-09-22 after reading
+brief summaries. They are requirements feedback, not observed Console use or
+timed execution of these scenarios by the operator.
 
 ## Console-assisted illustration
 
@@ -73,12 +76,19 @@ or measure accuracy against that scenario. Do not execute preview commands.
 
 ## Decision worksheet
 
-- Operator question: investigating why a routing check degraded; recurrence
-  and measured workflow benefit have not been demonstrated.
+- Operator questions: investigate a degraded routing check; distinguish missing
+  Metrics API evidence from workload failure; verify recovery; identify the
+  releases behind a stable baseline. Recurrence and measured workflow benefit
+  have not been demonstrated.
 - Baseline answer: the CLI identifies the changed check, state, uncertainty,
   and runbook reference. It does not establish cause.
 - Desired Console contribution: inspect Pod Events/logs first, then routing
   details. This is the operator's chosen sequence, not an observed timed run.
+- Additional needs: configuration and port inspection, connectivity checks,
+  and separately labeled application and ForgeOps release identities. These are
+  operator requests, not implemented Console capabilities or validated
+  evidence fields. Define the exact artifact, source, release date semantics,
+  digest algorithm and unavailable state before adding identity to a brief.
 - Requested consumers: a human helper, later incident review, and future
   ForgeOps comparison/briefing. Only the first two have a defined human
   consumption path today; machine intake remains unsupported.
@@ -89,10 +99,12 @@ or measure accuracy against that scenario. Do not execute preview commands.
 - Decision: admit the design for a reviewed human handoff; defer exporter
   implementation and automatic ForgeOps integration until contract review,
   implementation acceptance, and an aligned end-to-end exercise.
-- Evidence limit: no comparative click counts, elapsed times, aligned Console
-  fixture run, or operator answers for the other three cases were obtained.
+- Evidence limit: no comparative click counts, elapsed times, or aligned
+  Console fixture run were obtained. Answers for all four scenarios are now
+  recorded; only the first was discussed when the C5 design was accepted.
 
-This closes the requirements discussion for the design candidate, not proof
-that an integrated product improves investigation. Those unperformed checks
-remain acceptance prerequisites for any implementation. Live access,
+This records the requirements discussion for the design candidate, not proof
+that an integrated product improves investigation. The unperformed aligned
+exercise and acceptance checks remain prerequisites for any export
+implementation. Live access,
 ForgeFire, and the proposed Istio learning milestone remain separate.

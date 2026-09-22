@@ -129,6 +129,12 @@ with structured facts and optional human-only diagnostic excerpts. No exporter
 or ForgeOps intake is implemented. Aligned end-to-end acceptance and repeated
 benefit remain unproven; implementation admission requires those checks.
 Live access requires separate authorization.
+The later [operator exercise responses](../guides/forgeops-console-c5-operator-exercise.md)
+cover all four synthetic briefs. They identify configuration/connectivity
+inspection needs and request separate application and ForgeOps release identity
+for a stable baseline. These are not shipped features. An aligned synthetic
+Console/ForgeOps run and a source-backed identity contract are the next C5
+admission work before export implementation.
 
 **Purpose:** Improve the incident-copilot demonstration and prove
 trustworthiness.
