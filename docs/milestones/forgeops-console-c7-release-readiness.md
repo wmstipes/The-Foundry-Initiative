@@ -21,8 +21,8 @@ package label. A public release is held when evidence is incomplete.
 | 1 — Scope and support | Separate candidate targets from supported OS/browser/Kubernetes claims; record exclusions | Defined below; no public support claim |
 | 2 — Security and dependencies | Audit credential, loopback and plugin boundaries; locked dependencies and notices; review vulnerability results | Existing protections inspected; installed boundary checks added; final release security review remains open |
 | 3 — Candidate packaging | Build committed source, pair both executables/browser, identify exact inputs and hash packaged bytes | Native builder and informational `--build-info` implemented; unsigned, no publisher attestation |
-| 4 — Installed acceptance and rollback | Execute extracted files outside checkout, reject damaged pairs, restore complete pair; operator checks exact archive | Automated verifier implemented; exact-archive Windows UI/Ctrl+C and historical-pair rollback remain open |
-| 5 — Usability and accessibility | Labels, native semantics, keyboard focus and responsive layout checked; operator keyboard/zoom/screen-reader evidence | Concrete source issues corrected; browser assistive-technology acceptance remains open |
+| 4 — Installed acceptance and rollback | Execute extracted files outside checkout, reject damaged pairs, restore complete pair; operator checks exact archive | Automated verifier and exact-archive Windows UI/Ctrl+C checks passed on 2026-09-22; historical-pair rollback remains open |
+| 5 — Usability and accessibility | Labels, native semantics, keyboard focus and responsive layout checked; operator keyboard/zoom/screen-reader evidence | Edge keyboard/focus and 200% zoom/narrow-window checks passed; screen-reader acceptance remains open |
 | 6 — Review and release decision | Review PR checks, exact candidate hashes, support matrix and unresolved risks; publish only accepted assets | Candidate review; public version, tag and release held pending evidence |
 
 ## Architecture and security assessment
@@ -86,8 +86,8 @@ same-pair restoration check.
 | --- | --- |
 | Linux amd64 | Source checks and native extracted-candidate rehearsal; distro-specific public support remains undecided |
 | Windows amd64 CI | Native tests/build/installed rehearsal required by the matrix; no Smart App Control policy equivalence claimed |
-| Mike's Windows laptop | C6 source-built demo passed; resources test executable was blocked by Application Control with Smart App Control On. C7 archive is a new acceptance target |
-| Browser | Native list semantics, current/pressed state, visible focus and intermediate-width layout improved; exact-archive keyboard/zoom and screen-reader review pending |
+| Mike's Windows laptop | C7 packaged verifier and five manual checks passed for run 35768592178. The earlier C6 resources-test Application Control block remains unresolved |
+| Browser | Microsoft Edge 153.0.4234.48 (Official build), 64-bit: exact-archive keyboard/focus, zoom and narrow-window checks passed; screen-reader review pending |
 | Kubernetes | client-go v0.36.4 pinned; historical SignalForge v1.36.4 walkthroughs are context, not a public compatibility range or C7 live acceptance |
 | EKS, macOS, arm64, mesh | Not accepted or exercised in this candidate |
 
@@ -157,3 +157,44 @@ hits the existing v0.36.4 policy assertion; PR #112 mixes module versions and
 fails compilation. Its attempt to update k8s.io/api alone also failed dependency
 resolution. Patch-only grouping does not prohibit individual minor/major PRs.
 Keep the accepted module set until a coordinated update is reviewed separately.
+
+## Packaged Windows operator acceptance — 2026-09-22
+
+The operator supplied terminal output and confirmed all five requested manual
+checks passed without errors. This is operator-observed laptop evidence,
+separate from hosted CI and the earlier source-built C6 demo.
+
+- Source revision: `af0f3ec54d842c876e63ccc6cba9c7029756d2f0`.
+- Successful main Required Validation run: [35768592178](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/35768592178).
+- Windows artifact: `forgeops-console-candidate-windows-latest`, ID
+  `10713232162`; inner archive
+  `forgeops-console-candidate-af0f3ec54d84-windows-amd64.zip`.
+- Browser: Microsoft Edge `153.0.4234.48` (Official build), 64-bit.
+- OS: Windows; exact Windows edition/build was not supplied.
+
+The supplied command block checks the inner archive against its adjacent
+SHA256SUMS before running the verifier and stops on failure. The terminal
+output reports PASS for archive integrity, installed identity, loopback/nonce
+boundaries, synthetic reads, production offline bootstrap, mismatched-pair
+rejection and restoration. The digest itself was not printed in the submitted
+transcript; do not substitute the GitHub outer artifact digest for it.
+
+| Manual check on the extracted candidate | Operator result |
+| --- | --- |
+| Synthetic banner, context activation and signalforge namespace selection | Passed, no errors |
+| Pod/Service transitions clear previous rows and selection | Passed, no errors |
+| Tab/Shift+Tab/Enter navigation and visible focus | Passed, no errors |
+| Readability at 200% zoom and in a narrow window | Passed, no errors |
+| Ctrl+C returns promptly to PowerShell | Passed, no errors; terminal prompt shown |
+
+The verifier's LIMIT line describes its own forced Windows process cleanup.
+It is not a failed check. The separate operator Ctrl+C result supplies manual
+shutdown evidence for this exact candidate; it does not turn forced automated
+termination into graceful-shutdown coverage.
+
+This accepts the bounded synthetic Windows/Edge candidate exercise. It does
+not establish screen-reader conformance, historical-release rollback, live
+Kubernetes compatibility, broad Windows support, or resolution of the earlier
+resources-test policy block. Production bootstrap used only the verifier's
+synthetic configuration; no live cluster access or diagnostic disclosure was
+performed. Public release remains held on the remaining C7 evidence.
