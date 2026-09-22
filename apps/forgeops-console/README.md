@@ -29,6 +29,29 @@ exec plugins, auth-provider plugins, secondary credential files, proxies,
 insecure TLS, and impersonation. A separate synthetic-demo entry point uses a
 fake client and never loads kubeconfig.
 
+## Changing contexts
+
+The context dropdown lists contexts from the single explicit `--kubeconfig`
+file loaded when the core starts. Choose a context, click **Activate**, then
+choose a namespace and click **Set scope**. Activation resets the namespace,
+clears current resource/diagnostic selections, and creates a new generation.
+It does not change the kubeconfig's `current-context`.
+
+To add contexts, update that file using your usual trusted configuration
+workflow, then stop and restart Console with the same explicit file. To use a
+different file, restart with that file's `--kubeconfig` path. Browser refresh
+alone does not reload the file. Console does not merge ambient KUBECONFIG
+paths, discover other files, or offer browser-side credential upload.
+
+Context discovery does not establish authentication support or access. Standard
+EKS kubeconfigs use executable AWS credential retrieval (`aws eks get-token`);
+the current production client rejects exec credential plugins, so such a
+context may appear but its cluster reads fail. Do not remove this restriction
+or copy temporary tokens into files as a suggested workaround. Cloud
+authentication needs an explicit reviewed design. See
+[AWS EKS kubeconfig documentation](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)
+and the [C6 planning proposal](../../../docs/milestones/forgeops-console-c6-plugin-compatibility-planning.md).
+
 ## Pod diagnostics
 
 Select a Pod, review the sensitive-data warning, then explicitly select a
