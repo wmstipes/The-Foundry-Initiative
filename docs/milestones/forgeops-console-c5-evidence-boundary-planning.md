@@ -3,8 +3,11 @@
 ## Status and decision
 
 Planning requested by the operator on 2026-09-22 after C4 closeout merged
-through PR #104. This document proposes C5 scope and six gates; it does not
-record implementation approval or completed C5 acceptance.
+through PR #104. The plan merged through PR #105 at `da9acdd`. After syncing
+the laptop, the operator approved C5's planned work and all six control gates.
+That approval permits the bounded work; it does not establish completed gate
+acceptance, authorize live access, or admit an export contract without the
+required need assessment.
 
 C5 asks: **Does an explicitly selected Console observation help the operator
 understand a ForgeOps incident brief enough to justify another evidence
@@ -112,14 +115,15 @@ These are design requirements, not an approved schema or implemented feature.
 
 | Gate | Deliverable and exit condition |
 | --- | --- |
-| 1 — Scope | Review this plan and approve the bounded C5 work package; record exclusions and the no-integration success path. Planning only is currently authorized. |
+| 1 — Scope | Approved: the operator accepted the bounded C5 work package and all six gates after syncing PR #105. Exclusions and the no-integration success path remain in force. |
 | 2 — Need | Complete the offline operator worksheet and choose no integration or a justified minimal candidate. Do not infer operator feedback from automated tests. |
 | 3 — Boundary | Review the no-integration rationale, or the exact contract, consumer, limits, disclosure model, and failure cases. A candidate that expands approved scope returns for approval. |
 | 4 — Delivery | Produce the guide/decision record; implement only an admitted, approved candidate with focused boundary tests. No feature implementation is included in this planning PR. |
 | 5 — Verification | Replay reviewed fixtures and verify the selected path. For an artifact, test hostile/oversized/malformed/stale/missing inputs and prove existing ForgeOps compatibility. Separate automated evidence from operator acceptance and any separately authorized live evidence. |
 | 6 — Closeout | Review published checks and operator findings, reconcile documentation, merge through normal review, and sync the laptop. Record limitations and the integration decision without claiming a release. |
 
-No gate is claimed complete by creating this plan. C6 plugin distribution and
+The design review disposition below separates completed work from pending
+acceptance; approval alone does not pass a gate. C6 plugin distribution and
 C7 release readiness remain separately gated. C3-UX-01 remains an open label
 follow-up, not an implicit part of C5.
 
@@ -152,3 +156,58 @@ relative-link target checks for the four changed documents, and
 `git diff --check`. No tests or suite counts were added. Published CI remains
 separate evidence. Proposed C5 exercises and feature acceptance above remain
 pending and must not be counted as executed tests.
+
+## C5 offline rehearsal — 2026-09-22
+
+The assistant ran the existing source launcher at merged checkout
+`da9acddb64a2535c55b011274669e388315d78cb`. Provenance reported OK, source
+execution, and project/module version 1.0.0. Before/after validation, catalog
+validation, mapping validation, comparison replay, and incident replay passed
+for all four cases. Generated text briefs also matched the checked-in text
+expectations exactly. These are rehearsal results, not new automated tests or
+operator acceptance. Outputs were written outside the repository.
+
+| Scenario | Comparison exit | Mapping exit | Brief state | Exact comparison/brief replay |
+| --- | ---: | ---: | --- | --- |
+| routing-regression | 1 | 0 | DEGRADED | Pass |
+| incomplete-evidence | 1 | 0 | INCOMPLETE | Pass |
+| routing-recovery | 1 | 0 | RECOVERED | Pass |
+| stable-baseline | 0 | 0 | STABLE | Pass |
+
+Source review confirms that the Console demo uses context `synthetic-demo`,
+namespace `signalforge`, and different resource identities/counts from the
+ForgeOps corpus. Its EndpointSlice has one ready and one not-ready endpoint;
+the routing-regression after fixture reports two ready and one not-ready.
+No fixture alignment or corroboration is claimed. The
+[operator worksheet](../guides/forgeops-console-c5-operator-exercise.md)
+records the human feedback and explicitly unperformed assessments.
+
+## Boundary review delivery
+
+The operator identified save/share needs for human help, incident history, and
+future ForgeOps use, with Pod Events/logs inspected before Service/EndpointSlice
+details. The [C5 contract](../design/forgeops-console-observation-contract.md)
+defines a strict candidate with 64 KiB structured JSON, 12 selected observations,
+aliases, explicit missing/incomplete states, acquisition timestamps, and a
+96 KiB human handoff with up to four separately reviewed diagnostic excerpts.
+The excerpt path is a proposed addition to the initial exclusion; it is not
+implemented or silently included in machine evidence.
+
+Decision: deliver the human-handoff design and reject automatic ForgeOps
+integration for the current implementation. Existing ForgeOps v1.0.0 remains
+the supported machine evidence path. A separately reviewed follow-up must
+implement and validate the candidate before exports exist. The roadmap's C5
+design outcome is ready for review; full end-to-end operator acceptance is
+not established by the partial discussion and automated rehearsal.
+
+| Gate | Actual disposition |
+| --- | --- |
+| 1 | Scope approved by operator. |
+| 2 | Save/share needs and investigation order recorded; aligned comparative exercise and repeated benefit remain unproven. Sufficient for a design candidate, not exporter admission. |
+| 3 | Exact candidate boundary and no-current-intake decision delivered for PR review. |
+| 4 | Operator guide, decision record, and contract delivered. No exporter, schema validator, or ForgeOps intake implemented. |
+| 5 | Four existing scenarios replayed exactly; 248 existing repository tests, link-target validation, and whitespace checks passed. Candidate implementation acceptance remains unexecuted. |
+| 6 | Published review/checks, merge, and laptop sync remain pending. No release or live activity. |
+
+No feature tests were added and suite counts are unchanged. The proposed Istio
+lab learning milestone and future mesh inspection remain separate from C5.

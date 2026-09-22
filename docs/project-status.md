@@ -17,8 +17,11 @@ historical evidence rather than being rewritten when the suite grows.
 
 ## Current ForgeOps Console state
 
-- Planning work package: [C5 reviewed evidence boundary](milestones/forgeops-console-c5-evidence-boundary-planning.md);
-  planning requested, implementation approval pending. ForgeFire is captured
+- Active work package: [C5 reviewed evidence boundary](milestones/forgeops-console-c5-evidence-boundary-planning.md);
+  planned work and all six gates approved; offline rehearsal passed and the
+  [handoff contract](design/forgeops-console-observation-contract.md) is ready
+  for review. Export implementation and automatic ForgeOps intake are deferred;
+  comparative operator acceptance is unproven. ForgeFire is captured
   as a separate future proposal; no fault injection is authorized.
 - Accepted work package: C4 bounded Pod diagnostics
 - Status: accepted through PR #103 at `7910f0a`; published CI passed and the

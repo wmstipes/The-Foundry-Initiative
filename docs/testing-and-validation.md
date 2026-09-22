@@ -84,6 +84,25 @@ performed. No raw logs, screenshots, or credentials are committed.
 
 See the [C4 contract and gate status](milestones/forgeops-console-c4-pod-diagnostics.md).
 
+## Console C5 boundary design validation
+
+C5 adds documentation, not feature tests. All 248 existing top-level unittest
+cases pass; suite counts above remain unchanged. The offline source-launcher
+rehearsal at `da9acdd` validates before/after evidence and runbook mappings for
+routing-regression, incomplete-evidence, routing-recovery, and stable-baseline.
+Comparison and incident replay match each checked-in expectation, and text
+briefs match exactly. This is repeated execution of existing behavior, not
+four new tests or operator acceptance.
+
+Relative-link targets and whitespace are checked for the changed documentation.
+The [operator exercise](guides/forgeops-console-c5-operator-exercise.md) records
+actual feedback separately from unperformed comparative checks. The
+[candidate contract](design/forgeops-console-observation-contract.md) lists
+future hostile-input, disclosure, lifecycle, and compatibility acceptance.
+No export implementation, candidate validator, new consumer, live access, or
+fault injection was tested or delivered. PR checks and merge remain separate
+from these local results.
+
 ## What the suites cover
 
 ### ForgeOps

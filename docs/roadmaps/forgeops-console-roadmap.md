@@ -1,6 +1,6 @@
 # ForgeOps Console roadmap
 
-**Status:** C1-C4 accepted; C5 planning requested, implementation approval pending
+**Status:** C1-C4 accepted; C5 boundary design ready for review
 
 **Baseline:** ForgeOps v1.0.0; C1 was admitted from repository commit
 `8008f6934a0c1bd34a63d6a86a9ad74d170a7671` and merged at
@@ -119,11 +119,16 @@ Previous-container reads and in-flight cancellation were not exercised live.
 
 ### C5 — Reviewed ForgeOps evidence boundary
 
-**Status:** Planning requested on 2026-09-22. The
+**Status:** Planned work and all six control gates approved on 2026-09-22. The
 [C5 plan](../milestones/forgeops-console-c5-evidence-boundary-planning.md)
 proposes an offline comparison, explicit integration/no-integration decision,
 and six gates. It also records ForgeFire as a separate future training proposal.
-C5 implementation and live access are not authorized by the planning request.
+The offline four-scenario rehearsal passed. Operator feedback supports a
+[reviewed handoff design](../design/forgeops-console-observation-contract.md)
+with structured facts and optional human-only diagnostic excerpts. No exporter
+or ForgeOps intake is implemented. Aligned end-to-end acceptance and repeated
+benefit remain unproven; implementation admission requires those checks.
+Live access requires separate authorization.
 
 **Purpose:** Improve the incident-copilot demonstration and prove
 trustworthiness.
