@@ -46,6 +46,12 @@ and the operator confirmed the Console stopped. This is happy-path evidence,
 not exhaustive live security or cancellation acceptance. See the
 [C4 milestone](docs/milestones/forgeops-console-c4-pod-diagnostics.md).
 
+C5 planning is requested: compare the existing ForgeOps workflow with a
+Console-assisted operator exercise before deciding whether an evidence artifact
+is justified. The [C5 plan](docs/milestones/forgeops-console-c5-evidence-boundary-planning.md)
+proposes six gates and records ForgeFire as a separate future lab-training idea.
+Implementation approval is pending; no live access or fault injection is granted.
+
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 
 ## Phase 1 — Cluster and application foundation
