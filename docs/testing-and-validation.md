@@ -187,6 +187,32 @@ same-pair restoration remains the actual automated evidence. The earlier local
 Go test-execution block remains disclosed and does not invalidate the accepted
 packaged runtime.
 
+## Console C5 aligned synthetic exercise validation
+
+The later source demo adds explicit `routing-before` and `routing-after`
+selections without changing the published Console prerelease. Two new Go test
+functions (57 total in this source tree; C7 previously recorded 55) compare the
+constructed slice's namespace, Service label and exact ready/not-ready/unknown
+counts with each checked-in routing-regression snapshot, then check the actual
+Console resource projection and reject an unsupported scenario. These tests
+are fake-client/offline checks, not operator exercise results, live evidence,
+installed-archive acceptance or a claim that Console captured ForgeOps
+snapshots. The default demo and ForgeOps v1.0.0 contracts remain separate.
+
+With freshly built browser assets, an offline loopback HTTP rehearsal started
+each source demo mode separately, verified the synthetic bootstrap/context,
+followed context activation and namespace discovery/selection, and read the
+EndpointSlice through the resource route. It observed `3/3 ready` before and
+`2/3 ready` after. The first harness attempt skipped namespace discovery and
+was correctly denied; the corrected browser-order request sequence passed.
+No browser interaction or operator timing was measured by this API rehearsal.
+
+The [identity source design](design/forgeops-brief-release-identity-sources.md)
+introduces no brief fields or new validator, and its release dates and digests
+are not exercised by the synthetic demo. Record separate operator steps and
+comparative evidence before claiming improved investigation or admitting an
+exporter.
+
 ## What the suites cover
 
 ### ForgeOps

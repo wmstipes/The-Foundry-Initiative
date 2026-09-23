@@ -139,6 +139,14 @@ Open `http://127.0.0.1:9090`, activate `synthetic-demo`, choose the
 `signalforge` namespace, and select a resource. The permanent synthetic banner
 and separate binary make clear that no cluster connection exists.
 
+For the C5 routing exercise, the demo also accepts `--scenario routing-before`
+or `--scenario routing-after`. Run them one at a time, restarting the demo
+between stages. Select the displayed synthetic context and the
+`forge-restaurant` namespace, then inspect `synthetic-service` and its
+EndpointSlice. The stages match the reviewed fixture's 3/3 and 2/3 endpoint
+counts, respectively; they do not come from ForgeOps collection or establish
+cause. See the [operator exercise](../../../docs/guides/forgeops-console-c5-operator-exercise.md#aligned-synthetic-routing-illustration).
+
 The production entry point is `./cmd/forgeops-console` and requires an explicit
 `--kubeconfig`. Select an intentional cluster and read scope before activation;
 previous acceptance does not grant ongoing cluster or diagnostic access.
