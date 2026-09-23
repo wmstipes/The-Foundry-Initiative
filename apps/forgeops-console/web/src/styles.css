@@ -45,8 +45,8 @@ h2, h3 { margin: 0; letter-spacing: -0.025em; }
 .loading { color: var(--muted); }
 .mode-pill.demo { border-color: #d99142; color: #ffd7a3; }
 .mode-pill.demo span { background: #ff9f43; box-shadow: 0 0 0.8rem #ff9f43; }
-.resource-shell { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: 1rem; margin-top: 2rem; align-items: start; }
-.resource-nav { display: grid; gap: 0.4rem; position: sticky; top: 1rem; }
+.resource-shell { display: grid; grid-template-columns: 12rem minmax(0, 1fr); margin-top: 2rem; }
+.resource-nav { display: grid; align-content: start; gap: 0.4rem; padding: 1.25rem; border-right: 1px solid var(--border); }
 .resource-nav button { text-align: left; color: #d2e2ef; background: transparent; border: 1px solid transparent; }
 .resource-nav button.active { color: #071522; background: var(--accent); }
 .resource-main { padding: 1.25rem; min-width: 0; }
@@ -82,7 +82,7 @@ h2, h3 { margin: 0; letter-spacing: -0.025em; }
   .context-panel, .resource-shell, .resource-grid { grid-template-columns: 1fr; }
   .scope-generation { margin-left: 0; }
   select { min-width: 0; width: 100%; }
-  .resource-nav { position: static; grid-template-columns: repeat(2, 1fr); }.resource-nav .eyebrow { grid-column: 1 / -1; }.resource-table { border-right: 0; }.inline-control { flex-direction: column; }
+  .resource-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); border-right: 0; border-bottom: 1px solid var(--border); }.resource-nav .eyebrow { grid-column: 1 / -1; }.resource-table { border-right: 0; }.inline-control { flex-direction: column; }
   .resource-heading { flex-wrap: wrap; }
   .resource-actions { width: 100%; justify-content: space-between; }
   .endpoint-values span { white-space: normal; }
@@ -98,7 +98,7 @@ h2, h3 { margin: 0; letter-spacing: -0.025em; }
 button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid #ffffff; outline-offset: 3px; }
 @media (min-width: 761px) and (max-width: 1100px) {
   .context-panel, .resource-shell, .resource-grid { grid-template-columns: 1fr; }
-  .resource-nav { position: static; grid-template-columns: repeat(3, 1fr); }
+  .resource-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); border-right: 0; border-bottom: 1px solid var(--border); }
   .resource-nav .eyebrow { grid-column: 1 / -1; }
   .resource-table { border-right: 0; }
 }
