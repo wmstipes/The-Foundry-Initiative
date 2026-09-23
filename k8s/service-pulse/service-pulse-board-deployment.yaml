@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-pulse-board
+  namespace: forge-pulse
+  labels:
+    app: service-pulse-board
+    project: signalforge
+    app.kubernetes.io/name: service-pulse-board
+    app.kubernetes.io/part-of: signalforge
+    app.kubernetes.io/version: "0.1.1"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: service-pulse-board
+  template:
+    metadata:
+      labels:
+        app: service-pulse-board
+        project: signalforge
+        app.kubernetes.io/name: service-pulse-board
+        app.kubernetes.io/part-of: signalforge
+        app.kubernetes.io/version: "0.1.1"
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: service-pulse-board
+        image: wmstipes/signalforge-service-pulse:0.1.1@sha256:ef00b39bb93686ab087e254df4125622c29784ffff4ad2b74476064882af63e4
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PULSE_MODE
+          value: board
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+        startupProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          periodSeconds: 2
+          timeoutSeconds: 1
+          failureThreshold: 30
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          periodSeconds: 20
+          timeoutSeconds: 2
+          failureThreshold: 3
