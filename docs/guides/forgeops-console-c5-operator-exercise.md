@@ -97,6 +97,17 @@ slice should now say `2/3 ready`. You can inspect the three selected Pods,
 generic synthetic logs and Events, but the data deliberately does not encode
 a cause. Stop with Ctrl+C when finished.
 
+In the subsequent source-only triage update, the slice projects each bounded
+endpoint's Pod target and its ready/serving/terminating flags. In the after
+scenario, Endpoint 3 reports `ready=false` and targets
+`restaurant-api-demo-3`; use **Inspect Pod** to open that exact Pod's bounded
+details, then inspect its Events and logs. The Pod Ready condition and last
+transition are displayed when Kubernetes reports them. These synthetic Pods
+remain Ready and have no condition transition timestamp; the unavailable
+timestamp is explicit. EndpointSlice readiness alone does not establish a Pod
+failure or the start of a Service outage. The source-only update is not part
+of the published `v0.1.0-rc.1` archive and has no new operator acceptance yet.
+
 The matching namespace, Service name and endpoint counts allow a bounded
 side-by-side discussion with the fixture's `PASS → FAIL` routing check. The
 Console contexts differ from the fixture's `kubernetes-admin@kubernetes` on

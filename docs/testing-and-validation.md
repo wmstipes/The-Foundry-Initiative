@@ -213,6 +213,15 @@ are not exercised by the synthetic demo. Record separate operator steps and
 comparative evidence before claiming improved investigation or admitting an
 exporter.
 
+The follow-up source-only EndpointSlice triage path adds two Go test functions
+(59 total) for bounded Pod target/condition projection, missing Pod transition
+time, and a cross-namespace reference that must not become a link. The aligned
+demo assertion verifies that its changed endpoint targets the third Pod. One
+browser interaction case (20 Vitest cases total) checks that the target opens
+an exact Pod read and reveals diagnostics. These are offline fake-client and
+DOM checks; the published Windows preview has not changed, and the path awaits
+operator acceptance. The Pod Ready transition is not an outage timestamp.
+
 ## What the suites cover
 
 ### ForgeOps

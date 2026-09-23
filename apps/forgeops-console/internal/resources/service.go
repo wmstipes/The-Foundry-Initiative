@@ -353,10 +353,13 @@ func (s *Service) project(ctx context.Context, client kubernetes.Interface, scop
 			return nil, false, err
 		}
 		records := make([]Record, 0, len(list.Items))
+		incomplete := list.Continue != ""
 		for _, item := range list.Items {
-			records = append(records, projectEndpointSlice(item))
+			record, clipped := projectEndpointSlice(item)
+			records = append(records, record)
+			incomplete = incomplete || clipped
 		}
-		return trim(records, list.Continue != "")
+		return trim(records, incomplete)
 	default:
 		return nil, false, errors.New("unsupported resource")
 	}
@@ -395,10 +398,22 @@ func projectPod(item corev1.Pod) Record {
 		}
 		restarts += status.RestartCount
 	}
-	return Record{Kind: "Pod", Name: item.Name, Namespace: item.Namespace, Status: string(item.Status.Phase), Owners: owners(item.Namespace, item.OwnerReferences), Fields: []Field{
+	fields := []Field{
 		{Label: "Ready", Value: fmt.Sprintf("%d/%d", ready, len(item.Spec.Containers))}, {Label: "Restarts", Value: strconv.Itoa(int(restarts))},
 		{Label: "Node", Value: item.Spec.NodeName}, {Label: "Containers", Value: strings.Join(containers, ", ")},
-	}}
+	}
+	conditionStatus, transition := "unavailable", "unavailable"
+	for _, condition := range item.Status.Conditions {
+		if condition.Type == corev1.PodReady {
+			conditionStatus = string(condition.Status)
+			if !condition.LastTransitionTime.IsZero() {
+				transition = condition.LastTransitionTime.UTC().Format(time.RFC3339)
+			}
+			break
+		}
+	}
+	fields = append(fields, Field{Label: "Pod Ready condition", Value: conditionStatus}, Field{Label: "Pod Ready last transition (UTC; not outage time)", Value: transition})
+	return Record{Kind: "Pod", Name: item.Name, Namespace: item.Namespace, Status: string(item.Status.Phase), Owners: owners(item.Namespace, item.OwnerReferences), Fields: fields}
 }
 
 func selectedPods(namespace string, selector *metav1.LabelSelector, pods []corev1.Pod) []Reference {
@@ -461,7 +476,7 @@ func projectService(item corev1.Service, pods []corev1.Pod, slices []discoveryv1
 	}}
 }
 
-func projectEndpointSlice(item discoveryv1.EndpointSlice) Record {
+func projectEndpointSlice(item discoveryv1.EndpointSlice) (Record, bool) {
 	ports := make([]string, 0, len(item.Ports))
 	for _, port := range item.Ports {
 		name, number, protocol := "", "", ""
@@ -477,18 +492,36 @@ func projectEndpointSlice(item discoveryv1.EndpointSlice) Record {
 		ports = append(ports, strings.TrimSpace(name+" "+number+"/"+protocol))
 	}
 	ready := 0
-	for _, endpoint := range item.Endpoints {
-		if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
-			ready++
-		}
-	}
 	related := []Reference{}
 	if serviceName := item.Labels[discoveryv1.LabelServiceName]; serviceName != "" {
 		related = append(related, Reference{Kind: "Service", Name: serviceName, Namespace: item.Namespace, Relation: "serves"})
 	}
-	return Record{Kind: "EndpointSlice", Name: item.Name, Namespace: item.Namespace, Status: fmt.Sprintf("%d/%d ready", ready, len(item.Endpoints)), Owners: owners(item.Namespace, item.OwnerReferences), Related: related, Fields: []Field{
-		{Label: "Address type", Value: string(item.AddressType)}, {Label: "Ports", Value: strings.Join(ports, ", ")}, {Label: "Ready endpoints", Value: fmt.Sprintf("%d/%d", ready, len(item.Endpoints))},
-	}}
+	fields := []Field{{Label: "Address type", Value: string(item.AddressType)}, {Label: "Ports", Value: strings.Join(ports, ", ")}}
+	for index, endpoint := range item.Endpoints {
+		if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
+			ready++
+		}
+		if index >= MaxObjects {
+			continue
+		}
+		target := "Pod target unavailable"
+		if ref := endpoint.TargetRef; ref != nil && ref.Kind == "Pod" && ref.Name != "" && (ref.Namespace == "" || ref.Namespace == item.Namespace) {
+			target = "Pod/" + ref.Name
+			if len(related) < MaxObjects+1 {
+				related = append(related, Reference{Kind: "Pod", Name: ref.Name, Namespace: item.Namespace, Relation: "endpoint-target"})
+			}
+		}
+		fields = append(fields, Field{Label: fmt.Sprintf("Endpoint %d", index+1), Value: fmt.Sprintf("%s · ready=%s · serving=%s · terminating=%s", target, endpointCondition(endpoint.Conditions.Ready), endpointCondition(endpoint.Conditions.Serving), endpointCondition(endpoint.Conditions.Terminating))})
+	}
+	fields = append(fields, Field{Label: "Ready endpoints", Value: fmt.Sprintf("%d/%d", ready, len(item.Endpoints))})
+	return Record{Kind: "EndpointSlice", Name: item.Name, Namespace: item.Namespace, Status: fmt.Sprintf("%d/%d ready", ready, len(item.Endpoints)), Owners: owners(item.Namespace, item.OwnerReferences), Related: related, Fields: fields}, len(item.Endpoints) > MaxObjects
+}
+
+func endpointCondition(value *bool) string {
+	if value == nil {
+		return "unset"
+	}
+	return strconv.FormatBool(*value)
 }
 
 func value(pointer *int32) int32 {

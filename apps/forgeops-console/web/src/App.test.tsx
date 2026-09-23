@@ -80,4 +80,19 @@ describe("Console resource transitions", () => {
   vi.mocked(api.queryResources).mockResolvedValueOnce({ ...result("pods"), truncated: true });
   await click("Pods"); expect(host.textContent).toContain("object, relationship, or pagination limit");
  });
+
+ it("opens the exact Pod target for an unready endpoint and exposes diagnostics", async () => {
+  await scope();
+  const slice: ResourceRecord = { kind: "EndpointSlice", name: "slice", namespace: "team", status: "2/3 ready", fields: [{ label: "Endpoint 3", value: "Pod/api-three · ready=false · serving=unset · terminating=unset" }], owners: [], related: [{ kind: "Pod", name: "api-three", namespace: "team", relation: "endpoint-target" }] };
+  vi.mocked(api.queryResources).mockResolvedValueOnce({ ...result("endpointslices"), items: [slice] });
+  await click("EndpointSlices");
+  await act(async () => { (host.querySelector(".resource-row") as HTMLButtonElement).click(); });
+  expect(host.textContent).toContain("ready=false");
+  expect(host.textContent).toContain("does not establish Pod failure");
+  vi.mocked(api.queryResources).mockResolvedValueOnce({ ...result("pods"), operation: "read", items: [{ ...pod, name: "api-three", fields: [{ label: "Pod Ready last transition (UTC; not outage time)", value: "unavailable" }] }] });
+  await click("Inspect Pod");
+  expect(api.queryResources).toHaveBeenLastCalledWith("pods", 2, "api-three", expect.any(AbortSignal));
+  expect(host.textContent).toContain("unavailable");
+  expect(host.textContent).toContain("Logs, Events");
+ });
 });

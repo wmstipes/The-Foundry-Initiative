@@ -78,14 +78,15 @@ export default function App() {
     finally { finish(id, controller); }
   }
 
-  async function loadResources(nextKind: ResourceKind = kind) {
+  async function loadResources(nextKind: ResourceKind = kind, name?: string) {
     const { id, controller } = begin(); setKind(nextKind);
     const requestedScope = scope;
     try {
-      const loaded = await queryResources(nextKind, requestedScope.generation, undefined, controller.signal);
+      const loaded = await queryResources(nextKind, requestedScope.generation, name, controller.signal);
       if (!current(id, controller)) return;
       if (!sameScope(loaded.scope, requestedScope) || loaded.resource !== nextKind) throw new Error("stale_scope");
       setResult(loaded);
+      if (name && loaded.items.length === 1 && loaded.items[0].name === name) setSelected(loaded.items[0]);
       const entries = await activity();
       if (current(id, controller)) setHistory(entries);
     } catch (reason) { if (current(id, controller)) { setResult(null); showError(reason); } }
@@ -112,7 +113,7 @@ export default function App() {
               <label htmlFor="namespace">Namespace</label><div className="inline-control"><select id="namespace" value={namespaceChoice} onChange={(event) => setNamespaceChoice(event.target.value)} disabled={!namespaces.length}><option value="">Choose explicitly…</option>{namespaces.map((name) => <option value={name} key={name}>{name}</option>)}</select><button type="button" onClick={() => void activateNamespace()} disabled={busy || !namespaceChoice}>Set scope</button></div>
             </div>
           </section>
-          {resourcePluginLoaded && <ResourceBrowser scope={scope} kind={kind} result={result} selected={selected} busy={busy} history={history} onKind={(next) => void loadResources(next)} onRefresh={() => void loadResources()} onSelect={(record) => { if (!busy && result && sameScope(result.scope, scope) && result.resource === kind) setSelected(record); }} />}
+          {resourcePluginLoaded && <ResourceBrowser scope={scope} kind={kind} result={result} selected={selected} busy={busy} history={history} onKind={(next) => void loadResources(next)} onRefresh={() => void loadResources()} onSelect={(record) => { if (!busy && result && sameScope(result.scope, scope) && result.resource === kind) setSelected(record); }} onPodTarget={(name) => { if (!busy && result && sameScope(result.scope, scope)) void loadResources("pods", name); }} />}
           {selected?.kind === "Pod" && scope.namespace && data.plugins.some((plugin) => plugin.id === "forge.diagnostics") && <Diagnostics key={`${scope.generation}/${selected.namespace}/${selected.name}`} scope={scope} pod={selected} onComplete={() => { void activity().then(setHistory).catch(showError); }} />}
           <section><div className="section-heading"><p className="eyebrow">Capability broker</p><h2>First-party extensions</h2></div><div className="plugin-grid">{data.plugins.filter((plugin) => plugin.id !== "forge.resources" && plugin.id !== "forge.diagnostics").map((manifest) => <div key={manifest.id}>{renderPluginCard(manifest)}</div>)}</div></section>
         </>}
