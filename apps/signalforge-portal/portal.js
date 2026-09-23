@@ -6,7 +6,7 @@ byId("zone").textContent = `Your device reports ${zone}.`;
 
 function tick() {
   const now = new Date();
-  byId("utc-now").textContent = `${utcTime.format(now)} UTC`;
+  byId("utc-now").textContent = utcTime.format(now);
   byId("local-now").textContent = fullTime.format(now);
 }
 tick();
@@ -26,7 +26,7 @@ function convert() {
     result.textContent = "Use an ISO timestamp with an explicit zone, such as 2026-09-23T22:15:58Z.";
     return;
   }
-  result.textContent = `${fullTime.format(parsed)} (${zone}) · ${utcTime.format(parsed)} UTC`;
+  result.textContent = `${fullTime.format(parsed)} (${zone}) · ${utcTime.format(parsed)}`;
 }
 byId("convert").addEventListener("click", convert);
 byId("utc-input").addEventListener("keydown", event => { if (event.key === "Enter") convert(); });
