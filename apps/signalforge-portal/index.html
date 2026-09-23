@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>SignalForge Home</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="portal.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">SIGNALFORGE / HOME</p><h1>Your lab, one place.</h1><p>Open a tool, check the time, and pick up where you left off.</p></header>
+    <section class="clock panel" aria-labelledby="clock-heading">
+      <div><p class="eyebrow">TIME / LIVE</p><h2 id="clock-heading">UTC ↔ your time</h2><p id="zone"></p></div>
+      <div class="clock-values"><div><span>UTC now</span><strong id="utc-now"></strong></div><div><span>Your time now</span><strong id="local-now"></strong></div></div>
+      <label for="utc-input">Convert a UTC timestamp</label>
+      <div class="converter"><input id="utc-input" type="text" autocomplete="off" spellcheck="false" placeholder="2026-09-23T22:15:58.728572+00:00" aria-describedby="format-hint"><button id="convert" type="button">Convert</button></div>
+      <p id="format-hint" class="hint">Paste an ISO 8601 timestamp with Z or a numeric offset. Date and daylight saving changes use your browser's time zone.</p>
+      <output id="converted" role="status" aria-live="polite">Enter a timestamp to see your local time.</output>
+    </section>
+    <section class="panel" aria-labelledby="tools-heading"><p class="eyebrow">QUICK ACCESS</p><h2 id="tools-heading">Tools and services</h2>
+      <div class="host-row"><label for="host">Cluster node address</label><input id="host" type="text" inputmode="url" placeholder="192.168.243.110"><button id="save-host" type="button">Save address</button></div>
+      <p class="hint">The address stays in this browser. Use a node address reachable from your device.</p>
+      <div class="cards">
+        <article><span class="tag">IN THE LAB</span><h3>Forge YAML Workbench</h3><p>Inspect Kubernetes and general YAML locally in your browser.</p><a id="workbench" href="https://github.com/wmstipes/The-Foundry-Initiative/tree/main/apps/forge-yaml-workbench">Open Workbench <span aria-hidden="true">↗</span></a><small>NodePort 30081 after an address is saved</small></article>
+        <article><span class="tag">LOCAL FORWARD</span><h3>Service Pulse</h3><p>Recent Restaurant API checks and cross-node probe traffic.</p><a href="http://127.0.0.1:18080/">Open Pulse board <span aria-hidden="true">↗</span></a><small>First run: kubectl port-forward -n forge-pulse service/service-pulse-board 18080:8080</small></article>
+        <article><span class="tag">LOCAL FORWARD</span><h3>Grafana</h3><p>Existing SignalForge dashboards; logs will join after the logging rollout.</p><a href="http://127.0.0.1:13000/">Open Grafana <span aria-hidden="true">↗</span></a><small>First run: kubectl port-forward -n forge-observability service/grafana 13000:3000</small></article>
+        <article><span class="tag">REPOSITORY</span><h3>ForgeOps Console</h3><p>Local Kubernetes inspector and synthetic operator exercise.</p><a href="https://github.com/wmstipes/The-Foundry-Initiative/tree/main/apps/forgeops-console">Setup and launch <span aria-hidden="true">↗</span></a><small>Runs locally; launch address depends on your setup.</small></article>
+        <article><span class="tag">REPOSITORY</span><h3>Restaurant API</h3><p>Live service checked by Pulse. Find usage and deployment details.</p><a href="https://github.com/wmstipes/The-Foundry-Initiative/tree/main/apps/restaurant-api">View service <span aria-hidden="true">↗</span></a><small>ClusterIP service in forge-restaurant.</small></article>
+        <article><span class="tag">REPOSITORY</span><h3>Project Forge</h3><p>Runbooks, milestones, configuration and release history.</p><a href="https://github.com/wmstipes/The-Foundry-Initiative">Open repository <span aria-hidden="true">↗</span></a><small>Source of truth for the lab.</small></article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
