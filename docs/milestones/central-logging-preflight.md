@@ -10,6 +10,22 @@ Proposed path: one Alloy instance in `forge-observability` discovers Pods only i
 
 The existing Prometheus and Grafana PV paths are separate mounted filesystems. Grafana's 4 GiB filesystem was prepared on partition 2 of the Samsung NVMe and is already in use. A PV size is not a disk quota, and `Retain` does not back up data. **Do not create a Loki path under either existing mount or assume unallocated NVMe space.** First collect the following read-only inventory from the intended cluster context; review exact partition boundaries, free space, mount UUIDs, capacity and device health before choosing a dedicated disk extent and a bounded claim size. Preparation of a new partition or mount must have a separate reviewed procedure and backup gate.
 
+### Operator inventory, 2026-09-23
+
+The operator ran the read-only host checks interactively over SSH as `wmstipes` because the older Grafana preflight script uses `BatchMode=yes` and cannot prompt for a password. The Kubernetes portion of that script succeeded; its SSH portion stopped at authentication. The direct host output established:
+
+| Item | Observed value |
+| --- | --- |
+| Device | `/dev/nvme0n1`, GPT ID `FDF2C7FC-C23E-4147-93B5-B53D85A08F78`, 512-byte sectors, last usable LBA `1000215182` |
+| Prometheus partition | `p1` start `2048`, length `67108864`, filesystem UUID `4f2feee5-72a7-4f32-a351-b4253c4a0854`, mounted at `/mnt/signalforge-prometheus` |
+| Grafana partition | `p2` start `67110912`, length `8388608`, filesystem UUID `a506c674-127a-46da-9c7d-d158b6d1bb75`, mounted at `/mnt/signalforge-grafana` |
+| Unallocated extent | sectors `75499520`–`1000215182`, 440.94 GiB |
+| Drive health | critical warning `0`, spare `99%`, used `2%`, media errors `215` (same count recorded at the Grafana storage gate), temperature `306 K` |
+
+**Proposed Loki allocation for review:** a new 8 GiB partition `p3` beginning at sector `75499520`, length `16777216` sectors, ending at `92276735`. The next sector, `92276736`, remains unallocated. This allocates less than two percent of the reported unused extent. Mount it by its newly generated filesystem UUID at `/mnt/signalforge-loki`, with a dedicated `/mnt/signalforge-loki/data` directory for Loki UID/GID `10001:10001`. A static 8 GiB PV and reserved PVC would reference that directory, bind only on `forge-head`, and use `Retain`. The partition, rather than the PV's nominal capacity, would enforce the actual filesystem ceiling. Seven-day retention is a policy target; disk alerts and a tested backup are still required. **This is an allocation proposal, not a command to partition the disk.**
+
+Before any write, capture a fresh `sfdisk --dump` off-node, verify its SHA-256 against the live source, check an accepted off-node Prometheus backup, and verify device model/serial, sector size, mounted UUIDs, exact `p1` and `p2` boundaries and PARTUUIDs, free extent, NVMe warnings/spare/media errors, and absence of `p3`, a Loki mount or fstab entry. An append-only `sfdisk --no-act` preview and a per-partition kernel update must precede filesystem creation. After a partial write, stop for review; never rerun formatting automatically. The existing Grafana storage preparation helper demonstrates these checks but is **not** safe to run again for Loki.
+
 ```powershell
 kubectl config current-context
 kubectl get nodes -o wide
@@ -20,7 +36,7 @@ kubectl get networkpolicy -A
 ssh -T -o BatchMode=yes -o StrictHostKeyChecking=yes wmstipes@192.168.243.110 'lsblk -o NAME,SIZE,FSTYPE,UUID,MOUNTPOINTS; df -hT /mnt/signalforge-prometheus /mnt/signalforge-grafana; sudo -n sfdisk --dump /dev/nvme0n1; sudo -n sfdisk --list-free /dev/nvme0n1; sudo -n nvme smart-log /dev/nvme0n1'
 ```
 
-Confirm the actual device path before running the final SSH line; `/dev/nvme0n1` is only the historical Samsung device identifier. The SSH destination is the one in the existing Grafana preflight helper; adjust it if that trusted inventory changed. Capture outputs without sharing credentials or Secret values. Compare with `k8s/grafana/README.md` and `k8s/prometheus/README.md`. If there is no suitable free extent, choose an alternate storage backend before drafting an apply procedure.
+Confirm the actual device path before running the final SSH line; `/dev/nvme0n1` is only the historical Samsung device identifier. The SSH destination is the one in the existing Grafana preflight helper; adjust it if that trusted inventory changed. The commands shown use `BatchMode=yes` and `sudo -n`, so they require preconfigured passwordless SSH and sudo. When either prompts for a password, use an interactive SSH session and run the read-only commands individually; do not weaken host-key verification or paste credentials into output. Compare with `k8s/grafana/README.md` and `k8s/prometheus/README.md`. If there is no suitable free extent, choose an alternate storage backend before drafting an apply procedure.
 
 ## Deployment and acceptance gates
 
