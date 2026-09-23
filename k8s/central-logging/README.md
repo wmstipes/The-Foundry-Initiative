@@ -13,7 +13,7 @@ Local validation on 2026-09-23: the Loki v3.7.0 Linux AMD64 release executable r
 
 ## Storage preparation, separate gate
 
-**Completed 2026-09-23. Do not rerun the storage preparation script.** The operator reported `LOKI_FILESYSTEM_UUID=93a19402-4a5b-4689-aed7-f1841c2cb53b` and `HOST_EVIDENCE=/var/tmp/signalforge-loki-storage.8EDDMf` after the guarded partition/mount procedure. Before any Kubernetes apply, independently verify the live mount and partition with:
+**Completed and independently verified 2026-09-23. Do not rerun the storage preparation script.** The operator reported `LOKI_FILESYSTEM_UUID=93a19402-4a5b-4689-aed7-f1841c2cb53b` and `HOST_EVIDENCE=/var/tmp/signalforge-loki-storage.8EDDMf` after the guarded partition/mount procedure. A subsequent independent read showed `/dev/nvme0n1p3` mounted read/write with the expected UUID, `/data` owner `10001:10001` mode `750`, and 7.4 GiB available. The Prometheus and Grafana mounts remained present with their prior UUIDs. The read-only verification commands are retained here for future checks:
 
 ```bash
 findmnt -n -o SOURCE,UUID,FSTYPE,OPTIONS --mountpoint /mnt/signalforge-loki
