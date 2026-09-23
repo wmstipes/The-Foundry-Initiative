@@ -14,7 +14,15 @@ Each Pod requests 50m CPU and 64Mi memory and is limited to 250m CPU and 128Mi m
 
 ## Read-only preflight from the laptop
 
-From the repository root in PowerShell, after pulling the reviewed merge:
+From the repository root in PowerShell, after pulling the reviewed merge, make Git for Windows' external `diff.exe` available to `kubectl diff` in the current terminal session. PowerShell's `diff` alias is not an executable and will not work:
+
+```powershell
+$gitDiff = Join-Path $env:ProgramFiles 'Git\usr\bin\diff.exe'
+if (-not (Test-Path -LiteralPath $gitDiff)) { throw "Git for Windows diff.exe not found at $gitDiff" }
+$env:PATH = "$(Split-Path -Parent $gitDiff);$env:PATH"
+```
+
+Then run the read-only checks:
 
 ```powershell
 python .\scripts\validate-k8s-manifests.py
