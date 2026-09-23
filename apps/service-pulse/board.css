@@ -1,0 +1,4 @@
+body { font: 1rem system-ui; background: #0b1220; color: #edf5ff; max-width: 52rem; margin: 3rem auto; padding: 0 1rem; }
+li { padding: .7rem; border-bottom: 1px solid #33485e; }
+.ok { color: #8dd3ff; }
+.failed { color: #ffd7a3; }
