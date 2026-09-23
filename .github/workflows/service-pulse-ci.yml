@@ -18,7 +18,9 @@ permissions:
 
 jobs:
   source:
+    name: Source, native container and multi-architecture build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -26,4 +28,64 @@ jobs:
           python-version: "3.12"
       - run: python -m unittest discover -s apps/service-pulse/tests -v
       - run: python -m py_compile apps/service-pulse/main.py
-      - run: docker build --tag service-pulse:candidate apps/service-pulse
+      - name: Smoke test board-to-probe traffic in rootless, read-only containers
+        shell: bash
+        run: |
+          set -euo pipefail
+          image="service-pulse:smoke-${GITHUB_SHA}"
+          network="pulse-smoke-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          probe="${network}-probe"
+          board="${network}-board"
+          cleanup() {
+            docker logs "$probe" 2>/dev/null || true
+            docker logs "$board" 2>/dev/null || true
+            docker rm -f "$board" "$probe" >/dev/null 2>&1 || true
+            docker network rm "$network" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          docker build -t "$image" apps/service-pulse
+          docker network create "$network"
+          docker run -d --name "$probe" --network "$network" \
+            --network-alias service-pulse-probe.forge-pulse.svc.cluster.local \
+            --env PULSE_MODE=probe --read-only --cap-drop ALL \
+            --security-opt no-new-privileges:true "$image"
+          docker run -d --name "$board" --network "$network" \
+            --publish 127.0.0.1:18080:8080 --env PULSE_MODE=board \
+            --read-only --cap-drop ALL --security-opt no-new-privileges:true "$image"
+
+          test "$(docker exec "$board" id -u)" = "10001"
+          test "$(docker exec "$probe" id -u)" = "10001"
+          ready=false
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:18080/healthz | grep -q '"status":"ok"'; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+          test "$ready" = true
+          curl --fail --silent http://127.0.0.1:18080/ | grep -q 'SignalForge Service Pulse'
+          sample=false
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:18080/api/status | \
+              python -c 'import json,sys; d=json.load(sys.stdin); sys.exit(not (d.get("fresh") is True and len(d.get("samples", [])) > 0))'; then
+              sample=true
+              break
+            fi
+            sleep 1
+          done
+          test "$sample" = true
+          docker logs "$probe" 2>&1 | grep -q '"event":"functional_check"'
+          docker logs "$probe" 2>&1 | grep -q '"event":"checks_read"'
+          docker logs "$board" 2>&1 | grep -q '"event":"probe_read"'
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - name: Build AMD64 and ARM64 without publishing
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: apps/service-pulse
+          file: apps/service-pulse/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: service-pulse:ci-${{ github.sha }}
