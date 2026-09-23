@@ -100,7 +100,11 @@ export default function App() {
       <header className="topbar"><div><p className="brand">FORGEOPS</p><h1>Console</h1></div><div className={`mode-pill ${data?.mode === "synthetic-demo" ? "demo" : ""}`}><span /> {data?.mode === "synthetic-demo" ? "Synthetic demo" : "Read-only C4"}</div></header>
       <div className="scope-banner" role="status">
         <strong>{data?.mode === "synthetic-demo" ? "SYNTHETIC DATA — NO CLUSTER CONNECTION" : "Read-only cluster access"}</strong>
-        <span>Context: {scope.context || "none"}</span><span>Namespace: {scope.namespace || "none"}</span><span>Generation: {scope.generation || "—"}</span>
+        <div className="scope-identity">
+          <span><span className="scope-context-label">Context:</span> {scope.context || "none"}</span>
+          <span><span className="scope-namespace-label">Namespace:</span> {scope.namespace || "none"}</span>
+        </div>
+        <span className="scope-generation">Generation: {scope.generation || "—"}</span>
       </div>
       <main>
         {error && <p className="error" role="alert">{error}</p>}
