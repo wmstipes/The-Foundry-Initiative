@@ -13,6 +13,17 @@ Local validation on 2026-09-23: the Loki v3.7.0 Linux AMD64 release executable r
 
 ## Storage preparation, separate gate
 
+**Completed 2026-09-23. Do not rerun the storage preparation script.** The operator reported `LOKI_FILESYSTEM_UUID=93a19402-4a5b-4689-aed7-f1841c2cb53b` and `HOST_EVIDENCE=/var/tmp/signalforge-loki-storage.8EDDMf` after the guarded partition/mount procedure. Before any Kubernetes apply, independently verify the live mount and partition with:
+
+```bash
+findmnt -n -o SOURCE,UUID,FSTYPE,OPTIONS --mountpoint /mnt/signalforge-loki
+lsblk -o NAME,SIZE,FSTYPE,UUID,MOUNTPOINTS /dev/nvme0n1
+stat -c '%u:%g %a %n' /mnt/signalforge-loki/data
+df -hT /mnt/signalforge-loki
+```
+
+Expect `/dev/nvme0n1p3`, ext4 UUID `93a19402-4a5b-4689-aed7-f1841c2cb53b`, owner `10001:10001`, and an approximately 8 GiB filesystem. The preparation procedure below is retained as an audit record, not a new instruction to run it.
+
 The operator has chosen to proceed without a fresh off-node backup at this stage; Prometheus currently reports 27 MiB used and Grafana 2.6 MiB used. This choice does not make their existing data expendable: the storage script still verifies both partitions and active mounts and saves the table and fstab on the head's SD card before the write. A failed NVMe requiring replacement would make that on-node evidence insufficient for data recovery. The optional off-node path remains available. The previously accepted Prometheus archive is `prometheus-tsdb-20260910-150206Z.tar.gz` with SHA-256 `68e00637d6fd05db21bc8e5dbefa7bbb7d65a7548dd3de0eec5c2faae574dc24`.
 
 For **optional off-node partition-table evidence**, in an interactive SSH session as `wmstipes@192.168.243.110`, save a fresh read-only table dump in your home directory:
