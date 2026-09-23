@@ -41,8 +41,11 @@ historical evidence rather than being rewritten when the suite grows.
   missing. Mike reported reaching the synthetic target Pod in fewer than 12
   seconds and five clicks, with the remaining expected details correct. The
   measured path has no earlier timed baseline for comparison. The source-only
-  UI layout follow-up widens EndpointSlice details and relocates Activity. None
-  of these source updates is in the published preview.
+  UI layout follow-up in merged PR #126 widens EndpointSlice details and
+  relocates Activity; Mike confirmed it looks much better. A subsequent source
+  follow-up adds space between relationship text and Inspect Pod buttons and
+  adopts a dark blue palette. None of these source updates is in the
+  published preview.
 - Runtime: local browser interface and loopback-only Go core; one explicit
   kubeconfig, selected context/namespace, fixed typed reads, three compiled
   first-party plugins and bounded selected-Pod diagnostics. No mutation,
