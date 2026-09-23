@@ -121,6 +121,13 @@ Record each observation and any confusion as operator evidence. The earlier
 `2/3 ready` walkthrough has no timing baseline, so this timing establishes a
 new baseline rather than proving a speedup.
 
+On 2026-09-23, Mike reported reaching the target Pod in less than 12 seconds
+and five clicks in the source demo; the other expected details looked correct.
+This is operator-reported timing, not an instrumented comparison or a live
+cluster result. His screenshot also showed heavy wrapping in the EndpointSlice
+details while the collapsed Activity panel consumed a right column. A source
+layout follow-up gives the details more width and moves Activity beside Refresh.
+
 The source follow-up interprets an unset EndpointSlice `ready` or `serving`
 flag as effectively true, and unset `terminating` as effectively false, while
 displaying that each flag was unset. A target Pod UID is compared during Pod
