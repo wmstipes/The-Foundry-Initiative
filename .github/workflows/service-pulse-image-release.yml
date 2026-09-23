@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Approved version (first candidate: 0.1.0)"
+        description: "Approved corrective version: 0.1.1"
         required: true
         type: string
       source_sha:
@@ -33,7 +33,7 @@ jobs:
           EXPECTED_SHA: ${{ inputs.source_sha }}
         run: |
           set -euo pipefail
-          test "$REQUESTED_VERSION" = "0.1.0"
+          test "$REQUESTED_VERSION" = "0.1.1"
           [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]]
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -67,7 +67,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$GITHUB_REF" = "refs/heads/main"
-          test "$REQUESTED_VERSION" = "0.1.0"
+          test "$REQUESTED_VERSION" = "0.1.1"
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           status=$(curl --silent --show-error --max-time 15 --output /dev/null \
             --write-out '%{http_code}' \
