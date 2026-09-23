@@ -33,8 +33,8 @@ export interface Bootstrap {
 
 export interface Scope { context: string; namespace: string; generation: number }
 export interface ResourceField { label: string; value: string }
-export interface ResourceReference { kind: string; name: string; namespace?: string; relation: string }
-export interface ResourceRecord { kind: string; name: string; namespace?: string; status: string; fields: ResourceField[]; owners: ResourceReference[]; related: ResourceReference[] }
+export interface ResourceReference { kind: string; name: string; namespace?: string; uid?: string; relation: string }
+export interface ResourceRecord { kind: string; name: string; namespace?: string; uid?: string; status: string; fields: ResourceField[]; owners: ResourceReference[]; related: ResourceReference[] }
 export type ResourceKind = "namespaces" | "nodes" | "deployments" | "replicasets" | "pods" | "services" | "endpointslices";
 export interface ResourceResult { resource: ResourceKind; operation: "list" | "read"; scope: Scope; items: ResourceRecord[]; truncated: boolean }
 export interface ActivityEntry { sequence: number; capability: string; context: string; namespace?: string; generation: number; outcome: string; itemCount: number; truncated: boolean }
@@ -44,5 +44,5 @@ export interface PluginStatus {
   mode: string;
 }
 
-export interface DiagnosticQuery { generation: number; operation: "logs" | "events" | "preview"; pod: string; container?: string; previous?: boolean; target?: "logs" | "events" }
+export interface DiagnosticQuery { generation: number; operation: "logs" | "events" | "preview"; pod: string; expectedUID?: string; container?: string; previous?: boolean; target?: "logs" | "events" }
 export interface DiagnosticResult { scope: Scope; operation: string; text: string; events: Array<{ name: string; type: string; reason: string; message: string; count: number }>; truncated: boolean; warning: string; preview?: { powershell: string; posix: string; note: string } }

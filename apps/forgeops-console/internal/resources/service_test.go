@@ -235,9 +235,9 @@ func TestNodeCordonFlagIsExplicit(t *testing.T) {
 
 func TestPodReadyTransitionIsEvidenceNotOutageTime(t *testing.T) {
 	transition := metav1.NewTime(time.Date(2026, 9, 22, 12, 34, 0, 0, time.FixedZone("other", 3600)))
-	pod := corev1.Pod{Status: corev1.PodStatus{Conditions: []corev1.PodCondition{{Type: corev1.PodReady, Status: corev1.ConditionFalse, LastTransitionTime: transition}}}}
+	pod := corev1.Pod{ObjectMeta: metav1.ObjectMeta{UID: "pod-uid"}, Status: corev1.PodStatus{Conditions: []corev1.PodCondition{{Type: corev1.PodReady, Status: corev1.ConditionFalse, LastTransitionTime: transition}}}}
 	got := projectPod(pod)
-	if got.Fields[4].Value != "False" || got.Fields[5].Value != "2026-09-22T11:34:00Z" {
+	if got.UID != "pod-uid" || got.Fields[4].Value != "False" || got.Fields[5].Value != "2026-09-22T11:34:00Z" {
 		t.Fatalf("unexpected Pod condition evidence: %#v", got.Fields)
 	}
 	missing := projectPod(corev1.Pod{})
@@ -249,11 +249,11 @@ func TestPodReadyTransitionIsEvidenceNotOutageTime(t *testing.T) {
 func TestEndpointTargetProjectionBoundsAndNamespace(t *testing.T) {
 	falseValue, trueValue := false, true
 	slice := discoveryv1.EndpointSlice{ObjectMeta: metav1.ObjectMeta{Name: "slice", Namespace: "team", Labels: map[string]string{discoveryv1.LabelServiceName: "api"}}, Endpoints: []discoveryv1.Endpoint{
-		{TargetRef: &corev1.ObjectReference{Kind: "Pod", Name: "api-one", Namespace: "team"}, Conditions: discoveryv1.EndpointConditions{Ready: &falseValue, Serving: &trueValue}},
+		{TargetRef: &corev1.ObjectReference{Kind: "Pod", Name: "api-one", Namespace: "team", UID: "original-uid"}, Conditions: discoveryv1.EndpointConditions{Ready: &falseValue, Serving: &trueValue}},
 		{TargetRef: &corev1.ObjectReference{Kind: "Pod", Name: "private", Namespace: "other"}},
 	}}
 	got, clipped := projectEndpointSlice(slice)
-	if clipped || got.Status != "0/2 ready" || len(got.Related) != 2 || got.Related[1].Name != "api-one" || got.Fields[2].Value != "Pod/api-one · ready=false · serving=true · terminating=unset" || got.Fields[3].Value != "Pod target unavailable · ready=unset · serving=unset · terminating=unset" {
+	if clipped || got.Status != "1/2 ready" || len(got.Related) != 2 || got.Related[1].Name != "api-one" || got.Related[1].UID != "original-uid" || got.Fields[2].Value != "Pod/api-one · ready=false · serving=true · terminating=unset (effective false)" || got.Fields[3].Value != "Pod target unavailable · ready=unset (effective true) · serving=unset (effective true) · terminating=unset (effective false)" {
 		t.Fatalf("unexpected endpoint projection: %#v", got)
 	}
 	for len(slice.Endpoints) <= MaxObjects {

@@ -55,6 +55,7 @@ type Reference struct {
 	Kind      string `json:"kind"`
 	Name      string `json:"name"`
 	Namespace string `json:"namespace,omitempty"`
+	UID       string `json:"uid,omitempty"`
 	Relation  string `json:"relation"`
 }
 
@@ -62,6 +63,7 @@ type Record struct {
 	Kind      string      `json:"kind"`
 	Name      string      `json:"name"`
 	Namespace string      `json:"namespace,omitempty"`
+	UID       string      `json:"uid,omitempty"`
 	Status    string      `json:"status"`
 	Fields    []Field     `json:"fields"`
 	Owners    []Reference `json:"owners"`
@@ -413,7 +415,7 @@ func projectPod(item corev1.Pod) Record {
 		}
 	}
 	fields = append(fields, Field{Label: "Pod Ready condition", Value: conditionStatus}, Field{Label: "Pod Ready last transition (UTC; not outage time)", Value: transition})
-	return Record{Kind: "Pod", Name: item.Name, Namespace: item.Namespace, Status: string(item.Status.Phase), Owners: owners(item.Namespace, item.OwnerReferences), Fields: fields}
+	return Record{Kind: "Pod", Name: item.Name, Namespace: item.Namespace, UID: string(item.UID), Status: string(item.Status.Phase), Owners: owners(item.Namespace, item.OwnerReferences), Fields: fields}
 }
 
 func selectedPods(namespace string, selector *metav1.LabelSelector, pods []corev1.Pod) []Reference {
@@ -498,7 +500,7 @@ func projectEndpointSlice(item discoveryv1.EndpointSlice) (Record, bool) {
 	}
 	fields := []Field{{Label: "Address type", Value: string(item.AddressType)}, {Label: "Ports", Value: strings.Join(ports, ", ")}}
 	for index, endpoint := range item.Endpoints {
-		if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
+		if endpoint.Conditions.Ready == nil || *endpoint.Conditions.Ready {
 			ready++
 		}
 		if index >= MaxObjects {
@@ -508,18 +510,18 @@ func projectEndpointSlice(item discoveryv1.EndpointSlice) (Record, bool) {
 		if ref := endpoint.TargetRef; ref != nil && ref.Kind == "Pod" && ref.Name != "" && (ref.Namespace == "" || ref.Namespace == item.Namespace) {
 			target = "Pod/" + ref.Name
 			if len(related) < MaxObjects+1 {
-				related = append(related, Reference{Kind: "Pod", Name: ref.Name, Namespace: item.Namespace, Relation: "endpoint-target"})
+				related = append(related, Reference{Kind: "Pod", Name: ref.Name, Namespace: item.Namespace, UID: string(ref.UID), Relation: "endpoint-target"})
 			}
 		}
-		fields = append(fields, Field{Label: fmt.Sprintf("Endpoint %d", index+1), Value: fmt.Sprintf("%s · ready=%s · serving=%s · terminating=%s", target, endpointCondition(endpoint.Conditions.Ready), endpointCondition(endpoint.Conditions.Serving), endpointCondition(endpoint.Conditions.Terminating))})
+		fields = append(fields, Field{Label: fmt.Sprintf("Endpoint %d", index+1), Value: fmt.Sprintf("%s · ready=%s · serving=%s · terminating=%s", target, endpointCondition(endpoint.Conditions.Ready, true), endpointCondition(endpoint.Conditions.Serving, true), endpointCondition(endpoint.Conditions.Terminating, false))})
 	}
 	fields = append(fields, Field{Label: "Ready endpoints", Value: fmt.Sprintf("%d/%d", ready, len(item.Endpoints))})
 	return Record{Kind: "EndpointSlice", Name: item.Name, Namespace: item.Namespace, Status: fmt.Sprintf("%d/%d ready", ready, len(item.Endpoints)), Owners: owners(item.Namespace, item.OwnerReferences), Related: related, Fields: fields}, len(item.Endpoints) > MaxObjects
 }
 
-func endpointCondition(value *bool) string {
+func endpointCondition(value *bool, defaultValue bool) string {
 	if value == nil {
-		return "unset"
+		return fmt.Sprintf("unset (effective %t)", defaultValue)
 	}
 	return strconv.FormatBool(*value)
 }

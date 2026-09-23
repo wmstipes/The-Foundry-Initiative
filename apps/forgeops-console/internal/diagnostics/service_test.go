@@ -137,6 +137,51 @@ func TestContainerMustExistOnCurrentPod(t *testing.T) {
 	requireCode(t, err, "invalid_container")
 }
 
+func TestChangedPodUIDCannotReturnLogsOrEvents(t *testing.T) {
+	service, _, client, _ := fixture(t, func(context.Context, kubernetes.Interface, string, string, *corev1.PodLogOptions) (io.ReadCloser, error) {
+		t.Fatal("changed Pod must not be logged")
+		return nil, nil
+	})
+	for _, operation := range []string{"logs", "events"} {
+		q := Query{Generation: 2, Operation: operation, Pod: "api", ExpectedUID: "old-pod-uid"}
+		if operation == "logs" {
+			q.Container = "api"
+		}
+		_, err := service.Execute(context.Background(), q)
+		requireCode(t, err, "pod_changed")
+	}
+	for _, action := range client.Actions() {
+		if action.GetVerb() != "get" || action.GetResource().Resource != "pods" {
+			t.Fatalf("changed Pod reached diagnostic read: %v", action)
+		}
+	}
+	q := logsQuery()
+	q.ExpectedUID = strings.Repeat("x", 129)
+	_, err := service.Execute(context.Background(), q)
+	requireCode(t, err, "invalid_request")
+}
+
+func TestPodReplacementDuringLogReadDiscardsText(t *testing.T) {
+	service, _, _, _ := fixture(t, func(ctx context.Context, client kubernetes.Interface, _, _ string, _ *corev1.PodLogOptions) (io.ReadCloser, error) {
+		pod, err := client.CoreV1().Pods("team").Get(ctx, "api", metav1.GetOptions{})
+		if err != nil {
+			return nil, err
+		}
+		pod.UID = "replacement-uid"
+		if _, err = client.CoreV1().Pods("team").Update(ctx, pod, metav1.UpdateOptions{}); err != nil {
+			return nil, err
+		}
+		return io.NopCloser(strings.NewReader("replacement log")), nil
+	})
+	q := logsQuery()
+	q.ExpectedUID = "pod-uid"
+	result, err := service.Execute(context.Background(), q)
+	requireCode(t, err, "pod_changed")
+	if result.Text != "" {
+		t.Fatal("replacement logs escaped")
+	}
+}
+
 func TestLogByteLineAndControlBounds(t *testing.T) {
 	for _, input := range []string{strings.Repeat("x", MaxBytes+20), strings.Repeat("x\n", MaxLines+20)} {
 		service, _, _, _ := fixture(t, func(context.Context, kubernetes.Interface, string, string, *corev1.PodLogOptions) (io.ReadCloser, error) {

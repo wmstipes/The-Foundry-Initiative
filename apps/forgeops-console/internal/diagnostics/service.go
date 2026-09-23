@@ -36,12 +36,13 @@ const (
 )
 
 type Query struct {
-	Generation uint64 `json:"generation"`
-	Operation  string `json:"operation"`
-	Pod        string `json:"pod"`
-	Container  string `json:"container,omitempty"`
-	Previous   bool   `json:"previous,omitempty"`
-	Target     string `json:"target,omitempty"`
+	Generation  uint64 `json:"generation"`
+	Operation   string `json:"operation"`
+	Pod         string `json:"pod"`
+	ExpectedUID string `json:"expectedUID,omitempty"`
+	Container   string `json:"container,omitempty"`
+	Previous    bool   `json:"previous,omitempty"`
+	Target      string `json:"target,omitempty"`
 }
 type Event struct {
 	Name    string `json:"name"`
@@ -96,6 +97,9 @@ func valid(q Query) bool {
 		return false
 	}
 	if len(validation.IsDNS1123Subdomain(q.Pod)) != 0 {
+		return false
+	}
+	if len(q.ExpectedUID) > 128 || safeText(q.ExpectedUID, 128) != q.ExpectedUID {
 		return false
 	}
 	switch target {
@@ -156,8 +160,19 @@ func (s *Service) Execute(parent context.Context, q Query) (result Result, err e
 				if pod.Name != q.Pod || pod.Namespace != scope.Namespace || pod.UID == "" {
 					return Result{}, errors.New("invalid pod response")
 				}
+				if q.ExpectedUID != "" && string(pod.UID) != q.ExpectedUID {
+					return Result{}, &resources.APIError{Code: "pod_changed", Status: 409}
+				}
 				if q.Operation == "logs" {
 					result.Text, result.Truncated, err = s.readLogs(ctx, client, scope, pod, q)
+					if err == nil && q.ExpectedUID != "" {
+						current, getErr := client.CoreV1().Pods(scope.Namespace).Get(ctx, q.Pod, metav1.GetOptions{})
+						if getErr != nil {
+							err = getErr
+						} else if string(current.UID) != q.ExpectedUID {
+							err = &resources.APIError{Code: "pod_changed", Status: 409}
+						}
+					}
 				} else {
 					result.Events, result.Truncated, err = readEvents(ctx, client, scope, pod)
 				}

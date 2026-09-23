@@ -108,6 +108,28 @@ timestamp is explicit. EndpointSlice readiness alone does not establish a Pod
 failure or the start of a Service outage. The source-only update is not part
 of the published `v0.1.0-rc.1` archive and has no new operator acceptance yet.
 
+For the follow-up operator check, select `synthetic-service-demo` and start a
+timer. Identify Endpoint 3 (`ready=false`), use its `Inspect Pod` link, and
+record the elapsed time and clicks until `restaurant-api-demo-3` opens. Confirm
+that the Pod Ready condition and last transition both say `unavailable`.
+After acknowledging the diagnostic warning, read Pod Events and choose the
+`api` container for bounded logs. The synthetic target Pod has no matching
+Events and only generic synthetic log text; neither supplies a cause. Pass if
+the operator can identify the target, reach its diagnostics, and describe the
+remaining uncertainty without calling the Pod failed or dating an outage.
+Record each observation and any confusion as operator evidence. The earlier
+`2/3 ready` walkthrough has no timing baseline, so this timing establishes a
+new baseline rather than proving a speedup.
+
+The source follow-up interprets an unset EndpointSlice `ready` or `serving`
+flag as effectively true, and unset `terminating` as effectively false, while
+displaying that each flag was unset. A target Pod UID is compared during Pod
+drilldown and diagnostics; if the Pod changes, refresh the EndpointSlice.
+Without a target UID, the interface labels the drilldown as name-only and
+cannot confirm object identity. The bounded log read has a second identity
+check after retrieving text; it does not guarantee historical logs for a Pod
+that has already disappeared.
+
 The matching namespace, Service name and endpoint counts allow a bounded
 side-by-side discussion with the fixture's `PASS → FAIL` routing check. The
 Console contexts differ from the fixture's `kubernetes-admin@kubernetes` on

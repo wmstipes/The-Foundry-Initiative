@@ -8,7 +8,7 @@ import type { DiagnosticResult, ResourceRecord } from "../types";
 vi.mock("../api", () => ({ queryDiagnostics: vi.fn() }));
 const mock = vi.mocked(queryDiagnostics);
 const scope = { context: "dev", namespace: "team", generation: 2 };
-const pod: ResourceRecord = { kind: "Pod", name: "api", namespace: "team", status: "Running", fields: [{ label: "Containers", value: "api, sidecar" }], owners: [], related: [] };
+const pod: ResourceRecord = { kind: "Pod", name: "api", namespace: "team", uid: "pod-uid", status: "Running", fields: [{ label: "Containers", value: "api, sidecar" }], owners: [], related: [] };
 const result: DiagnosticResult = { scope, operation: "logs", text: "<img src=x onerror=alert(1)>", events: [], warning: "sensitive", truncated: false };
 let host: HTMLDivElement;
 let root: Root;
@@ -33,7 +33,7 @@ describe("Pod diagnostics", () => {
   });
   it("renders hostile content as text and sends bounded structured selections", async () => {
     mock.mockResolvedValue(result); await choose(); await click("Read logs");
-    expect(mock).toHaveBeenCalledWith({ generation: 2, operation: "logs", pod: "api", container: "api", previous: false }, expect.any(AbortSignal));
+    expect(mock).toHaveBeenCalledWith({ generation: 2, operation: "logs", pod: "api", expectedUID: "pod-uid", container: "api", previous: false }, expect.any(AbortSignal));
     expect(host.querySelector("pre")?.textContent).toBe(result.text); expect(host.querySelector("img")).toBeNull();
   });
   it("aborts cancellation and discards a late result even if the transport ignores abort", async () => {
