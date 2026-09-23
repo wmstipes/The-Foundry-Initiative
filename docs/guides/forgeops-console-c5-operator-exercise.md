@@ -127,6 +127,12 @@ This is operator-reported timing, not an instrumented comparison or a live
 cluster result. His screenshot also showed heavy wrapping in the EndpointSlice
 details while the collapsed Activity panel consumed a right column. A source
 layout follow-up gives the details more width and moves Activity beside Refresh.
+Mike confirmed the wider layout looked much better after PR #126 merged. His
+next screenshot showed the `Inspect Pod` buttons touching their relationship
+text; he requested spacing and a dark blue theme. The source UI follow-up
+groups each relationship and its action with a flexible gap and changes the
+Console's neutral/interactive colors. Amber synthetic-mode and warning cues
+remain distinct. This is visual operator feedback, not a new timed exercise.
 
 The source follow-up interprets an unset EndpointSlice `ready` or `serving`
 flag as effectively true, and unset `terminating` as effectively false, while
