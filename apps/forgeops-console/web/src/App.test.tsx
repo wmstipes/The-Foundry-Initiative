@@ -83,16 +83,28 @@ describe("Console resource transitions", () => {
 
  it("opens the exact Pod target for an unready endpoint and exposes diagnostics", async () => {
   await scope();
-  const slice: ResourceRecord = { kind: "EndpointSlice", name: "slice", namespace: "team", status: "2/3 ready", fields: [{ label: "Endpoint 3", value: "Pod/api-three · ready=false · serving=unset · terminating=unset" }], owners: [], related: [{ kind: "Pod", name: "api-three", namespace: "team", relation: "endpoint-target" }] };
+  const slice: ResourceRecord = { kind: "EndpointSlice", name: "slice", namespace: "team", status: "2/3 ready", fields: [{ label: "Endpoint 3", value: "Pod/api-three · ready=false · serving=unset (effective true) · terminating=unset (effective false)" }], owners: [], related: [{ kind: "Pod", name: "api-three", namespace: "team", uid: "target-uid", relation: "endpoint-target" }] };
   vi.mocked(api.queryResources).mockResolvedValueOnce({ ...result("endpointslices"), items: [slice] });
   await click("EndpointSlices");
   await act(async () => { (host.querySelector(".resource-row") as HTMLButtonElement).click(); });
   expect(host.textContent).toContain("ready=false");
   expect(host.textContent).toContain("does not establish Pod failure");
-  vi.mocked(api.queryResources).mockResolvedValueOnce({ ...result("pods"), operation: "read", items: [{ ...pod, name: "api-three", fields: [{ label: "Pod Ready last transition (UTC; not outage time)", value: "unavailable" }] }] });
+  vi.mocked(api.queryResources).mockResolvedValueOnce({ ...result("pods"), operation: "read", items: [{ ...pod, name: "api-three", uid: "target-uid", fields: [{ label: "Pod Ready last transition (UTC; not outage time)", value: "unavailable" }] }] });
   await click("Inspect Pod");
   expect(api.queryResources).toHaveBeenLastCalledWith("pods", 2, "api-three", expect.any(AbortSignal));
   expect(host.textContent).toContain("unavailable");
   expect(host.textContent).toContain("Logs, Events");
+ });
+
+ it("rejects a replaced Pod with the same name before showing diagnostics", async () => {
+  await scope();
+  const slice: ResourceRecord = { kind: "EndpointSlice", name: "slice", namespace: "team", status: "0/1 ready", fields: [], owners: [], related: [{ kind: "Pod", name: "api-three", namespace: "team", uid: "old-uid", relation: "endpoint-target" }] };
+  vi.mocked(api.queryResources).mockResolvedValueOnce({ ...result("endpointslices"), items: [slice] });
+  await click("EndpointSlices");
+  await act(async () => { (host.querySelector(".resource-row") as HTMLButtonElement).click(); });
+  vi.mocked(api.queryResources).mockResolvedValueOnce({ ...result("pods"), operation: "read", items: [{ ...pod, name: "api-three", uid: "new-uid" }] });
+  await click("Inspect Pod");
+  expect(host.querySelector(".diagnostics")).toBeNull();
+  expect(host.querySelector('[role="alert"]')?.textContent).toContain("pod_changed");
  });
 });

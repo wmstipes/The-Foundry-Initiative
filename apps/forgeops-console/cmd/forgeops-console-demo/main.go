@@ -184,7 +184,8 @@ func routingRegressionObjects(after bool) []runtime.Object {
 	objects = append(objects, &corev1.Service{ObjectMeta: metav1.ObjectMeta{Name: serviceName, Namespace: namespace}, Spec: corev1.ServiceSpec{Type: corev1.ServiceTypeClusterIP, Selector: map[string]string{"app": "restaurant-api"}, Ports: []corev1.ServicePort{{Name: portName, Port: 80, Protocol: protocol, TargetPort: intstr.FromInt32(port)}}}})
 	endpoints := make([]discoveryv1.Endpoint, 3)
 	for i := range endpoints {
-		endpoints[i] = discoveryv1.Endpoint{Addresses: []string{fmt.Sprintf("192.0.2.%d", i+1)}, TargetRef: &corev1.ObjectReference{Kind: "Pod", Namespace: namespace, Name: fmt.Sprintf("restaurant-api-demo-%d", i+1)}, Conditions: discoveryv1.EndpointConditions{Ready: boolPointer(!after || i < 2)}}
+		podName := fmt.Sprintf("restaurant-api-demo-%d", i+1)
+		endpoints[i] = discoveryv1.Endpoint{Addresses: []string{fmt.Sprintf("192.0.2.%d", i+1)}, TargetRef: &corev1.ObjectReference{Kind: "Pod", Namespace: namespace, Name: podName, UID: typesUID("demo-" + podName)}, Conditions: discoveryv1.EndpointConditions{Ready: boolPointer(!after || i < 2)}}
 	}
 	objects = append(objects, &discoveryv1.EndpointSlice{ObjectMeta: metav1.ObjectMeta{Name: "synthetic-service-demo", Namespace: namespace, Labels: map[string]string{discoveryv1.LabelServiceName: serviceName}}, AddressType: discoveryv1.AddressTypeIPv4, Ports: []discoveryv1.EndpointPort{{Name: &portName, Port: &port, Protocol: &protocol}}, Endpoints: endpoints})
 	return objects

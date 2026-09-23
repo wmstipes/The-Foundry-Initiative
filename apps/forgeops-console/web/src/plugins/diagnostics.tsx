@@ -28,6 +28,7 @@ export default function Diagnostics({ scope, pod, onComplete }: { scope: Scope; 
     const logRequest = operation === "logs" || target === "logs";
     try {
       const loaded = await queryDiagnostics({ generation: scope.generation, operation, pod: pod.name,
+        ...(pod.uid ? { expectedUID: pod.uid } : {}),
         ...(logRequest ? { container, previous } : {}), ...(target ? { target } : {}),
       }, controller.signal);
       if (id === serial.current && !controller.signal.aborted && loaded.scope.generation === scope.generation && loaded.scope.context === scope.context && loaded.scope.namespace === scope.namespace) setResult(loaded);

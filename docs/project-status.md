@@ -29,12 +29,15 @@ historical evidence rather than being rewritten when the suite grows.
   [separate release-identity sources](design/forgeops-brief-release-identity-sources.md)
   are specified but not displayed in an incident brief. Operator-assisted
   aligned acceptance remains outstanding.
-- Pending source-only triage update: an EndpointSlice projects bounded Pod
+- Source-only triage update merged through PR #124: an EndpointSlice projects bounded Pod
   targets and endpoint conditions, links to an exact Pod read, and displays
   Pod Ready condition transition time when reported. The synthetic after case
   still has three Ready Pods and one unready endpoint, with no recorded
-  transition timestamp or established root cause. This update is not in the
-  published preview and awaits operator review.
+  transition timestamp or established root cause. The agent pilot found that
+  unset endpoint readiness was miscounted and target Pod identity was not
+  verified. A focused follow-up corrects the default, compares target Pod UIDs
+  before drilldown and diagnostics, and labels name-only links when UID is
+  missing. This is not in the published preview and awaits operator review.
 - Runtime: local browser interface and loopback-only Go core; one explicit
   kubeconfig, selected context/namespace, fixed typed reads, three compiled
   first-party plugins and bounded selected-Pod diagnostics. No mutation,

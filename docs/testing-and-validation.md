@@ -1,6 +1,6 @@
 # Testing and validation
 
-**Inventory date:** 2026-09-22
+**Inventory date:** 2026-09-23
 
 This document defines what The Foundry Initiative means when it reports tests
 and validation results. It separates executable test cases, generated scenario
@@ -11,16 +11,16 @@ is not collapsed into one misleading total.
 
 | Suite | Current count | Scope |
 | --- | ---: | --- |
-| ForgeOps Python tests | 178 | `tests/test_forgeops*.py`; included in both Python totals below |
+| ForgeOps Python tests | 184 | `tests/test_forgeops*.py`; included in both Python totals below |
 | Top-level Python tests | 254 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
 | Complete repository Python discovery | 263 | Top-level 254 plus Restaurant API 9 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
-| ForgeOps Console Go tests | 55 | Test functions across eight core packages; table subtests not added to this count; separate from Python totals |
-| ForgeOps Console Vitest tests | 19 | API, App resource-transition, and Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
+| ForgeOps Console Go tests | 61 | Test functions across core and demo packages; table subtests not added to this count; separate from Python totals |
+| ForgeOps Console Vitest tests | 21 | API, App resource-transition, and Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
-The Python counts are nested, not additive: the 178 ForgeOps tests are part of
+The Python counts are nested, not additive: the 184 ForgeOps tests are part of
 the 254 top-level tests, and the 254 plus the nine Restaurant API tests produce
 the 263-test complete Python discovery. The browser, Go, and promtool
 scenarios use different runners and must be reported separately rather than as
@@ -221,6 +221,14 @@ browser interaction case (20 Vitest cases total) checks that the target opens
 an exact Pod read and reveals diagnostics. These are offline fake-client and
 DOM checks; the published Windows preview has not changed, and the path awaits
 operator acceptance. The Pod Ready transition is not an outage timestamp.
+
+The agent review follow-up adds two diagnostics Go test functions (61 total)
+and one browser case (21 total). The tests cover an endpoint with unset ready
+status, Pod target UID projection, a replaced Pod during drilldown, and a
+replacement during log retrieval. Existing diagnostics may still be read by
+name when target UID is absent, with the limitation shown in the UI. The
+post-read identity check bounds the log race but does not create durable
+historical logging or prove an outage time.
 
 ## What the suites cover
 
