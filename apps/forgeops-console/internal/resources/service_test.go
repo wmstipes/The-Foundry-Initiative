@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -229,5 +230,39 @@ func TestNodeCordonFlagIsExplicit(t *testing.T) {
 		if !found {
 			t.Fatal("explicit cordon flag missing")
 		}
+	}
+}
+
+func TestPodReadyTransitionIsEvidenceNotOutageTime(t *testing.T) {
+	transition := metav1.NewTime(time.Date(2026, 9, 22, 12, 34, 0, 0, time.FixedZone("other", 3600)))
+	pod := corev1.Pod{Status: corev1.PodStatus{Conditions: []corev1.PodCondition{{Type: corev1.PodReady, Status: corev1.ConditionFalse, LastTransitionTime: transition}}}}
+	got := projectPod(pod)
+	if got.Fields[4].Value != "False" || got.Fields[5].Value != "2026-09-22T11:34:00Z" {
+		t.Fatalf("unexpected Pod condition evidence: %#v", got.Fields)
+	}
+	missing := projectPod(corev1.Pod{})
+	if missing.Fields[4].Value != "unavailable" || missing.Fields[5].Value != "unavailable" {
+		t.Fatalf("missing condition fabricated timing: %#v", missing.Fields)
+	}
+}
+
+func TestEndpointTargetProjectionBoundsAndNamespace(t *testing.T) {
+	falseValue, trueValue := false, true
+	slice := discoveryv1.EndpointSlice{ObjectMeta: metav1.ObjectMeta{Name: "slice", Namespace: "team", Labels: map[string]string{discoveryv1.LabelServiceName: "api"}}, Endpoints: []discoveryv1.Endpoint{
+		{TargetRef: &corev1.ObjectReference{Kind: "Pod", Name: "api-one", Namespace: "team"}, Conditions: discoveryv1.EndpointConditions{Ready: &falseValue, Serving: &trueValue}},
+		{TargetRef: &corev1.ObjectReference{Kind: "Pod", Name: "private", Namespace: "other"}},
+	}}
+	got, clipped := projectEndpointSlice(slice)
+	if clipped || got.Status != "0/2 ready" || len(got.Related) != 2 || got.Related[1].Name != "api-one" || got.Fields[2].Value != "Pod/api-one · ready=false · serving=true · terminating=unset" || got.Fields[3].Value != "Pod target unavailable · ready=unset · serving=unset · terminating=unset" {
+		t.Fatalf("unexpected endpoint projection: %#v", got)
+	}
+	for len(slice.Endpoints) <= MaxObjects {
+		slice.Endpoints = append(slice.Endpoints, discoveryv1.Endpoint{})
+	}
+	service, state, _ := fixture(t, &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "team"}}, &slice)
+	scope := selectNamespace(t, service, state, "team")
+	result, err := service.Execute(context.Background(), Query{Generation: scope.Generation, Operation: "read", Resource: "endpointslices", Name: "slice"})
+	if err != nil || !result.Truncated || len(result.Items) != 1 || len(result.Items[0].Fields) != MaxObjects+3 {
+		t.Fatalf("endpoint clipping was not disclosed: %#v %v", result, err)
 	}
 }

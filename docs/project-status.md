@@ -1,6 +1,6 @@
 # Project Status
 
-**Last updated:** 2026-09-22
+**Last updated:** 2026-09-23
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
@@ -29,6 +29,12 @@ historical evidence rather than being rewritten when the suite grows.
   [separate release-identity sources](design/forgeops-brief-release-identity-sources.md)
   are specified but not displayed in an incident brief. Operator-assisted
   aligned acceptance remains outstanding.
+- Pending source-only triage update: an EndpointSlice projects bounded Pod
+  targets and endpoint conditions, links to an exact Pod read, and displays
+  Pod Ready condition transition time when reported. The synthetic after case
+  still has three Ready Pods and one unready endpoint, with no recorded
+  transition timestamp or established root cause. This update is not in the
+  published preview and awaits operator review.
 - Runtime: local browser interface and loopback-only Go core; one explicit
   kubeconfig, selected context/namespace, fixed typed reads, three compiled
   first-party plugins and bounded selected-Pod diagnostics. No mutation,

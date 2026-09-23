@@ -42,6 +42,9 @@ func TestRoutingScenariosMatchReviewedFixtureAndProjection(t *testing.T) {
 			}
 			ready, notReady, unknown := 0, 0, 0
 			for _, endpoint := range slices[0].Endpoints {
+				if endpoint.TargetRef == nil || endpoint.TargetRef.Kind != "Pod" || endpoint.TargetRef.Namespace != "forge-restaurant" {
+					t.Fatalf("missing in-scope Pod target: %#v", endpoint.TargetRef)
+				}
 				switch {
 				case endpoint.Conditions.Ready == nil:
 					unknown++
@@ -96,6 +99,9 @@ func TestRoutingScenariosMatchReviewedFixtureAndProjection(t *testing.T) {
 			}
 			if result.Truncated || len(result.Items) != 1 || result.Items[0].Status != stage.status || result.Items[0].Name != "synthetic-service-demo" {
 				t.Fatalf("unexpected projected EndpointSlice: %#v", result)
+			}
+			if len(result.Items[0].Related) != 4 || result.Items[0].Related[3].Name != "restaurant-api-demo-3" || result.Items[0].Fields[4].Value != "Pod/restaurant-api-demo-3 · ready="+map[string]string{"routing-before": "true", "routing-after": "false"}[stage.scenario]+" · serving=unset · terminating=unset" {
+				t.Fatalf("the changed endpoint cannot lead to its Pod: %#v", result.Items[0])
 			}
 			services, err := service.Execute(context.Background(), resources.Query{Generation: scope.Generation, Operation: "list", Resource: "services"})
 			if err != nil {
