@@ -13,7 +13,9 @@ Local validation on 2026-09-23: the Loki v3.7.0 Linux AMD64 release executable r
 
 ## Storage preparation, separate gate
 
-First verify the accepted Prometheus off-node archive (`prometheus-tsdb-20260910-150206Z.tar.gz`, recorded SHA-256 `68e00637d6fd05db21bc8e5dbefa7bbb7d65a7548dd3de0eec5c2faae574dc24`) and ensure enough space for another off-node partition-table backup. In an **interactive SSH session** as `wmstipes@192.168.243.110`, save a fresh read-only table dump in your home directory:
+The operator has chosen to proceed without a fresh off-node backup at this stage; Prometheus currently reports 27 MiB used and Grafana 2.6 MiB used. This choice does not make their existing data expendable: the storage script still verifies both partitions and active mounts and saves the table and fstab on the head's SD card before the write. A failed NVMe requiring replacement would make that on-node evidence insufficient for data recovery. The optional off-node path remains available. The previously accepted Prometheus archive is `prometheus-tsdb-20260910-150206Z.tar.gz` with SHA-256 `68e00637d6fd05db21bc8e5dbefa7bbb7d65a7548dd3de0eec5c2faae574dc24`.
+
+For **optional off-node partition-table evidence**, in an interactive SSH session as `wmstipes@192.168.243.110`, save a fresh read-only table dump in your home directory:
 
 ```bash
 sudo sfdisk --dump /dev/nvme0n1 > ~/loki-nvme-before.sfdisk
@@ -45,7 +47,7 @@ Run its plan on the head. It checks the serial, model, sector size, both live fi
 sudo bash prepare-loki-storage.sh --plan
 ```
 
-`--prepare <verified-off-node-table-sha256>` is a **separate disk write**. Run only after reviewing the plan output and accepted backup and authorizing that exact operation. The script appends only partition 3 (start `75499520`, length `16777216`, end `92276735`), verifies old partition records did not change, checks for signatures before formatting, creates a new ext4 filesystem, mounts by UUID and checks the Loki UID can write. It refuses unexpected state. If it stops after a write, inspect the saved host evidence and off-node table; do not rerun or format again. Record the printed `LOKI_FILESYSTEM_UUID` and verify it against `findmnt` and `lsblk` before Kubernetes apply.
+The **disk write** has two explicit modes: `--prepare <verified-off-node-table-sha256>` if using the optional off-node copy, or `--prepare-without-offnode-backup` for the operator's current choice. Neither is the default. Both verify the live partition layout and drive identity, save and hash a fresh table dump plus fstab on the head's SD card, preview the append, and then append only partition 3 (start `75499520`, length `16777216`, end `92276735`). They verify old partition records did not change, check for signatures before formatting, create a new ext4 filesystem, mount by UUID and check that Loki UID 10001 can write. Review the `--plan` output before invoking either write mode. If the script stops after a write, inspect the saved host evidence; do not rerun or format again. Record the printed `LOKI_FILESYSTEM_UUID` and verify it against `findmnt` and `lsblk` before Kubernetes apply.
 
 ## Phased Kubernetes review and rollout
 

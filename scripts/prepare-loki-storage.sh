@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Run interactively on forge-head. Default is read-only; --prepare requires the
-# SHA-256 of a matching sfdisk dump already copied and verified off-node.
+# Run interactively on forge-head. Default is read-only. The explicit
+# local-evidence-only mode preserves the table on the head's SD card.
 set -euo pipefail
 export LC_ALL=C
 
@@ -14,7 +14,8 @@ mode="${1:---plan}"
 case "$mode" in
   --plan) test "$#" -le 1 || { echo 'Usage: sudo bash prepare-loki-storage.sh --plan' >&2; exit 2; } ;;
   --prepare) test "$#" -eq 2 && [[ "$2" =~ ^[a-fA-F0-9]{64}$ ]] || { echo 'Usage: sudo bash prepare-loki-storage.sh --prepare OFF_NODE_SFDISK_SHA256' >&2; exit 2; } ;;
-  *) echo 'Usage: sudo bash prepare-loki-storage.sh --plan|--prepare OFF_NODE_SFDISK_SHA256' >&2; exit 2 ;;
+  --prepare-without-offnode-backup) test "$#" -eq 1 || { echo 'Usage: sudo bash prepare-loki-storage.sh --prepare-without-offnode-backup' >&2; exit 2; } ;;
+  *) echo 'Usage: sudo bash prepare-loki-storage.sh --plan|--prepare OFF_NODE_SFDISK_SHA256|--prepare-without-offnode-backup' >&2; exit 2 ;;
 esac
 test "$(id -u)" -eq 0
 test "$(hostname)" = forge-head
@@ -55,11 +56,15 @@ if [[ "$mode" = --plan ]]; then
 fi
 
 current_hash=$(sfdisk --dump "$device" | sha256sum | cut -d' ' -f1)
-if [[ "$current_hash" != "${2,,}" ]]; then echo 'Partition table differs from off-node backup; stop' >&2; exit 1; fi
+if [[ "$mode" = --prepare && "$current_hash" != "${2,,}" ]]; then echo 'Partition table differs from off-node backup; stop' >&2; exit 1; fi
 backup_dir=$(mktemp -d /var/tmp/signalforge-loki-storage.XXXXXX)
 sfdisk --dump "$device" > "$backup_dir/before.sfdisk"
 cp -p /etc/fstab "$backup_dir/fstab.before"
-trap 'rc=$?; if [[ "$rc" -ne 0 ]]; then echo "STOP: partial preparation may exist. Do not rerun or format. Inspect $backup_dir and off-node backup." >&2; fi' EXIT
+test "$(sha256sum "$backup_dir/before.sfdisk" | cut -d' ' -f1)" = "$current_hash"
+test "$(sfdisk --dump "$device" | sha256sum | cut -d' ' -f1)" = "$current_hash"
+echo "Partition table and fstab saved on the head's SD card: $backup_dir"
+if [[ "$mode" = --prepare-without-offnode-backup ]]; then echo 'Proceeding without an off-node partition-table copy; existing NVMe volumes have no off-node recovery copy for this change.'; fi
+trap 'rc=$?; if [[ "$rc" -ne 0 ]]; then echo "STOP: partial preparation may exist. Do not rerun or format. Inspect $backup_dir." >&2; fi' EXIT
 printf '%s\n' "$entry" | sfdisk --lock --append --no-reread --no-tell-kernel --wipe never --wipe-partitions never "$device"
 sfdisk --dump "$device" > "$backup_dir/after.sfdisk"
 for n in 1 2; do diff <(grep "^/dev/nvme0n1p$n " "$backup_dir/before.sfdisk") <(grep "^/dev/nvme0n1p$n " "$backup_dir/after.sfdisk"); done
