@@ -1,6 +1,6 @@
-# Service Pulse Kubernetes candidate
+# Service Pulse Kubernetes deployment
 
-This directory is a reviewed **candidate**, not a record of a live deployment. It defines one restricted `forge-pulse` namespace, two single-replica Deployments, and two internal ClusterIP Services. The board has no NodePort or Ingress. Istio injection is disabled for this first step; central logging and mesh enrollment will be reviewed separately.
+These are the tracked resources for the live `forge-pulse` deployment: one restricted namespace, two single-replica Deployments, and two internal ClusterIP Services. The board has no NodePort or Ingress. Istio injection is disabled for this first step; central logging and mesh enrollment will be reviewed separately.
 
 Both Deployments pin the published Linux AMD64/ARM64 OCI index:
 
@@ -10,7 +10,18 @@ wmstipes/signalforge-service-pulse:0.1.1@sha256:ef00b39bb93686ab087e254df4125622
 
 This is the corrected port-80 probe built from merge commit `5777e7c2a139a993e6e714ad22f64dadb6d28824` in [release run 35923087833](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/35923087833). Docker Hub reports Linux AMD64 manifest `sha256:abb558b6bb6b09e89d3fa2db09a63baeccfe061268e671bd6cc38c2ff4498f40` and ARM64 manifest `sha256:f3f5430cd5ce90c8395b7fcce734f85e933f3f0bffc876eaf56e63b30356e6b6` under the index.
 
-Each Pod requests 50m CPU and 64Mi memory and is limited to 250m CPU and 128Mi memory. The two Pods together request 100m CPU and 128Mi memory; check live allocatable capacity, current allocations, and scheduling before applying. Both run as UID/GID 10001 with a read-only root filesystem, restricted Pod Security, no ServiceAccount token, and no granted Kubernetes RBAC. `/healthz` checks only the process. A ready Pod **does not** prove the Restaurant or probe connection works.
+Each Pod requests 50m CPU and 64Mi memory and is limited to 250m CPU and 128Mi memory. The two Pods together request 100m CPU and 128Mi memory; check live allocatable capacity, current allocations, and scheduling before any changes. Both run as UID/GID 10001 with a read-only root filesystem, restricted Pod Security, no ServiceAccount token, and no granted Kubernetes RBAC. `/healthz` checks only the process. A ready Pod **does not** prove the Restaurant or probe connection works.
+
+## Live acceptance, 2026-09-23
+
+The namespace and four workload resources were applied from these manifests after server-side dry-run and diff review. The three `restaurant-api` endpoints were ready and serving; the Service exposed port 80 and targeted port 8000. Worker nodes had ample allocatable headroom.
+
+- Probe Pod `service-pulse-probe-6c7f9c9cc9-jfg6d` was 1/1 Ready with zero restarts on `forge-node-03`. Its internal Service `10.107.203.4:8080` had a ready endpoint at `10.244.54.204:8080`.
+- Board Pod `service-pulse-board-7bc66bb6b7-g84g9` was 1/1 Ready with zero restarts on `forge-node-02`. Its internal Service `10.99.230.54:8080` had an endpoint at `10.244.110.28:8080`.
+- A laptop port-forward to the board Service returned `fresh: true` from `/api/status`. Three recent Restaurant samples were `ok`, with probe log sample IDs `a9ca47f06eac4ae58a9514acf3d8bf91`, `37e009acd8c74b20b15fc928ad2f7f24`, and `f98514e707f34e27a4348f6e71b34446`. The latest was observed at `2026-09-23T22:08:58.656833+00:00` and took 5 ms.
+- Board `probe_read` and probe `checks_read` shared request ID `69868cba548842febf7f340370db36a2` at about 22:09:07 UTC; the probe returned five samples. This verifies the cross-node board-to-probe path. Visual rendering of the board page has not yet been confirmed.
+
+These are point-in-time observations, not an uptime claim. Central logging is not installed; Pod replacement will reset the probe's in-memory samples and may lose old container logs. No Istio proxy was requested by these manifests.
 
 ## Read-only preflight from the laptop
 

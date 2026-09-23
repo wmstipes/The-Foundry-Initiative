@@ -26,11 +26,11 @@ Path: `k8s/forge-yaml-workbench`
 
 This directory contains the restricted `forge-tools` namespace, hardened stateless Workbench Deployment, and NodePort Service on `30081`. The live workload and tracked Deployment use accepted immutable `0.10.0`, including safe browser-local YAML file drop and the earlier corrected finding-navigation scrolling. The Workbench has no Kubernetes API identity or mounted ServiceAccount token and processes YAML only in the browser.
 
-## Service Pulse candidate
+## Service Pulse
 
 Path: `k8s/service-pulse`
 
-This directory contains a proposed restricted `forge-pulse` namespace, one probe and one board Deployment, and their internal ClusterIP Services. Both pin the published `0.1.1` OCI digest. The board is accessible by port-forward only from outside the cluster. See its README for read-only preflight, phased review, acceptance, and scoped rollback. These resources have not been applied to the cluster.
+This directory contains the restricted `forge-pulse` namespace, one live probe and one live board Deployment, and their internal ClusterIP Services. Both pin the published `0.1.1` OCI digest. The board is accessible by port-forward only from outside the cluster. See its README for live acceptance evidence, change review, and scoped rollback.
 
 ## Validation
 
