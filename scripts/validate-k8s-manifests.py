@@ -52,6 +52,14 @@ WORKBENCH_IMAGE = (
 WORKBENCH_CONTAINER_PORT = 8080
 WORKBENCH_NODEPORT = 30081
 
+PULSE_MANIFEST_DIR = Path("k8s/service-pulse")
+PULSE_NAMESPACE = "forge-pulse"
+PULSE_IMAGE = (
+    "wmstipes/signalforge-service-pulse:0.1.1@"
+    "sha256:ef00b39bb93686ab087e254df4125622c29784ffff4ad2b74476064882af63e4"
+)
+PULSE_NAMES = ("service-pulse-probe", "service-pulse-board")
+
 REQUIRED_RESTAURANT_FILES = [
     "namespace.yaml",
     "restaurant-api-config.yaml",
@@ -88,6 +96,14 @@ REQUIRED_WORKBENCH_FILES = [
     "namespace.yaml",
     "forge-yaml-workbench-deployment.yaml",
     "forge-yaml-workbench-service.yaml",
+]
+
+REQUIRED_PULSE_FILES = [
+    "namespace.yaml",
+    "service-pulse-probe-deployment.yaml",
+    "service-pulse-probe-service.yaml",
+    "service-pulse-board-deployment.yaml",
+    "service-pulse-board-service.yaml",
 ]
 
 
@@ -935,11 +951,83 @@ def validate_workbench_manifests() -> None:
     ok("Workbench NodePort Service manifest is valid")
 
 
+def validate_pulse_manifests() -> None:
+    require_files(PULSE_MANIFEST_DIR, REQUIRED_PULSE_FILES)
+    actual_files = {path.name for path in PULSE_MANIFEST_DIR.glob("*.yaml")}
+    require(actual_files == set(REQUIRED_PULSE_FILES), "Pulse must contain only the five reviewed Kubernetes objects")
+
+    namespace = load_yaml(PULSE_MANIFEST_DIR / "namespace.yaml")
+    require(namespace.get("kind") == "Namespace", "Pulse namespace kind mismatch")
+    require(namespace.get("metadata", {}).get("name") == PULSE_NAMESPACE, "Pulse namespace name mismatch")
+    labels = namespace.get("metadata", {}).get("labels", {})
+    require(labels.get("istio-injection") == "disabled", "Pulse must initially opt out of mesh injection")
+    for mode in ("enforce", "audit", "warn"):
+        require(labels.get(f"pod-security.kubernetes.io/{mode}") == "restricted", f"Pulse {mode} policy mismatch")
+        require(labels.get(f"pod-security.kubernetes.io/{mode}-version") == "v1.36", f"Pulse {mode} policy version mismatch")
+
+    for name in PULSE_NAMES:
+        deployment = load_yaml(PULSE_MANIFEST_DIR / f"{name}-deployment.yaml")
+        service = load_yaml(PULSE_MANIFEST_DIR / f"{name}-service.yaml")
+        for resource, kind in ((deployment, "Deployment"), (service, "Service")):
+            require(resource.get("kind") == kind, f"{name} {kind} kind mismatch")
+            metadata = resource.get("metadata", {})
+            require(metadata.get("namespace") == PULSE_NAMESPACE and metadata.get("name") == name,
+                    f"{name} {kind} identity mismatch")
+
+        spec = deployment.get("spec", {})
+        require(spec.get("replicas") == 1, f"{name} must have one replica")
+        require(spec.get("selector", {}).get("matchLabels") == {"app": name}, f"{name} selector mismatch")
+        template = spec.get("template", {})
+        require(template.get("metadata", {}).get("labels", {}).get("app") == name,
+                f"{name} Pod labels mismatch")
+        require(template.get("metadata", {}).get("annotations", {}).get("sidecar.istio.io/inject") == "false",
+                f"{name} must initially opt out of mesh injection")
+        pod = template.get("spec", {})
+        require(pod.get("automountServiceAccountToken") is False, f"{name} must not mount a Kubernetes token")
+        require(pod.get("enableServiceLinks") is False, f"{name} must disable injected Service environment variables")
+        require(pod.get("securityContext") == {
+            "runAsNonRoot": True, "runAsUser": 10001, "runAsGroup": 10001,
+            "seccompProfile": {"type": "RuntimeDefault"},
+        }, f"{name} Pod security context mismatch")
+        require(len(pod.get("containers", [])) == 1, f"{name} must contain one container")
+        require("initContainers" not in pod and "volumes" not in pod and "serviceAccountName" not in pod,
+                f"{name} must not add init containers, volumes or a service account")
+        container = pod["containers"][0]
+        require(container.get("name") == name and container.get("image") == PULSE_IMAGE,
+                f"{name} must use the approved image and digest")
+        require(container.get("imagePullPolicy") == "IfNotPresent", f"{name} image pull policy mismatch")
+        require(container.get("env") == [{"name": "PULSE_MODE", "value": name.removeprefix("service-pulse-")}],
+                f"{name} mode mismatch")
+        require(container.get("ports") == [{"name": "http", "containerPort": 8080, "protocol": "TCP"}],
+                f"{name} container port mismatch")
+        require(container.get("securityContext") == {
+            "allowPrivilegeEscalation": False,
+            "readOnlyRootFilesystem": True,
+            "capabilities": {"drop": ["ALL"]},
+        }, f"{name} container security mismatch")
+        require(container.get("resources") == {
+            "requests": {"cpu": "50m", "memory": "64Mi"},
+            "limits": {"cpu": "250m", "memory": "128Mi"},
+        }, f"{name} resource bounds mismatch")
+        for probe_name in ("startupProbe", "readinessProbe", "livenessProbe"):
+            require(container.get(probe_name, {}).get("httpGet") == {"path": "/healthz", "port": "http"},
+                    f"{name} {probe_name} mismatch")
+
+        service_spec = service.get("spec", {})
+        require(service_spec.get("type") == "ClusterIP", f"{name} must be internal-only")
+        require(service_spec.get("selector") == {"app": name}, f"{name} Service selector mismatch")
+        require(service_spec.get("ports") == [{
+            "name": "http", "port": 8080, "targetPort": "http", "protocol": "TCP",
+        }], f"{name} Service port mismatch")
+    ok("Pulse namespace and both hardened, internal-only workloads are valid")
+
+
 def main() -> None:
     validate_restaurant_manifests()
     validate_prometheus_manifests()
     validate_metrics_server_manifests()
     validate_workbench_manifests()
+    validate_pulse_manifests()
     runpy.run_path(str(Path(__file__).with_name('validate-grafana.py')), run_name='__main__')
     print()
     print("All Kubernetes manifest checks passed.")
