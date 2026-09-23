@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pulse-alloy
+  namespace: forge-observability
+  labels:
+    app: pulse-alloy
+    project: signalforge
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: pulse-alloy
+  template:
+    metadata:
+      labels:
+        app: pulse-alloy
+        project: signalforge
+    spec:
+      serviceAccountName: pulse-alloy
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: alloy
+        image: grafana/alloy:v1.17.0@sha256:41c41849989b7e054ccbadc17938ee1e5592fe26bfbc56ef3ffc109c0b0b2739
+        args: ["run", "--server.http.listen-addr=0.0.0.0:12345", "--server.http.enable-pprof=false", "--disable-reporting", "--disable-support-bundle", "--storage.path=/var/lib/alloy", "/etc/alloy/config.alloy"]
+        ports:
+        - name: http
+          containerPort: 12345
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 384Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: [ALL]
+        readinessProbe:
+          httpGet:
+            path: /-/ready
+            port: http
+          periodSeconds: 10
+        volumeMounts:
+        - name: config
+          mountPath: /etc/alloy
+          readOnly: true
+        - name: data
+          mountPath: /var/lib/alloy
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: config
+        configMap:
+          name: pulse-alloy-config
+      - name: data
+        emptyDir:
+          sizeLimit: 64Mi
+      - name: tmp
+        emptyDir:
+          sizeLimit: 64Mi

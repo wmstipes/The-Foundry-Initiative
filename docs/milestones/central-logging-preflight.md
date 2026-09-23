@@ -6,7 +6,7 @@ Retain structured stdout from the two Service Pulse Pods across Pod replacement 
 
 Proposed path: one Alloy instance in `forge-observability` discovers Pods only in `forge-pulse`, reads their logs via the Kubernetes API using a ServiceAccount with a Role limited to that namespace (`get/list/watch pods` and `get pods/log`), and writes to a private Loki ClusterIP. Loki runs as one process on `forge-head` with a dedicated persistent filesystem for chunks, index, WAL and compactor markers. Grafana gets a provisioned Loki datasource after the ingestion path is checked. Start with seven-day retention, a measured storage ceiling and alerts for usage. Avoid dynamic labels such as sample IDs and request IDs; retain those inside JSON messages for search.
 
-## Storage gate before manifests
+## Storage gate before apply
 
 The existing Prometheus and Grafana PV paths are separate mounted filesystems. Grafana's 4 GiB filesystem was prepared on partition 2 of the Samsung NVMe and is already in use. A PV size is not a disk quota, and `Retain` does not back up data. **Do not create a Loki path under either existing mount or assume unallocated NVMe space.** First collect the following read-only inventory from the intended cluster context; review exact partition boundaries, free space, mount UUIDs, capacity and device health before choosing a dedicated disk extent and a bounded claim size. Preparation of a new partition or mount must have a separate reviewed procedure and backup gate.
 
@@ -21,6 +21,7 @@ The operator ran the read-only host checks interactively over SSH as `wmstipes` 
 | Grafana partition | `p2` start `67110912`, length `8388608`, filesystem UUID `a506c674-127a-46da-9c7d-d158b6d1bb75`, mounted at `/mnt/signalforge-grafana` |
 | Unallocated extent | sectors `75499520`–`1000215182`, 440.94 GiB |
 | Drive health | critical warning `0`, spare `99%`, used `2%`, media errors `215` (same count recorded at the Grafana storage gate), temperature `306 K` |
+| Drive identity | `Samsung SSD 950 PRO 512GB`, serial `S2GMNCAGB06236R`, confirmed by operator after the disk inventory |
 
 **Proposed Loki allocation for review:** a new 8 GiB partition `p3` beginning at sector `75499520`, length `16777216` sectors, ending at `92276735`. The next sector, `92276736`, remains unallocated. This allocates less than two percent of the reported unused extent. Mount it by its newly generated filesystem UUID at `/mnt/signalforge-loki`, with a dedicated `/mnt/signalforge-loki/data` directory for Loki UID/GID `10001:10001`. A static 8 GiB PV and reserved PVC would reference that directory, bind only on `forge-head`, and use `Retain`. The partition, rather than the PV's nominal capacity, would enforce the actual filesystem ceiling. Seven-day retention is a policy target; disk alerts and a tested backup are still required. **This is an allocation proposal, not a command to partition the disk.**
 
@@ -40,7 +41,7 @@ Confirm the actual device path before running the final SSH line; `/dev/nvme0n1`
 
 ## Deployment and acceptance gates
 
-1. Pin reviewed Loki and Alloy image index digests and verify ARM64 manifests, release dates and running image IDs. Validate retention configuration with a persistent compactor directory and a 24-hour TSDB index period. Set modest CPU and memory requests/limits and restricted security contexts. Review namespace-scoped permissions and API load for one collector.
+1. Recheck the reviewed Loki and Alloy image index digests and ARM64 manifests against the registry; record running image IDs. Validate retention configuration with a persistent compactor directory and a 24-hour TSDB index period. Review namespace-scoped permissions and API load for one collector. The candidate manifests and image identities are in `k8s/central-logging/README.md`.
 2. Validate configuration locally, then server-side dry-run and `kubectl diff` each resource. Start Loki first and verify `/ready`, persistent volume binding, and no restart loop. Start Alloy only after Loki is ready. Grafana datasource is last.
 3. Find a Pulse `sampleId` in its live Pod log and in Grafana Explore. Record the observed UTC time and browser-local time, Pod name, and JSON result. Delete **only one** Pulse Pod after a controlled window; find an earlier sample from that Pod in Loki after replacement and a new sample from the replacement. This tests actual retention across Pod lifecycle, not just collector readiness.
 4. Verify seven-day retention when old data exists and monitor disk usage and ingestion errors. Back up Loki data to a separate location and test isolated restore before treating this as durable history. A single local Loki instance and one collector are lab-scale components and have no high availability.
