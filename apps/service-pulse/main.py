@@ -16,7 +16,7 @@ from uuid import uuid4
 MODE = os.environ.get("PULSE_MODE", "board")
 if MODE not in ("board", "probe"):
     raise ValueError("PULSE_MODE must be board or probe")
-RESTAURANT_URL = "http://restaurant-api.forge-restaurant.svc.cluster.local:8000/menu"
+RESTAURANT_URL = "http://restaurant-api.forge-restaurant.svc.cluster.local:80/menu"
 PROBE_URL = "http://service-pulse-probe.forge-pulse.svc.cluster.local:8080/checks"
 INTERVAL_SECONDS = 30
 STALE_SECONDS = 90

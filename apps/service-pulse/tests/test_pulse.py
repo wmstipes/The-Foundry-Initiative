@@ -7,6 +7,7 @@ from http.server import ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 from urllib.request import urlopen
+from urllib.parse import urlsplit
 from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location("pulse_main", Path(__file__).resolve().parents[1] / "main.py")
@@ -33,6 +34,13 @@ class Response:
 class PulseTests(unittest.TestCase):
     def setUp(self):
         main.SAMPLES.clear()
+
+    def test_restaurant_check_uses_clusterip_service_port(self):
+        # The tracked Restaurant ClusterIP Service exposes port 80; its container uses 8000.
+        url = urlsplit(main.RESTAURANT_URL)
+        self.assertEqual(url.hostname, "restaurant-api.forge-restaurant.svc.cluster.local")
+        self.assertEqual(url.port, 80)
+        self.assertEqual(url.path, "/menu")
 
     def test_functional_check_records_bounded_success_and_request_identity(self):
         with patch.object(main, "urlopen", return_value=Response({"restaurant": "SignalForge Grill", "specials": ["Soup"]})) as fetch, patch.object(main, "log_event"):
