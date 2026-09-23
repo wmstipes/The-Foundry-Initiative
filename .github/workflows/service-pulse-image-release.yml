@@ -1,0 +1,103 @@
+name: Service Pulse Image Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Approved version (first candidate: 0.1.0)"
+        required: true
+        type: string
+      source_sha:
+        description: "Reviewed full commit SHA on main"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_NAME: wmstipes/signalforge-service-pulse
+
+jobs:
+  validate:
+    name: Validate exact main source and both architectures
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Require approved source and version
+        shell: bash
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+          EXPECTED_SHA: ${{ inputs.source_sha }}
+        run: |
+          set -euo pipefail
+          test "$REQUESTED_VERSION" = "0.1.0"
+          [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: python -m unittest discover -s apps/service-pulse/tests -v
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - name: Build without publishing
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: apps/service-pulse
+          file: apps/service-pulse/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: ${{ env.IMAGE_NAME }}:${{ inputs.version }}
+
+  publish:
+    name: Publish approved versioned image
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Reject existing tag and unexpected source
+        shell: bash
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+          EXPECTED_SHA: ${{ inputs.source_sha }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$REQUESTED_VERSION" = "0.1.0"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          status=$(curl --silent --show-error --max-time 15 --output /dev/null \
+            --write-out '%{http_code}' \
+            "https://hub.docker.com/v2/repositories/wmstipes/signalforge-service-pulse/tags/${REQUESTED_VERSION}")
+          test "$status" = "404" || { echo "Tag exists or Docker Hub could not confirm absence (HTTP $status)" >&2; exit 1; }
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Publish versioned multiarchitecture image
+        id: image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: apps/service-pulse
+          file: apps/service-pulse/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:${{ inputs.version }}
+      - name: Verify published index platforms and record digest
+        shell: bash
+        env:
+          DIGEST: ${{ steps.image.outputs.digest }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          [[ "$DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
+          docker buildx imagetools inspect --raw "${IMAGE_NAME}@${DIGEST}" > "$RUNNER_TEMP/service-pulse-index.json"
+          jq -e '[.manifests[].platform.architecture | select(. == "amd64" or . == "arm64")] | unique | sort == ["amd64", "arm64"]' \
+            "$RUNNER_TEMP/service-pulse-index.json"
+          printf 'Service Pulse %s\nSource: %s\nImage: %s:%s@%s\n' \
+            "$VERSION" "$GITHUB_SHA" "$IMAGE_NAME" "$VERSION" "$DIGEST" >> "$GITHUB_STEP_SUMMARY"
