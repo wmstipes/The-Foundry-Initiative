@@ -33,7 +33,7 @@ SignalForge uses a restaurant analogy to make Kubernetes concepts easier to unde
 * ForgeOps is the evidence-bound operations analyst; the human operator retains
   diagnosis and remediation authority
 
-The cluster currently hosts the **SignalForge Restaurant API**, a FastAPI service, and **Forge YAML Workbench**, a browser-local YAML inspector with Kubernetes and General YAML modes.
+The cluster hosts the **SignalForge Restaurant API**, a FastAPI service, and **Forge YAML Workbench**, a browser-local YAML inspector with Kubernetes and General YAML modes. [Service Pulse](k8s/service-pulse/README.md) checks the Restaurant API and provides live operational traffic. Its structured Pod logs flow through Alloy to a [private Loki instance](k8s/central-logging/README.md) and are searchable in Grafana. A probe log remained queryable after its Pod was replaced; Loki restart persistence, seven-day retention, and off-node recovery still need verification. [SignalForge Home](apps/signalforge-portal/README.md) is a browser-only preview with tool links and UTC/local time conversion.
 
 ## SignalForge Restaurant API
 
@@ -345,7 +345,7 @@ Planned next steps include:
 
 * observe naturally occurring alert behavior before deciding whether notification delivery is justified
 * add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
-* evaluate Loki and OpenTelemetry only when a specific operational question requires them
+* verify Loki restart persistence, seven-day retention, and off-node restore before depending on retained logs; evaluate OpenTelemetry only when a specific operational question requires it
 * maintain the bounded ForgeOps v1 release and require new work to improve the final incident-copilot demonstration, prove trustworthiness, or prepare a future release; model and retrieval integration remain deferred because the demonstration identified no concrete unmet operator question
 * follow the [ForgeOps post-v1 improvement roadmap](docs/roadmaps/forgeops-post-v1-roadmap.md) for separately approved demonstration, trust, and future-release candidates
 * follow the [Workbench security-guidance roadmap](docs/roadmaps/forge-yaml-workbench-security-guidance-roadmap.md) for a browser-local NIST SP 800-190 profile with selected SP 800-53 references and no compliance claim

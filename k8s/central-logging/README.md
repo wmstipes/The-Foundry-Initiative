@@ -1,6 +1,6 @@
-# Service Pulse central logging candidate
+# Service Pulse central logging
 
-This directory is a **review candidate**, not an apply-all bundle. It uses one local Loki 3.7.0 StatefulSet and one Alloy v1.17.0 Deployment. Alloy discovers `forge-pulse` Pod logs using namespace-scoped RBAC, and Loki retains them on a proposed dedicated 8 GiB NVMe partition. No Istio injection changes. The data remains on `forge-head` and needs an off-node backup and restore exercise before being called durable. See [inventory and storage gate](../../docs/milestones/central-logging-preflight.md).
+This directory records the accepted lab rollout; it is not an apply-all bundle. It uses one local Loki 3.7.0 StatefulSet and one Alloy v1.17.0 Deployment. Alloy discovers `forge-pulse` Pod logs using namespace-scoped RBAC, and Loki stores them on a dedicated 8 GiB NVMe partition. No Istio injection changes. The data remains on `forge-head` and needs an off-node backup and restore exercise before being called durable. See [inventory and storage gate](../../docs/milestones/central-logging-preflight.md).
 
 | Image | Release date (UTC) | OCI index | Linux ARM64 child |
 | --- | --- | --- | --- |
@@ -9,7 +9,7 @@ This directory is a **review candidate**, not an apply-all bundle. It uses one l
 
 Identities were checked against Docker Hub's tag API and the [Loki release](https://github.com/grafana/loki/releases/tag/v3.7.0) and [Alloy release](https://github.com/grafana/alloy/releases/tag/v1.17.0) on 2026-09-23. Recheck tag and digest metadata at deployment time. These checks establish registry metadata, not runtime compatibility or vulnerability status.
 
-Local validation on 2026-09-23: the Loki v3.7.0 Linux AMD64 release executable returned success for `-verify-config` on the ConfigMap's `config.yaml`, and the Alloy v1.17.0 Linux AMD64 release executable returned success for `validate` on `config.alloy`. YAML parsed, the proposed sector bounds were checked, and the repository manifest validator passed. These tests do not prove ARM64 startup, Pod admission, mounted storage, collection, retention or Grafana queries; those remain live rollout gates.
+Local validation on 2026-09-23: the Loki v3.7.0 Linux AMD64 release executable returned success for `-verify-config` on the ConfigMap's `config.yaml`, and the Alloy v1.17.0 Linux AMD64 release executable returned success for `validate` on `config.alloy`. YAML parsed, the proposed sector bounds were checked, and the repository manifest validator passed. These local checks alone do not prove ARM64 startup, Pod admission, mounted storage, collection, retention or Grafana queries; subsequent live results below establish startup, collection, and querying. Retention remains unverified.
 
 ## Storage preparation, separate gate
 
@@ -76,7 +76,9 @@ Grafana Explore verified 2026-09-23: the operator confirmed that the existing Pr
 
 Probe Pod replacement check passed 2026-09-24: the operator recorded `sampleId=bfa2350926ed44d181678c02a4439ec0` at 14:44:08Z before replacing the probe. Grafana Explore returned that exact log after the replacement, while Kubernetes showed only the replacement Pod `service-pulse-probe-6c7f9c9cc9-klrsj` (1/1 Ready, zero restarts). A separate later query showed a fresh successful check at 14:51:44Z with a different sample ID. The observed result establishes that Loki retained and served an old probe log after its source Pod was removed. It does not establish that Loki's own data survives a restart, that seven-day retention is enforced, or that an off-node restore works.
 
-On Windows where direct PowerShell script execution is disabled, run the existing Grafana regression script in a separate process with `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-grafana.ps1` from the repository root while the Grafana port-forward is active. This does not change the persistent execution policy. Supply Grafana credentials only at its interactive prompt and omit them from shared output.
+On Windows where direct PowerShell script execution is disabled, run the existing Grafana regression script in a separate process with `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-grafana.ps1` from the repository root while the Grafana port-forward is active. This does not change the persistent execution policy. Supply Grafana credentials only at its interactive prompt and omit them from shared output.
+
+The numbered procedure below records the original staged deployment and can guide a reviewed rebuild. Its apply and Pod replacement steps have already been completed for this cluster; do not rerun them as routine follow-up.
 
 1. Apply `loki-storage.yaml`, then inspect that both resources have the intended immutable specs; binding can wait for the first consumer. Apply `loki-config.yaml`, `loki-networkpolicy.yaml`, `loki-service.yaml`, and `loki-statefulset.yaml` individually. A policy admits TCP/3100 only from the `pulse-alloy` and `grafana` Pods in the same namespace. Confirm the PV/PVC bind after the Loki Pod schedules. Wait for `kubectl rollout status statefulset/loki -n forge-observability --timeout=180s` and check `/ready` by port-forward. A Ready Pod alone does not establish retention or ingestion.
 2. Apply `alloy-rbac.yaml`, `alloy-config.yaml`, and `alloy-deployment.yaml` separately. Confirm `kubectl auth can-i get pods/log -n forge-pulse --as=system:serviceaccount:forge-observability:pulse-alloy` is yes and the equivalent in `forge-restaurant` is no. Observe its logs and target health before trusting ingestion.

@@ -32,6 +32,12 @@ Path: `k8s/service-pulse`
 
 This directory contains the restricted `forge-pulse` namespace, one live probe and one live board Deployment, and their internal ClusterIP Services. Both pin the published `0.1.1` OCI digest. The board is accessible by port-forward only from outside the cluster. See its README for live acceptance evidence, change review, and scoped rollback.
 
+## Grafana and central logging
+
+Paths: `k8s/grafana` and `k8s/central-logging`
+
+Grafana provides the existing Prometheus dashboards and a provisioned Loki datasource. Alloy reads Service Pulse Pod logs with namespace-scoped permissions and sends them to a private, persistent Loki instance. The [central logging rollout record](central-logging/README.md) documents observed ingestion, Grafana queries, and log retrieval after a probe Pod replacement. It also records the remaining Loki persistence, retention, and recovery checks. Follow the reviewed per-resource procedure; do not apply the central logging directory wholesale or rerun its storage preparation.
+
 ## Validation
 
 From the repository root:

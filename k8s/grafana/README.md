@@ -84,10 +84,10 @@ Configuration changes are sourced from Git. The two dashboards poll projected di
 Open `http://127.0.0.1:3000`. In another PowerShell window:
 
 ```powershell
-.\scripts\test-grafana.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-grafana.ps1
 ```
 
-The tester checks health/version, rejection of anonymous dashboard search, data-source provisioning, exactly two dashboards with six panels each, every panel query through Grafana's Prometheus proxy, and three healthy API targets. Password input uses the credential prompt. Do not log request headers or run a transcript that captures manually exposed secrets.
+Keep the port-forward started by `open-grafana.ps1` running while testing; without it, the localhost health request cannot connect. The command above uses a separate PowerShell process and does not change the persistent execution policy. The tester checks health/version, rejection of anonymous dashboard search, data-source provisioning, exactly two dashboards with six panels each, every panel query through Grafana's Prometheus proxy, and three healthy API targets. Check Loki's logs separately in Explore as recorded in the [central logging rollout](../central-logging/README.md). Password input uses the credential prompt. Do not log request headers or run a transcript that captures manually exposed secrets.
 
 Inspect the dashboard layout and units in the browser. Exercise known application paths over at least two scrape intervals and verify traffic and latency; inspect the unmatched-route panel with a bounded 404 exercise. Zero-traffic and missing-data intervals must not be rendered as zero latency or healthy zero errors. Fixture tests cover the error-ratio edge cases without forcing live application failures.
 
