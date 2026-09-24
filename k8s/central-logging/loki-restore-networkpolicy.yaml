@@ -1,0 +1,10 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: loki-restore-deny
+  namespace: forge-observability
+spec:
+  podSelector:
+    matchLabels:
+      app: loki-restore-validation
+  policyTypes: [Ingress, Egress]

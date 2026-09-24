@@ -1022,12 +1022,81 @@ def validate_pulse_manifests() -> None:
     ok("Pulse namespace and both hardened, internal-only workloads are valid")
 
 
+def validate_loki_recovery_manifests() -> None:
+    directory = Path("k8s/central-logging")
+    names = ("loki-backup-pod.yaml", "loki-restore-extract-pod.yaml",
+             "loki-restore-validation-pod.yaml")
+    for name in names:
+        resource = load_yaml(directory / name)
+        identity = name.removesuffix("-pod.yaml")
+        require(resource.get("kind") == "Pod", f"{name} must be a Pod")
+        require(resource.get("metadata", {}).get("name") == identity and
+                resource["metadata"].get("namespace") == PROMETHEUS_NAMESPACE,
+                f"{name} identity mismatch")
+        pod = resource["spec"]
+        require(pod.get("automountServiceAccountToken") is False and
+                pod.get("nodeSelector") == {"kubernetes.io/hostname": "forge-head"},
+                f"{name} token or placement mismatch")
+        require(pod["securityContext"]["runAsUser"] == 10001 and
+                pod["securityContext"]["seccompProfile"] == {"type": "RuntimeDefault"},
+                f"{name} Pod security mismatch")
+        require(len(pod["containers"]) == 1, f"{name} must have one container")
+        container = pod["containers"][0]
+        require(container["securityContext"].get("allowPrivilegeEscalation") is False and
+                container["securityContext"].get("readOnlyRootFilesystem") is True and
+                container["securityContext"].get("capabilities") == {"drop": ["ALL"]},
+                f"{name} container security mismatch")
+        require(container.get("resources", {}).get("limits", {}).get("memory"),
+                f"{name} must have memory limit")
+        if identity == "loki-backup":
+            require(pod["volumes"] == [{"name": "data", "persistentVolumeClaim": {
+                "claimName": "loki-data", "readOnly": True}}],
+                "Loki backup may mount only the production PVC read-only")
+            require(container["volumeMounts"] == [{"name": "data", "mountPath": "/var/loki", "readOnly": True}],
+                    "Loki backup container mount must be read-only")
+        else:
+            mounts = [vol for vol in pod["volumes"] if vol["name"] == "restored-data"]
+            require(mounts == [{"name": "restored-data", "hostPath": {
+                "path": "/mnt/signalforge-loki/restore-validation", "type": "Directory"}}],
+                f"{name} must use the exact isolated path")
+            require(all("persistentVolumeClaim" not in vol for vol in pod["volumes"]),
+                    f"{name} must not mount a PVC")
+            if identity == "loki-restore-extract":
+                require(pod["volumes"] == mounts and container["volumeMounts"] == [
+                    {"name": "restored-data", "mountPath": "/validation"}],
+                    "Restore extractor may mount only the isolated directory")
+            else:
+                require(len(pod["volumes"]) == 3 and
+                        {v["name"] for v in pod["volumes"]} == {"restored-data", "config", "tmp"} and
+                        any(v == {"name": "config", "configMap": {"name": "loki-config"}} for v in pod["volumes"]) and
+                        any(v == {"name": "tmp", "emptyDir": {"sizeLimit": "64Mi"}} for v in pod["volumes"]) and
+                        {m["name"]: m["mountPath"] for m in container["volumeMounts"]} == {
+                            "restored-data": "/var/loki", "config": "/etc/loki", "tmp": "/tmp"},
+                        "Restored Loki must use only the isolated directory, config, and scratch mounts")
+        if identity != "loki-restore-validation":
+            require(container["image"] ==
+                    "busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e",
+                    f"{name} backup/extract image identity mismatch")
+        if identity == "loki-restore-validation":
+            require(container["image"] ==
+                    "grafana/loki:3.7.0@sha256:c316b7c7589a5eeca843b6926c7446149d18300b79ac8538dc4ae063bc478da2",
+                    "Restored Loki image differs from production")
+    policy = load_yaml(directory / "loki-restore-networkpolicy.yaml")
+    require(policy.get("kind") == "NetworkPolicy" and
+            policy.get("metadata", {}).get("name") == "loki-restore-deny" and
+            policy.get("spec") == {"podSelector": {"matchLabels": {"app": "loki-restore-validation"}},
+                                   "policyTypes": ["Ingress", "Egress"]},
+            "Restore policy must deny ingress and egress for only the restore Pod")
+    ok("Loki recovery helpers cannot mount production data writable or restore into the production path")
+
+
 def main() -> None:
     validate_restaurant_manifests()
     validate_prometheus_manifests()
     validate_metrics_server_manifests()
     validate_workbench_manifests()
     validate_pulse_manifests()
+    validate_loki_recovery_manifests()
     runpy.run_path(str(Path(__file__).with_name('validate-grafana.py')), run_name='__main__')
     print()
     print("All Kubernetes manifest checks passed.")

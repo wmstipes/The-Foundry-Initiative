@@ -1,0 +1,180 @@
+# Loki recovery candidate — source only
+
+## Decision boundary
+
+The accepted central logging rollout established ingestion, Grafana queries,
+and retrieval of a known probe log after replacement of its source Pod. On
+2026-09-24 the operator confirmed `loki-0` Ready with zero restarts, Alloy
+Ready, the 8 GiB retained PV/PVC Bound, ext4 UUID
+`93a19402-4a5b-4689-aed7-f1841c2cb53b` mounted read/write, 7.4 GiB free,
+and 716 KiB in Loki's data directory. Grafana returned exactly one
+`functional_check` for `sampleId=bfa2350926ed44d181678c02a4439ec0`
+at 2026-09-24T14:44:08Z. This initial baseline did not establish Loki restart
+persistence, off-node recovery, or seven-day retention. The backup gate below
+subsequently established restart persistence.
+
+This candidate adds reviewable tooling. Source publication authorizes no
+cluster mutation, logging interruption, archive creation, or cleanup. Review
+the scripts, dry-run output, encrypted destination, and recovery commands
+before a separately approved live gate.
+
+## Backup contract
+
+`scripts/loki-recovery.py backup` checks the exact context, one Ready Loki and
+Alloy replica, pinned Loki image, live Loki ConfigMap content, head placement,
+zero Loki restarts, and the Bound retained PV/PVC. Without `--execute`, it is
+read-only. It uses the reviewed SSH identity `wmstipes@192.168.243.110` to
+check the head's mount and UUID. The live path requires
+`--encrypted-destination-verified` and an existing destination
+outside Git. It stops Alloy first and Loki second, waits for both Pods to
+exit, mounts the production PVC read-only in a restricted helper, streams a
+complete `/var/loki` archive off-node, checks its structure, and records its
+SHA-256 and image/config identity. It never rewrites the production PVC or
+prunes older archives. A `.partial` file after an error must be inspected,
+not used as a backup.
+An archive lacking either sidecar after an interrupted write is also
+incomplete and must not be used for restore.
+
+The helper uses pinned BusyBox `1.37.0` OCI index
+`sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e`
+with Linux ARM64 child `sha256:d82c2ab94640ded77cf76514ce6a84870761105058a4a9e51b05a8a79be97a6c`
+from Docker Hub's tag API on 2026-09-24. Verify availability during the live
+image preflight.
+
+The `finally` path removes only its helper and attempts to restore Loki
+before Alloy, reporting incomplete recovery as an error. Keep the terminal
+open and verify both a pre-backup and a fresh post-recovery sample. A pause
+in collection is expected; lossless ingestion is not guaranteed.
+
+## Observed backup gate — 2026-09-24
+
+The operator ran the backup at the reviewed PR head after confirming that
+the Windows `C:` destination had BitLocker Protection On with 100% of used
+space encrypted. `ctr` pre-pulled the pinned BusyBox OCI index and its ARM64
+manifest onto `forge-head` before the logging interruption. The backup
+reported `loki-cold-20260924-181112Z.tar.gz` on the laptop with SHA-256
+`81cf06b8a989ff46e326e73072ecc3287445d79097127dc50a4816d9a929264e`.
+The operator independently checked the archive hash against the `.sha256`
+sidecar; metadata reported 124183 bytes, 103 entries, and
+`restoreVerified: false`. The read-only restore plan accepted all 103 safe
+entries, the sidecars, the image/config identity, and the live baseline.
+
+After the backup, Loki and Alloy returned to 1/1 Ready and the replacement
+`loki-0` was Running with zero restarts. Grafana again returned the historical
+`sampleId=bfa2350926ed44d181678c02a4439ec0` at 14:44:08 UTC and a new
+`functional_check` at 18:17:16 UTC with
+`sampleId=11752b2a496428cbf190f66038f9556`. This accepts the cold backup
+and production restart persistence. It does not prove that the archive can
+run as an isolated Loki service or establish seven-day retention.
+
+## Restore contract
+
+`scripts/loki-recovery.py restore` checks the off-node archive hash, safe
+entries, image/config identity, live cluster baseline, and head NVMe UUID.
+Without `--execute`, it creates nothing. The live path refuses an existing
+restore directory, creates only `/mnt/signalforge-loki/restore-validation`,
+streams the archive into a temporary extraction Pod, removes that Pod, then
+creates a deny ingress/egress NetworkPolicy and a separate pinned Loki Pod.
+The restored Pod mounts only the isolated host directory, never `loki-data`;
+it has no Service or Alloy target and listens on 3101. Its isolation and
+localhost port-forward must be checked during live acceptance; policy
+enforcement depends on the CNI.
+
+The restored Pod and directory remain for review. Query the exact pre-backup
+sample ID through a localhost port-forward. Ready alone is not restore
+acceptance. A failed restore leaves the isolated directory for inspection;
+never rerun over that path. Cleanup of the named Pod, policy, and exact
+directory is a later reviewed gate.
+
+## Observed isolated restore gate — 2026-09-24
+
+After separate approval, the operator restored the verified off-node archive
+into the isolated head directory. `pod/loki-restore-validation` was 1/1 Ready,
+Running with zero restarts on `forge-head`; the
+`networkpolicy/loki-restore-deny` object selected that Pod. Production Loki
+and Alloy both remained 1/1 Ready. A localhost port-forward to the restored
+Pod on 13101 returned the exact historical JSON log line with
+`sampleId=bfa2350926ed44d181678c02a4439ec0`,
+`time=2026-09-24T14:44:08.920865+00:00`, and `result=ok`. This accepts
+service recovery from the archive independently of production Grafana.
+
+The archive metadata's original `restoreVerified: false` is a record made
+at backup time; this dated observation is the later restore evidence. The
+operator did not record elapsed recovery time, and NetworkPolicy enforcement
+has not been independently tested. The restored Pod, policy, and directory
+were kept until the separately approved cleanup gate below. Seven-day
+retention remains unproven.
+
+## Observed cleanup gate — 2026-09-24
+
+The operator verified the off-node archive hash before cleanup and checked
+that the restored Pod's only data volume was the exact isolated head path,
+with no production PVC. The NetworkPolicy selector matched that Pod. On the
+head, `realpath` resolved to `/mnt/signalforge-loki/restore-validation`,
+and `findmnt` reported the parent mount `/mnt/signalforge-loki` with UUID
+`93a19402-4a5b-4689-aed7-f1841c2cb53b`. After these checks, the operator
+deleted `pod/loki-restore-validation` with a wait, deleted
+`networkpolicy/loki-restore-deny`, and removed only the isolated restore
+directory. The remote command also checked that the path no longer existed.
+Production Loki and Alloy remained 1/1 Ready. The off-node archive and its
+checksum/metadata sidecars were retained on the protected laptop drive.
+
+## Operator commands — separate gates
+
+From the repository root on the Windows laptop, first inspect the source,
+server dry-run/diff each new Kubernetes manifest, confirm PyYAML is installed
+(`python -m pip show PyYAML`), and use the read-only plans:
+
+```powershell
+python .\scripts\loki-recovery.py backup --destination "$env:USERPROFILE\SignalForge-Backups\loki"
+python .\scripts\loki-recovery.py restore --archive '<verified archive path>'
+```
+
+The backup and restore commands below were run under separate approvals, with
+the backup destination's encryption confirmed before the interruption:
+
+```powershell
+python .\scripts\loki-recovery.py backup --destination "$env:USERPROFILE\SignalForge-Backups\loki" --encrypted-destination-verified --execute
+python .\scripts\loki-recovery.py restore --archive '<verified archive path>' --execute
+```
+
+After an isolated restore Pod becomes Ready, forward its port in a separate
+terminal with `kubectl -n forge-observability port-forward --address 127.0.0.1
+pod/loki-restore-validation 13101:3101`. Query its `/loki/api/v1/query_range`
+over that localhost port for the marker within 2026-09-24 14:40–14:50 UTC.
+For example, in another PowerShell terminal:
+
+```powershell
+$query = '{namespace="forge-pulse",container="service-pulse-probe"} |= "bfa2350926ed44d181678c02a4439ec0"'
+$encodedQuery = [uri]::EscapeDataString($query)
+$uri = "http://127.0.0.1:13101/loki/api/v1/query_range?query=$encodedQuery&start=2026-09-24T14:40:00Z&end=2026-09-24T14:50:00Z&limit=10"
+$response = Invoke-RestMethod -Method Get -Uri $uri
+foreach ($stream in $response.data.result) {
+    foreach ($entry in $stream.values) { $entry[1] }
+}
+```
+
+Grafana's normal datasource still points to production Loki and cannot
+validate this restored copy. Keep the restored resources until the result
+has been reviewed. Windows PowerShell can strip embedded LogQL quotes when
+forwarding a variable to `curl.exe`; URL encoding the query and using
+`Invoke-RestMethod` preserves the quoted label values.
+
+## Acceptance and limitations
+
+1. Offline: Python compilation, archive-safety tests, YAML parsing, and
+   repository validation pass. Compare manifests and script to this contract.
+2. Live backup: exact context/image verified; interruption recorded;
+   archive/hash sidecars present off-node; Loki and Alloy Ready afterward;
+   historical and new sample IDs returned by production Loki.
+3. Isolated restore: checksum verified; restored pinned Loki Ready; old
+   sample returned through localhost; production Loki healthy. Record the
+   elapsed recovery time. Listing or extracting an archive alone is not
+   service recovery.
+4. Retention: follow a dated marker beyond 168h plus the configured 2h
+   deletion delay; distinguish query invisibility from chunk deletion.
+   Do not shorten retention or inject backdated logs to accelerate this check.
+
+Filesystem storage on one NVMe is not resilient to loss of `forge-head`.
+The archive may contain sensitive log text; keep it off-node and protected,
+not in the repository or PR.
