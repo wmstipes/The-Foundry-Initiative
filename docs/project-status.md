@@ -1,12 +1,22 @@
 # Project Status
 
-**Last updated:** 2026-09-23
+**Last updated:** 2026-09-24
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
 ## Summary
 
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
+
+Central logging now runs Loki and Alloy for `forge-pulse`; Grafana queries
+and retrieval after source Pod replacement passed. A cold off-node archive
+with matching SHA-256 was made, Loki and Alloy returned Ready, and an isolated
+restore returned the historical sample directly from the restored Loki. The
+isolated restore objects and directory were removed after verification.
+Seven-day retention remains pending. See [recovery evidence](milestones/loki-recovery-candidate.md).
+The next [Istio admission review](milestones/istio-admission-review.md) starts
+with read-only compatibility and headroom checks; no mesh installation or
+Console mesh capability has been admitted.
 
 The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestones 054-056 established strict runbook knowledge, deterministic grounded mapping, and the bounded incident-reasoning design. Milestones 057-060 implemented strict mapping validation, deterministic structured briefing, exact replay, and a fixed operator text view. Milestone 061 adversarially evaluated those boundaries and deferred model and retrieval integration. Milestone 062 passed its synthetic and live read-only incident-copilot demonstration without expanding that authority or identifying a concrete unmet operator question. Milestone 063 defined the bounded release contract, Milestone 064 proved the exact candidate, and Milestone 065 published and independently accepted ForgeOps v1.0.0.
 

@@ -1,12 +1,17 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-22
+**Last updated:** 2026-09-24
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
 ## Current position
 
 The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab.
+The central logging rollout and the separately verified cold off-node backup,
+Loki restart, isolated restore, and cleanup are complete; seven-day retention
+still needs a naturally elapsed observation. The next proposed milestone is
+the source-only [Istio admission review](docs/milestones/istio-admission-review.md):
+read-only capacity and compatibility inventory before any installation.
 Milestones 001-030 and 032-065 are complete, merged, closed, synchronized, and
 cleaned up. ForgeOps v1.0.0 is published through its product-specific GitHub
 Release, has passed independent published-wheel acceptance, and is the
