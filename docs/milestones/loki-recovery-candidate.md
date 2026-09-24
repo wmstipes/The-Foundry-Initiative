@@ -101,9 +101,23 @@ service recovery from the archive independently of production Grafana.
 The archive metadata's original `restoreVerified: false` is a record made
 at backup time; this dated observation is the later restore evidence. The
 operator did not record elapsed recovery time, and NetworkPolicy enforcement
-has not been independently tested. Keep the restored Pod, policy, and
-directory intact until a separate cleanup gate. Seven-day retention remains
-unproven.
+has not been independently tested. The restored Pod, policy, and directory
+were kept until the separately approved cleanup gate below. Seven-day
+retention remains unproven.
+
+## Observed cleanup gate — 2026-09-24
+
+The operator verified the off-node archive hash before cleanup and checked
+that the restored Pod's only data volume was the exact isolated head path,
+with no production PVC. The NetworkPolicy selector matched that Pod. On the
+head, `realpath` resolved to `/mnt/signalforge-loki/restore-validation`,
+and `findmnt` reported the parent mount `/mnt/signalforge-loki` with UUID
+`93a19402-4a5b-4689-aed7-f1841c2cb53b`. After these checks, the operator
+deleted `pod/loki-restore-validation` with a wait, deleted
+`networkpolicy/loki-restore-deny`, and removed only the isolated restore
+directory. The remote command also checked that the path no longer existed.
+Production Loki and Alloy remained 1/1 Ready. The off-node archive and its
+checksum/metadata sidecars were retained on the protected laptop drive.
 
 ## Operator commands — separate gates
 
@@ -116,9 +130,8 @@ python .\scripts\loki-recovery.py backup --destination "$env:USERPROFILE\SignalF
 python .\scripts\loki-recovery.py restore --archive '<verified archive path>'
 ```
 
-The backup command below was run after separate approval and confirmation of
-the encrypted off-node destination. The restore command remains a proposed
-separate live gate:
+The backup and restore commands below were run under separate approvals, with
+the backup destination's encryption confirmed before the interruption:
 
 ```powershell
 python .\scripts\loki-recovery.py backup --destination "$env:USERPROFILE\SignalForge-Backups\loki" --encrypted-destination-verified --execute
