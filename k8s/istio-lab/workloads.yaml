@@ -1,0 +1,142 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mesh-lab
+  namespace: forge-mesh-lab
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-api-v1
+  namespace: forge-mesh-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: lab-api, version: v1}
+  template:
+    metadata:
+      labels: {app: lab-api, version: v1}
+    spec:
+      serviceAccountName: mesh-lab
+      automountServiceAccountToken: false
+      containers:
+      - name: api
+        image: docker.io/library/busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
+        command: [/bin/sh, -ec]
+        args:
+        - |
+          mkdir -p /tmp/www
+          printf 'v1\n' > /tmp/www/index.html
+          exec httpd -f -p 8080 -h /tmp/www
+        ports:
+        - {name: http, containerPort: 8080}
+        readinessProbe:
+          httpGet: {path: /, port: 8080}
+          initialDelaySeconds: 2
+          periodSeconds: 5
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {cpu: 100m, memory: 64Mi}
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          runAsGroup: 10001
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: [ALL]}
+          seccompProfile: {type: RuntimeDefault}
+        volumeMounts:
+        - {name: scratch, mountPath: /tmp}
+      volumes:
+      - name: scratch
+        emptyDir: {sizeLimit: 8Mi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-api-v2
+  namespace: forge-mesh-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: lab-api, version: v2}
+  template:
+    metadata:
+      labels: {app: lab-api, version: v2}
+    spec:
+      serviceAccountName: mesh-lab
+      automountServiceAccountToken: false
+      containers:
+      - name: api
+        image: docker.io/library/busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
+        command: [/bin/sh, -ec]
+        args:
+        - |
+          mkdir -p /tmp/www
+          printf 'v2\n' > /tmp/www/index.html
+          exec httpd -f -p 8080 -h /tmp/www
+        ports:
+        - {name: http, containerPort: 8080}
+        readinessProbe:
+          httpGet: {path: /, port: 8080}
+          initialDelaySeconds: 2
+          periodSeconds: 5
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {cpu: 100m, memory: 64Mi}
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          runAsGroup: 10001
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: [ALL]}
+          seccompProfile: {type: RuntimeDefault}
+        volumeMounts:
+        - {name: scratch, mountPath: /tmp}
+      volumes:
+      - name: scratch
+        emptyDir: {sizeLimit: 8Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab-api
+  namespace: forge-mesh-lab
+spec:
+  type: ClusterIP
+  selector: {app: lab-api}
+  ports:
+  - {name: http, port: 8080, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-client
+  namespace: forge-mesh-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: lab-client}
+  template:
+    metadata:
+      labels: {app: lab-client}
+    spec:
+      serviceAccountName: mesh-lab
+      automountServiceAccountToken: false
+      containers:
+      - name: client
+        image: docker.io/library/busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
+        command: [/bin/sh, -c, 'exec sleep 86400']
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {cpu: 100m, memory: 64Mi}
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          runAsGroup: 10001
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: [ALL]}
+          seccompProfile: {type: RuntimeDefault}
