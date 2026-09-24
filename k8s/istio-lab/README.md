@@ -130,7 +130,12 @@ reporters; **Client responses by code** and **Client 503 responses** use the
 source reporter because the injected `/break` abort can happen before any
 server sees it. The panel shows an expected 503 in this exercise, not a
 production incident. `No data` means no series or too few samples, not a
-healthy zero. The v1/v2 split is probabilistic, especially with few requests.
+healthy zero. **Client 503 responses (total)** reads the client proxy's raw
+counter: it can show the first five errors even when all happened before the
+first Prometheus scrape of the new 503 series. It stays at five after repair
+until the proxy restarts; zero or missing data alone does not prove recovery.
+Confirm recovery by inspecting the VirtualService and making fresh successful
+requests. The v1/v2 split is probabilistic, especially with few requests.
 
 Use the Grafana dashboard beside `kubectl` and `istioctl` while carrying out
 stages 3 and 4. If `up` is zero, investigate Services, EndpointSlices, and
