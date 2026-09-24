@@ -9,8 +9,9 @@ Ready, the 8 GiB retained PV/PVC Bound, ext4 UUID
 `93a19402-4a5b-4689-aed7-f1841c2cb53b` mounted read/write, 7.4 GiB free,
 and 716 KiB in Loki's data directory. Grafana returned exactly one
 `functional_check` for `sampleId=bfa2350926ed44d181678c02a4439ec0`
-at 2026-09-24T14:44:08Z. This operator-provided baseline does not establish
-Loki restart persistence, off-node recovery, or seven-day retention.
+at 2026-09-24T14:44:08Z. This initial baseline did not establish Loki restart
+persistence, off-node recovery, or seven-day retention. The backup gate below
+subsequently established restart persistence.
 
 This candidate adds reviewable tooling. Source publication authorizes no
 cluster mutation, logging interruption, archive creation, or cleanup. Review
@@ -45,6 +46,27 @@ before Alloy, reporting incomplete recovery as an error. Keep the terminal
 open and verify both a pre-backup and a fresh post-recovery sample. A pause
 in collection is expected; lossless ingestion is not guaranteed.
 
+## Observed backup gate — 2026-09-24
+
+The operator ran the backup at the reviewed PR head after confirming that
+the Windows `C:` destination had BitLocker Protection On with 100% of used
+space encrypted. `ctr` pre-pulled the pinned BusyBox OCI index and its ARM64
+manifest onto `forge-head` before the logging interruption. The backup
+reported `loki-cold-20260924-181112Z.tar.gz` on the laptop with SHA-256
+`81cf06b8a989ff46e326e73072ecc3287445d79097127dc50a4816d9a929264e`.
+The operator independently checked the archive hash against the `.sha256`
+sidecar; metadata reported 124183 bytes, 103 entries, and
+`restoreVerified: false`. The read-only restore plan accepted all 103 safe
+entries, the sidecars, the image/config identity, and the live baseline.
+
+After the backup, Loki and Alloy returned to 1/1 Ready and the replacement
+`loki-0` was Running with zero restarts. Grafana again returned the historical
+`sampleId=bfa2350926ed44d181678c02a4439ec0` at 14:44:08 UTC and a new
+`functional_check` at 18:17:16 UTC with
+`sampleId=11752b2a496428cbf190f66038f9556`. This accepts the cold backup
+and production restart persistence. It does not prove that the archive can
+run as an isolated Loki service or establish seven-day retention.
+
 ## Restore contract
 
 `scripts/loki-recovery.py restore` checks the off-node archive hash, safe
@@ -64,7 +86,7 @@ acceptance. A failed restore leaves the isolated directory for inspection;
 never rerun over that path. Cleanup of the named Pod, policy, and exact
 directory is a later reviewed gate.
 
-## Operator commands — proposed, not authorized live steps
+## Operator commands — separate gates
 
 From the repository root on the Windows laptop, first inspect the source,
 server dry-run/diff each new Kubernetes manifest, confirm PyYAML is installed
@@ -75,8 +97,9 @@ python .\scripts\loki-recovery.py backup --destination "$env:USERPROFILE\SignalF
 python .\scripts\loki-recovery.py restore --archive '<verified archive path>'
 ```
 
-The explicit live commands, after separate approval and verifying the off-node
-destination is encrypted and protected, are:
+The backup command below was run after separate approval and confirmation of
+the encrypted off-node destination. The restore command remains a proposed
+separate live gate:
 
 ```powershell
 python .\scripts\loki-recovery.py backup --destination "$env:USERPROFILE\SignalForge-Backups\loki" --encrypted-destination-verified --execute
