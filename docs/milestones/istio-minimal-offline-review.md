@@ -1,11 +1,17 @@
-# Istio 1.31.1 minimal profile: offline manifest review
+# Istio 1.31.1 minimal profile: offline review and control-plane checkpoint
 
 **Date:** 2026-09-24
-**Decision:** No cluster installation yet. The proposed sidecar training pilot needs explicit review of cluster-wide permissions, admission scope, and a disposable privileged training namespace.
+**Status:** The separately approved minimal control plane is installed. The training namespace, workloads, sidecar injection, and Pod Security exception have not been applied.
+
+## Control-plane checkpoint
+
+The Windows `istioctl` 1.31.1 archive matched upstream SHA-256 `e77f2c192b54aab2ed480745bedc081b3cedecf177e357a4ea9e739634818f9f`. The locally rendered fixed-replica manifest matched the reviewed SHA-256 `040c5542afa78fefdc24473d69284e97bcdd7ecc0887adb82044591b85a7f717`, and the training Namespace passed server dry-run. The approved `istioctl install -f k8s/istio-training/istio-profile.yaml --verify` completed. The `istiod` Deployment and Pod reported Ready, with no Pod restarts; 15 Istio CRDs, the expected injection and validation webhooks, and no Istio/ztunnel DaemonSet were observed. The previously checked Loki and Alloy workloads and all nodes remained Ready.
+
+The installer warned that Calico's `bpfConnectTimeLoadBalancing=TCP` should be disabled. Read-only inspection showed Calico's Linux dataplane is `Iptables`, Felix `bpfEnabled=false`, and kube-proxy Ready on all four nodes. Tigera describes this warning as not preventing basic functionality; its production BPF recommendation does not justify a cluster-wide Felix change in this non-BPF pilot. Recheck the dataplane before any future BPF-mode deployment. This checkpoint verifies the control plane only; it does not validate injection or traffic through sidecars.
 
 ## Reproduction
 
-The upstream `istioctl-1.31.1-linux-amd64.tar.gz` release asset was verified against the release SHA-256 `a44563904f22f2a8bf6ac4fff1b0bad9f718587c2be6aa807b83fe9049910639`. No kubeconfig or cluster was used. Commands:
+The upstream `istioctl-1.31.1-linux-amd64.tar.gz` release asset was verified against the release SHA-256 `a44563904f22f2a8bf6ac4fff1b0bad9f718587c2be6aa807b83fe9049910639`. The initial manifest generation used no kubeconfig or cluster. Commands:
 
 ```sh
 istioctl manifest generate --set profile=minimal --output istio-minimal-1.31.1.yaml
@@ -33,8 +39,8 @@ The fixed-replica variant removes the HPA and renders `replicas: 1`, but leaves 
 
 Use a separate short-lived training namespace with an explicit Pod Security decision; Istio's non-CNI sidecar init container needs capabilities that the `baseline` admission level disallows. Supply two small disposable workloads, with one unmeshed baseline and one explicitly selected meshed case. Do not label `forge-pulse`, `forge-restaurant`, `forge-observability`, or `forge-tools` for injection. Define a resource and time budget and observe application baseline, proxy readiness, request success, and resource use. Avoid gateways, tracing addons, and production routing changes.
 
-Before requesting live install approval, review the full rendered manifest and the intended namespace objects; pin or accept exact image index identities; decide whether the broad default RBAC is acceptable for a training exercise; verify no existing Istio control plane; server dry-run/diff resources where their namespaces and APIs already exist, then validate dependent namespaced resources after the corresponding approved namespace creation. Document expected webhook selectors and a stop procedure. One `istiod` replica makes injection unavailable while it is down; avoid starting or replacing training Pods during that outage. Any actual install and cleanup must be separately reviewed.
+Before proceeding to the training gate, inspect the actual control-plane image identity and webhook selectors, confirm the existing workloads remain healthy, and server dry-run/diff the exact training resources in dependency order. Namespaced workloads can be server dry-run only after approved creation of their namespace. One `istiod` replica makes injection unavailable while it is down; avoid starting or replacing training Pods during that outage. Training namespace creation, workload changes, injection, and cleanup must be separately reviewed.
 
 For removal, delete training workloads and opt-in labels first, then uninstall the exact Istio installation after verifying no other control plane depends on its shared resources. Upstream documents `istioctl uninstall --purge` for complete removal but warns that it deletes cluster-scoped resources potentially shared by other control planes. Inspect remaining webhooks, roles, CRDs, Pods, and namespaces after removal. This is a procedure to review, not authorization to execute it.
 
-Official references: [Istio 1.31.1 release](https://github.com/istio/istio/releases/tag/1.31.1), [minimal profile](https://istio.io/latest/docs/setup/additional-setup/config-profiles/), [manifest generation](https://istio.io/latest/docs/reference/commands/istioctl/), [sidecar privileges and Istio CNI](https://istio.io/latest/docs/setup/additional-setup/cni/), [Pod Security Admission](https://istio.io/latest/docs/setup/additional-setup/pod-security-admission/), [uninstall guidance](https://istio.io/latest/docs/setup/install/istioctl/).
+Official references: [Istio 1.31.1 release](https://github.com/istio/istio/releases/tag/1.31.1), [minimal profile](https://istio.io/latest/docs/setup/additional-setup/config-profiles/), [manifest generation](https://istio.io/latest/docs/reference/commands/istioctl/), [sidecar privileges and Istio CNI](https://istio.io/latest/docs/setup/additional-setup/cni/), [Pod Security Admission](https://istio.io/latest/docs/setup/additional-setup/pod-security-admission/), [Calico BPF warning](https://docs.tigera.io/calico/latest/network-policy/istio/app-layer-policy#warning-about-bpf-load-balancing), [uninstall guidance](https://istio.io/latest/docs/setup/install/istioctl/).

@@ -1,11 +1,13 @@
-# Istio learning exercise — source-only candidate
+# Istio learning exercise — training candidate
 
-This directory is a review package, **not** an apply-all directory. It has not
-been deployed or server dry-run against SignalForge. The separate
+This directory is a review package, **not** an apply-all directory. The
+separately approved control plane has been installed and verified; the training
+namespace passed server dry-run but has not been created, and neither training
+workload has been deployed. The separate
 [offline control-plane review](../../docs/milestones/istio-minimal-offline-review.md)
-records the broad RBAC, webhooks, CRDs, 2 GiB istiod request and one-replica
-choice. The cluster-wide permission decision, exact images and uninstall
-procedure need approval before any installation.
+records the broad RBAC, webhooks, CRDs, 2 GiB istiod request, one-replica
+choice, and control-plane verification. The training changes and the uninstall
+procedure remain separate decisions.
 
 `istio-profile.yaml` is an `istioctl` input, not a resource for `kubectl apply`.
 It chooses the minimal sidecar profile with control-plane autoscaling disabled.
@@ -68,16 +70,16 @@ Likewise, some control-plane objects depend on the not-yet-created
 than treating a failed bulk server dry-run as approval to apply everything.
 No install or `kubectl apply` is part of this offline step.
 
-## Proposed later live sequence — each mutation separately gated
+## Live sequence — remaining mutations separately gated
 
-1. Verify expected context, four Ready nodes, current capacity, existing
-   workloads, Calico, no Istio control plane/webhooks, and absence of the
-   training namespace. Capture existing application and logging baseline.
-   Stop if this state differs.
-2. Review the `istio-system` Namespace and exact rendered CRDs, RBAC and
-   webhooks. Only with explicit install approval use the reviewed IstioOperator
-   input and exact CLI version. Confirm one Ready istiod, the expected
-   admission selectors, no CNI DaemonSet/gateway/ztunnel, and no changes to
+1. **Pre-install checks complete:** the expected context, four Ready nodes,
+   capacity, Calico configuration, absence of an existing Istio control plane,
+   and absence of the training namespace were checked. Recheck existing
+   application and logging baselines before each new training gate.
+2. **Control plane installed; final image and selector inspection pending:**
+   the approved install used the reviewed IstioOperator input and exact CLI
+   version. Inspect the actual image identity and webhook selectors; confirm
+   one Ready istiod, no CNI DaemonSet/gateway/ztunnel, and no changes to
    existing Pods or namespaces. Stop and diagnose if any check fails.
 3. In a separate approved training gate, server dry-run/diff and apply
    `namespace.yaml`; once that namespace exists, server dry-run/diff and apply
