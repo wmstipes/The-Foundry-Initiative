@@ -35,6 +35,9 @@ build/
 dist/
 node_modules/
 *.egg-info/
+# Local ForgeOps Console builds (release assets live outside this source tree)
+/apps/forgeops-console/forgeops-console.exe
+/apps/forgeops-console/forgeops-console-demo.exe
 
 # Terraform
 .terraform/

@@ -1,5 +1,7 @@
 # Central logging: scoped design and preflight
 
+This is the historical design and storage preflight. The accepted Loki and Alloy rollout, Grafana query, and probe Pod replacement evidence are recorded in [the central logging rollout](../../k8s/central-logging/README.md). The storage preparation described below has already completed; do not rerun it. Loki restart persistence, seven-day retention, and an off-node restore remain unverified.
+
 ## Goal and boundaries
 
 Retain structured stdout from the two Service Pulse Pods across Pod replacement so operators can search `functional_check`, `checks_read`, and `probe_read` in Grafana. Start with namespace `forge-pulse` only. Do not turn on mesh injection, collect application Secrets, expose Loki publicly, or alter the existing Grafana and Prometheus volumes.
