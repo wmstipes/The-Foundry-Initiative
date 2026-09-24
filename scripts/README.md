@@ -45,6 +45,12 @@ powershell -ExecutionPolicy Bypass -File .\scripts\forge.ps1 metrics-ui
 
 `metrics-backup-ready` reads Prometheus's own loaded-block gauge and succeeds only after at least one compacted block exists. `metrics-backup` runs that same gate before downtime, briefly scales Prometheus to zero, and streams a cold archive directly to `%USERPROFILE%\SignalForge-Backups\prometheus`; it retains the four newest archives and always attempts to restore the collector to one replica. `metrics-restore-test` verifies the newest archive's checksum, restores it into an isolated NVMe directory, runs `promtool` against that copy, and removes only the temporary restored copy. It may prompt for the `forge-head` sudo password when creating and removing the isolated directory.
 
+`loki-recovery.py` provides read-only backup and restore plans by default.
+Its separately gated `--execute` paths create a cold off-node Loki archive
+and an isolated restore Pod. See the
+[Loki recovery candidate](../docs/milestones/loki-recovery-candidate.md).
+Source publication is not approval for a logging interruption.
+
 `metrics-ui` keeps running while the port-forward is open; press Ctrl+C to stop it.
 
 Kubernetes resource-metrics commands:

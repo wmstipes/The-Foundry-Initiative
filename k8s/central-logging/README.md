@@ -1,5 +1,10 @@
 # Service Pulse central logging
 
+The [Loki recovery candidate](../../docs/milestones/loki-recovery-candidate.md)
+adds source-only backup and isolated restore tooling after the observed
+probe-Pod replacement check. Live `--execute` paths require separate review
+and authorization; the rollout record below remains historical.
+
 This directory records the accepted lab rollout; it is not an apply-all bundle. It uses one local Loki 3.7.0 StatefulSet and one Alloy v1.17.0 Deployment. Alloy discovers `forge-pulse` Pod logs using namespace-scoped RBAC, and Loki stores them on a dedicated 8 GiB NVMe partition. No Istio injection changes. The data remains on `forge-head` and needs an off-node backup and restore exercise before being called durable. See [inventory and storage gate](../../docs/milestones/central-logging-preflight.md).
 
 | Image | Release date (UTC) | OCI index | Linux ARM64 child |
