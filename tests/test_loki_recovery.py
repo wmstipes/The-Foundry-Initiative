@@ -6,6 +6,7 @@ from pathlib import Path
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 SOURCE = Path(__file__).resolve().parents[1] / "scripts" / "loki-recovery.py"
@@ -46,6 +47,19 @@ class LokiArchiveSafetyTests(unittest.TestCase):
             with self.subTest(entry=dangerous):
                 with self.assertRaisesRegex(RuntimeError, "Unsafe"):
                     RECOVERY.validate_archive(self.archive([("./wal/good", "file"), dangerous]))
+
+
+class LokiSshTargetTests(unittest.TestCase):
+    def test_reviewed_user_is_required_before_ssh(self):
+        with patch.object(RECOVERY, "command") as run:
+            with self.assertRaisesRegex(RuntimeError, "Unexpected SSH target"):
+                RECOVERY.verify_head_mount("wmsti@192.168.243.110")
+            run.assert_not_called()
+
+    def test_reviewed_user_and_host_are_passed_to_ssh(self):
+        with patch.object(RECOVERY, "command", return_value="93a19402-4a5b-4689-aed7-f1841c2cb53b ext4 /dev/nvme0n1p3") as run:
+            RECOVERY.verify_head_mount(RECOVERY.SSH_HOST)
+            self.assertEqual(run.call_args.args[:2], ("ssh", "wmstipes@192.168.243.110"))
 
 
 if __name__ == "__main__":

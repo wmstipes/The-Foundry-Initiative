@@ -20,9 +20,11 @@ before a separately approved live gate.
 ## Backup contract
 
 `scripts/loki-recovery.py backup` checks the exact context, one Ready Loki and
-Alloy replica, pinned Loki image, live Loki ConfigMap content, head placement, zero Loki restarts, and the
-Bound retained PV/PVC. Without `--execute`, it is read-only. The live path
-requires `--encrypted-destination-verified` and an existing destination
+Alloy replica, pinned Loki image, live Loki ConfigMap content, head placement,
+zero Loki restarts, and the Bound retained PV/PVC. Without `--execute`, it is
+read-only. It uses the reviewed SSH identity `wmstipes@192.168.243.110` to
+check the head's mount and UUID. The live path requires
+`--encrypted-destination-verified` and an existing destination
 outside Git. It stops Alloy first and Loki second, waits for both Pods to
 exit, mounts the production PVC read-only in a restricted helper, streams a
 complete `/var/loki` archive off-node, checks its structure, and records its

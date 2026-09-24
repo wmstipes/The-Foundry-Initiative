@@ -21,6 +21,7 @@ NAMESPACE = "forge-observability"
 CONTEXT = "kubernetes-admin@kubernetes"
 IMAGE = "grafana/loki:3.7.0@sha256:c316b7c7589a5eeca843b6926c7446149d18300b79ac8538dc4ae063bc478da2"
 UUID = "93a19402-4a5b-4689-aed7-f1841c2cb53b"
+SSH_HOST = "wmstipes@192.168.243.110"
 RESTORE_PATH = "/mnt/signalforge-loki/restore-validation"
 ROOT = Path(__file__).resolve().parent.parent
 MANIFESTS = ROOT / "k8s" / "central-logging"
@@ -86,8 +87,8 @@ def preflight():
 
 
 def verify_head_mount(host):
-    if host not in ("forge-head", "192.168.243.110"):
-        raise RuntimeError("Unexpected SSH host")
+    if host != SSH_HOST:
+        raise RuntimeError(f"Unexpected SSH target; expected {SSH_HOST}")
     mount = command("ssh", host, "findmnt", "-n", "-o", "UUID,FSTYPE,SOURCE",
                     "--mountpoint", "/mnt/signalforge-loki")
     if UUID not in mount or "ext4" not in mount or "/dev/nvme0n1p3" not in mount:
@@ -263,11 +264,11 @@ def main():
     backup_parser = sub.add_parser("backup")
     backup_parser.add_argument("--destination", required=True)
     backup_parser.add_argument("--execute", action="store_true")
-    backup_parser.add_argument("--ssh-host", default="192.168.243.110")
+    backup_parser.add_argument("--ssh-host", default=SSH_HOST)
     backup_parser.add_argument("--encrypted-destination-verified", action="store_true")
     restore_parser = sub.add_parser("restore")
     restore_parser.add_argument("--archive", required=True)
-    restore_parser.add_argument("--ssh-host", default="192.168.243.110")
+    restore_parser.add_argument("--ssh-host", default=SSH_HOST)
     restore_parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
     try:
