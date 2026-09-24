@@ -73,7 +73,7 @@ After storage, runtime capacity, credentials, and the configuration review pass:
 
 The helper verifies the context, mount UUID, Secret key presence, and shared StorageClass. It applies the retained volume and claim, runs a temporary write-check Pod on first installation, waits for its successful exit, and verifies the claim is bound to the intended volume. It then generates ConfigMaps from the source directories, applies the Service and Deployment, and waits for readiness. Updates restart the existing Grafana Pod so settings and data-source changes take effect. A failed preflight prevents starting Grafana.
 
-Configuration changes are sourced from Git. The two dashboards poll projected directory mounts every 30 seconds after ConfigMap propagation. Settings and data-source changes require a restart. No `subPath` mounts or watching sidecar are used. Dashboard UIDs and the data-source UID are stable.
+Configuration changes are sourced from Git. The dashboards poll projected directory mounts every 30 seconds after ConfigMap propagation. Settings and data-source changes require a restart. No `subPath` mounts or watching sidecar are used. Dashboard UIDs and the data-source UID are stable. The third dashboard is for the optional [Istio lab](../istio-lab/README.md) and is provisioned only after its metrics collection gate.
 
 ## Access and validation
 
@@ -87,7 +87,7 @@ Open `http://127.0.0.1:3000`. In another PowerShell window:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-grafana.ps1
 ```
 
-Keep the port-forward started by `open-grafana.ps1` running while testing; without it, the localhost health request cannot connect. The command above uses a separate PowerShell process and does not change the persistent execution policy. The tester checks health/version, rejection of anonymous dashboard search, data-source provisioning, exactly two dashboards with six panels each, every panel query through Grafana's Prometheus proxy, and three healthy API targets. Check Loki's logs separately in Explore as recorded in the [central logging rollout](../central-logging/README.md). Password input uses the credential prompt. Do not log request headers or run a transcript that captures manually exposed secrets.
+Keep the port-forward started by `open-grafana.ps1` running while testing; without it, the localhost health request cannot connect. The command above uses a separate PowerShell process and does not change the persistent execution policy. After the Istio lab dashboard rollout, the tester checks health/version, rejection of anonymous dashboard search, data-source provisioning, three dashboards with six panels each, every panel query through Grafana's Prometheus proxy, and three healthy Restaurant API targets. Check Loki's logs separately in Explore as recorded in the [central logging rollout](../central-logging/README.md). Password input uses the credential prompt. Do not log request headers or run a transcript that captures manually exposed secrets.
 
 Inspect the dashboard layout and units in the browser. Exercise known application paths over at least two scrape intervals and verify traffic and latency; inspect the unmatched-route panel with a bounded 404 exercise. Zero-traffic and missing-data intervals must not be rendered as zero latency or healthy zero errors. Fixture tests cover the error-ratio edge cases without forcing live application failures.
 

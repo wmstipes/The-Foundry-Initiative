@@ -7,7 +7,7 @@ import yaml
 base = Path(__file__).resolve().parents[1] / 'k8s/grafana/dashboards'
 dashboards = [json.loads(p.read_text()) for p in base.glob('*.json')]
 queries = [t['expr'] for d in dashboards for p in d['panels'] for t in p['targets']]
-error = next(p['targets'][0]['expr'] for d in dashboards for p in d['panels'] if p['id'] == 3)
+error = next(p['targets'][0]['expr'] for d in dashboards if d['uid'] == 'signalforge-restaurant-overview' for p in d['panels'] if p['id'] == 3)
 labels = 'job="restaurant-api",namespace="forge-restaurant",traffic="application",method="GET",path="/menu",pod="fixture"'
 def series(status,values):
     return {'series':'restaurant_api_requests_total{'+labels+',status="'+status+'"}', 'values':values}

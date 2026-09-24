@@ -18,8 +18,8 @@ try {
     $DataSource = Invoke-RestMethod "$Base/api/datasources/uid/$Uid" -Headers $Header
     if ($DataSource.type -ne 'prometheus' -or $DataSource.access -ne 'proxy') { throw 'Unexpected data source' }
     $Dashboards = Invoke-RestMethod "$Base/api/search?tag=signalforge&type=dash-db" -Headers $Header
-    if (@($Dashboards).Count -ne 2) { throw 'Expected exactly two SignalForge dashboards' }
-    foreach ($DashboardUid in @('signalforge-restaurant-overview','signalforge-scrape-diagnostics')) {
+    if (@($Dashboards).Count -ne 3) { throw 'Expected exactly three SignalForge dashboards' }
+    foreach ($DashboardUid in @('signalforge-restaurant-overview','signalforge-scrape-diagnostics','signalforge-istio-lab')) {
         $D = Invoke-RestMethod "$Base/api/dashboards/uid/$DashboardUid" -Headers $Header
         if (@($D.dashboard.panels).Count -ne 6) { throw "Expected six panels in $DashboardUid" }
         foreach ($Panel in $D.dashboard.panels) {
