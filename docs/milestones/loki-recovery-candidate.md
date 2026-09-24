@@ -20,7 +20,7 @@ before a separately approved live gate.
 ## Backup contract
 
 `scripts/loki-recovery.py backup` checks the exact context, one Ready Loki and
-Alloy replica, pinned Loki image, head placement, zero Loki restarts, and the
+Alloy replica, pinned Loki image, live Loki ConfigMap content, head placement, zero Loki restarts, and the
 Bound retained PV/PVC. Without `--execute`, it is read-only. The live path
 requires `--encrypted-destination-verified` and an existing destination
 outside Git. It stops Alloy first and Loki second, waits for both Pods to
@@ -65,7 +65,8 @@ directory is a later reviewed gate.
 ## Operator commands — proposed, not authorized live steps
 
 From the repository root on the Windows laptop, first inspect the source,
-server dry-run/diff each new Kubernetes manifest, and use the read-only plans:
+server dry-run/diff each new Kubernetes manifest, confirm PyYAML is installed
+(`python -m pip show PyYAML`), and use the read-only plans:
 
 ```powershell
 python .\scripts\loki-recovery.py backup --destination "$env:USERPROFILE\SignalForge-Backups\loki"

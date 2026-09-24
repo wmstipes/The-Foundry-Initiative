@@ -14,6 +14,8 @@ import tarfile
 from datetime import datetime, timezone
 from time import monotonic, sleep
 
+import yaml
+
 
 NAMESPACE = "forge-observability"
 CONTEXT = "kubernetes-admin@kubernetes"
@@ -50,6 +52,10 @@ def preflight():
     pvc = get("pvc", "loki-data")
     pv = json.loads(kubectl("get", "pv", "loki-local-nvme", "-o", "json"))
     pod = get("pod", "loki-0")
+    expected_config = yaml.safe_load((MANIFESTS / "loki-config.yaml").read_text(encoding="utf-8"))["data"]["config.yaml"]
+    live_config = get("configmap", "loki-config").get("data", {}).get("config.yaml")
+    if live_config != expected_config:
+        raise RuntimeError("Live Loki configuration differs from reviewed candidate")
     if (stateful["spec"].get("replicas") != 1 or
             alloy["spec"].get("replicas") != 1 or
             stateful.get("status", {}).get("readyReplicas") != 1 or
@@ -76,7 +82,7 @@ def preflight():
     existing = json.loads(kubectl("-n", NAMESPACE, "get", "pod", "-l", "app=loki-backup", "-o", "json"))
     if existing["items"]:
         raise RuntimeError("Existing Loki backup Pod must be reviewed before proceeding")
-    print("PASS: expected context, ready workloads, image, placement and retained volume")
+    print("PASS: expected context, ready workloads, image, configuration, placement and retained volume")
 
 
 def verify_head_mount(host):
