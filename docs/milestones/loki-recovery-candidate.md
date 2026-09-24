@@ -86,6 +86,25 @@ acceptance. A failed restore leaves the isolated directory for inspection;
 never rerun over that path. Cleanup of the named Pod, policy, and exact
 directory is a later reviewed gate.
 
+## Observed isolated restore gate — 2026-09-24
+
+After separate approval, the operator restored the verified off-node archive
+into the isolated head directory. `pod/loki-restore-validation` was 1/1 Ready,
+Running with zero restarts on `forge-head`; the
+`networkpolicy/loki-restore-deny` object selected that Pod. Production Loki
+and Alloy both remained 1/1 Ready. A localhost port-forward to the restored
+Pod on 13101 returned the exact historical JSON log line with
+`sampleId=bfa2350926ed44d181678c02a4439ec0`,
+`time=2026-09-24T14:44:08.920865+00:00`, and `result=ok`. This accepts
+service recovery from the archive independently of production Grafana.
+
+The archive metadata's original `restoreVerified: false` is a record made
+at backup time; this dated observation is the later restore evidence. The
+operator did not record elapsed recovery time, and NetworkPolicy enforcement
+has not been independently tested. Keep the restored Pod, policy, and
+directory intact until a separate cleanup gate. Seven-day retention remains
+unproven.
+
 ## Operator commands — separate gates
 
 From the repository root on the Windows laptop, first inspect the source,
