@@ -114,12 +114,19 @@ For example, in another PowerShell terminal:
 
 ```powershell
 $query = '{namespace="forge-pulse",container="service-pulse-probe"} |= "bfa2350926ed44d181678c02a4439ec0"'
-curl.exe --get 'http://127.0.0.1:13101/loki/api/v1/query_range' --data-urlencode "query=$query" --data-urlencode 'start=2026-09-24T14:40:00Z' --data-urlencode 'end=2026-09-24T14:50:00Z'
+$encodedQuery = [uri]::EscapeDataString($query)
+$uri = "http://127.0.0.1:13101/loki/api/v1/query_range?query=$encodedQuery&start=2026-09-24T14:40:00Z&end=2026-09-24T14:50:00Z&limit=10"
+$response = Invoke-RestMethod -Method Get -Uri $uri
+foreach ($stream in $response.data.result) {
+    foreach ($entry in $stream.values) { $entry[1] }
+}
 ```
 
 Grafana's normal datasource still points to production Loki and cannot
 validate this restored copy. Keep the restored resources until the result
-has been reviewed.
+has been reviewed. Windows PowerShell can strip embedded LogQL quotes when
+forwarding a variable to `curl.exe`; URL encoding the query and using
+`Invoke-RestMethod` preserves the quoted label values.
 
 ## Acceptance and limitations
 
