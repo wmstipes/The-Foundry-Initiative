@@ -61,8 +61,11 @@ Review every rendered object, image, service account/ClusterRoleBinding,
 webhook selector and failure policy, control-plane resource request, and
 namespace precondition. Compare the generated document's object set and
 profile settings to the offline review. Review `namespace.yaml` and
-`workloads.yaml` independently. Only after source review, use server dry-run
-and `kubectl diff` for the exact resources under an explicit admission gate.
+`workloads.yaml` independently. The API server can dry-run the new namespace,
+but cannot dry-run namespaced training workloads before that namespace exists.
+Likewise, some control-plane objects depend on the not-yet-created
+`istio-system` namespace or Istio CRDs. Record these ordering limits rather
+than treating a failed bulk server dry-run as approval to apply everything.
 No install or `kubectl apply` is part of this offline step.
 
 ## Proposed later live sequence — each mutation separately gated
@@ -77,7 +80,8 @@ No install or `kubectl apply` is part of this offline step.
    admission selectors, no CNI DaemonSet/gateway/ztunnel, and no changes to
    existing Pods or namespaces. Stop and diagnose if any check fails.
 3. In a separate approved training gate, server dry-run/diff and apply
-   `namespace.yaml`, then server dry-run/diff and apply `workloads.yaml`.
+   `namespace.yaml`; once that namespace exists, server dry-run/diff and apply
+   `workloads.yaml`.
    Wait for both Deployments and confirm each Pod contains only its application
    container. Record Pod IDs and at least ten successful internal requests:
 
