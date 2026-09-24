@@ -135,9 +135,9 @@
     },
     {
       "id": 4,
-      "title": "Client 503 responses (5m)",
+      "title": "Client 503 responses (total)",
       "type": "timeseries",
-      "description": "Expected to rise during the deliberate fault and stop rising after repair; old errors remain visible in the rolling five minute window.",
+      "description": "Client proxy 503 counter. It rises during the deliberate fault and stays at its last value after repair; a proxy restart resets the counter.",
       "gridPos": {
         "x": 12,
         "y": 9,
@@ -151,7 +151,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(increase(istio_requests_total{job=\"istio-lab\",namespace=\"forge-mesh-lab\",workload=\"lab-client\",reporter=\"source\",destination_service_name=\"lab-api\",destination_service_namespace=\"forge-mesh-lab\",response_code=\"503\"}[5m]))",
+          "expr": "sum(istio_requests_total{job=\"istio-lab\",namespace=\"forge-mesh-lab\",workload=\"lab-client\",reporter=\"source\",destination_service_name=\"lab-api\",destination_service_namespace=\"forge-mesh-lab\",response_code=\"503\"})",
           "legendFormat": "503 count",
           "instant": false,
           "range": true,
