@@ -43,6 +43,8 @@ class AlertActivationGuardTests(unittest.TestCase):
         expected_rules = re.search(r'\$CandidateRuleHash = "([0-9a-f]{64})"', self.source).group(1)
         self.assertEqual(normalized_hash(manifest['data']['prometheus.yml']), expected_config)
         self.assertEqual(normalized_hash(manifest['data']['restaurant-scrape.rules.yaml']), expected_rules)
+        self.assertIn('$PreLabCandidateConfigHash = "c5c2e613e3bc6575d4d1085382362627ccb0f94da5a1fc1ddc418463ad4525de"', self.source)
+        self.assertIn('$ConfigHash -in @($CandidateConfigHash, $PreLabCandidateConfigHash)', self.source)
 
     def test_scope_and_no_receiver_are_preserved(self):
         self.assertIn('job=\"restaurant-api\",namespace=\"forge-restaurant\"', self.source)

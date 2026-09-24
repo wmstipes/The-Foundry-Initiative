@@ -29,7 +29,8 @@ $RepoRoot = Split-Path -Parent $ScriptDir
 $ManifestPath = Join-Path $RepoRoot "k8s/prometheus/prometheus-config.yaml"
 $ExpectedImage = "prom/prometheus:v3.13.2"
 $BaselineConfigHash = "070efd2b53a24a2df3acbe7782ee6c70886131b26bd8cacaaad27a3fbfff7507"
-$CandidateConfigHash = "c5c2e613e3bc6575d4d1085382362627ccb0f94da5a1fc1ddc418463ad4525de"
+$CandidateConfigHash = "900efa83c52626d708b682c804989777188f5635f0288e4a0a9d180a38a67ca9"
+$PreLabCandidateConfigHash = "c5c2e613e3bc6575d4d1085382362627ccb0f94da5a1fc1ddc418463ad4525de"
 $CandidateRuleHash = "2a52f3c16e254eff53fc3756dd695bb508b4b87909f82a7ae5e43ebebcda8040"
 $ExpectedAlerts = @(
     "RestaurantNoHealthyScrapeTargets",
@@ -78,7 +79,7 @@ function Get-ConfigState {
     else { "absent" }
 
     if ($ConfigHash -eq $BaselineConfigHash -and -not $HasRules) { return "baseline" }
-    if ($ConfigHash -eq $CandidateConfigHash -and $RuleHash -eq $CandidateRuleHash) { return "candidate" }
+    if ($ConfigHash -in @($CandidateConfigHash, $PreLabCandidateConfigHash) -and $RuleHash -eq $CandidateRuleHash) { return "candidate" }
     return "unexpected (prometheus.yml=$ConfigHash, rules=$RuleHash)"
 }
 
