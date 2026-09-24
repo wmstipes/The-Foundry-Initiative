@@ -32,18 +32,23 @@ byId("convert").addEventListener("click", convert);
 byId("utc-input").addEventListener("keydown", event => { if (event.key === "Enter") convert(); });
 
 const hostInput = byId("host");
-const storedHost = localStorage.getItem("signalforge-host") || "";
+// Validate saved values too: browser storage can be edited independently of this form.
+function validHost(value) {
+  const host = value.trim();
+  return /^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$/i.test(host) ? host : "";
+}
+const storedHost = validHost(localStorage.getItem("signalforge-host") || "");
 hostInput.value = storedHost;
 function updateWorkbench(host) {
   const link = byId("workbench");
-  if (host) link.href = `http://${host}:30081/`;
+  if (host) link.href = `http://${encodeURIComponent(host)}:30081/`;
   else link.href = "https://github.com/wmstipes/The-Foundry-Initiative/tree/main/apps/forge-yaml-workbench";
 }
 updateWorkbench(storedHost);
 byId("save-host").addEventListener("click", () => {
   const host = hostInput.value.trim();
   // A hostname or IPv4 address only; never accept URL punctuation in an authority.
-  if (host && !/^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$/i.test(host)) {
+  if (host && !validHost(host)) {
     hostInput.setCustomValidity("Enter a hostname or IPv4 address without a scheme, port, or path.");
     hostInput.reportValidity();
     return;
