@@ -128,7 +128,15 @@ spec:
       containers:
       - name: client
         image: docker.io/library/busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
-        command: [/bin/sh, -c, 'exec sleep 86400']
+        command: [/bin/sh, -ec]
+        args:
+        - |
+          while :; do
+            if ! wget -q -T 5 -t 1 -O /dev/null http://lab-api:8080/; then
+              echo 'lab-client: request to lab-api failed' >&2
+            fi
+            sleep 15
+          done
         resources:
           requests: {cpu: 10m, memory: 16Mi}
           limits: {cpu: 100m, memory: 64Mi}

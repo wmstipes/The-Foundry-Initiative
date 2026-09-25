@@ -1,6 +1,6 @@
 # Istio learning lab: route, break, diagnose, repair
 
-This is a guided lab, not an apply-all directory. Keep the current minimal
+This is a persistent learning lab, not an apply-all directory. Keep the current minimal
 Istio control plane installed while learning. Only `forge-mesh-lab` may opt
 into injection. Do not change the restaurant, pulse, observability, tools,
 system, or Calico namespaces. Do not apply `route-stable.yaml`,
@@ -19,15 +19,21 @@ VirtualService in sequence.
 
 There is no gateway, NodePort, production routing change, lab persistent storage,
 or NetworkPolicy. `lab-api` is a ClusterIP reachable from other cluster Pods;
-this namespace is for short, disposable exercises, not network isolation.
+the namespace does not provide network isolation. The three metrics Services
+expose cleartext Envoy statistics on port 15090 within the cluster. Keep other
+workloads out of this namespace and do not treat it as a security boundary.
 The three pinned BusyBox application containers have 10m CPU/16Mi memory
 requests each; injected proxies request more resources. Without Istio CNI,
-the sidecar init step needs a temporary Pod Security `privileged` exception
-for this namespace. Keep that exception only during an active lab session.
+the sidecar init step needs a Pod Security `privileged` exception
+for this namespace. Keeping the lab meshed also keeps its namespace at
+`pod-security.kubernetes.io/enforce=privileged`; inspect this label before
+applying new workloads to the lab. The audit and warn labels remain restricted.
 
 ## Stage 1: ordinary Kubernetes traffic
 
-Start with `namespace.yaml`: injection disabled, Pod Security baseline.
+For a new lab only, start with `namespace.yaml`: injection disabled, Pod Security
+baseline. This file is a bootstrap manifest; **do not reapply it to the running
+meshed lab**, because it would change the namespace injection and admission labels.
 Server dry-run and create the Namespace, then server dry-run and apply
 `workloads.yaml` after the Namespace exists. Its two server Deployments
 return `v1` and `v2`; the Service selects both; the client calls the Service.
@@ -63,7 +69,9 @@ foreach ($name in 'lab-api-v1','lab-api-v2','lab-client') {
 ```
 
 Predict: responses can contain both versions, since Kubernetes distributes
-requests across the two ready endpoints. Verify there is one application
+requests across the two ready endpoints. The client also makes one request to
+`http://lab-api:8080/` every 15 seconds and logs only failed requests. It
+never calls `/break`. Verify there is one application
 container and no `istio-proxy` in each Pod. There is no Istio route yet.
 
 ## Stage 2: opt in only this namespace
@@ -87,13 +95,13 @@ The presence of sidecars alone does not prove mTLS, availability, or policy.
 
 ## Stage 2b: observe the meshed lab
 
-The existing Forge Prometheus initially collects **no** Istio metrics. From
+For a new lab, the existing Forge Prometheus initially collects **no** Istio metrics. From
 the reviewed checkout, validate `metrics-services.yaml` with a server dry-run
 and apply it only after the three proxies are Ready. Its three ClusterIP
 Services select the client, v1, and v2 Pods separately and expose only their
 Envoy `:15090/stats/prometheus` endpoint to cluster Pods. The endpoint is
-cleartext and is **not** an access-controlled interface; use this only for
-the short-lived lab. This does not add a new Prometheus RBAC permission or
+cleartext and is **not** an access-controlled interface; leave only the three
+lab Services exposed internally. This does not add a new Prometheus RBAC permission or
 install a second collector.
 
 Before changing central monitoring, compare the live
@@ -122,8 +130,8 @@ review rather than overwriting operator changes. The Grafana test script
 expects three dashboards after this phase. A ConfigMap rollback restores the
 prior dashboards; no database wipe is involved.
 
-Generate several requests after the collector is Ready; allow at least two
-30-second scrapes, and keep requests flowing for a five-minute `rate` window
+The client supplies steady traffic after the collector is Ready. Allow at least two
+30-second scrapes and a five-minute `rate` window
 before interpreting the traffic and latency panels. Check **Proxy scrape
 health** first. The **Requests by destination version** panel uses server
 reporters; **Client responses by code** and **Client 503 responses** use the
@@ -181,19 +189,42 @@ successful `istioctl analyze -n forge-mesh-lab` does not mean an intentional
 normal `/` responses. Record the before/after VirtualService and client
 response. Leave unrelated workloads alone.
 
-## Return or continue later
+## Leave the lab ready for later
 
-At session end, apply `route-stable.yaml` (known good), scale only the three
-lab Deployments to zero, wait for Pods to disappear, then set the lab
-Namespace to `istio-injection=disabled` and Pod Security `baseline` before
-scaling them back to one. Verify new Pod IDs, no injected proxy, and ordinary
-service responses. Remove `metrics-services.yaml` Services at the end of the
-meshed session. The static lab Prometheus job will show three failed targets
-until you restore the previously captured ConfigMap and restart Prometheus;
-verify Restaurant API targets again. The Grafana dashboard can remain as a
-historical view, but will show no current lab traffic. The Istio control
-plane can remain for another lesson;
-opt into injection again only when actively testing.
+Keep the three Deployments at one replica, the namespace injection enabled,
+the three metrics Services present, and the Prometheus job active. Leave
+`route-canary.yaml` applied for a healthy 50/50 split. The client generates
+about four requests per minute (roughly 5,760 per day), all to `/`. Its
+application container requests 10m CPU and 16Mi memory and is limited to
+100m CPU and 64Mi memory; the injected proxy uses additional resources.
+Check `kubectl -n forge-mesh-lab logs deployment/lab-client -c client --tail=20`
+for failures. The Grafana **SignalForge Istio Learning Lab** dashboard will
+show fresh traffic after the five-minute rate window fills. A successful
+request to `/` does not establish that a deliberate `/break` fault has been
+removed; inspect the VirtualService after every fault exercise.
+
+To restore the known good route after a fault, apply **only**
+`k8s/istio-lab/route-canary.yaml`, inspect the live VirtualService to ensure
+it has no `/break` abort, and make fresh requests to `/` for v1/v2. A direct
+request to `/break` may receive a BusyBox HTTP 404 because there is no file
+at that path; it should no longer receive the injected Envoy 503. The
+cumulative client 503 counter retains older errors until
+the proxy restarts; use fresh requests and the current rate to confirm repair.
+If you prefer a single version while investigating, apply `route-stable.yaml`
+and expect v1 only, then reapply canary to resume normal learning traffic.
+
+To pause background traffic temporarily, scale only `deployment/lab-client`
+to zero; this also removes the interactive client and its metrics target, so
+restore it to one before expecting three healthy lab scrapes. Never leave
+Prometheus's static target pointing at a removed metrics Service for an
+extended period. A full return to unmeshed baseline is an **optional teardown**:
+first restore the stable route, scale all three lab Deployments to zero and
+wait for their Pods to disappear, then label the lab namespace injection
+disabled and Pod Security baseline. Scale the three Deployments to one, verify
+new unmeshed Pod IDs and ordinary service responses, delete only the three lab
+metrics Services, restore the validated pre-lab Prometheus ConfigMap and
+restart only Prometheus. Verify three healthy Restaurant targets and both
+alert rules. The dashboard can remain provisioned as historical context.
 
 If any stage fails, stop changes and inspect the lab Pods, events, endpoint
 slices, VirtualService, DestinationRule, and `istiod` without mutating other

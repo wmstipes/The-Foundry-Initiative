@@ -44,8 +44,10 @@ Path: `k8s/istio-lab`
 
 The [guided lab](istio-lab/README.md) uses an isolated namespace, two versions
 of a small HTTP service, and one client to explore sidecar injection, traffic
-shifting, a scoped HTTP fault, diagnosis, and repair. Its route files represent
-alternative states of the same VirtualService; apply them one at a time.
+shifting, a scoped HTTP fault, diagnosis, and repair. The client makes one
+request every 15 seconds so the Grafana panels remain useful between lessons.
+Its route files represent alternative states of the same VirtualService; apply
+them one at a time. Keep the healthy meshed lab running for later exploration.
 
 ## Validation
 

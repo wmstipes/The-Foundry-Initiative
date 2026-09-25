@@ -4,7 +4,7 @@ metadata:
   name: forge-mesh-lab
   labels:
     project: signalforge
-    purpose: disposable-istio-learning
+    purpose: istio-learning
     istio-injection: disabled
     pod-security.kubernetes.io/enforce: baseline
     pod-security.kubernetes.io/enforce-version: v1.36
