@@ -31,6 +31,25 @@ of assertions or behaviors. One test may verify several invariants or iterate
 over a reviewed scenario corpus. For example, one Milestone 061 test executes
 all nine adversarial incident-brief cases.
 
+## Istio learning lab validation
+
+The persistent lab adds live acceptance evidence, not a new automated test
+count. The isolated namespace has three meshed Pods at 2/2 Ready, a stable v1
+route and a healthy 50/50 canary route. Twenty manual canary calls yielded
+11 v1 and nine v2 responses; that sample demonstrates both subsets, not an
+exact long-term split. The client loop sends one request to `/` every 15
+seconds; Prometheus measured eight HTTP 200 requests over a two-minute window
+after rollout. The three lab proxy scrapes and three Restaurant API scrapes
+were up, and the two Restaurant alerts remained healthy and inactive.
+Grafana showed live traffic for both versions, HTTP 200 client responses, and
+healthy proxy scrapes. The 503 panel had no current series after client proxy
+replacement and no new injected fault; absence of that series is not proof
+that a later fault or application error cannot occur. The lab does not test
+production service routing, mTLS policy, network isolation, or Console mesh
+inspection. See the [runbook](../k8s/istio-lab/README.md) for the reset path
+and [PR #139](https://github.com/wmstipes/The-Foundry-Initiative/pull/139)
+for the reviewed change and live acceptance record.
+
 ## Console C3 live walkthrough evidence
 
 On 2026-09-21, after explicit authorization, the operator built accepted source

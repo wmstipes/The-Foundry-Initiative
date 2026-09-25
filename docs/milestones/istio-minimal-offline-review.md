@@ -1,7 +1,12 @@
 # Istio 1.31.1 minimal profile: offline review and control-plane checkpoint
 
 **Date:** 2026-09-24
-**Status:** The separately approved minimal control plane is installed. The training namespace, workloads, sidecar injection, and Pod Security exception have not been applied.
+**Status at writing:** The separately approved minimal control plane is installed. The training namespace, workloads, sidecar injection, and Pod Security exception have not been applied.
+
+**Subsequent outcome (2026-09-25):** The [persistent learning lab](../../k8s/istio-lab/README.md)
+uses a separate namespace with three injected workloads and a scoped Pod
+Security exception. The checkpoint below remains historical evidence, not a
+description of the present lab state.
 
 ## Control-plane checkpoint
 

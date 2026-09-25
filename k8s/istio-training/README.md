@@ -1,5 +1,11 @@
 # Istio learning exercise — training candidate
 
+**Historical review package:** This candidate was superseded by the active
+[persistent Istio learning lab](../istio-lab/README.md) in the separate
+`forge-mesh-lab` namespace. Do not apply this directory to the live cluster
+as a way to operate or repair the current lab. The state and commands below
+record the earlier proposal.
+
 This directory is a review package, **not** an apply-all directory. The
 separately approved control plane has been installed and verified; the training
 namespace passed server dry-run but has not been created, and neither training

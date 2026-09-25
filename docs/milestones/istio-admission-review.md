@@ -1,7 +1,13 @@
 # Istio learning pilot — admission review
 
-**Status:** Source-only assessment; no mesh install or live inventory accepted yet.
+**Status at writing:** Source-only assessment; no mesh install or live inventory accepted yet.
 **Date:** 2026-09-24
+
+**Subsequent outcome (2026-09-25):** The reviewed minimal Istio control plane
+and [isolated persistent learning lab](../../k8s/istio-lab/README.md) are now
+running. This page records the earlier admission criteria and should not be
+read as the current cluster state. See [project status](../project-status.md)
+and the lab runbook for the live state and recovery instructions.
 
 ## Question and recommendation
 

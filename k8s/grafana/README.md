@@ -73,12 +73,12 @@ After storage, runtime capacity, credentials, and the configuration review pass:
 
 The helper verifies the context, mount UUID, Secret key presence, and shared StorageClass. It applies the retained volume and claim, runs a temporary write-check Pod on first installation, waits for its successful exit, and verifies the claim is bound to the intended volume. It then generates ConfigMaps from the source directories, applies the Service and Deployment, and waits for readiness. Updates restart the existing Grafana Pod so settings and data-source changes take effect. A failed preflight prevents starting Grafana.
 
-Configuration changes are sourced from Git. The dashboards poll projected directory mounts every 30 seconds after ConfigMap propagation. Settings and data-source changes require a restart. No `subPath` mounts or watching sidecar are used. Dashboard UIDs and the data-source UID are stable. The third dashboard is for the optional [Istio lab](../istio-lab/README.md) and is provisioned only after its metrics collection gate.
+Configuration changes are sourced from Git. The dashboards poll projected directory mounts every 30 seconds after ConfigMap propagation. Settings and data-source changes require a restart. No `subPath` mounts or watching sidecar are used. Dashboard UIDs and the data-source UID are stable. The third dashboard is the active [Istio learning lab](../istio-lab/README.md); it shows proxy scrape health, version traffic, client responses, latency, and scrape duration.
 
 ## Access and validation
 
 ```powershell
-.\scripts\open-grafana.ps1 -ExpectedContext '<verified context>'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\open-grafana.ps1 -ExpectedContext '<verified context>'
 ```
 
 Open `http://127.0.0.1:3000`. In another PowerShell window:

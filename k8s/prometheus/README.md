@@ -1,21 +1,28 @@
 # SignalForge Lightweight Prometheus
 
-These manifests deploy a single Prometheus server for the Restaurant API.
+These manifests deploy one Prometheus server for the Restaurant API and the
+isolated Istio learning lab.
 
 ## Scope
 
 - Namespace: `forge-observability`
 - Prometheus image: `prom/prometheus:v3.13.2`
 - One Prometheus replica
-- Pod discovery limited to `forge-restaurant`
-- Scrape target limited to Restaurant API containers on the named `http` port
+- Pod discovery limited to `forge-restaurant`; three static lab proxy targets use named internal Services in `forge-mesh-lab`
+- Scrape target limited to Restaurant API containers on the named `http` port and three Envoy `:15090/stats/prometheus` endpoints
 - Scrape interval: 30 seconds
 - Retention time: 30 days
 - Retention size: 24 GB
 - Storage: static 30 GiB local PV on the `forge-head` NVMe
 - Access: `kubectl port-forward` only
 
-No Grafana, Alertmanager, node-exporter, kube-state-metrics, Prometheus Operator, dynamic provisioner, or distributed storage platform is installed.
+Grafana is deployed separately. No Alertmanager, node-exporter,
+kube-state-metrics, Prometheus Operator, dynamic provisioner, or distributed
+storage platform is installed. The two accepted alert rules still evaluate
+Restaurant API scrape coverage only. The lab endpoints are cleartext and
+reachable from cluster Pods; they are not access-controlled. Keep the three
+lab metrics Services available while the static scrape job is active. See the
+[Istio lab runbook](../istio-lab/README.md) before removing any of them.
 
 ## Resources
 
@@ -23,7 +30,7 @@ No Grafana, Alertmanager, node-exporter, kube-state-metrics, Prometheus Operator
 - `prometheus-service-account.yaml` provides the Prometheus workload identity.
 - `restaurant-pod-reader-role.yaml` grants read-only Pod discovery in `forge-restaurant`.
 - `restaurant-pod-reader-role-binding.yaml` binds that Role to the Prometheus ServiceAccount.
-- `prometheus-config.yaml` defines the Restaurant API scrape job and embeds the two accepted limited-alerting rules. Milestone 030 records the explicitly approved activation and live verification.
+- `prometheus-config.yaml` defines the Restaurant API discovery job, the three static Istio lab proxy targets, and the two accepted Restaurant limited-alerting rules. Milestone 030 records their explicitly approved activation and live verification.
 - `prometheus-storage-class.yaml` defines the non-default, no-provisioner local StorageClass.
 - `prometheus-local-pv.yaml` represents `/mnt/signalforge-prometheus/data` on `forge-head` and retains its data after claim release.
 - `prometheus-data-pvc.yaml` reserves the named local PV for Prometheus.
