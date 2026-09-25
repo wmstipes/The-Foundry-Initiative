@@ -68,6 +68,11 @@ Rollback accepts only a file whose name, namespace and normalized baseline confi
 
 ## Maintenance and interpretation
 
+- For a seven-day read-only review, run `manage-prometheus-alerts.ps1
+  -HistoryHours 168` from a checkout whose candidate config matches the live
+  configuration. The helper uses 60-second samples for this window to stay
+  within Prometheus' 11,000-point query limit. A sampled deficit is an
+  approximation; shorter interruptions and alert transitions can be missed.
 - Planned application scale-down or maintenance can legitimately satisfy these service-level coverage expressions; record or review the condition rather than treating every firing state as an incident.
 - More than three healthy targets does not fire a coverage alert. A failed extra rollout target can therefore remain diagnostic rather than alerting.
 - The alerts measure scrape coverage, not end-user availability, latency, error rate, notification delivery or Prometheus self-health.
