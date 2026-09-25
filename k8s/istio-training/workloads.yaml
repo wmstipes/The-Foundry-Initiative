@@ -1,0 +1,111 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mesh-training
+  namespace: forge-mesh-training
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mesh-server
+  namespace: forge-mesh-training
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mesh-server
+  template:
+    metadata:
+      labels:
+        app: mesh-server
+    spec:
+      serviceAccountName: mesh-training
+      automountServiceAccountToken: false
+      containers:
+      - name: server
+        image: docker.io/library/busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
+        command: [/bin/sh, -ec]
+        args:
+        - |
+          mkdir -p /tmp/www
+          printf 'signalforge-mesh-training\n' > /tmp/www/index.html
+          exec httpd -f -p 8080 -h /tmp/www
+        ports:
+        - name: http
+          containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 2
+          periodSeconds: 5
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {cpu: 100m, memory: 64Mi}
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          runAsGroup: 10001
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: [ALL]
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - name: scratch
+          mountPath: /tmp
+      volumes:
+      - name: scratch
+        emptyDir:
+          sizeLimit: 8Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mesh-server
+  namespace: forge-mesh-training
+spec:
+  type: ClusterIP
+  selector:
+    app: mesh-server
+  ports:
+  - name: http
+    port: 8080
+    targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mesh-client
+  namespace: forge-mesh-training
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mesh-client
+  template:
+    metadata:
+      labels:
+        app: mesh-client
+    spec:
+      serviceAccountName: mesh-training
+      automountServiceAccountToken: false
+      containers:
+      - name: client
+        image: docker.io/library/busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
+        command: [/bin/sh, -c, 'exec sleep 86400']
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {cpu: 100m, memory: 64Mi}
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          runAsGroup: 10001
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: [ALL]
+          seccompProfile:
+            type: RuntimeDefault

@@ -81,19 +81,24 @@ def validate(base=BASE):
     require(provider['allowUiUpdates'] is False and provider['updateIntervalSeconds'] == 30, 'Provisioning policy mismatch')
     require(provider['options']['path'] == '/etc/grafana/dashboards', 'Wrong dashboard path')
     dashboards = [json.loads(p.read_text()) for p in sorted((base/'dashboards').glob('*.json'))]
-    require({d['uid'] for d in dashboards} == {'signalforge-restaurant-overview','signalforge-scrape-diagnostics'}, 'Dashboard identity mismatch')
+    require({d['uid'] for d in dashboards} == {'signalforge-restaurant-overview','signalforge-scrape-diagnostics','signalforge-istio-lab'}, 'Dashboard identity mismatch')
     for d in dashboards:
         require(len(d['panels']) == 6 and d['refresh'] == '30s', 'Dashboard scope/refresh mismatch')
         require(d['time'] == {'from':'now-30m','to':'now'}, 'Wrong default range')
         for p in d['panels']:
             require(p['datasource']['uid'] == 'signalforge-prometheus', 'Panel data source mismatch')
             for t in p['targets']:
-                require('job="restaurant-api"' in t['expr'] and 'namespace="forge-restaurant"' in t['expr'], 'Unscoped PromQL')
+                if d['uid'] == 'signalforge-istio-lab':
+                    require('job="istio-lab"' in t['expr'] and 'namespace="forge-mesh-lab"' in t['expr'], 'Unscoped lab PromQL')
+                    if 'istio_requests_total' in t['expr'] or 'istio_request_duration_milliseconds' in t['expr']:
+                        require('destination_service_name="lab-api"' in t['expr'] and 'destination_service_namespace="forge-mesh-lab"' in t['expr'], 'Lab traffic query targets wrong service')
+                else:
+                    require('job="restaurant-api"' in t['expr'] and 'namespace="forge-restaurant"' in t['expr'], 'Unscoped PromQL')
                 require('vector(0)' not in t['expr'], 'Missing data must not become a healthy zero')
                 require('node_cpu' not in t['expr'] and 'kube_' not in t['expr'], 'Uncollected telemetry')
     for directory in ('config','provisioning/datasources','provisioning/dashboards','dashboards'):
         require(sum(p.stat().st_size for p in (base/directory).iterdir()) < 900_000, 'ConfigMap source exceeds safe size')
-    print('OK: Grafana storage, exposure, privileges, provisioning and 12 panels')
+    print('OK: Grafana storage, exposure, privileges, provisioning and 18 panels')
 
 
 if __name__ == '__main__':

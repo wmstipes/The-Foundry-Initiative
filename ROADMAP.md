@@ -1,12 +1,19 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-22
+**Last updated:** 2026-09-25
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
 ## Current position
 
 The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab.
+The central logging rollout and the separately verified cold off-node backup,
+Loki restart, isolated restore, and cleanup are complete; seven-day retention
+still needs a naturally elapsed observation. The
+[Istio admission review](docs/milestones/istio-admission-review.md) led to an
+isolated [persistent learning lab](k8s/istio-lab/README.md) with a minimal
+control plane, three meshed Pods, healthy 50/50 routing, and scoped
+Prometheus/Grafana observability. Production namespaces remain unmeshed.
 Milestones 001-030 and 032-065 are complete, merged, closed, synchronized, and
 cleaned up. ForgeOps v1.0.0 is published through its product-specific GitHub
 Release, has passed independent published-wheel acceptance, and is the
@@ -61,8 +68,9 @@ proposes six gates and records ForgeFire as a separate future lab-training idea.
 The offline rehearsal passed and operator feedback informed a
 [bounded handoff design](docs/design/forgeops-console-observation-contract.md),
 now ready for review. Export implementation and automatic ForgeOps intake are
-deferred pending contract and end-to-end acceptance. No live access or fault
-injection is granted. Istio learning and mesh inspection are separate proposals.
+deferred pending contract and end-to-end acceptance. No Console live access or
+fault injection is granted by C5. The Istio learning lab is active; mesh
+inspection in ForgeOps Console remains a separate proposal.
 
 Milestone 029's documentation-only limited-alerting design was accepted and merged on 2026-09-10 at `1837868`. Milestone 030's offline rules passed all 19 pinned-promtool scenarios and merged through PR #5 at `604e38e`; its guarded activation candidate merged through PR #6 at `f54b961`. On 2026-09-11, explicit approval preceded successful ConfigMap-only activation and independent verification of two healthy inactive rules with three healthy targets. The delays remain provisional, and no notification delivery is configured.
 

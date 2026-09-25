@@ -189,10 +189,10 @@ validation covers the existing offline pipeline and documentation consistency.
 
 ## Follow-on boundaries
 
-Istio is a separate proposed SignalForge learning milestone: first verify
-version/ARM64/CNI/resource compatibility, then plan a training namespace,
-verification and rollback. No mesh is installed or inspected by C5. A future
-mesh plugin needs its own capabilities and typed observation contract; this
+Istio was a separate proposed SignalForge learning milestone when this C5
+design was written. An isolated learning lab has since been installed, but
+C5 does not inspect its mesh. A future mesh plugin needs its own capabilities
+and typed observation contract; this
 schema deliberately contains no arbitrary plugin payload.
 
 ForgeFire remains separately proposed. No fault injection, live collection,

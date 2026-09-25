@@ -1,6 +1,6 @@
 # Central logging: scoped design and preflight
 
-This is the historical design and storage preflight. The accepted Loki and Alloy rollout, Grafana query, and probe Pod replacement evidence are recorded in [the central logging rollout](../../k8s/central-logging/README.md). The storage preparation described below has already completed; do not rerun it. Loki restart persistence, seven-day retention, and an off-node restore remain unverified.
+This is the historical design and storage preflight. The accepted Loki and Alloy rollout, Grafana query, and probe Pod replacement evidence are recorded in [the central logging rollout](../../k8s/central-logging/README.md). The storage preparation described below has already completed; do not rerun it. Loki restart persistence and isolated off-node restore were subsequently verified in [the recovery record](loki-recovery-candidate.md); seven-day retention remains unverified.
 
 ## Goal and boundaries
 

@@ -1,12 +1,30 @@
 # Project Status
 
-**Last updated:** 2026-09-23
+**Last updated:** 2026-09-25
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
 ## Summary
 
-The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, and the browser-local Forge YAML Workbench.
+The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, the browser-local Forge YAML Workbench, and an isolated Istio learning lab.
+
+Central logging now runs Loki and Alloy for `forge-pulse`; Grafana queries
+and retrieval after source Pod replacement passed. A cold off-node archive
+with matching SHA-256 was made, Loki and Alloy returned Ready, and an isolated
+restore returned the historical sample directly from the restored Loki. The
+isolated restore objects and directory were removed after verification.
+Seven-day retention remains pending. See [recovery evidence](milestones/loki-recovery-candidate.md).
+The [Istio admission assessment](milestones/istio-admission-review.md) led to
+an installed minimal control plane and a persistent, meshed
+[`forge-mesh-lab`](../k8s/istio-lab/README.md). Only the lab namespace has
+injection enabled. Three Pods are 2/2 Ready; a client requests the two API
+versions through the healthy 50/50 route every 15 seconds. All three Envoy
+proxy targets and all three Restaurant API targets were up on September 25,
+the two Restaurant alerts were healthy and inactive, and Grafana displayed
+both version series and HTTP 200 client traffic. The lab retains a scoped
+Pod Security `privileged` exception and cleartext internal metrics endpoints;
+there is no gateway or mesh enrollment for production application namespaces.
+ForgeOps and Console mesh inspection remain separate future decisions.
 
 The project has moved from basic workload deployment into repeatable engineering operations: automated tests, GitHub Actions, ARM64 image publishing, version-controlled Kubernetes manifests, validation, helper commands, application metrics, and current node and Pod resource visibility. Milestones 044-050 established bounded snapshot collection, deterministic evidence, validation, comparison, and a synthetic scenario corpus. Milestone 051 established explicit ForgeOps execution identity and supported local execution modes. Milestone 052 added exact-byte evidence integrity records without claiming authenticity or chain of custody. Milestone 053 added bounded offline scenario replay. Milestones 054-056 established strict runbook knowledge, deterministic grounded mapping, and the bounded incident-reasoning design. Milestones 057-060 implemented strict mapping validation, deterministic structured briefing, exact replay, and a fixed operator text view. Milestone 061 adversarially evaluated those boundaries and deferred model and retrieval integration. Milestone 062 passed its synthetic and live read-only incident-copilot demonstration without expanding that authority or identifying a concrete unmet operator question. Milestone 063 defined the bounded release contract, Milestone 064 proved the exact candidate, and Milestone 065 published and independently accepted ForgeOps v1.0.0.
 
@@ -64,7 +82,7 @@ historical evidence rather than being rewritten when the suite grows.
   but no asset in this Windows preview. The earlier laptop resources-test
   Application Control block remains a development-test limitation, not a pass.
 - Direction: use the [Console roadmap](roadmaps/forgeops-console-roadmap.md).
-  ForgeFire, mesh work and evidence integration remain separate proposals.
+  ForgeFire, Console mesh inspection, and evidence integration remain separate proposals.
 
 ## Current application
 

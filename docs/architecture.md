@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-22
+**Last updated:** 2026-09-25
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -22,6 +22,12 @@ flowchart TD
     NodePort --> API["Restaurant API Pods (3)"]
     WorkbenchPort --> Workbench["YAML Workbench (1)"]
     Prometheus["Prometheus (1)"] -->|scrape /metrics| API
+    LabClient["Meshed lab client"] -->|ClusterIP request| LabAPI["Meshed lab API v1/v2"]
+    Istiod["istiod (1)"] -.->|route config| LabClient
+    Istiod -.->|route config| LabAPI
+    Prometheus -->|scrape proxy metrics| LabClient
+    Prometheus -->|scrape proxy metrics| LabAPI
+    Grafana["Grafana (1)"] -->|query| Prometheus
     Operator["Operator kubectl"] -->|top request| APIServer["Kubernetes API server"]
     APIServer --> MetricsServer["Metrics Server (1)"]
     MetricsServer -->|verified TLS on 10250| Kubelets["Kubelets (4)"]
@@ -93,10 +99,35 @@ and [C7 acceptance record](milestones/forgeops-console-c7-release-readiness.md).
 - Discovery: Kubernetes Pod discovery limited to `forge-restaurant`
 - Authorization: namespace-scoped Role granting only `get`, `list`, and `watch` on Pods
 - Scrape model: each Restaurant API Pod is scraped independently every 30 seconds
+- Lab scrape: three static Envoy targets at port 15090 in `forge-mesh-lab`, each on its own metrics Service
 - Access: ClusterIP Service and temporary `kubectl port-forward`
 - Storage: retained 30 GiB local PV on the head NVMe, 30-day retention, and a 24 GB cap
 
 Prometheus remains deliberately lightweight. Grafana is deployed as a separate visualization layer; Alertmanager, node-exporter, kube-state-metrics, and the Prometheus Operator are not installed.
+The two existing alert rules cover the three Restaurant API scrape targets;
+the additional lab targets do not change that alerting contract. Removing a
+lab metrics Service while leaving its static scrape target configured will
+produce an unhealthy target. See the [lab runbook](../k8s/istio-lab/README.md)
+for the meshed steady state and optional collector rollback.
+
+### Istio learning lab
+
+- Namespace: `forge-mesh-lab`; only this namespace has injection enabled
+- Workloads: `lab-api-v1`, `lab-api-v2`, and `lab-client`, one replica each with an Envoy sidecar
+- Routing: `Service/lab-api` selects both versions; `DestinationRule` defines their subsets; `VirtualService` normally sends 50% to each
+- Traffic: the client requests `http://lab-api:8080/` every 15 seconds and logs failures; manual requests can exercise stable, canary, and deliberate `/break` fault routes
+- Observability: Prometheus scrapes the three proxy metrics Services; Grafana provisions the six-panel **SignalForge Istio Learning Lab** dashboard
+
+The minimal Istio control plane remains installed for learning. There is no
+mesh gateway, NodePort, NetworkPolicy, or production namespace injection in
+this lab. The ClusterIP API and cleartext proxy metrics endpoints are reachable
+from cluster Pods, so the namespace is not a network security boundary.
+Without Istio CNI, the current sidecar init configuration requires Pod
+Security `privileged` enforcement in this lab namespace while meshed; audit
+and warn remain restricted. This is an explicit ongoing constraint. The
+known-good route is `route-canary.yaml`, and `route-stable.yaml` selects only
+v1 when a simpler diagnosis is useful. The ForgeOps CLI and Console do not
+collect mesh evidence or control Istio routing.
 
 ### Approved persistent-storage target
 

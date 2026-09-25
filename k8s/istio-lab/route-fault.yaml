@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: lab-api
+  namespace: forge-mesh-lab
+spec:
+  hosts: [lab-api]
+  http:
+  - match:
+    - uri: {exact: /break}
+    fault:
+      abort:
+        httpStatus: 503
+        percentage: {value: 100}
+    route:
+    - destination: {host: lab-api, subset: v1}
+  - route:
+    - destination: {host: lab-api, subset: v1}
+      weight: 50
+    - destination: {host: lab-api, subset: v2}
+      weight: 50

@@ -54,6 +54,32 @@ This creates evaluator-visible rules only. With no Alertmanager or receiver, fir
 
 No failure was injected. This evidence establishes rule loading and healthy inactive evaluation, not delivered notifications, real-incident timing, application availability, or independent evaluator monitoring.
 
+## Seven-day review (2026-09-25)
+
+The operator ran the read-only plan from the Istio review checkout because
+the live Prometheus configuration includes the temporary lab scrape job. The
+live ConfigMap matched the reviewed candidate; the server dry-run passed and
+the candidate diff was empty. Three Restaurant API targets were healthy and
+both accepted rules were loaded with `health=ok` and `state=inactive`.
+
+Over 168 hours, all 10,081 one-minute target-count samples reported three
+healthy targets; the sampled minimum was three, with zero below-three samples
+and no sampled deficit. The first seven-day attempt at 30-second steps exceeded
+Prometheus' 11,000-point limit; the helper now selects a bounded interval and
+reports that interval explicitly. These observations show no sustained sampled
+coverage loss. They do not establish that no shorter loss or alert transition
+occurred, or that alerts recovered after a natural failure.
+
+The warning expression requires one or two healthy targets, while the critical
+expression requires zero healthy targets or an absent scoped series. Their
+conditions are mutually exclusive for the same evaluation. No naturally
+occurring alert transition was demonstrated in this review, so neither the
+five-minute warning delay nor the two-minute critical delay has been measured
+against a real recovery. **Keep both provisional delays unchanged.** Revisit
+their noise and recovery behavior when a natural deficit provides evidence;
+do not inject a failure solely to close this review. No alert configuration
+or workloads were changed for this review.
+
 ## Failure and rollback
 
 If any post-mutation step fails, the helper attempts to reapply the saved baseline ConfigMap, restart Prometheus, and verify three healthy targets with the candidate rules absent. It retains the recovery file in all cases. If automatic rollback also fails, stop and use the exact path printed by the helper:
@@ -68,6 +94,11 @@ Rollback accepts only a file whose name, namespace and normalized baseline confi
 
 ## Maintenance and interpretation
 
+- For a seven-day read-only review, run `manage-prometheus-alerts.ps1
+  -HistoryHours 168` from a checkout whose candidate config matches the live
+  configuration. The helper uses 60-second samples for this window to stay
+  within Prometheus' 11,000-point query limit. A sampled deficit is an
+  approximation; shorter interruptions and alert transitions can be missed.
 - Planned application scale-down or maintenance can legitimately satisfy these service-level coverage expressions; record or review the condition rather than treating every firing state as an incident.
 - More than three healthy targets does not fire a coverage alert. A failed extra rollout target can therefore remain diagnostic rather than alerting.
 - The alerts measure scrape coverage, not end-user availability, latency, error rate, notification delivery or Prometheus self-health.

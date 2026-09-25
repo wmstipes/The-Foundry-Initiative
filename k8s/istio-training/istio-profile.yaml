@@ -1,0 +1,8 @@
+# Review input for istioctl; do not kubectl apply this file.
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  profile: minimal
+  values:
+    pilot:
+      autoscaleEnabled: false

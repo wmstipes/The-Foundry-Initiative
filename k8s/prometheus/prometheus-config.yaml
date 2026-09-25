@@ -90,3 +90,17 @@ data:
         source_labels:
         - __meta_kubernetes_pod_ready
         target_label: pod_ready
+    # Lab-only sidecar endpoints; enable this collector change only after the
+    # three lab Pods are meshed and metrics-services.yaml has been applied.
+    - job_name: istio-lab
+      metrics_path: /stats/prometheus
+      static_configs:
+      - targets:
+        - lab-client-metrics.forge-mesh-lab.svc.cluster.local:15090
+        labels: {namespace: forge-mesh-lab, workload: lab-client}
+      - targets:
+        - lab-api-v1-metrics.forge-mesh-lab.svc.cluster.local:15090
+        labels: {namespace: forge-mesh-lab, workload: lab-api-v1}
+      - targets:
+        - lab-api-v2-metrics.forge-mesh-lab.svc.cluster.local:15090
+        labels: {namespace: forge-mesh-lab, workload: lab-api-v2}

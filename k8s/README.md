@@ -38,6 +38,17 @@ Paths: `k8s/grafana` and `k8s/central-logging`
 
 Grafana provides the existing Prometheus dashboards and a provisioned Loki datasource. Alloy reads Service Pulse Pod logs with namespace-scoped permissions and sends them to a private, persistent Loki instance. The [central logging rollout record](central-logging/README.md) documents observed ingestion, Grafana queries, and log retrieval after a probe Pod replacement. It also records the remaining Loki persistence, retention, and recovery checks. Follow the reviewed per-resource procedure; do not apply the central logging directory wholesale or rerun its storage preparation.
 
+## Istio learning lab
+
+Path: `k8s/istio-lab`
+
+The [guided lab](istio-lab/README.md) uses an isolated namespace, two versions
+of a small HTTP service, and one client to explore sidecar injection, traffic
+shifting, a scoped HTTP fault, diagnosis, and repair. The client makes one
+request every 15 seconds so the Grafana panels remain useful between lessons.
+Its route files represent alternative states of the same VirtualService; apply
+them one at a time. Keep the healthy meshed lab running for later exploration.
+
 ## Validation
 
 From the repository root:

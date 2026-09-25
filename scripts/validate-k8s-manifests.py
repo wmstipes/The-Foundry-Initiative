@@ -317,6 +317,18 @@ def validate_prometheus_manifests() -> None:
     require(embedded_rules == canonical_rules, "Embedded alert rules must match the canonical validated rules")
 
     scrape_jobs = prometheus_config.get("scrape_configs", [])
+    require({job.get("job_name") for job in scrape_jobs} == {RESTAURANT_APP, "istio-lab"},
+            "Prometheus jobs must be limited to Restaurant API and the scoped Istio lab")
+    lab_job = next(job for job in scrape_jobs if job.get("job_name") == "istio-lab")
+    require(lab_job.get("metrics_path") == "/stats/prometheus" and
+            lab_job.get("static_configs") == [
+                {"targets": ["lab-client-metrics.forge-mesh-lab.svc.cluster.local:15090"],
+                 "labels": {"namespace": "forge-mesh-lab", "workload": "lab-client"}},
+                {"targets": ["lab-api-v1-metrics.forge-mesh-lab.svc.cluster.local:15090"],
+                 "labels": {"namespace": "forge-mesh-lab", "workload": "lab-api-v1"}},
+                {"targets": ["lab-api-v2-metrics.forge-mesh-lab.svc.cluster.local:15090"],
+                 "labels": {"namespace": "forge-mesh-lab", "workload": "lab-api-v2"}},
+            ], "Istio lab scrape must be limited to the three named proxy Services")
     restaurant_jobs = [job for job in scrape_jobs if job.get("job_name") == RESTAURANT_APP]
     require(len(restaurant_jobs) == 1, "Prometheus must define exactly one restaurant-api scrape job")
     restaurant_job = restaurant_jobs[0]
