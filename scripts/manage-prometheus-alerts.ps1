@@ -10,7 +10,7 @@ param(
     [int]$ExpectedTargetCount = 3,
     [int]$LocalPort = 19090,
     [int]$TimeoutSeconds = 180,
-    [int]$HistoryHours = 24
+    [ValidateRange(1, 720)][int]$HistoryHours = 24
 )
 
 Set-StrictMode -Version Latest
@@ -221,7 +221,10 @@ function Show-CoverageHistory {
     $Query = [Uri]::EscapeDataString('sum(up{job="restaurant-api",namespace="forge-restaurant"})')
     $End = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
     $Start = $End - ($HistoryHours * 3600)
-    $Response = Invoke-PrometheusApi "/api/v1/query_range?query=$Query&start=$Start&end=$End&step=30"
+    # Prometheus caps query_range at 11,000 points per series. Round the
+    # interval to a multiple of 30s and leave room for both endpoints.
+    $StepSeconds = 30 * [int][Math]::Max(1, [Math]::Ceiling(($HistoryHours * 3600.0) / (10900 * 30)))
+    $Response = Invoke-PrometheusApi "/api/v1/query_range?query=$Query&start=$Start&end=$End&step=$StepSeconds"
     $Series = @($Response.data.result)
     if ($Response.status -ne "success" -or $Series.Count -ne 1) {
         Write-Warning "No scoped history was returned; rollout timing still requires manual review."
@@ -236,15 +239,16 @@ function Show-CoverageHistory {
     $PreviousTimestamp = $null
     foreach ($Point in $Values) {
         $Timestamp = [long]$Point[0]
-        if ($PreviousTimestamp -and ($Timestamp - $PreviousTimestamp) -gt 45) { $Current = 0 }
+        if ($PreviousTimestamp -and ($Timestamp - $PreviousTimestamp) -gt ($StepSeconds * 1.5)) { $Current = 0 }
         if ([double]$Point[1] -lt $ExpectedTargetCount) {
-            $Current += 30
+            $Current += $StepSeconds
             if ($Current -gt $Longest) { $Longest = $Current }
         }
         else { $Current = 0 }
         $PreviousTimestamp = $Timestamp
     }
-    Write-Host "History review (${HistoryHours}h, 30s samples): minimum=$Minimum; below-$ExpectedTargetCount samples=$Below/$($Counts.Count); longest contiguous sampled deficit=${Longest}s."
+    Write-Host "History review (${HistoryHours}h, ${StepSeconds}s samples): minimum=$Minimum; below-$ExpectedTargetCount samples=$Below/$($Counts.Count); longest contiguous sampled deficit=${Longest}s."
+    Write-Host "Sampled coverage can miss interruptions shorter than ${StepSeconds}s; longest deficit is an approximation."
     Write-Host "This is context only: it does not validate availability, evaluator self-health, or notification delivery."
 }
 
