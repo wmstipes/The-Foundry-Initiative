@@ -1,0 +1,18 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: forge-gateway
+  namespace: metallb-system
+spec:
+  addresses:
+    - 192.168.243.250/32
+  autoAssign: false
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: forge-gateway
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - forge-gateway
