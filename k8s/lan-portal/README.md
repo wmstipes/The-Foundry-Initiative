@@ -1,4 +1,4 @@
-# Forge LAN portal (first stage)
+# Forge LAN portal and private HTTPS
 
 The gateway is LAN-only. MetalLB v0.16.1 runs in native L2 mode and announces
 `192.168.243.250` for the Traefik v41.6.0 LoadBalancer Service in
@@ -7,13 +7,14 @@ The gateway is LAN-only. MetalLB v0.16.1 runs in native L2 mode and announces
 created. The single-address pool has `autoAssign: false` to prevent accidental
 allocation to another Service. The Traefik dashboard route is disabled.
 
-The initial portal uses a small, restricted, stateless HTTP server with two
-replicas. It contains links to the Workbench and Restaurant API. The ingress
-routes expose those two preexisting public demo workloads over HTTP on the
-LAN. Do not put credentials in those pages or enter sensitive YAML while this
-HTTP stage is in use. Headlamp, Grafana, Prometheus, and Service Pulse remain
-ClusterIP-only until private HTTPS and appropriate authentication are in place.
-The portal labels those entries as pending instead of providing broken links.
+The portal uses a small, restricted, stateless HTTP server with two replicas.
+Traefik terminates private HTTPS using the `forge-gateway-tls` Secret in its
+`default` TLSStore, backed by the offline-root private CA. Port 80 redirects to
+HTTPS with a temporary 302. The portal links to the Workbench and Restaurant
+API over HTTPS. Do not enter sensitive YAML in the demo Workbench; it has no
+application login. Headlamp, Grafana, Prometheus, and Service Pulse remain
+ClusterIP-only until appropriate authentication is in place. The portal labels
+those entries as pending.
 
 ## Install / reconcile
 
@@ -24,6 +25,7 @@ $ctx = 'kubernetes-admin@kubernetes'
 kubectl apply --context $ctx -f .\k8s\lan-portal\namespace.yaml
 kubectl apply --dry-run=server --context $ctx -f .\k8s\lan-portal\portal.yaml
 kubectl apply --context $ctx -f .\k8s\lan-portal\portal.yaml
+kubectl rollout restart deployment/forge-portal -n forge-portal --context $ctx
 kubectl rollout status deployment/forge-portal -n forge-portal --context $ctx --timeout=120s
 kubectl get pods,service,ingress -n forge-portal --context $ctx
 ```
@@ -50,16 +52,22 @@ Add the following entries to the Windows hosts file on the laptop and NUC,
 ```
 
 The `home.arpa` suffix is reserved for home networks. Browser entry point:
-`http://forge.home.arpa/`. Before updating hosts files, verify routes with
-`curl.exe --resolve forge.home.arpa:80:192.168.243.250 http://forge.home.arpa/`
-and the equivalent names for the two linked services. This is only available
+`https://forge.home.arpa/`. Install the **public** root certificate into each
+client's CurrentUser Root store after comparing its SHA-256 with the expected
+`68105417902A1EF6C0905DF6923774E0DEB3BB59EAF83B21E1E41651CB874106`.
+Never import the root private key on a client. Windows curl (Schannel) can
+report unknown revocation status for the private CA, which has no online
+revocation endpoint; `--ssl-revoke-best-effort` still checks chain and hostname.
+For a one-off check before trusting the root, use
+`curl.exe --ssl-revoke-best-effort --cacert $caFile --resolve forge.home.arpa:443:192.168.243.250 https://forge.home.arpa/`.
+This is only available
 while the cluster, gateway speaker, and LAN are functioning; the single
 control-plane node remains a single point of failure.
 
 ## Next stage
 
-Install cert-manager, establish and back up a private root CA, distribute its
-trust anchor to the laptop and NUC, issue private TLS certificates, and route
-sensitive services only after checking authentication and authorization.
-Headlamp must retain read-only privileges and must not use an unprotected
-service-account-token auto-login.
+Install the public root on the NUC after verifying the hash, then add
+protected ingress routes for Grafana, Prometheus, Headlamp, and Service Pulse
+only after checking authentication and authorization. Headlamp must retain
+read-only privileges and must not use an unprotected service-account-token
+auto-login.
