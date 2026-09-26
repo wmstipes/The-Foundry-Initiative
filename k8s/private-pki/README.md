@@ -16,10 +16,21 @@ from publishing the CA as an issuer. No root key or issued Secret belongs in Git
    plaintext export. Copy the encrypted archive to the NUC and USB; compare
    SHA-256 hashes. Keep the key and passphrase out of the repository and chat.
    Store the public `tls.crt` PEM separately for client trust.
-4. Only after backup verification, create an issuer and leaf certificates.
-   Limit certificate requests to namespaces/services that need them. The CA
-   issuer does not rotate the root automatically; monitor root and leaf expiry
-   and plan trust-anchor rollover.
+4. Apply `gateway-ca-bootstrap.yaml` to create a temporary root-signing
+   ClusterIssuer and a gateway intermediate CA. Wait for the intermediate
+   Certificate to become Ready; verify it has a Secret in `forge-gateway`.
+5. Apply `gateway-leaf.yaml` to sign the gateway TLS certificate using a
+   namespaced Issuer. Wait for its Certificate to become Ready.
+6. Remove the temporary ClusterIssuer, then delete the root Certificate,
+   root Secret, and bootstrap Issuer, in that order. The intermediate continues
+   to issue 90-day gateway leaf certificates. The root's **only** remaining
+   private-key copies are the encrypted backups. Do not reapply the stage 1
+   bootstrap file during normal operations: it would generate a new root.
+7. Monitor intermediate expiry: before its two-year certificate reaches its
+   30-day renewal window, securely restore the same root key/certificate,
+   temporarily recreate the root-signing ClusterIssuer, renew the intermediate,
+   then take the root offline again. Rotating the root trust anchor requires
+   its own planned rollout to Windows clients.
 
 Apply stage 1 from the repo root:
 
@@ -31,13 +42,19 @@ kubectl wait --context $ctx -n cert-manager --for=condition=Ready certificate/fo
 kubectl get issuer,certificate -n cert-manager --context $ctx
 ```
 
+Before stage 2, run `kubectl auth can-i list secrets -n cert-manager --as
+system:serviceaccount:forge-gateway:traefik`: the current Traefik chart grants
+cluster-wide Secret access (confirmed live). Removing the root Secret after
+intermediate issuance limits the impact of a future gateway compromise.
+Restrict Traefik's RBAC and namespace watch as a separate reviewed change.
+
 The root Secret contains the private key. Do not paste `kubectl get secret -o
 yaml/json` output into chat, terminal transcripts, or a pull request. A
 recovery procedure must restore the **same** key and certificate: creating a
 new root with the same name does not restore trust on existing clients. This
-bootstrap uses a ten-year root validity and starts renewal a year before
-expiry with the same key; distribute and verify a replacement trust anchor
-before relying on any renewed root certificate.
+one-time bootstrap uses a ten-year root validity. Once the Certificate is
+deleted, cert-manager cannot automatically renew the offline root; schedule a
+trust-anchor replacement before expiry.
 
 The initial portal HTTP routes remain unchanged until leaf certificates,
 client trust, and protected access are reviewed and tested. A single control
