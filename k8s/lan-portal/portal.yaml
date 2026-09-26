@@ -1,0 +1,187 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: forge-portal
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forge-portal-page
+  namespace: forge-portal
+data:
+  index.html: |
+    <!doctype html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Project Forge</title>
+      <style>
+        :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #10151c; color: #edf3f7; }
+        body { max-width: 920px; margin: 0 auto; padding: 3rem 1.25rem; }
+        h1 { margin-bottom: .25rem; }
+        p { color: #aebdcc; line-height: 1.5; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 2rem; }
+        .card { display: block; border: 1px solid #354759; background: #1b2733; border-radius: 12px; padding: 1.25rem; color: #edf3f7; text-decoration: none; }
+        a.card:hover, a.card:focus-visible { border-color: #66d9c3; outline: 2px solid #66d9c3; outline-offset: 2px; }
+        .card h2 { margin: 0 0 .4rem; font-size: 1.1rem; }
+        .card p { margin: 0; font-size: .95rem; }
+        .pending { opacity: .7; }
+        .status { font-size: .8rem; font-weight: 700; color: #66d9c3; text-transform: uppercase; letter-spacing: .06em; }
+        .pending .status { color: #e3c27c; }
+      </style>
+    </head>
+    <body>
+      <h1>Project Forge</h1>
+      <p>Local services on the Forge cluster. This page runs in Kubernetes and stays available while the cluster and LAN are online.</p>
+      <div class="grid">
+        <a class="card" href="http://yaml.forge.home.arpa/"><span class="status">Open</span><h2>YAML Workbench</h2><p>Inspect and format Kubernetes YAML.</p></a>
+        <a class="card" href="http://restaurant.forge.home.arpa/"><span class="status">Open</span><h2>Restaurant API</h2><p>Explore the demo API.</p></a>
+        <div class="card pending"><span class="status">Private HTTPS next</span><h2>Grafana</h2><p>Dashboards and logs.</p></div>
+        <div class="card pending"><span class="status">Private HTTPS next</span><h2>Prometheus</h2><p>Metrics and alerts.</p></div>
+        <div class="card pending"><span class="status">Private HTTPS next</span><h2>Headlamp</h2><p>Read-only Kubernetes dashboard.</p></div>
+        <div class="card pending"><span class="status">Private HTTPS next</span><h2>Service Pulse</h2><p>Service health and events.</p></div>
+      </div>
+    </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forge-portal
+  namespace: forge-portal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: forge-portal
+  template:
+    metadata:
+      labels:
+        app: forge-portal
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: forge-portal
+                topologyKey: kubernetes.io/hostname
+      containers:
+        - name: web
+          image: docker.io/library/busybox:1.36.1
+          imagePullPolicy: IfNotPresent
+          command: ["httpd", "-f", "-p", "8080", "-h", "/www"]
+          ports:
+            - name: http
+              containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 30
+          volumeMounts:
+            - name: page
+              mountPath: /www
+              readOnly: true
+      volumes:
+        - name: page
+          configMap:
+            name: forge-portal-page
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: forge-portal
+  namespace: forge-portal
+spec:
+  selector:
+    app: forge-portal
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: forge-portal
+  namespace: forge-portal
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: forge.home.arpa
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: forge-portal
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: forge-yaml-workbench
+  namespace: forge-tools
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: yaml.forge.home.arpa
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: forge-yaml-workbench
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: restaurant-api
+  namespace: forge-restaurant
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: restaurant.forge.home.arpa
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-api
+                port:
+                  number: 80
