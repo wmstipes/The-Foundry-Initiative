@@ -1102,6 +1102,49 @@ def validate_loki_recovery_manifests() -> None:
     ok("Loki recovery helpers cannot mount production data writable or restore into the production path")
 
 
+def validate_headlamp_manifests() -> None:
+    directory = Path("k8s/headlamp")
+    namespace = load_yaml(directory / "namespace.yaml")
+    require(namespace.get("kind") == "Namespace" and
+            namespace.get("metadata", {}).get("name") == "forge-headlamp" and
+            namespace["metadata"].get("labels", {}).get("pod-security.kubernetes.io/enforce") == "restricted",
+            "Headlamp must use its restricted namespace")
+
+    role, binding = load_yaml_documents(directory / "node-reader.yaml")
+    require(role.get("kind") == "ClusterRole" and
+            role.get("metadata", {}).get("name") == "forge-headlamp-node-reader" and
+            role.get("rules") == [{"apiGroups": [""], "resources": ["nodes"],
+                                   "verbs": ["get", "list", "watch"]}],
+            "Headlamp Node reader must grant only read access to Nodes")
+    require(binding.get("kind") == "ClusterRoleBinding" and
+            binding.get("roleRef") == {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "ClusterRole", "name": "forge-headlamp-node-reader"} and
+            binding.get("subjects") == [{"kind": "ServiceAccount",
+                                         "name": "headlamp", "namespace": "forge-headlamp"}],
+            "Headlamp Node reader must bind only the dedicated service account")
+
+    values = load_yaml(directory / "values.yaml")
+    require(values.get("clusterRoleBinding", {}).get("clusterRoleName") == "view" and
+            values.get("config", {}).get("unsafeUseServiceAccountToken") is False,
+            "Headlamp must use view and require per-user authentication")
+    require(values.get("service", {}).get("type") == "ClusterIP" and
+            values.get("ingress", {}).get("enabled") is False and
+            values.get("persistentVolumeClaim", {}).get("enabled") is False,
+            "Headlamp must remain internal and stateless")
+    security = values.get("securityContext", {})
+    require(security.get("allowPrivilegeEscalation") is False and
+            security.get("runAsNonRoot") is True and
+            security.get("capabilities", {}).get("drop") == ["ALL"] and
+            security.get("seccompProfile", {}).get("type") == "RuntimeDefault",
+            "Headlamp container must meet restricted Pod Security")
+    resources = values.get("resources", {})
+    require(resources.get("requests") == {"cpu": "50m", "memory": "128Mi"} and
+            resources.get("limits") == {"cpu": "300m", "memory": "512Mi"},
+            "Headlamp must retain bounded pilot resources")
+    ok("Headlamp pilot values, namespace, and scoped Node reader are valid")
+
+
 def main() -> None:
     validate_restaurant_manifests()
     validate_prometheus_manifests()
@@ -1109,6 +1152,7 @@ def main() -> None:
     validate_workbench_manifests()
     validate_pulse_manifests()
     validate_loki_recovery_manifests()
+    validate_headlamp_manifests()
     runpy.run_path(str(Path(__file__).with_name('validate-grafana.py')), run_name='__main__')
     print()
     print("All Kubernetes manifest checks passed.")
