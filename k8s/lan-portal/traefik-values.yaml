@@ -15,6 +15,15 @@ tlsStore:
     defaultCertificate:
       secretName: forge-gateway-tls
 
+ports:
+  web:
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: false
+
 ingressClass:
   isDefaultClass: false
 
