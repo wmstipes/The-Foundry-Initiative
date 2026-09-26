@@ -58,9 +58,10 @@ client's CurrentUser Root store after comparing its SHA-256 with the expected
 Never import the root private key on a client. Windows curl (Schannel) can
 report unknown revocation status for the private CA, which has no online
 revocation endpoint; `--ssl-revoke-best-effort` still checks chain and hostname.
-For a one-off check before trusting the root, use
+For a one-off check before trusting the root, set `$caFile` to the path of
+the exported public root `.crt`, then use
 `curl.exe --ssl-revoke-best-effort --cacert $caFile --resolve forge.home.arpa:443:192.168.243.250 https://forge.home.arpa/`.
-This is only available
+The portal is only available
 while the cluster, gateway speaker, and LAN are functioning; the single
 control-plane node remains a single point of failure.
 
