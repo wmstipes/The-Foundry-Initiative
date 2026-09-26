@@ -21,18 +21,15 @@ Run from the repository root using PowerShell:
 
 ```powershell
 $ctx = 'kubernetes-admin@kubernetes'
+kubectl apply --context $ctx -f .\k8s\lan-portal\namespace.yaml
 kubectl apply --dry-run=server --context $ctx -f .\k8s\lan-portal\portal.yaml
 kubectl apply --context $ctx -f .\k8s\lan-portal\portal.yaml
 kubectl rollout status deployment/forge-portal -n forge-portal --context $ctx --timeout=120s
 kubectl get pods,service,ingress -n forge-portal --context $ctx
 ```
 
-The namespace in `portal.yaml` must be created before its namespaced objects
-on clusters that reject a single multi-document apply across a new namespace.
-If that happens, run
-`kubectl apply --context $ctx -f .\k8s\lan-portal\portal.yaml --dry-run=client`
-for syntax validation, then apply the Namespace document separately and retry.
-For existing clusters the namespace is already present after the first apply.
+Apply the namespace first so the server-side dry run can validate the
+namespaced resources against the restricted Pod Security policy.
 
 To reconcile MetalLB separately, run
 `kubectl apply --context $ctx -f .\k8s\lan-portal\metallb-pool.yaml`.
