@@ -1,0 +1,30 @@
+# Pin the chart separately with --version 0.45.0; these values reproduce the pilot.
+replicaCount: 1
+clusterRoleBinding:
+  # Upstream defaults to cluster-admin; the pilot uses the built-in view role.
+  clusterRoleName: view
+config:
+  unsafeUseServiceAccountToken: false
+service:
+  type: ClusterIP
+ingress:
+  enabled: false
+persistentVolumeClaim:
+  enabled: false
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 100
+  runAsGroup: 101
+  privileged: false
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: [ALL]
+  seccompProfile:
+    type: RuntimeDefault
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 512Mi
