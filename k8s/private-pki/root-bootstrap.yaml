@@ -1,0 +1,35 @@
+# Stage 1: generate the trust anchor. Back up the resulting root Secret before
+# creating any leaf certificates. Never commit the Secret or its private key.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: forge-root-bootstrap
+  namespace: cert-manager
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: forge-root-ca
+  namespace: cert-manager
+spec:
+  secretName: forge-root-ca
+  isCA: true
+  commonName: Project Forge Internal Root CA
+  subject:
+    organizations:
+      - Project Forge
+  duration: 87600h # 10 years; plan CA replacement well before expiry.
+  renewBefore: 8760h # Starts renewing a year before expiry; track and coordinate trust.
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Never
+  usages:
+    - cert sign
+    - crl sign
+  issuerRef:
+    name: forge-root-bootstrap
+    kind: Issuer
+    group: cert-manager.io

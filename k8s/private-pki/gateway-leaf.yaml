@@ -1,0 +1,35 @@
+# Stage 2b. Apply after the intermediate CA is Ready, then remove the
+# temporary forge-root-signing ClusterIssuer. Only forge-gateway certificates
+# can use this namespace-scoped Issuer.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: forge-gateway-ca
+  namespace: forge-gateway
+spec:
+  ca:
+    secretName: forge-gateway-intermediate-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: forge-gateway-tls
+  namespace: forge-gateway
+spec:
+  secretName: forge-gateway-tls
+  duration: 2160h # 90 days.
+  renewBefore: 720h # 30 days.
+  dnsNames:
+    - forge.home.arpa
+    - "*.forge.home.arpa"
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  usages:
+    - digital signature
+    - server auth
+  issuerRef:
+    name: forge-gateway-ca
+    kind: Issuer
+    group: cert-manager.io
