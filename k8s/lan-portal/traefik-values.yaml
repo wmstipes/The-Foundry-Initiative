@@ -1,0 +1,34 @@
+# Traefik chart 41.6.0, app v3.7.13; release traefik in forge-gateway.
+service:
+  spec:
+    type: LoadBalancer
+    loadBalancerIP: 192.168.243.250
+  annotations:
+    metallb.io/address-pool: forge-gateway
+
+ingressClass:
+  isDefaultClass: false
+
+ingressRoute:
+  dashboard:
+    enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
