@@ -1,8 +1,15 @@
-# Forge private CA: staged bootstrap
+# Forge private CA: completed bootstrap and offline root
 
 The cluster runs cert-manager v1.21.2 (Helm release `cert-manager`, namespace
-`cert-manager`, CRDs managed with `crds.enabled=true`). Bootstrap is separate
-from publishing the CA as an issuer. No root key or issued Secret belongs in Git.
+`cert-manager`, CRDs managed with `crds.enabled=true`). The root was generated,
+backed up, used to sign the gateway intermediate, and removed from the cluster.
+The `forge-gateway-ca` Issuer and `forge-gateway-tls` Certificate are Ready in
+`forge-gateway`. No root key or issued Secret belongs in Git.
+
+**The bootstrap files below record one-time operations. Do not reapply
+`root-bootstrap.yaml` or `gateway-ca-bootstrap.yaml` to the running cluster.**
+The former would generate a different root; the latter would recreate a root
+signer without its offline key.
 
 1. Confirm encrypted backup tooling and destinations on Windows 11 laptop and
    NUC. Retain another copy on USB. Keep the archive passphrase in a password
@@ -32,7 +39,8 @@ from publishing the CA as an issuer. No root key or issued Secret belongs in Git
    then take the root offline again. Rotating the root trust anchor requires
    its own planned rollout to Windows clients.
 
-Apply stage 1 from the repo root:
+Historical stage 1 commands (for disaster recovery planning only; **do not run
+against the current cluster**):
 
 ```powershell
 $ctx = 'kubernetes-admin@kubernetes'
@@ -56,6 +64,11 @@ one-time bootstrap uses a ten-year root validity. Once the Certificate is
 deleted, cert-manager cannot automatically renew the offline root; schedule a
 trust-anchor replacement before expiry.
 
-The initial portal HTTP routes remain unchanged until leaf certificates,
-client trust, and protected access are reviewed and tested. A single control
-plane and the local LAN remain availability limits.
+The gateway now serves the private certificate from a Traefik TLSStore. The
+laptop trusts the public root certificate; HTTP redirects to HTTPS; the portal,
+Workbench, and Restaurant routes verified over HTTPS. The root certificate file
+hash used before import was
+`68105417902A1EF6C0905DF6923774E0DEB3BB59EAF83B21E1E41651CB874106`.
+The NUC still needs a separately verified public-root import. Headlamp,
+Grafana, Prometheus, and Service Pulse remain unexposed pending authentication.
+A single control plane and the local LAN remain availability limits.
