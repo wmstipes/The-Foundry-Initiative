@@ -39,22 +39,14 @@ signer without its offline key.
    then take the root offline again. Rotating the root trust anchor requires
    its own planned rollout to Windows clients.
 
-Historical stage 1 commands (for disaster recovery planning only; **do not run
-against the current cluster**):
+The one-time bootstrap manifests are retained for audit. Recovery must restore
+the original backed-up Secret under controlled conditions; the historical
+`kubectl apply` sequence would create a new, untrusted root on this cluster.
 
-```powershell
-$ctx = 'kubernetes-admin@kubernetes'
-kubectl apply --dry-run=server --context $ctx -f .\k8s\private-pki\root-bootstrap.yaml
-kubectl apply --context $ctx -f .\k8s\private-pki\root-bootstrap.yaml
-kubectl wait --context $ctx -n cert-manager --for=condition=Ready certificate/forge-root-ca --timeout=120s
-kubectl get issuer,certificate -n cert-manager --context $ctx
-```
-
-Before stage 2, run `kubectl auth can-i list secrets -n cert-manager --as
-system:serviceaccount:forge-gateway:traefik`: the current Traefik chart grants
-cluster-wide Secret access (confirmed live). Removing the root Secret after
-intermediate issuance limits the impact of a future gateway compromise.
-Restrict Traefik's RBAC and namespace watch as a separate reviewed change.
+During bootstrap, the Traefik ServiceAccount could list Secrets in
+`cert-manager` (confirmed live). Removing the root Secret after issuance
+reduced its exposure. Restrict Traefik's RBAC and namespace watch as a
+separate reviewed change.
 
 The root Secret contains the private key. Do not paste `kubectl get secret -o
 yaml/json` output into chat, terminal transcripts, or a pull request. A
