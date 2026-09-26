@@ -6,6 +6,15 @@ service:
   annotations:
     metallb.io/address-pool: forge-gateway
 
+providers:
+  kubernetesCRD:
+    defaultTLSResourcesNamespace: forge-gateway
+
+tlsStore:
+  default:
+    defaultCertificate:
+      secretName: forge-gateway-tls
+
 ingressClass:
   isDefaultClass: false
 
