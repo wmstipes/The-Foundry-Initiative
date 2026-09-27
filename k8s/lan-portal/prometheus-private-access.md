@@ -84,9 +84,18 @@ Add `192.168.243.250 prometheus.forge.home.arpa` to the laptop hosts file as
 Administrator. Open `https://prometheus.forge.home.arpa/` in Edge, enter the
 new credential when the browser prompts, and inspect Status > Targets and a
 bounded query. No credentials should be shared in chat or used with
-`curl --user` on the command line. Add a portal link only after the anonymous
-denial and interactive access both pass. On the NUC, defer access until its
-public-root trust and hosts entries are installed.
+`curl --user` on the command line. Live laptop acceptance passed: the anonymous query returned 401; Edge
+accepted the login without certificate warnings and displayed Targets and an
+`up` query. Reconcile the portal card from the tracked manifest:
+
+```powershell
+kubectl apply --context $ctx -f .\k8s\lan-portal\portal.yaml
+kubectl rollout restart deployment/forge-portal -n forge-portal --context $ctx
+kubectl rollout status deployment/forge-portal -n forge-portal --context $ctx --timeout=120s
+```
+
+On the NUC, defer access until its public-root trust and hosts entries are
+installed.
 
 Deleting only `ingress/prometheus-lan` removes LAN exposure if a test fails;
 the internal Service and Grafana's data source continue to work. Remove the
