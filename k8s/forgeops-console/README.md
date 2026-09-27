@@ -18,15 +18,28 @@ namespaces. It cannot read Secrets or modify objects. Logs and Events can
 contain sensitive values and are not automatically redacted. BasicAuth is a
 single-user LAN gate, not Kubernetes user identity or per-user RBAC.
 
+## Accepted pilot (2026-09-27)
+
+The `0.1.1` multi-platform image was published at OCI index digest
+`sha256:1ce34a44e2c711ffb12449ca60cdfc9716482e6eaf5b86d91ce0850cd5f3ab14`.
+The operator applied the rendered manifest with that digest, observed one
+Ready Pod with zero restarts and a Service EndpointSlice on port 9090, then
+applied the authenticated ingress. An unauthenticated HTTPS request to
+`/api/v1/bootstrap` returned `401` with the public root CA and hostname
+validated. A fresh private-browser visit prompted for BasicAuth and the
+operator reported the Console works. This checks the observed route and login;
+it does not prove multi-user isolation or high availability. The tracked
+Deployment intentionally keeps a digest placeholder, so reproduce this release
+by rendering the reviewed digest into the manifest as shown below.
+
 ## Build and release
 
-The image workflow validates an AMD64/ARM64 build in the PR. After the code
-PR is reviewed and merged to main, run the **ForgeOps Console cluster image**
-workflow on `main` with version `0.1.1`. Do not redeploy `0.1.0`:
+The image workflow validates an AMD64/ARM64 build in the PR. The image was published from `main` by the **ForgeOps Console cluster image**
+workflow with version `0.1.1`. For a future release, review and merge code
+before running that workflow with the new version. Do not redeploy `0.1.0`:
 it starts on the Pod address but the old listener rejects that address and exits. Its publish job requires the
-release environment and existing Docker Hub credentials. Read the OCI index
-digest from the run summary. Confirm both platforms and image name before
-installing. The manifest deliberately has an invalid digest placeholder:
+release environment and existing Docker Hub credentials. Read the OCI index digest from the run summary. Confirm both platforms and
+image name before installing a future version. The manifest deliberately has an invalid digest placeholder:
 do not apply the Deployment until the real digest is reviewed.
 
 ## Stage a private deployment
@@ -68,8 +81,9 @@ kubectl get pods,service,networkpolicy -n forge-console --context $ctx
 Remove-Variable manifest
 ```
 
-The Console must remain private until the auth gate is tested. Create a
-**new**, strong credential in the password manager. Traefik's BasicAuth
+The accepted pilot used a distinct credential. For a new installation, keep
+the Console private until the auth gate is tested. Create a **new**, strong
+credential in the password manager. Traefik's BasicAuth
 Secret stores it as plaintext (base64 is not encryption). Do not commit,
 paste, or print the Secret or password. Use PowerShell without transcript
 logging:
@@ -123,7 +137,7 @@ as Administrator. Open `https://forgeops.forge.home.arpa/` in Edge.
 After signing in, select `forge` and a namespace. Confirm bounded
 resource lists, a Pod log after acknowledging the warning, and no
 certificate error. Keep NUC setup deferred until its hosts and public-root
-trust are in place. Only after live acceptance, reconcile the tracked Forge home page card:
+trust are in place. After live acceptance, reconcile the tracked Forge home page card:
 
 ```powershell
 kubectl apply --context $ctx -f .\k8s\lan-portal\portal.yaml
