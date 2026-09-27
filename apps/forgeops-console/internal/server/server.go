@@ -28,16 +28,16 @@ const maxRequestBytes int64 = 4 << 10
 const ClusterHost = "forgeops.forge.home.arpa"
 
 type Options struct {
-	AllowedHost string
+	AllowedHost     string
 	PublicHTTPSHost string
-	Contexts    []config.ContextSummary
-	State       *session.State
-	Registry    *plugins.Registry
-	Broker      *broker.Broker
-	Resources   *resources.Service
-	Static      fs.FS
-	Nonce       string
-	Mode        string
+	Contexts        []config.ContextSummary
+	State           *session.State
+	Registry        *plugins.Registry
+	Broker          *broker.Broker
+	Resources       *resources.Service
+	Static          fs.FS
+	Nonce           string
+	Mode            string
 }
 
 type api struct {
