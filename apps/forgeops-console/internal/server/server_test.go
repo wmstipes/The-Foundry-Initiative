@@ -34,6 +34,10 @@ func testHandler(t *testing.T) http.Handler {
 }
 
 func testHandlerWithDiagnosticFactory(t *testing.T, diagnosticFactory cluster.ClientFactory) http.Handler {
+	return testHandlerForHost(t, diagnosticFactory, false)
+}
+
+func testHandlerForHost(t *testing.T, diagnosticFactory cluster.ClientFactory, public bool) http.Handler {
 	t.Helper()
 	state, err := session.New([]string{"dev", "prod"})
 	if err != nil {
@@ -85,8 +89,13 @@ func testHandlerWithDiagnosticFactory(t *testing.T, diagnosticFactory cluster.Cl
 		"index.html":           &fstest.MapFile{Data: []byte("<html>shell</html>")},
 		"app.js":               &fstest.MapFile{Data: []byte("console.log('local')")},
 	}
+	allowedHost, publicHost := testHost, ""
+	if public {
+		allowedHost, publicHost = ClusterHost, ClusterHost
+	}
 	handler, err := New(Options{
-		AllowedHost: testHost,
+		AllowedHost: allowedHost,
+		PublicHTTPSHost: publicHost,
 		Contexts: []config.ContextSummary{
 			{Name: "dev", ClusterName: "dev-cluster", AuthInfoName: "dev-user"},
 			{Name: "prod", ClusterName: "prod-cluster", AuthInfoName: "prod-user"},
@@ -320,5 +329,27 @@ func TestBundleRejectsMissingMalformedAndMismatchedAssets(t *testing.T) {
 	}
 	if validateBundle(fstest.MapFS{}) == nil {
 		t.Fatal("missing bundle accepted")
+	}
+}
+
+func TestClusterHostRequiresHTTPSOrigin(t *testing.T) {
+	handler := testHandlerForHost(t, cluster.OfflineFactory{}, true)
+	for _, tc := range []struct {
+		host, origin string
+		want         int
+	}{
+		{ClusterHost, "https://" + ClusterHost, http.StatusOK},
+		{ClusterHost, "http://" + ClusterHost, http.StatusForbidden},
+		{"127.0.0.1:9090", "https://" + ClusterHost, http.StatusForbidden},
+		{ClusterHost, "https://evil.example", http.StatusForbidden},
+	} {
+		request := httptest.NewRequest(http.MethodGet, "https://"+ClusterHost+"/api/v1/bootstrap", nil)
+		request.Host = tc.host
+		request.Header.Set("Origin", tc.origin)
+		result := httptest.NewRecorder()
+		handler.ServeHTTP(result, request)
+		if result.Code != tc.want {
+			t.Errorf("host=%q origin=%q: got %d, want %d", tc.host, tc.origin, result.Code, tc.want)
+		}
 	}
 }
