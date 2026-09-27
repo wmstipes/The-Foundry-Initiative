@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-25
+**Last updated:** 2026-09-27
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -17,7 +17,15 @@ The primary workload is the SignalForge Restaurant API, a small FastAPI service 
 
 ```mermaid
 flowchart TD
-    Client["Laptop or client"] --> NodePort["NodePort 30080"]
+    Client["Laptop or client"] -->|private HTTPS| Gateway["MetalLB VIP / Traefik"]
+    Gateway --> Portal["Forge portal (2)"]
+    Gateway -->|BasicAuth| Console["ForgeOps Console (1)"]
+    Console -->|ServiceAccount reads| APIServer
+    Gateway -->|BasicAuth| Prometheus
+    Gateway -->|Grafana login| Grafana
+    Gateway -->|HTTPS| API
+    Gateway -->|HTTPS| Workbench
+    Client --> NodePort["NodePort 30080"]
     Client --> WorkbenchPort["NodePort 30081"]
     NodePort --> API["Restaurant API Pods (3)"]
     WorkbenchPort --> Workbench["YAML Workbench (1)"]
@@ -73,7 +81,7 @@ flowchart TD
 - Security: restricted Pod Security labels, non-root execution, RuntimeDefault seccomp, read-only root filesystem, dropped capabilities, and bounded writable `/tmp`
 - Delivery: guarded version tags publish AMD64 and ARM64 images; the Deployment pins both version and OCI index digest
 
-### ForgeOps Console on the operator workstation
+### ForgeOps Console: workstation preview and cluster pilot
 
 - Source: `apps/forgeops-console`; published as the Windows engineering preview
   [v0.1.0-rc.1](https://github.com/wmstipes/The-Foundry-Initiative/releases/tag/forgeops-console-v0.1.0-rc.1).
@@ -85,11 +93,37 @@ flowchart TD
 - Example, resources and diagnostics are compiled first-party plugins; they are
   trusted code, not isolated third-party modules. Read-only routes do not reduce
   the Kubernetes permissions of the supplied identity.
-- Console runs outside Kubernetes and is independent of the ForgeOps CLI and
-  Workbench. There is no Console-to-ForgeOps evidence export/intake connection.
+- The separate in-cluster pilot runs in `forge-console` as one restricted ARM64
+  replica behind a ClusterIP Service. Traefik terminates private HTTPS at
+  `https://forgeops.forge.home.arpa/` and applies a dedicated BasicAuth gate.
+  The Pod uses a dedicated read-only ServiceAccount, a fixed `forge` context and
+  an ingress NetworkPolicy permitting Traefik. The cluster runtime accepts no
+  workstation kubeconfig; it has one process-wide scope, so use one operator
+  at a time. BasicAuth is not per-user Kubernetes RBAC.
+- The `0.1.1` image is deployed by OCI index digest. Its rollout, Service
+  endpoint, anonymous `401`, and authenticated browser session were observed
+  on 2026-09-27. The initial `0.1.0` image exited due to a loopback-only
+  listener check; do not redeploy it. See the [cluster runbook](../k8s/forgeops-console/README.md).
+- Both modes remain independent of the ForgeOps CLI and Workbench. There is no
+  Console-to-ForgeOps evidence export/intake connection.
 
 See the [implemented compatibility/lifecycle boundary](design/forgeops-console-c6-compatibility-lifecycle.md)
 and [C7 acceptance record](milestones/forgeops-console-c7-release-readiness.md).
+
+### Private LAN gateway and service access
+
+MetalLB advertises `192.168.243.250` on the LAN for the Traefik LoadBalancer.
+The two-replica [Forge portal](../k8s/lan-portal/README.md) at
+`https://forge.home.arpa/` links to the Workbench, Restaurant API, Grafana,
+Prometheus and protected ForgeOps Console. A cert-manager issued wildcard
+certificate chains to the offline Project Forge root CA; laptop clients trust
+only the exported public root. Local hosts-file entries resolve the names;
+NUC setup remains deferred. HTTP redirects to HTTPS. Grafana retains its
+own login, while Prometheus and Console use separate BasicAuth credentials.
+Headlamp and Service Pulse have no permanent protected ingress yet. The LAN,
+Traefik/MetalLB gateway, single control plane and local PVs remain availability
+constraints; two portal replicas alone do not make the entry point highly
+available.
 
 ### Metrics collection
 
@@ -100,7 +134,7 @@ and [C7 acceptance record](milestones/forgeops-console-c7-release-readiness.md).
 - Authorization: namespace-scoped Role granting only `get`, `list`, and `watch` on Pods
 - Scrape model: each Restaurant API Pod is scraped independently every 30 seconds
 - Lab scrape: three static Envoy targets at port 15090 in `forge-mesh-lab`, each on its own metrics Service
-- Access: ClusterIP Service and temporary `kubectl port-forward`
+- Access: ClusterIP Service plus authenticated private HTTPS at `https://prometheus.forge.home.arpa/`; port-forward remains available for maintenance
 - Storage: retained 30 GiB local PV on the head NVMe, 30-day retention, and a 24 GB cap
 
 Prometheus remains deliberately lightweight. Grafana is deployed as a separate visualization layer; Alertmanager, node-exporter, kube-state-metrics, and the Prometheus Operator are not installed.
@@ -187,6 +221,9 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 - `k8s/prometheus` contains the lightweight metrics-collection resources.
 - `k8s/metrics-server` contains the Kubernetes resource-metrics API resources.
 - `k8s/forge-yaml-workbench` contains the restricted namespace, hardened Deployment, NodePort Service, and operating notes.
+- `k8s/lan-portal` contains the LAN gateway configuration, portal, private ingress, and access runbooks.
+- `k8s/private-pki` contains the offline-root CA and gateway certificate bootstrap runbooks.
+- `k8s/forgeops-console` contains the cluster Console Deployment, read-only RBAC, ingress policy and access runbook.
 - `scripts` contains developer, deployment, smoke-test, and validation helpers.
 - `.github/workflows` contains application CI, manifest validation, and ARM64 image publishing.
 - `docs/milestones` preserves chronological implementation evidence.
@@ -316,13 +353,13 @@ Routine Wiki changes begin in the main repository, pass offline structure and li
 - Prefer trusted serving certificates over disabling TLS validation.
 - Protect metric label cardinality.
 - Automate repeatable validation and preserve manual troubleshooting skills.
-- Keep externally reachable services intentional; Prometheus remains ClusterIP-only.
+- Keep externally reachable services intentional; Prometheus remains a ClusterIP Service behind authenticated private ingress.
 - Record temporary limitations instead of hiding them.
 
 ## Current constraints
 
 - Prometheus storage is node-local; head-node or NVMe failure requires recovery. Weekly backups remain manual, and full service-restoration timing has not been measured.
-- NodePort is appropriate for the private lab but is not the long-term ingress design.
+- Existing Restaurant API and Workbench NodePorts remain reachable on the private LAN alongside their HTTPS ingress routes.
 - Metrics Server provides current CPU and memory samples but no historical resource-metrics store.
 - The upstream APIService uses `insecureSkipTLSVerify` for the API server-to-Metrics Server connection because the serving certificate is generated dynamically. This is separate from the secured Metrics Server-to-kubelet path.
 - Kubelet serving-certificate rotation requests require deliberate operator review and approval.
@@ -334,8 +371,8 @@ Potential next architecture steps include:
 
 1. Observe naturally occurring limited-alert behavior before designing notification delivery.
 2. Continue the demonstrated Prometheus and Grafana backup cadence.
-3. Introduce Ingress and TLS for cleaner private-lab access when selected as a bounded milestone.
-4. Evaluate Loki and OpenTelemetry only for defined logging or tracing questions.
+3. Add protected HTTPS ingress for Headlamp and Service Pulse only after their access policies are reviewed.
+4. Finish Loki retention and recovery checks; evaluate OpenTelemetry only for a defined tracing question.
 5. Preserve ForgeOps v1.0.0 as the deterministic, informational baseline and
    admit post-v1 work only through the
    [ForgeOps improvement roadmap](roadmaps/forgeops-post-v1-roadmap.md).
