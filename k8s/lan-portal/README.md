@@ -14,10 +14,11 @@ HTTPS with a temporary 302. The portal links to the Workbench and Restaurant
 API over HTTPS. Do not enter sensitive YAML in the demo Workbench; it has no
 application login. Grafana has its own login; Prometheus has a LAN BasicAuth gate. Both use
 HTTPS ingress while their Services remain ClusterIP. Headlamp and Service
-Pulse remain unlinked until protected access is in place. The tracked ForgeOps
-Console card points to a protected cluster pilot; do not reconcile this version
-of the portal until the Console's live anonymous 401 and authenticated browser
-checks pass. See [its staged runbook](../forgeops-console/README.md).
+Pulse remain unlinked until protected access is in place.
+The ForgeOps Console card points to the protected cluster pilot. Its anonymous
+`401` and fresh private-browser authentication prompt passed on 2026-09-27.
+See [the cluster runbook](../forgeops-console/README.md) for its single-operator
+scope and access limits.
 
 ## Install / reconcile
 
