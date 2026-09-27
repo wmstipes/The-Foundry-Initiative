@@ -25,7 +25,10 @@ Packages are unsigned. Do not bypass Windows application control if blocked.
 The published Windows preview retains its original behavior. The
 [cluster pilot](../../k8s/forgeops-console/README.md) is a separate
 `--in-cluster` mode with one fixed context and a dedicated ServiceAccount.
-Its Deployment is staged until an image digest and live access checks pass.
+Its `0.1.1` image is running behind private HTTPS and BasicAuth. The operator
+observed a Ready Pod, anonymous `401`, and a fresh browser authentication
+prompt on 2026-09-27. The tracked manifest requires substitution of the
+reviewed OCI index digest before applying; see the cluster runbook.
 
 - one explicit regular kubeconfig file is required in workstation mode;
 - the workstation listener must be a literal loopback address;

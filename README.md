@@ -33,7 +33,7 @@ SignalForge uses a restaurant analogy to make Kubernetes concepts easier to unde
 * ForgeOps is the evidence-bound operations analyst; the human operator retains
   diagnosis and remediation authority
 
-The cluster hosts the **SignalForge Restaurant API**, a FastAPI service, and **Forge YAML Workbench**, a browser-local YAML inspector with Kubernetes and General YAML modes. [Service Pulse](k8s/service-pulse/README.md) checks the Restaurant API and provides live operational traffic. Its structured Pod logs flow through Alloy to a [private Loki instance](k8s/central-logging/README.md) and are searchable in Grafana. A probe log remained queryable after its Pod was replaced; Loki restart persistence, seven-day retention, and off-node recovery still need verification. The [Istio learning lab](k8s/istio-lab/README.md) keeps two small API versions and one steady client meshed for routing and fault exercises, with a Grafana dashboard. [SignalForge Home](apps/signalforge-portal/README.md) is a browser-only preview with tool links and UTC/local time conversion.
+The cluster hosts the **SignalForge Restaurant API**, a FastAPI service, and **Forge YAML Workbench**, a browser-local YAML inspector with Kubernetes and General YAML modes. The [Forge LAN portal](k8s/lan-portal/README.md) at `https://forge.home.arpa/` links to privately hosted applications over HTTPS, including the protected [ForgeOps Console cluster pilot](k8s/forgeops-console/README.md). [Service Pulse](k8s/service-pulse/README.md) checks the Restaurant API and provides live operational traffic. Its structured Pod logs flow through Alloy to a [private Loki instance](k8s/central-logging/README.md) and are searchable in Grafana. A probe log remained queryable after its Pod was replaced; The isolated Loki restore was validated; seven-day retention remains to be verified. The [Istio learning lab](k8s/istio-lab/README.md) keeps two small API versions and one steady client meshed for routing and fault exercises, with a Grafana dashboard. The earlier [SignalForge Home browser preview](apps/signalforge-portal/README.md) remains a separate development example.
 
 ## SignalForge Restaurant API
 
@@ -78,6 +78,8 @@ is a published Windows amd64 engineering preview: a local browser interface
 served by a loopback-only Go core. It provides bounded Kubernetes resource
 reads, selected-Pod diagnostic snapshots and non-executable command previews.
 It uses one explicit kubeconfig and three compiled first-party plugins.
+
+A separate `0.1.1` ARM64 cluster image now runs behind the private Traefik HTTPS gateway with a dedicated read-only ServiceAccount and BasicAuth. The laptop browser check confirmed a fresh authentication prompt; the cluster mode has only the fixed `forge` context and one shared operator scope. See the [cluster runbook](k8s/forgeops-console/README.md) for deployment and limits.
 
 The accepted Windows/Edge package passed synthetic and bounded SignalForge
 reads, keyboard/zoom/Narrator checks and operator shutdown. It is unsigned;
@@ -252,13 +254,16 @@ The-Foundry-Initiative/
   apps/
     restaurant-api/        FastAPI application source, Dockerfile, and tests
     forge-yaml-workbench/  Browser-local YAML inspector, container, and tests
-    forgeops-console/      Local Go/browser Kubernetes inspector and synthetic demo
+    forgeops-console/      Go/browser inspector: workstation preview and cluster pilot
 
   k8s/
     fastapi-restaurant/    Kubernetes manifests for the Restaurant API
     prometheus/            Lightweight Prometheus manifests and scrape configuration
     metrics-server/        Kubernetes resource-metrics API manifests
     forge-yaml-workbench/  Restricted Workbench Namespace, Deployment, and Service
+    lan-portal/            Private LAN gateway, HTTPS portal, and ingress runbooks
+    private-pki/           Offline-root CA and gateway certificate bootstrap
+    forgeops-console/      Cluster Console manifests, access policy, and runbook
 
   docs/
     architecture.md        Current system architecture and constraints
@@ -344,7 +349,7 @@ The current development workflow is:
 Planned next steps include:
 
 * observe naturally occurring alert behavior before deciding whether notification delivery is justified
-* add Ingress and TLS when a cleaner private-lab access model becomes the next bounded milestone
+* extend the existing private HTTPS gateway to Headlamp and Service Pulse after reviewing their authentication and access policy
 * verify Loki restart persistence, seven-day retention, and off-node restore before depending on retained logs; evaluate OpenTelemetry only when a specific operational question requires it
 * maintain the bounded ForgeOps v1 release and require new work to improve the final incident-copilot demonstration, prove trustworthiness, or prepare a future release; model and retrieval integration remain deferred because the demonstration identified no concrete unmet operator question
 * follow the [ForgeOps post-v1 improvement roadmap](docs/roadmaps/forgeops-post-v1-roadmap.md) for separately approved demonstration, trust, and future-release candidates
