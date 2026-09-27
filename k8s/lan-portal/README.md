@@ -15,6 +15,10 @@ API over HTTPS. Do not enter sensitive YAML in the demo Workbench; it has no
 application login. Grafana has its own login; Prometheus has a LAN BasicAuth gate. Both use
 HTTPS ingress while their Services remain ClusterIP. Headlamp and Service
 Pulse remain unlinked until protected access is in place.
+The ForgeOps Console card links to its setup instructions. Console currently runs
+on the operator workstation with a loopback-only listener; the card is not an
+in-cluster Console endpoint and does not launch the app. An always-on Console
+would need a separate Kubernetes deployment and authentication design.
 
 ## Install / reconcile
 
