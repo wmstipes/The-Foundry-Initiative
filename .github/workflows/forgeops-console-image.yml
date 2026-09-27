@@ -29,6 +29,34 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - name: Smoke test in-cluster startup on AMD64
+        shell: bash
+        run: |
+          set -euo pipefail
+          image="forgeops-console:smoke-${GITHUB_SHA}"
+          container="forgeops-console-smoke-${GITHUB_RUN_ID}"
+          cleanup() {
+            docker logs "$container" 2>/dev/null || true
+            docker rm --force "$container" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+          docker build --platform linux/amd64 --tag "$image" -f apps/forgeops-console/Dockerfile .
+          docker run --detach --name "$container" \
+            --publish 127.0.0.1:19090:9090 \
+            --read-only --security-opt no-new-privileges:true --cap-drop ALL \
+            "$image"
+          ready=false
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error \
+              -H 'Host: forgeops.forge.home.arpa' \
+              http://127.0.0.1:19090/healthz 2>/dev/null | grep --quiet '"status":"ok"'; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+          test "$ready" = true
+          test "$(curl --silent -o /dev/null -w '%{http_code}' http://127.0.0.1:19090/healthz)" = 403
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
