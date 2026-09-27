@@ -122,16 +122,16 @@ func run() error {
 		return err
 	}
 	handler, err := server.New(server.Options{
-		AllowedHost: allowedHost,
+		AllowedHost:     allowedHost,
 		PublicHTTPSHost: publicHost,
-		Contexts:    loaded.Contexts,
-		State:       state,
-		Registry:    registry,
-		Broker:      capabilityBroker,
-		Resources:   resourceService,
-		Static:      os.DirFS(*webDirectory),
-		Nonce:       nonce,
-		Mode:        "read-only-c4",
+		Contexts:        loaded.Contexts,
+		State:           state,
+		Registry:        registry,
+		Broker:          capabilityBroker,
+		Resources:       resourceService,
+		Static:          os.DirFS(*webDirectory),
+		Nonce:           nonce,
+		Mode:            "read-only-c4",
 	})
 	if err != nil {
 		return err
