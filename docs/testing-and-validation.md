@@ -31,6 +31,19 @@ of assertions or behaviors. One test may verify several invariants or iterate
 over a reviewed scenario corpus. For example, one Milestone 061 test executes
 all nine adversarial incident-brief cases.
 
+## Headlamp pilot validation
+
+The Kubernetes manifest validator checks the Headlamp namespace's restricted Pod
+Security label, the scoped Node-reader role and subject, the chart's `view`
+override, per-user authentication, local-only exposure, container security,
+and resource bounds. This extends an existing static validator and adds no
+executable test cases to the inventory above. The live pilot separately showed
+four Ready nodes, resource usage, an initial readiness-probe Event, and
+authorization results: list Pods=yes, get Secrets=no, create Deployments=no.
+Those observations are acceptance evidence for the currently running release,
+not proof of a fresh installation from the tracked values file. See the
+[Headlamp runbook](../k8s/headlamp/README.md).
+
 ## Istio learning lab validation
 
 The persistent lab adds live acceptance evidence, not a new automated test

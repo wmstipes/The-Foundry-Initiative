@@ -49,6 +49,12 @@ request every 15 seconds so the Grafana panels remain useful between lessons.
 Its route files represent alternative states of the same VirtualService; apply
 them one at a time. Keep the healthy meshed lab running for later exploration.
 
+## Headlamp cluster viewer
+
+Path: `k8s/headlamp`
+
+The [read-only Headlamp pilot](headlamp/README.md) pins Helm chart 0.45.0, uses a restricted namespace, the built-in `view` role plus a narrowly scoped Node reader, and exposes only a ClusterIP Service for local port-forwarding. Its runbook records the observed four Ready nodes, resource metrics, startup Event, RBAC checks, and reconciliation/rollback commands.
+
 ## Validation
 
 From the repository root:
