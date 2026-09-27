@@ -95,3 +95,24 @@ func TestShutdownJoinsDrainAndBoundsUncooperativeHandler(t *testing.T) {
 		})
 	}
 }
+
+func TestClusterListenerAllowsOnlyFixedPodAddress(t *testing.T) {
+	if err := ValidateClusterListenAddress("0.0.0.0:9090"); err != nil {
+		t.Fatalf("cluster address rejected: %v", err)
+	}
+	for _, address := range []string{"127.0.0.1:9090", "0.0.0.0:8080", "[::]:9090", "localhost:9090"} {
+		if err := ValidateClusterListenAddress(address); err == nil {
+			t.Errorf("cluster address %q unexpectedly accepted", address)
+		}
+		state, err := session.New([]string{"forge"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := ListenAndServeCluster(context.Background(), &http.Server{Addr: address}, state); err == nil {
+			t.Errorf("cluster listener started at %q", address)
+		}
+	}
+	if err := ValidateListenAddress("0.0.0.0:9090"); err == nil {
+		t.Fatal("workstation listener accepted the cluster bind address")
+	}
+}

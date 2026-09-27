@@ -16,6 +16,26 @@ func ListenAndServe(ctx context.Context, httpServer *http.Server, state *session
 	if err := ValidateListenAddress(httpServer.Addr); err != nil {
 		return err
 	}
+	return listenAndServe(ctx, httpServer, state)
+}
+
+// ListenAndServeCluster is intentionally separate from the workstation path.
+// The externally reachable server must bind only its fixed in-cluster port.
+func ListenAndServeCluster(ctx context.Context, httpServer *http.Server, state *session.State) error {
+	if err := ValidateClusterListenAddress(httpServer.Addr); err != nil {
+		return err
+	}
+	return listenAndServe(ctx, httpServer, state)
+}
+
+func ValidateClusterListenAddress(address string) error {
+	if address != "0.0.0.0:9090" {
+		return errors.New("cluster listen address must be 0.0.0.0:9090")
+	}
+	return nil
+}
+
+func listenAndServe(ctx context.Context, httpServer *http.Server, state *session.State) error {
 	listener, err := net.Listen("tcp", httpServer.Addr)
 	if err != nil {
 		state.Close()

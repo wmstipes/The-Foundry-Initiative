@@ -149,5 +149,8 @@ func run() error {
 	defer stop()
 
 	log.Printf("ForgeOps Console listening on %s (read-only mode; in-cluster=%t)", *listenAddress, *inCluster)
+	if *inCluster {
+		return server.ListenAndServeCluster(shutdownContext, httpServer, state)
+	}
 	return server.ListenAndServe(shutdownContext, httpServer, state)
 }

@@ -24,7 +24,7 @@ spec:
       containers:
         - name: console
           # Replace the digest with the reviewed ARM64/AMD64 OCI index digest before applying.
-          image: wmstipes/signalforge-forgeops-console:0.1.0@sha256:REPLACE_WITH_RELEASE_DIGEST
+          image: wmstipes/signalforge-forgeops-console:0.1.1@sha256:REPLACE_WITH_RELEASE_DIGEST
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
