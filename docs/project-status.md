@@ -1,12 +1,12 @@
 # Project Status
 
-**Last updated:** 2026-09-25
+**Last updated:** 2026-09-27
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
 ## Summary
 
-The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, the browser-local Forge YAML Workbench, and an isolated Istio learning lab.
+The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, the browser-local Forge YAML Workbench, an isolated Istio learning lab, and the ForgeOps Console cluster pilot. The [private LAN portal](../k8s/lan-portal/README.md) provides permanent HTTPS links for the protected services.
 
 Central logging now runs Loki and Alloy for `forge-pulse`; Grafana queries
 and retrieval after source Pod replacement passed. A cold off-node archive
@@ -32,6 +32,13 @@ The [testing and validation guide](testing-and-validation.md) defines current
 suite counts, collection scope, commands, offline and live boundaries, and the
 maintenance rule for future test changes. Historical milestone counts remain
 historical evidence rather than being rewritten when the suite grows.
+
+## Private LAN access (2026-09-27)
+
+- MetalLB advertises `192.168.243.250` for Traefik. The two-replica portal is at `https://forge.home.arpa/`; the laptop uses hosts-file entries and trusts the public root CA. NUC setup is deferred.
+- Workbench and Restaurant API have HTTPS routes; Grafana has HTTPS plus its own login. Prometheus uses a distinct BasicAuth gate; its anonymous query returned `401`. Headlamp and Service Pulse still await protected ingress.
+- The [ForgeOps Console cluster pilot](../k8s/forgeops-console/README.md) runs in `forge-console` with one Ready Pod, a ClusterIP Service, restricted read-only ServiceAccount and Traefik-only ingress policy. Release `0.1.1` is pinned to OCI index digest `sha256:1ce34a44e2c711ffb12449ca60cdfc9716482e6eaf5b86d91ce0850cd5f3ab14`. Its EndpointSlice, successful rollout, anonymous `401`, and fresh private-browser BasicAuth prompt were observed. Mike reported the authenticated page and checks worked. No high-availability or multi-operator claim follows from this acceptance.
+- The initial `0.1.0` image crashed on the cluster bind address and was superseded by `0.1.1`. Root CA private key is held offline; the public certificate alone is trusted on the laptop. The single control plane and gateway remain availability constraints.
 
 ## Current ForgeOps Console state
 
@@ -63,11 +70,13 @@ historical evidence rather than being rewritten when the suite grows.
   relocates Activity; Mike confirmed it looks much better. A subsequent source
   follow-up adds space between relationship text and Inspect Pod buttons and
   adopts a dark blue palette. None of these source updates is in the
-  published preview.
-- Runtime: local browser interface and loopback-only Go core; one explicit
-  kubeconfig, selected context/namespace, fixed typed reads, three compiled
-  first-party plugins and bounded selected-Pod diagnostics. No mutation,
-  executable command preview, persistence or third-party loader is provided.
+  published Windows preview. The separate cluster image is `0.1.1`.
+- Workstation preview runtime: local browser interface and loopback-only Go core;
+  one explicit kubeconfig, selected context/namespace, fixed typed reads, three
+  compiled first-party plugins and bounded selected-Pod diagnostics. The
+  separate cluster runtime uses only its ServiceAccount token and fixed `forge`
+  context. Neither mode adds mutation, executable command preview, persistence,
+  or a third-party loader.
 - Accepted package environment: Windows 11 Pro 25H2 build 26200.9457, x64;
   Edge 153.0.4234.48; keyboard/focus, zoom/narrow-window, focused Narrator,
   synthetic and bounded live SignalForge namespace/Pod/Service reads, and Ctrl+C.
@@ -346,7 +355,7 @@ historical evidence rather than being rewritten when the suite grows.
 - Scrape interval: 30 seconds
 - Retention: 30 days or 24 GB
 - Storage: 30 GiB retained local PV on the head NVMe
-- Access: ClusterIP plus `kubectl port-forward`
+- Access: ClusterIP plus BasicAuth-protected private HTTPS at `https://prometheus.forge.home.arpa/`; port-forward remains an operator option
 - Healthy Restaurant API targets: 3
 - Prometheus Pod: stable with zero restarts after rollout
 - Automatic target rediscovery: confirmed through application Pod replacement
@@ -367,7 +376,7 @@ historical evidence rather than being rewritten when the suite grows.
 - Replicas: 1
 - Grafana OSS version: `13.2.1`
 - Image: `grafana/grafana:13.2.1@sha256:f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283`
-- Access: ClusterIP plus authenticated `kubectl port-forward`; anonymous dashboard access is rejected
+- Access: ClusterIP plus private HTTPS at `https://grafana.forge.home.arpa/` with Grafana login; anonymous dashboard API access is rejected
 - Storage: 3 GiB retained local PV `grafana-local-nvme` on the `forge-head` NVMe
 - Filesystem UUID: `a506c674-127a-46da-9c7d-d158b6d1bb75`
 - Mount: `/mnt/signalforge-grafana`
