@@ -123,8 +123,15 @@ as Administrator. Open `https://forgeops.forge.home.arpa/` in Edge.
 After signing in, select `forge` and a namespace. Confirm bounded
 resource lists, a Pod log after acknowledging the warning, and no
 certificate error. Keep NUC setup deferred until its hosts and public-root
-trust are in place. After live acceptance, update the Forge home page card
-to the verified URL and label it as protected.
+trust are in place. Only after live acceptance, reconcile the tracked Forge home page card:
+
+```powershell
+kubectl apply --context $ctx -f .\k8s\lan-portal\portal.yaml
+kubectl rollout restart deployment/forge-portal -n forge-portal --context $ctx
+kubectl rollout status deployment/forge-portal -n forge-portal --context $ctx --timeout=120s
+```
+
+Confirm the Console card opens the authenticated HTTPS endpoint in a new tab.
 
 Rollback: delete `ingress/forgeops-console` in `forge-console` to remove
 LAN exposure. The Windows preview and other cluster Services are unaffected.
