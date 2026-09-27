@@ -56,8 +56,7 @@ The dry run must succeed before applying:
 ```powershell
 $digest = 'sha256:PASTE_REVIEWED_64_HEX_DIGEST'
 if ($digest -notmatch '^sha256:[0-9a-f]{64}$') { throw 'Invalid digest' }
-$manifest = (Get-Content -Raw .\k8s\forgeops-console\deployment.yaml).
-  Replace('sha256:REPLACE_WITH_RELEASE_DIGEST', $digest)
+$manifest = (Get-Content -Raw .\k8s\forgeops-console\deployment.yaml).Replace('sha256:REPLACE_WITH_RELEASE_DIGEST', $digest)
 $manifest | kubectl apply --dry-run=server -f - --context $ctx
 if ($LASTEXITCODE -ne 0) { throw 'Deployment validation failed' }
 kubectl apply --context $ctx -f .\k8s\forgeops-console\network-policy.yaml
