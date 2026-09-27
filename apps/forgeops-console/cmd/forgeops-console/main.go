@@ -21,6 +21,7 @@ import (
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/resources"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/server"
 	"github.com/wmstipes/The-Foundry-Initiative/apps/forgeops-console/internal/session"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
 func main() {
@@ -34,6 +35,7 @@ func run() error {
 	kubeconfigPath := flag.String("kubeconfig", "", "path to the explicit kubeconfig fixture")
 	listenAddress := flag.String("listen", "127.0.0.1:9090", "literal loopback listen address")
 	webDirectory := flag.String("web-dir", "", "path to the built browser assets")
+	inCluster := flag.Bool("in-cluster", false, "use the dedicated Pod ServiceAccount behind Forge private HTTPS")
 	buildInfo := flag.Bool("build-info", false, "print build identity without loading configuration or starting a listener")
 	flag.Parse()
 	if *buildInfo {
@@ -43,12 +45,33 @@ func run() error {
 	if *webDirectory == "" {
 		return errors.New("--web-dir is required")
 	}
-	if err := server.ValidateListenAddress(*listenAddress); err != nil {
-		return err
-	}
-	loaded, err := config.LoadExplicit(*kubeconfigPath)
-	if err != nil {
-		return err
+	var loaded config.Loaded
+	var factory cluster.ClientFactory = cluster.LiveFactory{}
+	allowedHost := *listenAddress
+	publicHost := ""
+	if *inCluster {
+		if *kubeconfigPath != "" || *listenAddress != "127.0.0.1:9090" {
+			return errors.New("--in-cluster cannot be combined with --kubeconfig or --listen")
+		}
+		*listenAddress = "0.0.0.0:9090"
+		allowedHost = server.ClusterHost
+		publicHost = server.ClusterHost
+		loaded = config.Loaded{
+			Config: &clientcmdapi.Config{Contexts: map[string]*clientcmdapi.Context{
+				"forge": {Cluster: "in-cluster", AuthInfo: "serviceaccount"},
+			}},
+			Contexts: []config.ContextSummary{{Name: "forge", ClusterName: "in-cluster", AuthInfoName: "serviceaccount"}},
+		}
+		factory = cluster.InClusterFactory{}
+	} else {
+		if err := server.ValidateListenAddress(*listenAddress); err != nil {
+			return err
+		}
+		var err error
+		loaded, err = config.LoadExplicit(*kubeconfigPath)
+		if err != nil {
+			return err
+		}
 	}
 	contextNames := make([]string, 0, len(loaded.Contexts))
 	for _, summary := range loaded.Contexts {
@@ -75,7 +98,7 @@ func run() error {
 	}); err != nil {
 		return err
 	}
-	resourceService, err := resources.New(loaded.Config, state, cluster.LiveFactory{})
+	resourceService, err := resources.New(loaded.Config, state, factory)
 	if err != nil {
 		return err
 	}
@@ -91,7 +114,7 @@ func run() error {
 	}); err != nil {
 		return err
 	}
-	diagnosticService, err := diagnostics.New(loaded.Config, state, cluster.LiveFactory{}, nil, resourceService.RecordDiagnostic)
+	diagnosticService, err := diagnostics.New(loaded.Config, state, factory, nil, resourceService.RecordDiagnostic)
 	if err != nil {
 		return err
 	}
@@ -99,7 +122,8 @@ func run() error {
 		return err
 	}
 	handler, err := server.New(server.Options{
-		AllowedHost: *listenAddress,
+		AllowedHost: allowedHost,
+		PublicHTTPSHost: publicHost,
 		Contexts:    loaded.Contexts,
 		State:       state,
 		Registry:    registry,
@@ -124,6 +148,6 @@ func run() error {
 	shutdownContext, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	log.Printf("ForgeOps Console C4 listening at http://%s (read-only mode)", *listenAddress)
+	log.Printf("ForgeOps Console listening on %s (read-only mode; in-cluster=%t)", *listenAddress, *inCluster)
 	return server.ListenAndServe(shutdownContext, httpServer, state)
 }
