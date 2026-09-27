@@ -84,7 +84,9 @@ Add `192.168.243.250 prometheus.forge.home.arpa` to the laptop hosts file as
 Administrator. Open `https://prometheus.forge.home.arpa/` in Edge, enter the
 new credential when the browser prompts, and inspect Status > Targets and a
 bounded query. No credentials should be shared in chat or used with
-`curl --user` on the command line. Live laptop acceptance passed: the anonymous query returned 401; Edge
+`curl --user` on the command line.
+
+Live laptop acceptance passed: the anonymous query returned 401; Edge
 accepted the login without certificate warnings and displayed Targets and an
 `up` query. Reconcile the portal card from the tracked manifest:
 
