@@ -94,9 +94,9 @@ func testHandlerForHost(t *testing.T, diagnosticFactory cluster.ClientFactory, p
 		allowedHost, publicHost = ClusterHost, ClusterHost
 	}
 	handler, err := New(Options{
-		AllowedHost: allowedHost,
+		AllowedHost:     allowedHost,
 		PublicHTTPSHost: publicHost,
-		Contexts: []config.ContextSummary{
+		Contexts:         []config.ContextSummary{
 			{Name: "dev", ClusterName: "dev-cluster", AuthInfoName: "dev-user"},
 			{Name: "prod", ClusterName: "prod-cluster", AuthInfoName: "prod-user"},
 		},
