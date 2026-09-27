@@ -1,4 +1,4 @@
-# Grafana private HTTPS pilot
+# Grafana private HTTPS access
 
 Grafana already requires its own login: anonymous access and self-registration
 are disabled. The existing `grafana-admin` Secret remains in the cluster;
@@ -59,7 +59,17 @@ The historical `open-grafana.ps1` browser flow uses plain HTTP
 port-forwarding and is superseded for interactive login by this HTTPS URL;
 its health checks can still use the internal Service.
 
-Add a portal card only after the login and dashboard checks succeed. NUC
-access needs its own verified public-root import and hosts entry. If the
+Live laptop acceptance passed: HTTPS login returned 200, anonymous dashboard
+search returned 401, and Edge opened the dashboards and Loki Explore without a
+certificate warning. The portal card can now be reconciled from the tracked
+manifest:
+
+```powershell
+kubectl apply -f .\k8s\lan-portal\portal.yaml --context $ctx
+kubectl rollout restart deployment/forge-portal -n forge-portal --context $ctx
+kubectl rollout status deployment/forge-portal -n forge-portal --context $ctx --timeout=120s
+```
+
+NUC access needs its own verified public-root import and hosts entry. If the
 Ingress fails, delete only `ingress/grafana` in `forge-observability`;
 the ClusterIP Service and existing metrics collection remain available.
