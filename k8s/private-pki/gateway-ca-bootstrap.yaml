@@ -1,0 +1,36 @@
+# Stage 2a. Apply only after the root Secret has a verified off-cluster
+# encrypted backup. This ClusterIssuer is temporary: remove it once the
+# intermediate CA Certificate is Ready.
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: forge-root-signing
+spec:
+  ca:
+    secretName: forge-root-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: forge-gateway-intermediate-ca
+  namespace: forge-gateway
+spec:
+  secretName: forge-gateway-intermediate-ca
+  isCA: true
+  commonName: Project Forge Gateway Issuing CA
+  subject:
+    organizations:
+      - Project Forge
+  duration: 17520h # 2 years. Temporarily restore root signing before renewal.
+  renewBefore: 720h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Never
+  usages:
+    - cert sign
+    - crl sign
+  issuerRef:
+    name: forge-root-signing
+    kind: ClusterIssuer
+    group: cert-manager.io
