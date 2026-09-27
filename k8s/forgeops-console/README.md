@@ -22,7 +22,8 @@ single-user LAN gate, not Kubernetes user identity or per-user RBAC.
 
 The image workflow validates an AMD64/ARM64 build in the PR. After the code
 PR is reviewed and merged to main, run the **ForgeOps Console cluster image**
-workflow on `main` with version `0.1.0`. Its publish job requires the
+workflow on `main` with version `0.1.1`. Do not redeploy `0.1.0`:
+it starts on the Pod address but the old listener rejects that address and exits. Its publish job requires the
 release environment and existing Docker Hub credentials. Read the OCI index
 digest from the run summary. Confirm both platforms and image name before
 installing. The manifest deliberately has an invalid digest placeholder:
