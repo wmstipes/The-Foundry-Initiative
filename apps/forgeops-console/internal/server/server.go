@@ -25,17 +25,19 @@ import (
 )
 
 const maxRequestBytes int64 = 4 << 10
+const ClusterHost = "forgeops.forge.home.arpa"
 
 type Options struct {
-	AllowedHost string
-	Contexts    []config.ContextSummary
-	State       *session.State
-	Registry    *plugins.Registry
-	Broker      *broker.Broker
-	Resources   *resources.Service
-	Static      fs.FS
-	Nonce       string
-	Mode        string
+	AllowedHost     string
+	PublicHTTPSHost string
+	Contexts        []config.ContextSummary
+	State           *session.State
+	Registry        *plugins.Registry
+	Broker          *broker.Broker
+	Resources       *resources.Service
+	Static          fs.FS
+	Nonce           string
+	Mode            string
 }
 
 type api struct {
@@ -65,8 +67,12 @@ func ValidateListenAddress(address string) error {
 }
 
 func New(options Options) (http.Handler, error) {
-	if err := ValidateListenAddress(options.AllowedHost); err != nil {
-		return nil, err
+	if options.PublicHTTPSHost == "" {
+		if err := ValidateListenAddress(options.AllowedHost); err != nil {
+			return nil, err
+		}
+	} else if options.PublicHTTPSHost != ClusterHost || options.AllowedHost != ClusterHost {
+		return nil, errors.New("cluster mode requires the fixed private HTTPS host")
 	}
 	if options.State == nil || options.Registry == nil || options.Broker == nil || options.Resources == nil || options.Static == nil || options.Nonce == "" || options.Mode == "" {
 		return nil, errors.New("server options are incomplete")
@@ -110,7 +116,11 @@ func (a *api) validOrigin(raw string) bool {
 		return true
 	}
 	origin, err := url.Parse(raw)
-	return err == nil && origin.Scheme == "http" && origin.Host == a.options.AllowedHost && origin.User == nil && origin.Opaque == "" && origin.Path == "" && origin.RawQuery == "" && origin.Fragment == ""
+	scheme := "http"
+	if a.options.PublicHTTPSHost != "" {
+		scheme = "https"
+	}
+	return err == nil && origin.Scheme == scheme && origin.Host == a.options.AllowedHost && origin.User == nil && origin.Opaque == "" && origin.Path == "" && origin.RawQuery == "" && origin.Fragment == ""
 }
 
 func (a *api) health(writer http.ResponseWriter, _ *http.Request) {

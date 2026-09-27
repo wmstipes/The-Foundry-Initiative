@@ -20,10 +20,15 @@ The archive's candidate filename and historical README release hold are retained
 as build metadata; the later release decision is recorded in the release notes.
 Packages are unsigned. Do not bypass Windows application control if blocked.
 
-## Current runtime boundary
+## Workstation runtime boundary
 
-- one explicit regular kubeconfig file is required;
-- the listener must be a literal loopback address;
+The published Windows preview retains its original behavior. The
+[cluster pilot](../../k8s/forgeops-console/README.md) is a separate
+`--in-cluster` mode with one fixed context and a dedicated ServiceAccount.
+Its Deployment is staged until an image digest and live access checks pass.
+
+- one explicit regular kubeconfig file is required in workstation mode;
+- the workstation listener must be a literal loopback address;
 - parsed context metadata is sanitized before it reaches the browser;
 - context, namespace, generation, activity, and the session nonce remain in
   memory;
@@ -37,9 +42,10 @@ Packages are unsigned. Do not bypass Windows application control if blocked.
   exec, attach, proxy, port-forward, dynamic plugins, persistence,
   images, or deployments.
 
-The production client accepts only embedded kubeconfig material and rejects
+The workstation client accepts only embedded kubeconfig material and rejects
 exec plugins, auth-provider plugins, secondary credential files, proxies,
-insecure TLS, and impersonation. A separate synthetic-demo entry point uses a
+insecure TLS, and impersonation. Cluster mode instead uses the projected Pod
+ServiceAccount token and Kubernetes CA; it accepts no kubeconfig. A separate synthetic-demo entry point uses a
 fake client and never loads kubeconfig.
 
 ## C6 compatibility and lifecycle

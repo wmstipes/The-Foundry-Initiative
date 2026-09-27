@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forgeops-console
+  namespace: forge-console
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: forgeops-console
+  template:
+    metadata:
+      labels:
+        app: forgeops-console
+    spec:
+      serviceAccountName: forgeops-console
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: console
+          # Replace the digest with the reviewed ARM64/AMD64 OCI index digest before applying.
+          image: wmstipes/signalforge-forgeops-console:0.1.0@sha256:REPLACE_WITH_RELEASE_DIGEST
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 9090
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: forgeops-console
+  namespace: forge-console
+spec:
+  type: ClusterIP
+  selector:
+    app: forgeops-console
+  ports:
+    - name: http
+      port: 9090
+      targetPort: http

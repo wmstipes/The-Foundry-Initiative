@@ -14,7 +14,10 @@ HTTPS with a temporary 302. The portal links to the Workbench and Restaurant
 API over HTTPS. Do not enter sensitive YAML in the demo Workbench; it has no
 application login. Grafana has its own login; Prometheus has a LAN BasicAuth gate. Both use
 HTTPS ingress while their Services remain ClusterIP. Headlamp and Service
-Pulse remain unlinked until protected access is in place.
+Pulse remain unlinked until protected access is in place. The tracked ForgeOps
+Console card points to a protected cluster pilot; do not reconcile this version
+of the portal until the Console's live anonymous 401 and authenticated browser
+checks pass. See [its staged runbook](../forgeops-console/README.md).
 
 ## Install / reconcile
 
@@ -51,6 +54,7 @@ Add the following entries to the Windows hosts file on the laptop and NUC,
 192.168.243.250 restaurant.forge.home.arpa
 192.168.243.250 grafana.forge.home.arpa
 192.168.243.250 prometheus.forge.home.arpa
+192.168.243.250 forgeops.forge.home.arpa
 ```
 
 The `home.arpa` suffix is reserved for home networks. Browser entry point:

@@ -36,11 +36,13 @@ class ForgeOpsConsoleC2PolicyTests(unittest.TestCase):
         self.assertNotIn("ClientConfigLoadingRules", loader)
         self.assertNotIn("InClusterConfig", loader)
 
-    def test_listener_is_restricted_to_literal_loopback(self) -> None:
+    def test_workstation_listener_remains_loopback_and_cluster_origin_is_https(self) -> None:
         server = self.read("internal/server/server.go")
         self.assertIn("ip.IsLoopback()", server)
         self.assertIn("request.Host != a.options.AllowedHost", server)
-        self.assertIn('origin.Scheme == "http"', server)
+        self.assertIn('scheme := "http"', server)
+        self.assertIn('scheme = "https"', server)
+        self.assertIn("PublicHTTPSHost != ClusterHost", server)
 
     def test_state_changes_require_an_in_memory_nonce(self) -> None:
         server = self.read("internal/server/server.go")
