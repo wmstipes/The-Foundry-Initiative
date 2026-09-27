@@ -32,7 +32,7 @@ data:
       <div class="grid">
         <a class="card" href="https://yaml.forge.home.arpa/"><span class="status">Open</span><h2>YAML Workbench</h2><p>Inspect and format Kubernetes YAML.</p></a>
         <a class="card" href="https://restaurant.forge.home.arpa/"><span class="status">Open</span><h2>Restaurant API</h2><p>Explore the demo API.</p></a>
-        <div class="card pending"><span class="status">Protected access next</span><h2>Grafana</h2><p>Dashboards and logs.</p></div>
+        <a class="card" href="https://grafana.forge.home.arpa/"><span class="status">Open · sign in</span><h2>Grafana</h2><p>Dashboards and logs.</p></a>
         <div class="card pending"><span class="status">Protected access next</span><h2>Prometheus</h2><p>Metrics and alerts.</p></div>
         <div class="card pending"><span class="status">Protected access next</span><h2>Headlamp</h2><p>Read-only Kubernetes dashboard.</p></div>
         <div class="card pending"><span class="status">Protected access next</span><h2>Service Pulse</h2><p>Service health and events.</p></div>
