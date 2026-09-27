@@ -42,9 +42,10 @@ Its Deployment is staged until an image digest and live access checks pass.
   exec, attach, proxy, port-forward, dynamic plugins, persistence,
   images, or deployments.
 
-The production client accepts only embedded kubeconfig material and rejects
+The workstation client accepts only embedded kubeconfig material and rejects
 exec plugins, auth-provider plugins, secondary credential files, proxies,
-insecure TLS, and impersonation. A separate synthetic-demo entry point uses a
+insecure TLS, and impersonation. Cluster mode instead uses the projected Pod
+ServiceAccount token and Kubernetes CA; it accepts no kubeconfig. A separate synthetic-demo entry point uses a
 fake client and never loads kubeconfig.
 
 ## C6 compatibility and lifecycle
