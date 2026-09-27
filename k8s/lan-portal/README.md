@@ -12,9 +12,9 @@ Traefik terminates private HTTPS using the `forge-gateway-tls` Secret in its
 `default` TLSStore, backed by the offline-root private CA. Port 80 redirects to
 HTTPS with a temporary 302. The portal links to the Workbench and Restaurant
 API over HTTPS. Do not enter sensitive YAML in the demo Workbench; it has no
-application login. Headlamp, Grafana, Prometheus, and Service Pulse remain
-ClusterIP-only until appropriate authentication is in place. The portal labels
-those entries as pending.
+application login. Grafana has its own login; Prometheus has a LAN BasicAuth gate. Both use
+HTTPS ingress while their Services remain ClusterIP. Headlamp and Service
+Pulse remain unlinked until protected access is in place.
 
 ## Install / reconcile
 
@@ -49,6 +49,8 @@ Add the following entries to the Windows hosts file on the laptop and NUC,
 192.168.243.250 forge.home.arpa
 192.168.243.250 yaml.forge.home.arpa
 192.168.243.250 restaurant.forge.home.arpa
+192.168.243.250 grafana.forge.home.arpa
+192.168.243.250 prometheus.forge.home.arpa
 ```
 
 The `home.arpa` suffix is reserved for home networks. Browser entry point:
@@ -68,7 +70,8 @@ control-plane node remains a single point of failure.
 ## Next stage
 
 Install the public root on the NUC after verifying the hash, then add
-protected ingress routes for Grafana, Prometheus, Headlamp, and Service Pulse
-only after checking authentication and authorization. Headlamp must retain
+protected ingress routes for Headlamp and Service Pulse only after checking
+authentication and authorization. Prometheus access and recovery are described
+in [its runbook](prometheus-private-access.md). Headlamp must retain
 read-only privileges and must not use an unprotected service-account-token
 auto-login.
