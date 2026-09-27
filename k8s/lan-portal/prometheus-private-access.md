@@ -60,8 +60,8 @@ or paste the Secret body. Now apply the middleware and Ingress:
 
 ```powershell
 kubectl apply --context $ctx -f .\k8s\lan-portal\prometheus-private-ingress.yaml
-kubectl get middleware/prometheus-lan-auth,ingress/prometheus-lan `
-  -n forge-observability --context $ctx
+kubectl get middleware prometheus-lan-auth -n forge-observability --context $ctx
+kubectl get ingress prometheus-lan -n forge-observability --context $ctx
 ```
 
 Before browsing the endpoint, prove the gateway denies anonymous access. If
