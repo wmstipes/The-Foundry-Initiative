@@ -55,6 +55,18 @@ Path: `k8s/headlamp`
 
 The [read-only Headlamp pilot](headlamp/README.md) pins Helm chart 0.45.0, uses a restricted namespace, the built-in `view` role plus a narrowly scoped Node reader, and exposes only a ClusterIP Service for local port-forwarding. Its runbook records the observed four Ready nodes, resource metrics, startup Event, RBAC checks, and reconciliation/rollback commands.
 
+## Private LAN portal and gateway
+
+Path: `k8s/lan-portal`
+
+MetalLB and Traefik provide a LAN-only HTTPS entry point at `192.168.243.250`. The two-replica Forge portal links to Workbench, Restaurant API, Grafana, BasicAuth-protected Prometheus, and the protected ForgeOps Console cluster pilot. The [private-PKI runbook](private-pki/README.md) covers the offline root, gateway intermediate, and wildcard leaf. The laptop browser trusts the public root; NUC setup remains deferred. The gateway and single control plane are not highly available.
+
+## ForgeOps Console cluster pilot
+
+Path: `k8s/forgeops-console`
+
+The [cluster runbook](forgeops-console/README.md) covers the `0.1.1` digest-pinned image, restricted single replica, read-only ServiceAccount, Traefik-only ingress policy, distinct BasicAuth gate, and observed rollout and browser checks. The workstation preview retains its separate loopback-only kubeconfig mode.
+
 ## Validation
 
 From the repository root:
