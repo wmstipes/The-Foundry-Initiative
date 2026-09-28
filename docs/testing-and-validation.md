@@ -44,6 +44,18 @@ Those observations are acceptance evidence for the currently running release,
 not proof of a fresh installation from the tracked values file. See the
 [Headlamp runbook](../k8s/headlamp/README.md).
 
+On 2026-09-28, the protected Headlamp and Service Pulse routes each returned
+`401` to anonymous HTTPS requests. The operator reported both authenticated
+browser pages working. Dex HTTPS discovery matched its configured issuer;
+after the API-server OIDC change, `/readyz` returned `ok`, the replacement
+API-server Pod was Ready, and Headlamp chart revision 2 rolled out. The
+operator reported successful interactive OIDC login and cluster browsing.
+Separate impersonation checks for the configured OIDC username allowed Pod and
+Node lists and denied Secret reads and Deployment creation. Those checks are
+point-in-time evidence, not a token-level authorization test or a guarantee of
+recovery after an identity-provider outage. The private OIDC overlay and
+provider configuration are outside this repository.
+
 ## Istio learning lab validation
 
 The persistent lab adds live acceptance evidence, not a new automated test

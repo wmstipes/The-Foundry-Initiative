@@ -30,7 +30,7 @@ This directory contains the restricted `forge-tools` namespace, hardened statele
 
 Path: `k8s/service-pulse`
 
-This directory contains the restricted `forge-pulse` namespace, one live probe and one live board Deployment, and their internal ClusterIP Services. Both pin the published `0.1.1` OCI digest. The board is accessible by port-forward only from outside the cluster. See its README for live acceptance evidence, change review, and scoped rollback.
+This directory contains the restricted `forge-pulse` namespace, one live probe and one live board Deployment, and their internal ClusterIP Services. Both pin the published `0.1.1` OCI digest. The board is linked from the portal through a BasicAuth-protected private HTTPS route; the probe remains internal. See its README for workload evidence and scoped rollback. The protected route and policy are operated separately from the workload.
 
 ## Grafana and central logging
 
@@ -53,13 +53,13 @@ them one at a time. Keep the healthy meshed lab running for later exploration.
 
 Path: `k8s/headlamp`
 
-The [read-only Headlamp pilot](headlamp/README.md) pins Helm chart 0.45.0, uses a restricted namespace, the built-in `view` role plus a narrowly scoped Node reader, and exposes only a ClusterIP Service for local port-forwarding. Its runbook records the observed four Ready nodes, resource metrics, startup Event, RBAC checks, and reconciliation/rollback commands.
+The [read-only Headlamp pilot](headlamp/README.md) pins Helm chart 0.45.0 and uses a restricted namespace, a ClusterIP Service, and a BasicAuth-protected private HTTPS route. The normal login is through privately configured Dex OIDC. The chart ServiceAccount and the signed-in user have separate read-only RBAC; the private OIDC overlay is required on upgrades. The runbook distinguishes live acceptance from the older port-forward/token recovery path.
 
 ## Private LAN portal and gateway
 
 Path: `k8s/lan-portal`
 
-MetalLB and Traefik provide a LAN-only HTTPS entry point at `192.168.243.250`. The two-replica Forge portal links to Workbench, Restaurant API, Grafana, BasicAuth-protected Prometheus, and the protected ForgeOps Console cluster pilot. The [private-PKI runbook](private-pki/README.md) covers the offline root, gateway intermediate, and wildcard leaf. The laptop browser trusts the public root; NUC setup remains deferred. The gateway and single control plane are not highly available.
+MetalLB and Traefik provide a LAN-only HTTPS entry point. The two-replica Forge portal also links to the protected Headlamp and Service Pulse board. The [private-PKI runbook](private-pki/README.md) covers the offline root, gateway intermediate, and wildcard leaf. The laptop browser trusts the public root; NUC setup remains deferred. The gateway and single control plane are not highly available.
 
 ## ForgeOps Console cluster pilot
 

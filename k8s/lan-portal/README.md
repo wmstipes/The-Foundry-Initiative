@@ -12,9 +12,11 @@ Traefik terminates private HTTPS using the `forge-gateway-tls` Secret in its
 `default` TLSStore, backed by the offline-root private CA. Port 80 redirects to
 HTTPS with a temporary 302. The portal links to the Workbench and Restaurant
 API over HTTPS. Do not enter sensitive YAML in the demo Workbench; it has no
-application login. Grafana has its own login; Prometheus has a LAN BasicAuth gate. Both use
-HTTPS ingress while their Services remain ClusterIP. Headlamp and Service
-Pulse remain unlinked until protected access is in place.
+application login. Grafana has its own login; Prometheus has a LAN BasicAuth
+gate. Headlamp and Service Pulse now have active portal cards and their own
+BasicAuth-protected HTTPS routes; the Headlamp sign-in additionally uses Dex
+OIDC. Their Services remain ClusterIP. The Service Pulse probe remains
+internal. Ingress policies limit the protected application Pods to the gateway.
 The ForgeOps Console card points to the protected cluster pilot. Its anonymous
 `401` and fresh private-browser authentication prompt passed on 2026-09-27.
 See [the cluster runbook](../forgeops-console/README.md) for its single-operator
@@ -58,6 +60,10 @@ Add the following entries to the Windows hosts file on the laptop and NUC,
 192.168.243.250 forgeops.forge.home.arpa
 ```
 
+This historical bootstrap list omits the subsequently activated protected
+cards and Dex; maintain their name resolution in the private operator notes
+on each client that needs access.
+
 The `home.arpa` suffix is reserved for home networks. Browser entry point:
 `https://forge.home.arpa/`. Install the **public** root certificate into each
 client's CurrentUser Root store after comparing its SHA-256 with the expected
@@ -74,9 +80,9 @@ control-plane node remains a single point of failure.
 
 ## Next stage
 
-Install the public root on the NUC after verifying the hash, then add
-protected ingress routes for Headlamp and Service Pulse only after checking
-authentication and authorization. Prometheus access and recovery are described
-in [its runbook](prometheus-private-access.md). Headlamp must retain
-read-only privileges and must not use an unprotected service-account-token
-auto-login.
+Install the public root on the NUC after verifying the hash and supplying
+local hostname resolution for the protected applications and Dex. The
+additional routing and identity details are retained in private operator
+material outside Git. Prometheus access and recovery are described in
+[its runbook](prometheus-private-access.md). Keep Headlamp's read-only
+authorization and its private OIDC overlay when upgrading it.

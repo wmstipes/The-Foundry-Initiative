@@ -1,6 +1,6 @@
 # Service Pulse Kubernetes deployment
 
-These are the tracked resources for the live `forge-pulse` deployment: one restricted namespace, two single-replica Deployments, and two internal ClusterIP Services. The board has no NodePort or Ingress. Istio injection is disabled for this first step; central logging and mesh enrollment will be reviewed separately.
+These are the tracked workload resources for the live `forge-pulse` deployment: one restricted namespace, two single-replica Deployments, and two internal ClusterIP Services. The board has no NodePort; a separately managed protected HTTPS ingress now links it from the LAN portal. Anonymous access returned `401`, and the operator reported authenticated browser access working. The probe remains internal. Istio injection is disabled for these workloads; central logging is now active for their Pod logs, while mesh enrollment remains a separate decision.
 
 Both Deployments pin the published Linux AMD64/ARM64 OCI index:
 
@@ -21,7 +21,7 @@ The namespace and four workload resources were applied from these manifests afte
 - A laptop port-forward to the board Service returned `fresh: true` from `/api/status`. Three recent Restaurant samples were `ok`, with probe log sample IDs `a9ca47f06eac4ae58a9514acf3d8bf91`, `37e009acd8c74b20b15fc928ad2f7f24`, and `f98514e707f34e27a4348f6e71b34446`. The latest was observed at `2026-09-23T22:08:58.656833+00:00` and took 5 ms.
 - Board `probe_read` and probe `checks_read` shared request ID `69868cba548842febf7f340370db36a2` at about 22:09:07 UTC; the probe returned five samples. This verifies the cross-node board-to-probe path. A browser screenshot showed the board rendered with "Latest: ok" at `2026-09-23T22:12:58.697439+00:00` and 13 successful samples. After the board was left open without reloading, a second screenshot showed "Latest: ok" advancing to `2026-09-23T22:15:58.728572+00:00` with new successful samples. This confirms continued browser refresh during that observation window.
 
-These are point-in-time observations, not an uptime claim. Central logging is not installed; Pod replacement will reset the probe's in-memory samples and may lose old container logs. No Istio proxy was requested by these manifests.
+These are point-in-time observations from 2026-09-23, not an uptime claim. Central logging was installed subsequently; Pod replacement still resets the probe's in-memory samples. No Istio proxy was requested by these manifests.
 
 ## Read-only preflight from the laptop
 

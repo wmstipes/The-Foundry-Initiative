@@ -33,7 +33,7 @@ SignalForge uses a restaurant analogy to make Kubernetes concepts easier to unde
 * ForgeOps is the evidence-bound operations analyst; the human operator retains
   diagnosis and remediation authority
 
-The cluster hosts the **SignalForge Restaurant API**, a FastAPI service, and **Forge YAML Workbench**, a browser-local YAML inspector with Kubernetes and General YAML modes. The [Forge LAN portal](k8s/lan-portal/README.md) at `https://forge.home.arpa/` links to privately hosted applications over HTTPS, including the protected [ForgeOps Console cluster pilot](k8s/forgeops-console/README.md). [Service Pulse](k8s/service-pulse/README.md) checks the Restaurant API and provides live operational traffic. Its structured Pod logs flow through Alloy to a [private Loki instance](k8s/central-logging/README.md) and are searchable in Grafana. A probe log remained queryable after its Pod was replaced; The isolated Loki restore was validated; seven-day retention remains to be verified. The [Istio learning lab](k8s/istio-lab/README.md) keeps two small API versions and one steady client meshed for routing and fault exercises, with a Grafana dashboard. The earlier [SignalForge Home browser preview](apps/signalforge-portal/README.md) remains a separate development example.
+The cluster hosts the **SignalForge Restaurant API**, a FastAPI service, and **Forge YAML Workbench**, a browser-local YAML inspector with Kubernetes and General YAML modes. The [Forge LAN portal](k8s/lan-portal/README.md) at `https://forge.home.arpa/` links to privately hosted applications over HTTPS, including the protected [ForgeOps Console cluster pilot](k8s/forgeops-console/README.md), [Headlamp](k8s/headlamp/README.md), and [Service Pulse](k8s/service-pulse/README.md). Headlamp uses private Dex OIDC for its read-only operator sign-in, with an additional ingress BasicAuth gate; its credentials and deployment overlay remain outside Git. Service Pulse checks the Restaurant API and provides live operational traffic. Its structured Pod logs flow through Alloy to a [private Loki instance](k8s/central-logging/README.md) and are searchable in Grafana. A probe log remained queryable after its Pod was replaced; the isolated Loki restore was validated; seven-day retention remains to be verified. The [Istio learning lab](k8s/istio-lab/README.md) keeps two small API versions and one steady client meshed for routing and fault exercises, with a Grafana dashboard. The earlier [SignalForge Home browser preview](apps/signalforge-portal/README.md) remains a separate development example.
 
 ## SignalForge Restaurant API
 
@@ -262,6 +262,8 @@ The-Foundry-Initiative/
     metrics-server/        Kubernetes resource-metrics API manifests
     forge-yaml-workbench/  Restricted Workbench Namespace, Deployment, and Service
     lan-portal/            Private LAN gateway, HTTPS portal, and ingress runbooks
+    headlamp/              Read-only cluster viewer and OIDC operator notes
+    service-pulse/         Service health probe and board
     private-pki/           Offline-root CA and gateway certificate bootstrap
     forgeops-console/      Cluster Console manifests, access policy, and runbook
 
@@ -349,7 +351,7 @@ The current development workflow is:
 Planned next steps include:
 
 * observe naturally occurring alert behavior before deciding whether notification delivery is justified
-* extend the existing private HTTPS gateway to Headlamp and Service Pulse after reviewing their authentication and access policy
+* observe Headlamp OIDC sign-in after restarts and review whether the additional BasicAuth prompt should remain
 * verify Loki restart persistence, seven-day retention, and off-node restore before depending on retained logs; evaluate OpenTelemetry only when a specific operational question requires it
 * maintain the bounded ForgeOps v1 release and require new work to improve the final incident-copilot demonstration, prove trustworthiness, or prepare a future release; model and retrieval integration remain deferred because the demonstration identified no concrete unmet operator question
 * follow the [ForgeOps post-v1 improvement roadmap](docs/roadmaps/forgeops-post-v1-roadmap.md) for separately approved demonstration, trust, and future-release candidates

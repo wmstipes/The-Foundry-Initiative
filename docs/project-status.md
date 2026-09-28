@@ -1,12 +1,12 @@
 # Project Status
 
-**Last updated:** 2026-09-27
+**Last updated:** 2026-09-28
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
 ## Summary
 
-The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, the browser-local Forge YAML Workbench, an isolated Istio learning lab, and the ForgeOps Console cluster pilot. The [private LAN portal](../k8s/lan-portal/README.md) provides permanent HTTPS links for the protected services.
+The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, the browser-local Forge YAML Workbench, an isolated Istio learning lab, the ForgeOps Console cluster pilot, and a private Dex identity provider for Headlamp. The [private LAN portal](../k8s/lan-portal/README.md) provides permanent HTTPS links for the protected services.
 
 Central logging now runs Loki and Alloy for `forge-pulse`; Grafana queries
 and retrieval after source Pod replacement passed. A cold off-node archive
@@ -33,10 +33,12 @@ suite counts, collection scope, commands, offline and live boundaries, and the
 maintenance rule for future test changes. Historical milestone counts remain
 historical evidence rather than being rewritten when the suite grows.
 
-## Private LAN access (2026-09-27)
+## Private LAN access (updated 2026-09-28)
 
 - MetalLB advertises `192.168.243.250` for Traefik. The two-replica portal is at `https://forge.home.arpa/`; the laptop uses hosts-file entries and trusts the public root CA. NUC setup is deferred.
-- Workbench and Restaurant API have HTTPS routes; Grafana has HTTPS plus its own login. Prometheus uses a distinct BasicAuth gate; its anonymous query returned `401`. Headlamp and Service Pulse still await protected ingress.
+- Workbench and Restaurant API have HTTPS routes; Grafana has HTTPS plus its own login. Prometheus uses a distinct BasicAuth gate; its anonymous query returned `401`. Headlamp and Service Pulse now have separate protected HTTPS routes, ingress policies, and active portal cards. Each anonymous route check returned `401`; authenticated browser access was reported working.
+- Dex chart `0.24.1` is deployed in a restricted identity namespace; HTTPS discovery returned the expected issuer. The API server recovered to `/readyz=ok` after its OIDC configuration change, with the replacement Pod `1/1` Running; Tigera also recovered after the brief API restart. Headlamp chart `0.45.0` revision 2 rolled out with a private OIDC overlay. Mike confirmed the Dex sign-in and Headlamp access work. The ingress BasicAuth gate remains. The OIDC user is bound to `view` and scoped Node reads; impersonation checks allowed listing Pods and Nodes, denied Secrets reads and Deployment creation. These checks do not establish long-term identity-provider or gateway availability.
+- Identity provider configuration and client credentials, the Headlamp overlay, and API-server rollback copies remain outside Git. The repository's Headlamp base values alone do not represent the running release. See the [identity architecture](architecture.md#headlamp-identity-and-authorization) and [Headlamp operating notes](../k8s/headlamp/README.md).
 - The [ForgeOps Console cluster pilot](../k8s/forgeops-console/README.md) runs in `forge-console` with one Ready Pod, a ClusterIP Service, restricted read-only ServiceAccount and Traefik-only ingress policy. Release `0.1.1` is pinned to OCI index digest `sha256:1ce34a44e2c711ffb12449ca60cdfc9716482e6eaf5b86d91ce0850cd5f3ab14`. Its EndpointSlice, successful rollout, anonymous `401`, and fresh private-browser BasicAuth prompt were observed. Mike reported the authenticated page and checks worked. No high-availability or multi-operator claim follows from this acceptance.
 - The initial `0.1.0` image crashed on the cluster bind address and was superseded by `0.1.1`. Root CA private key is held offline; the public certificate alone is trusted on the laptop. The single control plane and gateway remain availability constraints.
 
