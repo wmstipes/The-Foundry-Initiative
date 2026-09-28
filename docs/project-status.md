@@ -6,6 +6,11 @@
 
 ## Summary
 
+Current procedures are collected in the [operations index](runbooks/README.md).
+The [access and OIDC acceptance record](milestones/private-access-and-headlamp-oidc.md)
+holds today's rollout evidence. The [documentation review](milestones/documentation-review-2026-09-28.md)
+records the wider September 28 reconciliation.
+
 The active Foundry workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab. The cluster runs the versioned SignalForge Restaurant API, lightweight Prometheus, Kubernetes Metrics Server, Grafana, the browser-local Forge YAML Workbench, an isolated Istio learning lab, the ForgeOps Console cluster pilot, and a private Dex identity provider for Headlamp. The [private LAN portal](../k8s/lan-portal/README.md) provides permanent HTTPS links for the protected services.
 
 Central logging now runs Loki and Alloy for `forge-pulse`; Grafana queries
@@ -441,6 +446,11 @@ Milestone 026 host preparation is complete:
 The NVMe cutover is live. Pod-replacement persistence and six-block off-node backup/restore validation passed. See Milestone 026 for the checksum and evidence.
 
 ## Immediate next step
+
+For the platform, preserve OIDC settings through a reviewed kubeadm upgrade
+configuration, establish a tested identity recovery procedure, and verify
+naturally elapsed Loki retention. These are open operational items; the
+documentation review does not perform them. NUC client trust remains deferred.
 
 Maintain the accepted ForgeOps v1.0.0 baseline. Any future milestone must
 directly improve the final incident-copilot demonstration, prove that it is

@@ -1,10 +1,16 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-25
+**Last updated:** 2026-09-28
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
 ## Current position
+
+The private gateway, seven active portal cards, and Headlamp's Dex OIDC login
+are in operation. The [access and identity rollout record](docs/milestones/private-access-and-headlamp-oidc.md)
+captures the September 27-28 acceptance and remaining recovery work. This is
+platform work with its own named record; it does not consume the planned
+ForgeOps or Workbench milestone numbers.
 
 The active workstream is SignalForge, a four-node Raspberry Pi Kubernetes lab.
 The central logging rollout and the separately verified cold off-node backup,

@@ -23,6 +23,22 @@ When a change adds, removes, parameterizes, relocates, or changes discovery of
 tests, update the testing guide's dated inventory and suite description in the
 same pull request. Report named suite counts rather than an unlabeled total.
 
+## Documentation maintenance
+
+Before closing a change that affects operation or access, review the
+[documentation map](docs/README.md). Update current status, architecture,
+the affected runbook, and a dated evidence record as applicable. Keep observed
+results distinct from planned work and static validation. Historical milestone
+results retain their original dates and test counts; add a subsequent-outcome
+note when a historical procedure could otherwise be mistaken for current guidance.
+
+Wiki changes start in `docs/wiki`. Validate those files, publish the reviewed
+copies to the separate Wiki repository within the authorized task scope, and
+verify an exact copy with `validate-wiki-front-door.py --wiki-dir <checkout>`.
+Record the Wiki commit in the change record. Publish only links that already
+resolve on `main`; new target files must reach `main` before the Wiki links do.
+The Wiki remains navigation; current procedures and evidence live in this repository.
+
 ## Commit messages
 
 Use short, intentional commit messages that describe the result, for example:

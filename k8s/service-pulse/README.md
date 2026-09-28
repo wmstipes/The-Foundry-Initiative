@@ -25,6 +25,10 @@ These are point-in-time observations from 2026-09-23, not an uptime claim. Centr
 
 ## Read-only preflight from the laptop
 
+The [protected route runbook](../lan-portal/protected-apps.md) covers its
+separate ingress, credential prerequisites, HTTPS checks, and route removal.
+The procedure below covers the workload, not a route-only change.
+
 From the repository root in PowerShell, after pulling the reviewed merge, make Git for Windows' external `diff.exe` available to `kubectl diff` in the current terminal session. PowerShell's `diff` alias is not an executable and will not work:
 
 ```powershell
@@ -86,7 +90,7 @@ kubectl logs deployment/service-pulse-probe -n forge-pulse --tail=30
 kubectl port-forward -n forge-pulse service/service-pulse-board 18080:8080
 ```
 
-In a second terminal open `http://127.0.0.1:18080/` and check `http://127.0.0.1:18080/api/status`. The probe should log fresh `functional_check` results with `result=ok`; the board should show a fresh sample and log `probe_read`. Match a board request ID to probe `checks_read`. A failed sample needs investigation of DNS, Service endpoints, policies and application logs; `/healthz` alone is insufficient. The board stores no history: probe replacement loses its in-memory samples. Central logging has not yet been deployed, so logs from a removed Pod may not remain available.
+In a second terminal open `http://127.0.0.1:18080/` and check `http://127.0.0.1:18080/api/status`. The probe should log fresh `functional_check` results with `result=ok`; the board should show a fresh sample and log `probe_read`. Match a board request ID to probe `checks_read`. A failed sample needs investigation of DNS, Service endpoints, policies and application logs; `/healthz` alone is insufficient. The board stores no history: probe replacement loses its in-memory samples. Alloy now forwards the Pulse Pod logs to Loki; a historical sample remained queryable after source Pod replacement. See the [logging runbook](../central-logging/README.md) for retention and recovery limits.
 
 ## Scoped rollback
 

@@ -1,6 +1,6 @@
 # Testing and validation
 
-**Inventory date:** 2026-09-23
+**Inventory date:** 2026-09-28
 
 This document defines what The Foundry Initiative means when it reports tests
 and validation results. It separates executable test cases, generated scenario
@@ -12,21 +12,25 @@ is not collapsed into one misleading total.
 | Suite | Current count | Scope |
 | --- | ---: | --- |
 | ForgeOps Python tests | 184 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 254 | Everything collected below `tests/` |
+| Top-level Python tests | 259 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
-| Complete repository Python discovery | 263 | Top-level 254 plus Restaurant API 9 |
+| Service Pulse Python tests | 7 | `apps/service-pulse/tests`; included in complete Python discovery |
+| Complete repository Python discovery | 275 | Top-level 259 plus Restaurant API 9 plus Service Pulse 7 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
-| ForgeOps Console Go tests | 61 | Test functions across core and demo packages; table subtests not added to this count; separate from Python totals |
+| ForgeOps Console Go tests | 63 | Test functions across core and demo packages; table subtests not added to this count; separate from Python totals |
 | ForgeOps Console Vitest tests | 21 | API, App resource-transition, and Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
 The Python counts are nested, not additive: the 184 ForgeOps tests are part of
-the 254 top-level tests, and the 254 plus the nine Restaurant API tests produce
-the 263-test complete Python discovery. The browser, Go, and promtool
+the 259 top-level tests. Those plus nine Restaurant API tests and seven
+Service Pulse tests produce the 275-case complete Python discovery. The browser, Go, and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
-A test count is the number of cases collected by its runner. It is not a count
+Reconciled against [PR #158 required validation](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/36468840565): Python reported 275 cases and 288 unittest subtests; subtests are not added to the case total. Workbench reported 92 and Console browser validation 21. Local unittest discovery found 259 top-level cases (including five Loki recovery cases), 184 focused ForgeOps cases, and seven Pulse cases with no discovery errors. The Go count is the 63 top-level `Test*` functions in the current source; no claim is made that Go reports a runner case total.
+
+A runner test count is the number of cases it collects; the Go row above is
+explicitly a source-function count. Neither is a count
 of assertions or behaviors. One test may verify several invariants or iterate
 over a reviewed scenario corpus. For example, one Milestone 061 test executes
 all nine adversarial incident-brief cases.
@@ -35,8 +39,11 @@ all nine adversarial incident-brief cases.
 
 The Kubernetes manifest validator checks the Headlamp namespace's restricted Pod
 Security label, the scoped Node-reader role and subject, the chart's `view`
-override, per-user authentication, local-only exposure, container security,
-and resource bounds. This extends an existing static validator and adds no
+override, disabled unsafe ServiceAccount auto-login, chart-managed ingress
+disabled, ClusterIP Service, container security, and resource bounds. It also
+checks the separate protected ingress and gateway selector policies. These
+static checks do not verify live credentials, certificate trust, policy
+enforcement, or the private OIDC configuration. This extends an existing static validator and adds no
 executable test cases to the inventory above. The live pilot separately showed
 four Ready nodes, resource usage, an initial readiness-probe Event, and
 authorization results: list Pods=yes, get Secrets=no, create Deployments=no.
@@ -90,7 +97,7 @@ selection control. This manual happy-path evidence is separate from synthetic
 demo checks and automated tests; it does not prove concurrent in-flight
 cancellation, every security/error path, or application network reachability.
 The [C3 milestone](milestones/forgeops-console-c3-read-only-resource-browser.md#live-read-only-walkthrough--2026-09-21)
-records the observations, limits, and open scheduling-label follow-up. Screenshots
+records the observations and limits; its scheduling-label follow-up was resolved in the accepted C7 release. Screenshots
 and kubeconfig contents are not committed as part of this reconciliation.
 
 ## Console C4 validation
@@ -326,6 +333,8 @@ cause, or remediation authorization.
   authority, strict brokered plugin capabilities, deferred third-party plugin
   loading, primary threat classes, preserved roadmap numbering, and ForgeOps v1
   independence.
+- `tests/test_loki_recovery.py` covers safe archive paths, checksum/metadata validation, and isolated restore safeguards. It does not exercise live storage recovery.
+- `apps/service-pulse/tests/test_pulse.py` covers the bounded sample buffer, functional checks, board/probe behavior, and error handling. The separate container smoke test verifies board-to-probe exchange.
 - `tests/test_wiki_front_door.py` covers stable Wiki content, links, workflow
   triggers, and exact-copy publication behavior.
 - `apps/restaurant-api/tests/test_main.py` covers root metadata, health,
@@ -367,10 +376,10 @@ $env:PYTHONPATH = "$PWD\src;$PWD\apps\restaurant-api"
 Useful narrower Python suites are:
 
 ~~~powershell
-# Top-level Python suite: currently 254 tests
+# Top-level Python suite: currently 259 tests
 .\.venv\Scripts\python.exe -m pytest -q .\tests
 
-# Focused ForgeOps suite: currently 178 tests
+# Focused ForgeOps suite: currently 184 tests
 .\.venv\Scripts\python.exe -m unittest discover `
   -s tests -p 'test_forgeops*.py' -v
 

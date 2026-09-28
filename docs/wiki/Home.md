@@ -15,6 +15,9 @@ The Foundry Initiative is a personal engineering, learning, and portfolio projec
 - **Use ForgeOps Console:** Read the [workstation Console guide](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/apps/forgeops-console/README.md), [cluster pilot runbook](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/k8s/forgeops-console/README.md), and [Console roadmap](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/roadmaps/forgeops-console-roadmap.md).
 - **Review future configuration guidance:** Explore the [Workbench security-guidance roadmap](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/roadmaps/forge-yaml-workbench-security-guidance-roadmap.md).
 - **Operate SignalForge:** Use the [operator runbooks](https://github.com/wmstipes/The-Foundry-Initiative/tree/main/docs/runbooks).
+- **Access cluster services:** Start with the [LAN portal guide](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/k8s/lan-portal/README.md), [Headlamp guide](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/k8s/headlamp/README.md), and [Service Pulse guide](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/k8s/service-pulse/README.md).
+- **Explore service-mesh behavior:** Follow the [Istio learning lab](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/k8s/istio-lab/README.md).
+- **Maintain the project:** Read the [contribution process](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/CONTRIBUTING.md) and [security policy](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/SECURITY.md).
 - **Inspect implementation evidence:** Browse the [milestone records](https://github.com/wmstipes/The-Foundry-Initiative/tree/main/docs/milestones).
 - **Understand the purpose:** Read the [project vision](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/vision.md).
 

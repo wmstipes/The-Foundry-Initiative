@@ -1,11 +1,12 @@
 # Service Pulse central logging
 
-The [Loki recovery candidate](../../docs/milestones/loki-recovery-candidate.md)
-adds source-only backup and isolated restore tooling after the observed
-probe-Pod replacement check. Live `--execute` paths require separate review
-and authorization; the rollout record below remains historical.
+The [Loki recovery record](../../docs/milestones/loki-recovery-candidate.md)
+records the verified cold off-node backup, Loki restart persistence, isolated
+service restore, and cleanup on 2026-09-24. Seven-day retention remains
+unverified. Repeat backup/restore operations require review of their
+interruption and storage effects; the rollout observations below are dated history.
 
-This directory records the accepted lab rollout; it is not an apply-all bundle. It uses one local Loki 3.7.0 StatefulSet and one Alloy v1.17.0 Deployment. Alloy discovers `forge-pulse` Pod logs using namespace-scoped RBAC, and Loki stores them on a dedicated 8 GiB NVMe partition. No Istio injection changes. The data remains on `forge-head` and needs an off-node backup and restore exercise before being called durable. See [inventory and storage gate](../../docs/milestones/central-logging-preflight.md).
+This directory records the accepted lab rollout; it is not an apply-all bundle. It uses one local Loki 3.7.0 StatefulSet and one Alloy v1.17.0 Deployment. Alloy discovers `forge-pulse` Pod logs using namespace-scoped RBAC, and Loki stores them on a dedicated 8 GiB NVMe partition. No Istio injection changes. The live data remains on `forge-head`; an accepted off-node archive exists, but backup freshness still requires manual upkeep. See [inventory and storage gate](../../docs/milestones/central-logging-preflight.md).
 
 | Image | Release date (UTC) | OCI index | Linux ARM64 child |
 | --- | --- | --- | --- |
@@ -77,7 +78,7 @@ Loki startup accepted 2026-09-23: the ConfigMap, ingress NetworkPolicy, and Serv
 
 Alloy collection and Loki query accepted 2026-09-23: the Alloy RBAC, ConfigMap, and Deployment passed server-side dry-run and diff before apply. The first Pod exited because the Deployment used unsupported `--disable-support-bundle`; the manifest was corrected to `--server.http.disable-support-bundle=true`, independently previewed and applied by the operator. The replacement Pod was 1/1 Ready with zero restarts, and Alloy opened log streams for both Service Pulse Pods. A Loki `query_range` result returned a `functional_check` line for `service-pulse-probe`, labeled `namespace=forge-pulse`, `container=service-pulse-probe`, with `sampleId=8f9329958c784ef0b795cd1fa8b11732`. This established a queryable central log at the collection gate.
 
-Grafana Explore verified 2026-09-23: the operator confirmed that the existing Prometheus source differs from the newly rendered ConfigMap only by CRLF/LF line endings. The rendered ConfigMap added `loki.yaml`, was applied, and Grafana rolled out successfully. A browser screenshot shows `SignalForge Loki` in Explore returning recent `functional_check` lines from `service-pulse-probe` under the expected LogQL selector. The selected query displayed 120 lines; displayed local time corresponds to the embedded UTC timestamp. On 2026-09-24, the Grafana regression script completed successfully after restoring the localhost port-forward: Grafana 13.2.1 reported its database healthy, both existing dashboards' panel queries were accepted, and three Restaurant API targets were healthy. Retention and restore checks are still pending.
+Grafana Explore verified 2026-09-23: the operator confirmed that the existing Prometheus source differs from the newly rendered ConfigMap only by CRLF/LF line endings. The rendered ConfigMap added `loki.yaml`, was applied, and Grafana rolled out successfully. A browser screenshot shows `SignalForge Loki` in Explore returning recent `functional_check` lines from `service-pulse-probe` under the expected LogQL selector. The selected query displayed 120 lines; displayed local time corresponds to the embedded UTC timestamp. On 2026-09-24, the Grafana regression script completed successfully after restoring the localhost port-forward: Grafana 13.2.1 reported its database healthy, both existing dashboards' panel queries were accepted, and three Restaurant API targets were healthy. Retention and restore checks were pending at that observation; the later recovery record above establishes restore acceptance.
 
 Probe Pod replacement check passed 2026-09-24: the operator recorded `sampleId=bfa2350926ed44d181678c02a4439ec0` at 14:44:08Z before replacing the probe. Grafana Explore returned that exact log after the replacement, while Kubernetes showed only the replacement Pod `service-pulse-probe-6c7f9c9cc9-klrsj` (1/1 Ready, zero restarts). A separate later query showed a fresh successful check at 14:51:44Z with a different sample ID. The observed result establishes that Loki retained and served an old probe log after its source Pod was removed. It does not establish that Loki's own data survives a restart, that seven-day retention is enforced, or that an off-node restore works.
 
