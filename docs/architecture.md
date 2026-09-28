@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-27
+**Last updated:** 2026-09-28
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -19,6 +19,8 @@ The primary workload is the SignalForge Restaurant API, a small FastAPI service 
 flowchart TD
     Client["Laptop or client"] -->|private HTTPS| Gateway["MetalLB VIP / Traefik"]
     Gateway --> Portal["Forge portal (2)"]
+    Gateway -->|BasicAuth| Headlamp["Headlamp (1)"]
+    Gateway -->|BasicAuth| Pulse["Service Pulse board (1)"]
     Gateway -->|BasicAuth| Console["ForgeOps Console (1)"]
     Console -->|ServiceAccount reads| APIServer
     Gateway -->|BasicAuth| Prometheus
@@ -115,15 +117,43 @@ and [C7 acceptance record](milestones/forgeops-console-c7-release-readiness.md).
 MetalLB advertises `192.168.243.250` on the LAN for the Traefik LoadBalancer.
 The two-replica [Forge portal](../k8s/lan-portal/README.md) at
 `https://forge.home.arpa/` links to the Workbench, Restaurant API, Grafana,
-Prometheus and protected ForgeOps Console. A cert-manager issued wildcard
+Prometheus, ForgeOps Console, Headlamp, and Service Pulse. A cert-manager issued wildcard
 certificate chains to the offline Project Forge root CA; laptop clients trust
 only the exported public root. Local hosts-file entries resolve the names;
 NUC setup remains deferred. HTTP redirects to HTTPS. Grafana retains its
-own login, while Prometheus and Console use separate BasicAuth credentials.
-Headlamp and Service Pulse have no permanent protected ingress yet. The LAN,
+own login, while Prometheus, Console, Headlamp, and Service Pulse use separate
+BasicAuth credentials. The Headlamp and Service Pulse board Services remain
+ClusterIP; their protected HTTPS routes and ingress policies are active.
+Service Pulse's probe remains an internal Service. Anonymous requests to the
+new protected routes returned `401`, and their browser access was exercised.
+The LAN,
 Traefik/MetalLB gateway, single control plane and local PVs remain availability
 constraints; two portal replicas alone do not make the entry point highly
 available.
+
+### Headlamp identity and authorization
+
+Headlamp's normal interactive login uses a privately deployed Dex identity
+provider in `forge-identity`. The browser follows the OIDC authorization flow
+through the HTTPS gateway; Headlamp exchanges the callback for a token and
+presents the user's OIDC identity to the Kubernetes API server. The API server
+validates Dex-issued tokens using the trusted public Forge root CA and maps
+the email claim to a prefixed Kubernetes username. A distinct user binding
+grants built-in `view` plus `get/list/watch` on Nodes. Impersonation checks
+confirmed Pod and Node listing, and denied Secrets and Deployment creation;
+the operator confirmed interactive sign-in and cluster browsing on 2026-09-28.
+The ingress BasicAuth gate remains in front of Headlamp during this pilot.
+Neither that gate nor Headlamp's ServiceAccount grants the signed-in user
+additional Kubernetes RBAC. Operator-created short-lived token access was
+used before OIDC and has not been retested after the upgrade.
+
+Dex runs as a single replica with Kubernetes-backed storage; the API server
+is also a single control plane. Availability of the identity provider and
+gateway therefore affects new logins. The identity provider configuration,
+client secret, local Helm overlay, certificate material, and control-plane
+rollback copies are managed outside this public repository. The checked-in
+Headlamp base values alone do not reproduce the running OIDC installation.
+See the [Headlamp operating notes](../k8s/headlamp/README.md).
 
 ### Metrics collection
 
@@ -371,7 +401,8 @@ Potential next architecture steps include:
 
 1. Observe naturally occurring limited-alert behavior before designing notification delivery.
 2. Continue the demonstrated Prometheus and Grafana backup cadence.
-3. Add protected HTTPS ingress for Headlamp and Service Pulse only after their access policies are reviewed.
+3. Observe Dex and Headlamp login behavior across restarts, then decide whether
+   the extra Headlamp BasicAuth prompt is useful for the longer-term pilot.
 4. Finish Loki retention and recovery checks; evaluate OpenTelemetry only for a defined tracing question.
 5. Preserve ForgeOps v1.0.0 as the deterministic, informational baseline and
    admit post-v1 work only through the
