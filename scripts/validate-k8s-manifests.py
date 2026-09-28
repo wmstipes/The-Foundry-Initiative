@@ -104,6 +104,8 @@ REQUIRED_PULSE_FILES = [
     "service-pulse-probe-service.yaml",
     "service-pulse-board-deployment.yaml",
     "service-pulse-board-service.yaml",
+    "network-policy.yaml",
+    "private-ingress.yaml",
 ]
 
 
@@ -966,7 +968,7 @@ def validate_workbench_manifests() -> None:
 def validate_pulse_manifests() -> None:
     require_files(PULSE_MANIFEST_DIR, REQUIRED_PULSE_FILES)
     actual_files = {path.name for path in PULSE_MANIFEST_DIR.glob("*.yaml")}
-    require(actual_files == set(REQUIRED_PULSE_FILES), "Pulse must contain only the five reviewed Kubernetes objects")
+    require(actual_files == set(REQUIRED_PULSE_FILES), "Pulse must contain only the reviewed Kubernetes resources")
 
     namespace = load_yaml(PULSE_MANIFEST_DIR / "namespace.yaml")
     require(namespace.get("kind") == "Namespace", "Pulse namespace kind mismatch")
@@ -1031,7 +1033,45 @@ def validate_pulse_manifests() -> None:
         require(service_spec.get("ports") == [{
             "name": "http", "port": 8080, "targetPort": "http", "protocol": "TCP",
         }], f"{name} Service port mismatch")
-    ok("Pulse namespace and both hardened, internal-only workloads are valid")
+    validate_private_route(PULSE_MANIFEST_DIR, "forge-pulse", "service-pulse", "pulse.forge.home.arpa",
+                           "service-pulse-board", 8080, 8080, "Forge Service Pulse",
+                           {"app": "service-pulse-board"})
+    ok("Pulse workloads and staged private route are valid")
+
+
+def validate_private_route(directory: Path, namespace: str, prefix: str,
+                           hostname: str, service: str, port: int,
+                           network_port: int, realm: str,
+                           selector: dict[str, str]) -> None:
+    middleware, ingress = load_yaml_documents(directory / "private-ingress.yaml")
+    auth = f"{prefix}-lan-auth"
+    require(middleware.get("kind") == "Middleware" and
+            middleware.get("metadata") == {"name": auth, "namespace": namespace} and
+            middleware.get("spec") == {"basicAuth": {
+                "secret": auth, "realm": realm,
+                "removeHeader": True}},
+            f"{prefix} must have a distinct BasicAuth gate")
+    require(ingress.get("kind") == "Ingress" and
+            ingress.get("metadata", {}).get("namespace") == namespace and
+            ingress.get("metadata", {}).get("annotations", {}).get(
+                "traefik.ingress.kubernetes.io/router.middlewares") ==
+            f"{namespace}-{auth}@kubernetescrd" and
+            ingress.get("spec") == {
+                "ingressClassName": "traefik",
+                "rules": [{"host": hostname, "http": {"paths": [{
+                    "path": "/", "pathType": "Prefix", "backend": {"service": {
+                        "name": service, "port": {"number": port}}}}]}}]},
+            f"{prefix} private ingress must route through authentication")
+    policy = load_yaml(directory / "network-policy.yaml")
+    require(policy.get("kind") == "NetworkPolicy" and
+            policy.get("metadata", {}).get("namespace") == namespace and
+            policy.get("spec") == {
+                "podSelector": {"matchLabels": selector}, "policyTypes": ["Ingress"],
+                "ingress": [{"from": [{"namespaceSelector": {"matchLabels": {
+                    "kubernetes.io/metadata.name": "forge-gateway"}},
+                    "podSelector": {"matchLabels": {"app.kubernetes.io/name": "traefik"}}}],
+                    "ports": [{"protocol": "TCP", "port": network_port}]}]},
+            f"{prefix} workload ingress must admit only the gateway")
 
 
 def validate_loki_recovery_manifests() -> None:
@@ -1142,7 +1182,11 @@ def validate_headlamp_manifests() -> None:
     require(resources.get("requests") == {"cpu": "50m", "memory": "128Mi"} and
             resources.get("limits") == {"cpu": "300m", "memory": "512Mi"},
             "Headlamp must retain bounded pilot resources")
-    ok("Headlamp pilot values, namespace, and scoped Node reader are valid")
+    validate_private_route(directory, "forge-headlamp", "headlamp", "headlamp.forge.home.arpa",
+                           "headlamp", 80, 4466, "Forge Headlamp",
+                           {"app.kubernetes.io/name": "headlamp",
+                                            "app.kubernetes.io/instance": "headlamp"})
+    ok("Headlamp pilot values, scoped Node reader, and staged private route are valid")
 
 
 def main() -> None:

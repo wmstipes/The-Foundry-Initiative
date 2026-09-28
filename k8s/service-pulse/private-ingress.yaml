@@ -1,0 +1,31 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: service-pulse-lan-auth
+  namespace: forge-pulse
+spec:
+  basicAuth:
+    secret: service-pulse-lan-auth
+    realm: Forge Service Pulse
+    removeHeader: true
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: service-pulse-private
+  namespace: forge-pulse
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: forge-pulse-service-pulse-lan-auth@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: pulse.forge.home.arpa
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: service-pulse-board
+                port:
+                  number: 8080
