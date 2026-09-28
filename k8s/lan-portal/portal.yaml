@@ -21,9 +21,7 @@ data:
         a.card:hover, a.card:focus-visible { border-color: #66d9c3; outline: 2px solid #66d9c3; outline-offset: 2px; }
         .card h2 { margin: 0 0 .4rem; font-size: 1.1rem; }
         .card p { margin: 0; font-size: .95rem; }
-        .pending { opacity: .7; }
         .status { font-size: .8rem; font-weight: 700; color: #66d9c3; text-transform: uppercase; letter-spacing: .06em; }
-        .pending .status { color: #e3c27c; }
       </style>
     </head>
     <body>
@@ -35,8 +33,8 @@ data:
         <a class="card" target="_blank" rel="noopener noreferrer" href="https://grafana.forge.home.arpa/"><span class="status">Open · sign in</span><h2>Grafana</h2><p>Dashboards and logs.</p></a>
         <a class="card" target="_blank" rel="noopener noreferrer" href="https://prometheus.forge.home.arpa/"><span class="status">Open · sign in</span><h2>Prometheus</h2><p>Metrics and alerts.</p></a>
         <a class="card" target="_blank" rel="noopener noreferrer" href="https://forgeops.forge.home.arpa/"><span class="status">Open · sign in</span><h2>ForgeOps Console</h2><p>Read-only Kubernetes inspection and diagnostics.</p></a>
-        <div class="card pending"><span class="status">Protected access next</span><h2>Headlamp</h2><p>Read-only Kubernetes dashboard.</p></div>
-        <div class="card pending"><span class="status">Protected access next</span><h2>Service Pulse</h2><p>Service health and events.</p></div>
+        <a class="card" target="_blank" rel="noopener noreferrer" href="https://headlamp.forge.home.arpa/"><span class="status">Open · sign in</span><h2>Headlamp</h2><p>Read-only Kubernetes dashboard.</p></a>
+        <a class="card" target="_blank" rel="noopener noreferrer" href="https://pulse.forge.home.arpa/"><span class="status">Open · sign in</span><h2>Service Pulse</h2><p>Service health and events.</p></a>
       </div>
     </body>
     </html>
