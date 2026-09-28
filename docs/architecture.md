@@ -21,19 +21,35 @@ application ingress backends currently use HTTP inside the cluster, so the
 private certificate does not establish encryption of those internal hops.
 The Restaurant and Workbench NodePorts also remain alternate HTTP paths.
 
-The following diagram shows the Kubernetes inspection paths:
+The following diagram shows the Kubernetes inspection paths and Headlamp's
+Dex identity provider. The dotted OIDC relationships use Dex's HTTPS issuer
+through Traefik; they do not represent direct connections to the Dex Pod.
 
 ```mermaid
 flowchart TD
     Browser["Browser"] -->|private HTTPS| Gateway["Traefik"]
     Gateway -->|HTTP and BasicAuth gate| Headlamp["Headlamp"]
     Gateway -->|HTTP and BasicAuth gate| Console["ForgeOps Console"]
+    Gateway -->|HTTP identity endpoint| Dex["Dex in forge-identity"]
+    Headlamp -.->|OIDC code exchange via gateway| Dex
     Headlamp -->|user OIDC token| APIServer["Kubernetes API"]
+    APIServer -.->|issuer metadata and signing keys via gateway| Dex
     Console -->|ServiceAccount reads| APIServer
     Operator["Operator kubectl"] -->|kubeconfig| APIServer
     APIServer --> MetricsServer["Metrics Server"]
     MetricsServer -->|verified kubelet TLS| Kubelets["Kubelets"]
 ```
+
+Dex serves `https://auth.forge.home.arpa/`. During Headlamp sign-in, the
+browser is redirected there to authenticate. Headlamp exchanges the returned
+authorization code for tokens and presents the user's ID token to Kubernetes.
+The API server verifies it using Dex's public signing keys, then applies the
+user's Kubernetes RBAC. Dex supplies identity; Kubernetes decides which
+resources that identity can read. The separate Headlamp BasicAuth gate remains
+at Traefik. ForgeOps Console's ServiceAccount path does not use Dex.
+See the [login sequence](#headlamp-identity-and-authorization) for the detailed
+flow and [Dex's Kubernetes guide](https://dexidp.io/docs/guides/kubernetes/)
+for the token-verification model.
 
 
 ### Kubernetes platform
