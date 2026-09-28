@@ -10,7 +10,7 @@ Milestone 027's accepted design was implemented and live-validated in Milestone 
 - Registry image configuration specifies user `472`; tagged Dockerfile defaults to group `0`. The storage-preflight Pod verifies runtime UID/GID 472:0 before first deployment.
 - Requests: 100m CPU / 512Mi memory; limits: 1000m CPU / 1Gi memory.
 - Non-root, no API token, no RBAC, no capabilities, read-only root filesystem. Persistent data and bounded temporary files are the writable paths.
-- ClusterIP on port 3000 with localhost-only operator forwarding.
+- ClusterIP on port 3000 with authenticated private HTTPS through the portal; localhost operator forwarding remains available for the test helpers. See [private access](../lan-portal/grafana-private-access.md).
 - No additional plugin installation, anonymous access, sign-up, snapshots, or alert evaluation.
 
 The [13.2.1 release](https://github.com/grafana/grafana/releases/tag/v13.2.1), [security advisories](https://grafana.com/security/security-advisories/), [tagged Dockerfile](https://github.com/grafana/grafana/blob/v13.2.1/Dockerfile), and [registry tag metadata](https://hub.docker.com/v2/repositories/grafana/grafana/tags/13.2.1) were reviewed on 2026-09-10. ARM64 configuration was retrieved from the registry by digest. This verifies published image metadata, not a complete vulnerability scan; the running ARM64 workload and browser behavior were subsequently accepted in Milestone 028.

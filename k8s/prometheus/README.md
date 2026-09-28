@@ -14,7 +14,7 @@ isolated Istio learning lab.
 - Retention time: 30 days
 - Retention size: 24 GB
 - Storage: static 30 GiB local PV on the `forge-head` NVMe
-- Access: `kubectl port-forward` only
+- Access: BasicAuth-protected private HTTPS through the portal; local `kubectl port-forward` remains available for maintenance. See [private access](../lan-portal/prometheus-private-access.md).
 
 Grafana is deployed separately. No Alertmanager, node-exporter,
 kube-state-metrics, Prometheus Operator, dynamic provisioner, or distributed

@@ -15,36 +15,26 @@ The primary workload is the SignalForge Restaurant API, a small FastAPI service 
 
 ## Current topology
 
+The portal links to seven applications; their access methods are listed in the
+[operations index](runbooks/README.md). HTTPS terminates at Traefik. The
+application ingress backends currently use HTTP inside the cluster, so the
+private certificate does not establish encryption of those internal hops.
+The Restaurant and Workbench NodePorts also remain alternate HTTP paths.
+
+The following diagram shows the Kubernetes inspection paths:
+
 ```mermaid
 flowchart TD
-    Client["Laptop or client"] -->|private HTTPS| Gateway["MetalLB VIP / Traefik"]
-    Gateway --> Portal["Forge portal (2)"]
-    Gateway -->|BasicAuth| Headlamp["Headlamp (1)"]
-    Gateway -->|BasicAuth| Pulse["Service Pulse board (1)"]
-    Gateway -->|BasicAuth| Console["ForgeOps Console (1)"]
+    Browser["Browser"] -->|private HTTPS| Gateway["Traefik"]
+    Gateway -->|HTTP and BasicAuth gate| Headlamp["Headlamp"]
+    Gateway -->|HTTP and BasicAuth gate| Console["ForgeOps Console"]
+    Headlamp -->|user OIDC token| APIServer["Kubernetes API"]
     Console -->|ServiceAccount reads| APIServer
-    Gateway -->|BasicAuth| Prometheus
-    Gateway -->|Grafana login| Grafana
-    Gateway -->|HTTPS| API
-    Gateway -->|HTTPS| Workbench
-    Client --> NodePort["NodePort 30080"]
-    Client --> WorkbenchPort["NodePort 30081"]
-    NodePort --> API["Restaurant API Pods (3)"]
-    WorkbenchPort --> Workbench["YAML Workbench (1)"]
-    Prometheus["Prometheus (1)"] -->|scrape /metrics| API
-    LabClient["Meshed lab client"] -->|ClusterIP request| LabAPI["Meshed lab API v1/v2"]
-    Istiod["istiod (1)"] -.->|route config| LabClient
-    Istiod -.->|route config| LabAPI
-    Prometheus -->|scrape proxy metrics| LabClient
-    Prometheus -->|scrape proxy metrics| LabAPI
-    Grafana["Grafana (1)"] -->|query| Prometheus
-    Operator["Operator kubectl"] -->|top request| APIServer["Kubernetes API server"]
-    APIServer --> MetricsServer["Metrics Server (1)"]
-    MetricsServer -->|verified TLS on 10250| Kubelets["Kubelets (4)"]
-    Actions["GitHub Actions"] -->|publish ARM64 image| Registry["Docker Hub"]
-    Registry -->|versioned image| API
-    Registry -->|digest-pinned image| Workbench
+    Operator["Operator kubectl"] -->|kubeconfig| APIServer
+    APIServer --> MetricsServer["Metrics Server"]
+    MetricsServer -->|verified kubelet TLS| Kubelets["Kubelets"]
 ```
+
 
 ### Kubernetes platform
 
@@ -74,7 +64,7 @@ flowchart TD
 - Manifests: `k8s/forge-yaml-workbench`
 - Namespace: `forge-tools`
 - Deployment: one stateless replica using accepted immutable release `0.10.0` with browser-local Tree search and safe one-file YAML drop
-- Access: private-lab NodePort `30081`
+- Access: portal HTTPS route plus alternate private-lab NodePort `30081`
 - Runtime: unprivileged NGINX on container port `8080`
 - Processing: shared YAML parsing, formatting preview, line-diff generation, diagnostics, guarded local-file opening and drop handling, tree navigation and search, Markdown report generation, and Validation display filtering run entirely in the browser; local files are read through the browser File API without upload, Tree search and display filters do not change analysis or report contents, and Kubernetes-specific operational findings, the bundled `v1.36.4` schema validator, and the pinned OWASP Top 10:2025 review profile run only in Kubernetes mode
 - Schema boundary: the Milestone 036 implementation supports 12 explicit core, apps, and batch GVKs; unsupported built-ins and unavailable CRD schemas receive non-validity result states. The published `0.4.1` correction uses build-time standalone validators so the strict CSP remains intact.
@@ -153,7 +143,55 @@ gateway therefore affects new logins. The identity provider configuration,
 client secret, local Helm overlay, certificate material, and control-plane
 rollback copies are managed outside this public repository. The checked-in
 Headlamp base values alone do not reproduce the running OIDC installation.
-See the [Headlamp operating notes](../k8s/headlamp/README.md).
+See the [Headlamp operating notes](../k8s/headlamp/README.md) and
+[identity operations](runbooks/headlamp-oidc.md).
+
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant H as Headlamp
+    participant D as Dex
+    participant K as Kubernetes API
+    B->>H: Open through HTTPS gateway and BasicAuth
+    H-->>B: Redirect to Dex
+    B->>D: Authenticate Forge account
+    D-->>B: Redirect to Headlamp callback with code
+    B->>H: Deliver authorization code
+    H->>D: Exchange code using OIDC client
+    D-->>H: Issue tokens
+    H->>K: Read resources using user token
+    K-->>H: Enforce bound user RBAC
+```
+
+The API server obtains issuer metadata and signing keys from Dex over trusted
+HTTPS for token verification. Dex stores identity state in Kubernetes; new
+logins consequently depend on the API, the gateway, name resolution, and CA
+trust. Full cold-start recovery has not been rehearsed. The manual API-server
+manifest change also needs reconciliation with kubeadm's configuration and
+patch workflow before a control-plane upgrade.
+
+### Service Pulse and central logging
+
+The board reads the probe's bounded in-memory samples. The probe checks the
+Restaurant API's internal menu endpoint; neither component holds Kubernetes
+credentials. Alloy independently reads Pulse Pod logs through namespace-scoped
+Kubernetes RBAC and sends them to Loki. Grafana queries both Loki logs and
+Prometheus metrics. Probe sample history resets with the probe; persisted logs
+have their own retention and recovery lifecycle.
+
+```mermaid
+flowchart TD
+    Board["Pulse board"] -->|read samples| Probe["Pulse probe"]
+    Probe -->|functional check| Restaurant["Restaurant API"]
+    Alloy["Alloy"] -->|read Pulse Pod logs| API["Kubernetes API"]
+    Alloy -->|write logs| Loki["Loki on local NVMe"]
+    Grafana["Grafana"] -->|query logs| Loki
+```
+
+An off-node Loki backup, production restart persistence, and an isolated
+restore passed; naturally elapsed seven-day retention remains unverified.
+See the [recovery record](milestones/loki-recovery-candidate.md). The single
+head/NVMe dependency applies to Loki as well as Prometheus and Grafana.
 
 ### Metrics collection
 
@@ -236,17 +274,23 @@ Baseline queries are maintained in `docs/observability/prometheus-queries.md`.
 Milestone 029's limited-alerting design is accepted and merged. Milestone 030's canonical rules passed all 19 pinned-promtool scenarios and are now loaded by the existing Prometheus evaluator through the existing read-only `/etc/prometheus` ConfigMap mount. Activation changed only the ConfigMap and restarted only Prometheus after an exact-baseline check, dry-run, reviewed diff, recovery capture and explicit approval. Immediate and independent checks confirmed an exact live/repository match, three healthy targets, and two rules with healthy inactive state. Grafana unified alerting remains disabled, and no Alertmanager, receiver or notification path is configured; evaluator failure remains an uncovered condition.
 
 1. Application and infrastructure changes are developed in Git.
-2. Restaurant API tests run through GitHub Actions.
+2. The required GitHub Actions workflow runs Python, Workbench browser, and Console browser/Go checks, including Console checks on Windows and Linux.
 3. Kubernetes manifests are checked by the repository validator and `promtool` where appropriate.
-4. GitHub Actions builds the Restaurant API ARM64 image and Workbench AMD64/ARM64 image.
-5. Guarded version tags publish versioned release images to Docker Hub.
-6. PowerShell helpers apply the manifests and wait for Kubernetes rollouts.
-7. Smoke tests, Prometheus target checks, and Metrics API checks validate the live deployment.
+4. Component workflows validate container builds for the supported architectures; the Restaurant runs on ARM64, while Workbench, Pulse and the cluster Console publish AMD64/ARM64 images.
+5. Release workflows use component-specific version tags or guarded manual dispatch. Source CI success alone does not publish or deploy a release.
+6. The operator reviews the immutable image or chart identity, manifest diff, private overlays and recovery inputs, then uses the component runbook for an authorized rollout.
+7. Component smoke checks, protected HTTPS/browser checks, Prometheus targets and the Metrics API provide live acceptance evidence where applicable. CI does not establish live cluster health.
+
+See the [validation inventory](testing-and-validation.md),
+[operations index](runbooks/README.md), and [script guide](../scripts/README.md).
 
 ## Repository organization
 
 - `apps/restaurant-api` contains the FastAPI source, container definition, dependencies, and tests.
 - `apps/forge-yaml-workbench` contains the browser application, analyzer, tests, and unprivileged web container.
+- `apps/forgeops-console` contains the Go inspection core and browser interface for workstation and cluster modes.
+- `apps/service-pulse` contains the functional probe, board and offline tests.
+- `src/forgeops` contains the separate Python CLI and deterministic evidence pipeline.
 - `k8s/fastapi-restaurant` contains the Restaurant API Kubernetes resources.
 - `k8s/prometheus` contains the lightweight metrics-collection resources.
 - `k8s/metrics-server` contains the Kubernetes resource-metrics API resources.
@@ -254,8 +298,10 @@ Milestone 029's limited-alerting design is accepted and merged. Milestone 030's 
 - `k8s/lan-portal` contains the LAN gateway configuration, portal, private ingress, and access runbooks.
 - `k8s/private-pki` contains the offline-root CA and gateway certificate bootstrap runbooks.
 - `k8s/forgeops-console` contains the cluster Console Deployment, read-only RBAC, ingress policy and access runbook.
+- `k8s/headlamp` contains the public Headlamp base values, restricted access resources and operating notes; the OIDC overlay and Dex configuration remain private.
+- `k8s/service-pulse`, `k8s/central-logging`, `k8s/grafana` and `k8s/istio-lab` contain their component manifests and runbooks.
 - `scripts` contains developer, deployment, smoke-test, and validation helpers.
-- `.github/workflows` contains application CI, manifest validation, and ARM64 image publishing.
+- `.github/workflows` contains required validation, component CI and guarded application release workflows.
 - `docs/milestones` preserves chronological implementation evidence.
 - `docs/observability` contains reusable metrics queries and guidance.
 - `docs/runbooks` contains operator procedures and recovery steps.
@@ -372,7 +418,13 @@ The main repository is the authoritative documentation system. `ROADMAP.md` owns
 
 The GitHub Wiki is a separate Git repository and serves only as a curated front door. Its Home and sidebar are published as exact copies of the reviewed files under `docs/wiki`; they contain stable orientation and links rather than versions, live state, commands, recovery steps, or acceptance evidence. If the Wiki and repository ever disagree, the repository is authoritative.
 
-Routine Wiki changes begin in the main repository, pass offline structure and link validation, receive normal review, and require separate approval before the live Wiki is mutated. Direct browser edits are reserved for an explicitly approved recovery or rollback.
+Routine Wiki changes begin in the main repository and pass offline structure
+and link validation. Publish the reviewed source within the operator's
+authorized scope, then verify an exact match against the separate Wiki
+checkout and record its commit. If Git publication is unavailable, the browser
+editor may synchronize those same reviewed bytes; it is not an independent
+authoring source. New destination files must reach `main` before the Wiki
+links to them. See the [contribution process](../CONTRIBUTING.md).
 
 ## Architectural principles
 
@@ -387,6 +439,8 @@ Routine Wiki changes begin in the main repository, pass offline structure and li
 - Record temporary limitations instead of hiding them.
 
 ## Current constraints
+
+- Dex OIDC is a single-replica pilot. Its state and private configuration need a verified recovery procedure; the manual API-server flags and host alias must be preserved through a reviewed kubeadm upgrade plan.
 
 - Prometheus storage is node-local; head-node or NVMe failure requires recovery. Weekly backups remain manual, and full service-restoration timing has not been measured.
 - Existing Restaurant API and Workbench NodePorts remain reachable on the private LAN alongside their HTTPS ingress routes.
@@ -403,7 +457,7 @@ Potential next architecture steps include:
 2. Continue the demonstrated Prometheus and Grafana backup cadence.
 3. Observe Dex and Headlamp login behavior across restarts, then decide whether
    the extra Headlamp BasicAuth prompt is useful for the longer-term pilot.
-4. Finish Loki retention and recovery checks; evaluate OpenTelemetry only for a defined tracing question.
+4. Finish the naturally elapsed Loki retention check and maintain backup freshness; evaluate OpenTelemetry only for a defined tracing question.
 5. Preserve ForgeOps v1.0.0 as the deterministic, informational baseline and
    admit post-v1 work only through the
    [ForgeOps improvement roadmap](roadmaps/forgeops-post-v1-roadmap.md).

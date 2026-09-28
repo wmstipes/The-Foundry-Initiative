@@ -16,7 +16,7 @@ This document defines the accepted design and the implementation gate. The opera
 
 ## Repository review
 
-The local repository was clean on `main` at the supplied commit. The review covered the README, contribution conventions, architecture, project status, Milestones 021 and 025â€“026, application instrumentation, PromQL baseline, Prometheus manifests, and manifest-validator structure. No cluster commands were run during this planning review; current runtime findings below are recorded Milestone 026 evidence and operator-provided state.
+The local repository was clean on `main` at the supplied commit. The review covered the README, contribution conventions, architecture, project status, Milestones 021 and 025–026, application instrumentation, PromQL baseline, Prometheus manifests, and manifest-validator structure. No cluster commands were run during this planning review; current runtime findings below are recorded Milestone 026 evidence and operator-provided state.
 
 The repository already favors versioned images, plain manifests, PowerShell helpers, restricted RBAC, and small milestones. The application publishes request counters and duration histograms with `method`, `path`, `status`, and `traffic` labels, plus version metadata and an analyze-feature gauge. Prometheus adds `namespace`, `pod`, and `node` labels through Pod discovery.
 

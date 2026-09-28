@@ -16,7 +16,9 @@ application login. Grafana has its own login; Prometheus has a LAN BasicAuth
 gate. Headlamp and Service Pulse now have active portal cards and their own
 BasicAuth-protected HTTPS routes; the Headlamp sign-in additionally uses Dex
 OIDC. Their Services remain ClusterIP. The Service Pulse probe remains
-internal. Ingress policies limit the protected application Pods to the gateway.
+internal. The Headlamp and Pulse board ingress policies permit the gateway
+selectors; see the [protected route runbook](protected-apps.md) for acceptance
+and scoped route removal.
 The ForgeOps Console card points to the protected cluster pilot. Its anonymous
 `401` and fresh private-browser authentication prompt passed on 2026-09-27.
 See [the cluster runbook](../forgeops-console/README.md) for its single-operator

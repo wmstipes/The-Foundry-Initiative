@@ -32,6 +32,9 @@ The original local token workflow below is a possible recovery option, not
 the normal sign-in procedure; it has not been retested since OIDC was enabled.
 Dex and the gateway must be available for new OIDC logins. See
 [identity architecture](../../docs/architecture.md#headlamp-identity-and-authorization).
+For troubleshooting and recovery inputs, see [identity operations](../../docs/runbooks/headlamp-oidc.md).
+The [protected route runbook](../lan-portal/protected-apps.md) owns ingress
+checks and route removal.
 
 ## Reconcile the current release
 
@@ -41,7 +44,10 @@ https://kubernetes-sigs.github.io/headlamp/`):
 
 ```powershell
 $ctx = 'kubernetes-admin@kubernetes'
+$overlayPath = Join-Path (Join-Path $env:USERPROFILE 'Forge-Private-OIDC') 'headlamp-oidc-values.yaml'
+if (-not (Test-Path -LiteralPath $overlayPath)) { throw 'Private OIDC overlay missing; stop' }
 kubectl apply -f .\k8s\headlamp\namespace.yaml --context $ctx
+if ($LASTEXITCODE -ne 0) { throw 'Namespace reconciliation failed' }
 kubectl get secret forge-headlamp-oidc forge-headlamp-ca `
   -n forge-headlamp --context $ctx -o name
 if ($LASTEXITCODE -ne 0) { throw 'OIDC secrets missing; stop' }
@@ -50,6 +56,7 @@ helm upgrade --install headlamp headlamp/headlamp `
   --values .\k8s\headlamp\values.yaml `
   --values $overlayPath `
   --wait --timeout 5m --rollback-on-failure
+if ($LASTEXITCODE -ne 0) { throw 'Headlamp upgrade failed; inspect release history' }
 kubectl apply -f .\k8s\headlamp\node-reader.yaml --context $ctx
 ```
 
@@ -95,7 +102,8 @@ kubectl create token headlamp --namespace forge-headlamp `
 ```
 
 Visit `http://127.0.0.1:8080` and paste the token into the login screen.
-Do not commit or share the token. The pilot displayed four Ready nodes,
+Do not commit or share the token. Clear the clipboard after use. The original
+token-based pilot displayed four Ready nodes,
 workloads, CPU/memory usage, and an initial Headlamp readiness-probe Event.
 That single startup Event was observed while the pod subsequently became
 Ready; the pilot does not establish long-term uptime or log persistence.

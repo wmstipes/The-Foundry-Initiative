@@ -109,9 +109,9 @@ No logs, Events, exec, commands, mutation, deployment, or application endpoint
 checks were part of the walkthrough. Stopping the local server was requested;
 shutdown confirmation was not supplied with the evidence above.
 
-## Open usability follow-up
+## Usability follow-up and subsequent outcome
 
-**C3-UX-01 — Node scheduling label (C7 fix implemented; candidate review pending).** The original Node
+**C3-UX-01 — Node scheduling label (resolved in the accepted C7 release).** The original Node
 projection labels `spec.unschedulable` as `Scheduling`, so the observed value
 `false` is ambiguous. It means the unschedulable flag is false, not that
 scheduling is disabled; it does not guarantee that a particular Pod can run
@@ -121,8 +121,9 @@ both boolean values. The original reconciliation changed no application code. C7
 flag `Unschedulable (cordoned)` and adds regression coverage for both boolean
 values. See the [C7 candidate record](forgeops-console-c7-release-readiness.md).
 
-C4 remains separately gated and unstarted; this walkthrough does not authorize
-logs, Events, or any expanded live operation.
+C4 was separately gated and unstarted at this walkthrough. Its later
+[accepted diagnostics work](forgeops-console-c4-pod-diagnostics.md) records
+its own authorization and observations; the C3 evidence does not cover it.
 
 ## Gate status
 

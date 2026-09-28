@@ -154,7 +154,7 @@ between stages. Select the displayed synthetic context and the
 `forge-restaurant` namespace, then inspect `synthetic-service` and its
 EndpointSlice. The stages match the reviewed fixture's 3/3 and 2/3 endpoint
 counts, respectively; they do not come from ForgeOps collection or establish
-cause. See the [operator exercise](../../../docs/guides/forgeops-console-c5-operator-exercise.md#aligned-synthetic-routing-illustration).
+cause. See the [operator exercise](../../docs/guides/forgeops-console-c5-operator-exercise.md#aligned-synthetic-routing-illustration).
 
 The production entry point is `./cmd/forgeops-console` and requires an explicit
 `--kubeconfig`. Select an intentional cluster and read scope before activation;

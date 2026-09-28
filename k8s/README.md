@@ -2,6 +2,9 @@
 
 SignalForge Kubernetes resources are grouped by workload.
 
+Use the [operations index](../docs/runbooks/README.md) for service access,
+routine checks, backup ownership, and upgrade prerequisites.
+
 ## Restaurant API
 
 Path: `k8s/fastapi-restaurant`
@@ -68,6 +71,11 @@ Path: `k8s/forgeops-console`
 The [cluster runbook](forgeops-console/README.md) covers the `0.1.1` digest-pinned image, restricted single replica, read-only ServiceAccount, Traefik-only ingress policy, distinct BasicAuth gate, and observed rollout and browser checks. The workstation preview retains its separate loopback-only kubeconfig mode.
 
 ## Validation
+
+Dex's deployment and Headlamp's OIDC overlay are managed outside this public
+tree. The [identity runbook](../docs/runbooks/headlamp-oidc.md) describes their
+inputs and recovery limits. The repository validator does not validate those
+private files or prove a current browser login.
 
 From the repository root:
 

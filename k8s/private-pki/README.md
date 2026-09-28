@@ -61,6 +61,10 @@ laptop trusts the public root certificate; HTTP redirects to HTTPS; the portal,
 Workbench, and Restaurant routes verified over HTTPS. The root certificate file
 hash used before import was
 `68105417902A1EF6C0905DF6923774E0DEB3BB59EAF83B21E1E41651CB874106`.
-The NUC still needs a separately verified public-root import. Headlamp,
-Grafana, Prometheus, and Service Pulse remain unexposed pending authentication.
+The NUC still needs a separately verified public-root import. Grafana,
+Prometheus, Console, Headlamp, and Service Pulse now have protected HTTPS
+routes. Dex discovery and Headlamp OIDC login were accepted on 2026-09-28;
+the public root was also installed on the control-plane host and supplied
+to Headlamp. The root private key remains offline. See the
+[access rollout record](../../docs/milestones/private-access-and-headlamp-oidc.md).
 A single control plane and the local LAN remain availability limits.

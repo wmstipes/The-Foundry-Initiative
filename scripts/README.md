@@ -2,6 +2,12 @@
 
 This folder contains helper scripts for operating and developing The Foundry Initiative.
 
+The [operations index](../docs/runbooks/README.md) maps services to their
+current access and recovery procedures. `deploy`, persistence checks, backup,
+and restore commands can change workloads or interrupt collection; they are
+not all read-only status commands. No helper here performs Dex/Headlamp OIDC
+bootstrap or makes private identity configuration reproducible from Git.
+
 ## Developer helper
 
 ```powershell

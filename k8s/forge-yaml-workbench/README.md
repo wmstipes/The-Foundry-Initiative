@@ -8,6 +8,10 @@ These manifests define the tracked SignalForge browser-local Forge YAML Workbenc
 - `forge-yaml-workbench-deployment.yaml` runs one stateless, unprivileged NGINX replica on container port `8080`.
 - `forge-yaml-workbench-service.yaml` provides lab access through NodePort `30081`.
 
+The portal also provides private HTTPS access through the gateway. NodePort
+remains an alternate lab HTTP path. The application has no login and all YAML
+processing stays in the browser. See the [gateway runbook](../lan-portal/README.md).
+
 ## Image
 
 Tracked deployment release:

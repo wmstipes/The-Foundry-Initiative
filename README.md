@@ -20,6 +20,10 @@ The goal is to keep building, documenting, learning, and turning experience into
 
 ## Current focus
 
+Use the [documentation map](docs/README.md) to find current architecture,
+operations, learning guides, and dated evidence. The
+[operations index](docs/runbooks/README.md) covers service access and recovery.
+
 The active workstream is **SignalForge**, a Raspberry Pi Kubernetes lab designed to build practical experience with Kubernetes, containerized applications, infrastructure troubleshooting, deterministic incident analysis, and carefully gated future assistance.
 
 SignalForge uses a restaurant analogy to make Kubernetes concepts easier to understand:
@@ -352,7 +356,7 @@ Planned next steps include:
 
 * observe naturally occurring alert behavior before deciding whether notification delivery is justified
 * observe Headlamp OIDC sign-in after restarts and review whether the additional BasicAuth prompt should remain
-* verify Loki restart persistence, seven-day retention, and off-node restore before depending on retained logs; evaluate OpenTelemetry only when a specific operational question requires it
+* verify naturally elapsed seven-day Loki retention and maintain the demonstrated backup/restore procedures; evaluate OpenTelemetry only when a specific operational question requires it
 * maintain the bounded ForgeOps v1 release and require new work to improve the final incident-copilot demonstration, prove trustworthiness, or prepare a future release; model and retrieval integration remain deferred because the demonstration identified no concrete unmet operator question
 * follow the [ForgeOps post-v1 improvement roadmap](docs/roadmaps/forgeops-post-v1-roadmap.md) for separately approved demonstration, trust, and future-release candidates
 * follow the [Workbench security-guidance roadmap](docs/roadmaps/forge-yaml-workbench-security-guidance-roadmap.md) for a browser-local NIST SP 800-190 profile with selected SP 800-53 references and no compliance claim
