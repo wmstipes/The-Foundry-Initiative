@@ -1,0 +1,31 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: headlamp-lan-auth
+  namespace: forge-headlamp
+spec:
+  basicAuth:
+    secret: headlamp-lan-auth
+    realm: Forge Headlamp
+    removeHeader: true
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: headlamp-private
+  namespace: forge-headlamp
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: forge-headlamp-headlamp-lan-auth@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: headlamp.forge.home.arpa
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: headlamp
+                port:
+                  number: 80
