@@ -63,6 +63,17 @@ point-in-time evidence, not a token-level authorization test or a guarantee of
 recovery after an identity-provider outage. The private OIDC overlay and
 provider configuration are outside this repository.
 
+On September 29, live operator evidence additionally established off-node
+SHA-256 equality for the etcd snapshot and host archive; offline etcd
+reconstruction with matching revision/key count; kubeadm candidate validation;
+and byte-for-byte equality between rendering with the reviewed candidate
+patch and rendering with the installed patch plus saved configuration. The
+live API manifest hash stayed unchanged and readiness returned `ok`. No new
+automated test cases were added. These checks do not establish running
+cluster/Dex recovery, future-version upgrade compatibility, encryption of
+backups, or automatic patch discovery. See the
+[dated recovery record](milestones/identity-preservation-recovery-2026-09-29.md).
+
 ## Istio learning lab validation
 
 The persistent lab adds live acceptance evidence, not a new automated test

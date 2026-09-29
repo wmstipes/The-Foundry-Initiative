@@ -58,8 +58,9 @@ Review log output before sharing it; read-only access does not redact secrets.
    configuration until the new state has been accepted.
 
 Headlamp upgrades require both tracked base values and its private OIDC
-overlay. Control-plane upgrades additionally require preserving the OIDC
-settings through kubeadm configuration/patches; see [identity operations](headlamp-oidc.md).
+overlay. Control-plane upgrades must explicitly supply the installed OIDC
+patch directory as well as retain the saved kubeadm arguments; see
+[identity operations](headlamp-oidc.md#preserve-oidc-during-kubeadm-upgrades).
 The current single control plane can interrupt API access during replacement.
 
 ## Backup and recovery responsibilities
@@ -69,7 +70,7 @@ The current single control plane can interrupt API access during replacement.
 | Prometheus | Head-local PV; off-node cold archive and isolated TSDB validation | Weekly manual backup; inspect helper retention; full service restore timing unmeasured |
 | Grafana | Head-local PV; isolated recovery reached usable dashboards in 4.37 minutes | Weekly and pre-upgrade archives; preserve matching encryption key and credentials separately |
 | Loki | Head-local PV; off-node backup, restart persistence, and isolated service restore accepted | Maintain backup freshness; naturally elapsed seven-day retention and elapsed recovery time remain open |
-| Dex / Kubernetes identity | Kubernetes storage plus private configuration and client credentials | Preserve identity state with a reviewed cluster-state backup; full identity restore has not been tested |
+| Dex / Kubernetes identity | Off-node etcd snapshot and host archive hash-verified; private files copied; offline database reconstruction passed September 29 | Maintain backup freshness and explicit upgrade patch usage; full running cluster/Dex recovery remains untested |
 | Private CA | Offline root backup; online intermediate and gateway leaf | Keep original root and passphrase protected; review intermediate/root expiry and client trust |
 | Stateless apps | Reviewed manifests, images, and required configuration | Preserve exact versions and private inputs; a reinstall does not restore in-memory Pulse samples |
 

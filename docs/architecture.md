@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-28
+**Last updated:** 2026-09-29
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -182,9 +182,12 @@ sequenceDiagram
 The API server obtains issuer metadata and signing keys from Dex over trusted
 HTTPS for token verification. Dex stores identity state in Kubernetes; new
 logins consequently depend on the API, the gateway, name resolution, and CA
-trust. Full cold-start recovery has not been rehearsed. The manual API-server
-manifest change also needs reconciliation with kubeadm's configuration and
-patch workflow before a control-plane upgrade.
+trust. Full cold-start recovery has not been rehearsed. On September 29,
+kubeadm's saved configuration and an installed host-alias patch reproduced
+the reviewed API-server manifest in dry-run mode. Upgrades must explicitly
+supply `/etc/kubernetes/forge-kubeadm-patches`; patches are not auto-discovered.
+Off-node snapshot/archive verification and offline etcd reconstruction passed;
+see the [dated evidence and limits](milestones/identity-preservation-recovery-2026-09-29.md).
 
 ### Service Pulse and central logging
 
@@ -456,7 +459,7 @@ links to them. See the [contribution process](../CONTRIBUTING.md).
 
 ## Current constraints
 
-- Dex OIDC is a single-replica pilot. Its state and private configuration need a verified recovery procedure; the manual API-server flags and host alias must be preserved through a reviewed kubeadm upgrade plan.
+- Dex OIDC is a single-replica pilot. Off-node backup verification and offline etcd reconstruction passed, but full cluster/Dex recovery remains untested. OIDC regeneration inputs are preserved; every future control-plane upgrade must explicitly supply the installed patch directory and review the target-version manifest diff.
 
 - Prometheus storage is node-local; head-node or NVMe failure requires recovery. Weekly backups remain manual, and full service-restoration timing has not been measured.
 - Existing Restaurant API and Workbench NodePorts remain reachable on the private LAN alongside their HTTPS ingress routes.

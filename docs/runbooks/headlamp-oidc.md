@@ -29,8 +29,12 @@ storage with an independently recoverable copy:
 - The existing administrator kubeconfig and trusted SSH/console access, stored
   securely and independent of the Dex browser login.
 
-No full identity-state backup or restore exercise has been accepted. Do not
-equate today's successful login with recovery after loss of the control plane.
+On September 29, an off-node etcd snapshot and control-plane archive passed
+SHA-256 transfer verification, and an offline etcd reconstruction retained
+the snapshot revision and key count. Private identity files were copied too.
+See the [recovery evidence and limits](../milestones/identity-preservation-recovery-2026-09-29.md).
+No restored etcd server or recovered Dex login was exercised. Do not equate
+offline database reconstruction with recovery after loss of the control plane.
 
 ## Diagnose a login failure
 
@@ -62,13 +66,58 @@ Record the previous Helm revision and its values before an upgrade. A Helm
 rollback changes Headlamp only; it does not restore a rotated Secret, Dex
 configuration, identity data, or API-server authentication settings.
 
-Before a kubeadm upgrade, reconcile the manually applied OIDC flags and Pod
-host alias with the supported kubeadm configuration and per-node patch
-procedure, then inspect the proposed manifest diff. This reconciliation has
-not yet been performed. Kubernetes documents that kubeadm can overwrite
-manual reconfiguration during upgrades. See
-[reconfiguration](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-reconfigure/)
+### Preserve OIDC during kubeadm upgrades
+
+On September 29, the accepted five OIDC flags were recorded in the
+`apiServer.extraArgs` list of `kube-system/kubeadm-config`'s
+`ClusterConfiguration`. The issuer host alias is retained in the root-owned
+`/etc/kubernetes/forge-kubeadm-patches/kube-apiserver0+strategic.yaml` on
+`forge-head`. The installed inputs regenerated the reviewed API manifest in
+kubeadm v1.36.4 dry-run mode, without replacing the running manifest.
+
+**The patch directory is not automatically discovered.** Every applicable
+control-plane upgrade must explicitly supply
+`--patches /etc/kubernetes/forge-kubeadm-patches`, or an equivalently reviewed
+`UpgradeConfiguration` patch-directory setting. This project has not installed
+an upgrade wrapper or claimed automatic enforcement. Worker-only steps follow
+their own upgrade procedure; this patch is for the control-plane API Pod.
+
+For a separately approved upgrade, set `targetVersion` to the reviewed version
+on `forge-head`, verify current backups and independent administrator/SSH
+access, inspect the saved kubeadm configuration and patch, and review the
+upstream upgrade prerequisites. The following is the command shape, not an
+instruction to upgrade now:
+
+```bash
+# First render and review; targetVersion must be deliberately set beforehand.
+sudo kubeadm upgrade apply "${targetVersion:?Set the reviewed target version}" \
+  --patches /etc/kubernetes/forge-kubeadm-patches --dry-run
+# Only after accepting that diff and approving the upgrade:
+sudo kubeadm upgrade apply "${targetVersion:?Set the reviewed target version}" \
+  --patches /etc/kubernetes/forge-kubeadm-patches
+```
+
+Check that generated arguments retain the issuer, client `headlamp`, email
+claim, `forge:` prefix, and CA file; that the issuer host alias remains; and
+that certificate host mounts, image, security settings and probes have only
+reviewed changes. Preserve the trusted public root on the host too: preserving
+a mount does not recreate its contents. Validate readiness and fresh OIDC
+login after an actual upgrade. An unchanged current-version dry run does not
+prove compatibility with a future kubeadm or API-server release.
+
+The preservation-only change did not restart the API server. To undo that
+change before an upgrade, restore only the saved `ClusterConfiguration` data
+field with a check that the current value still matches the accepted candidate,
+and remove only the installed OIDC patch after verifying it is the expected
+file. Do not replace the whole ConfigMap from stale exported metadata. This
+undoes future regeneration inputs; it does not remove OIDC from the running
+API server. A failed live upgrade needs the separate reviewed control-plane
+recovery plan, not merely this ConfigMap rollback.
+
+See [reconfiguration](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-reconfigure/)
 and [component customization](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/control-plane-flags/).
+
+### Live manifest recovery
 
 For an approved API-server change, retain SSH/console access and a verified
 backup. Stage candidate and restore files **outside**

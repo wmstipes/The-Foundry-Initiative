@@ -51,7 +51,16 @@ updated the documentation and architecture after OIDC acceptance; it merged at
 `554f432ac5aeca881f6b536f95037cff4918ea9a` with successful required validation.
 The private Dex manifests and overlay were not published by that PR.
 
-## Remaining work
+## Subsequent outcome — September 29
+
+[Preservation and recovery work](identity-preservation-recovery-2026-09-29.md)
+recorded the OIDC flags in kubeadm configuration, installed the explicit
+host-alias patch, and verified regeneration without changing the live manifest.
+Off-node etcd and host-file copies passed hash checks; offline etcd restoration
+passed. Full running identity recovery remains untested. The remaining-work
+list below records the September 28 handoff rather than current completion.
+
+## Remaining work at September 28
 
 - Preserve the manual API-server flags and host alias through the supported
   kubeadm configuration/patch workflow before any control-plane upgrade.
