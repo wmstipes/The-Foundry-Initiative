@@ -9,7 +9,8 @@ their original history unless a subsequent-outcome note says otherwise.
 
 | Record | Outcome and boundary |
 | --- | --- |
-| [Private access and Headlamp OIDC](private-access-and-headlamp-oidc.md) | Protected service cards and interactive identity accepted; identity recovery and kubeadm upgrade preservation remain open |
+| [Identity preservation and recovery](identity-preservation-recovery-2026-09-29.md) | Installed kubeadm inputs reproduce the reviewed candidate; off-node copies and offline reconstruction verified; full identity recovery remains open |
+| [Private access and Headlamp OIDC](private-access-and-headlamp-oidc.md) | September 28 protected-service and interactive identity acceptance; subsequent preservation evidence is recorded above |
 | [Documentation review](documentation-review-2026-09-28.md) | Cross-repository Markdown, current operations, test inventory, and Wiki reconciliation |
 | [Loki recovery](loki-recovery-candidate.md) | Cold backup, restart persistence, isolated restore and cleanup accepted; retention remains open |
 | [Central logging preflight](central-logging-preflight.md) | Historical storage/design record; current logging procedure is in the component runbook |
