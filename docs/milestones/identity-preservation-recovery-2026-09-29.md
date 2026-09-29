@@ -77,13 +77,32 @@ Future upgrade commands must include
 `--patches /etc/kubernetes/forge-kubeadm-patches`; merely installing the patch
 does not arrange automatic use.
 
+## Cleanup acceptance — September 29
+
+After PR #162 merged, the operator rechecked both off-node SHA-256 values;
+the snapshot and control-plane archive still matched the recorded hashes.
+The temporary snapshot in the etcd data-directory mount was compared with
+the retained head-node copy before removal. The two dry-run manifests were
+compared before their temporary directories were removed; absence checks
+passed for all three staging targets.
+
+The etcd image had no `/bin/rm`. A narrowly scoped host-Python helper instead
+verified the retained snapshot hash, located exactly one running etcd process
+whose database mount matched the live host database, rejected symlink targets
+and the live database, and removed only the known offline-restore directory
+through that container's `/proc/<pid>/root/tmp` path. Its absence check passed.
+
+The final API readiness response was `ok`. The etcd Pod was 1/1 Running;
+its four restarts were dated 27 days earlier, with no restart caused by this
+work. Retained head-node and laptop recovery copies, private identity files,
+and installed preservation inputs were not cleanup targets. The audit helper
+itself remains with the private recovery material.
+
 ## Remaining acceptance
 
 - Supply the explicit patch directory on every applicable future kubeadm
   upgrade, and repeat the generated-manifest review for the target version.
 - Retain updated preservation inputs with the private recovery copies.
-- Remove only confirmed disposable snapshot staging and offline-restore
-  output after the retained copies have been verified.
 - Rehearse running cluster/Dex recovery separately, with a reviewed recovery
   topology and Kubernetes-aware etcd revision handling. The offline restore
   above did not start etcd or test watch consumers, token validation, fresh
