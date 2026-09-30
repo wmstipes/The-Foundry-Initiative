@@ -70,105 +70,14 @@ Repeat scoped capture for `-n forge-headlamp logs deployment/headlamp` and
 The [logging plan](identity-logging-plan.md) describes collection gaps and future
 LogQL queries; these identity logs are not part of the accepted Pulse-only pipeline.
 
-## 3. Check token authentication directly
+## 3. TokenReview and local signature verification
 
-Obtain the current cookie token locally in browser developer tools. Headlamp can
-clear cookies after rejection; if necessary, disable JavaScript on the Dex consent
-page before granting access and inspect the resulting Headlamp cookie before the
-frontend runs. Re-enable JavaScript afterward. Cookie chunks, if present, must be
-assembled in numeric order; do not treat a partial cookie as a complete JWT.
-Never paste a full token into chat, an issue, a shell command line, or a screenshot.
-Do not use an online JWT decoder. A decoded key ID is not signature verification.
+Follow [How to diagnose OIDC tokens](../guides/tokenreview-and-signature-verification.md)
+for prerequisites, safe cookie capture, copyable PowerShell commands, explanations,
+and a results matrix. Run TokenReview first; use local RS256 verification for
+signature failures. Compare the same complete token before and after a change.
 
-This sends the token only to the configured Kubernetes API via administrator
-credentials. TokenReview is an authentication check, not a persistent workload
-change or an RBAC check. Keep request/response bodies private; review any audit
-policy before capturing TokenReview bodies centrally.
-
-```powershell
-& {
-    $ErrorActionPreference = 'Stop'
-    $secureToken = Read-Host 'Cookie token (hidden; local only)' -AsSecureString
-    try {
-        $token = [System.Net.NetworkCredential]::new('', $secureToken).Password.Trim()
-        $request = @{
-            apiVersion = 'authentication.k8s.io/v1'
-            kind = 'TokenReview'
-            spec = @{ token = $token }
-        } | ConvertTo-Json -Depth 5 -Compress
-        $raw = $request | kubectl --context kubernetes-admin@kubernetes create `
-            --raw='/apis/authentication.k8s.io/v1/tokenreviews' -f - 2>$null
-        if ($LASTEXITCODE -ne 0) { throw 'TokenReview request failed; do not print raw bodies' }
-        $review = ($raw -join "`n") | ConvertFrom-Json
-        [pscustomobject]@{
-            Authenticated = ($review.status.authenticated -eq $true)
-            ExpectedUser = ($review.status.user.username -eq 'forge:operator@forge.home.arpa')
-            SignatureError = ([string]$review.status.error -match 'failed to verify.*signature')
-            ErrorPresent = -not [string]::IsNullOrWhiteSpace($review.status.error)
-        }
-    }
-    finally {
-        $token = $request = $raw = $review = $null
-        $secureToken.Dispose()
-    }
-}
-```
-
-If authenticated, investigate the browser/gateway/Headlamp flow or RBAC as indicated;
-do not restart the API server. If rejected, classify the private error before
-changing configuration. This incident's error was cryptographic signature failure.
-
-## 4. Verify an RS256 signature against published keys locally
-
-Use the same complete token as TokenReview. This verifies the signature only;
-it does not check expiry, issuer, audience or authorization. The known trusted
-issuer URL is fixed below; do not follow a URL from an unverified token.
-
-```powershell
-& {
-    $ErrorActionPreference = 'Stop'
-    function Decode-Base64Url([string]$Value) {
-        $encoded = $Value.Replace('-', '+').Replace('_', '/')
-        $encoded += '=' * ((4 - ($encoded.Length % 4)) % 4)
-        return ,([Convert]::FromBase64String($encoded))
-    }
-    $rawKeys = curl.exe --ssl-revoke-best-effort --fail --silent --show-error `
-        --connect-timeout 10 --max-time 20 'https://auth.forge.home.arpa/keys'
-    if ($LASTEXITCODE -ne 0) { throw 'Trusted public-key fetch failed' }
-    $keys = ($rawKeys -join "`n") | ConvertFrom-Json
-    $secureToken = Read-Host 'Same complete cookie token (hidden)' -AsSecureString
-    $rsa = $null
-    try {
-        $token = [System.Net.NetworkCredential]::new('', $secureToken).Password.Trim()
-        $parts = $token.Split('.')
-        if ($parts.Count -ne 3) { throw 'Expected complete JWT' }
-        $header = [Text.Encoding]::UTF8.GetString((Decode-Base64Url $parts[0])) | ConvertFrom-Json
-        if ($header.alg -cne 'RS256') { throw 'Unexpected algorithm' }
-        $matches = @($keys.keys | Where-Object { $_.kid -ceq $header.kid })
-        if ($matches.Count -ne 1 -or $matches[0].kty -cne 'RSA') {
-            throw 'Expected one matching RSA public key'
-        }
-        $parameters = [System.Security.Cryptography.RSAParameters]::new()
-        $parameters.Modulus = Decode-Base64Url $matches[0].n
-        $parameters.Exponent = Decode-Base64Url $matches[0].e
-        $rsa = [System.Security.Cryptography.RSA]::Create()
-        $rsa.ImportParameters($parameters)
-        $signed = [Text.Encoding]::ASCII.GetBytes($parts[0] + '.' + $parts[1])
-        $signature = Decode-Base64Url $parts[2]
-        [pscustomobject]@{
-            KeyID = $header.kid
-            SignatureValid = $rsa.VerifyData($signed, $signature,
-                [System.Security.Cryptography.HashAlgorithmName]::SHA256,
-                [System.Security.Cryptography.RSASignaturePadding]::Pkcs1)
-        }
-    }
-    finally {
-        if ($null -ne $rsa) { $rsa.Dispose() }
-        $secureToken.Dispose()
-        $token = $parts = $signed = $signature = $null
-    }
-}
-```
+## 4. Compare the control-plane key retrieval path
 
 For this incident, host-side public-key retrieval also succeeded with the expected
 CA and gateway address. Run from PowerShell and inspect only public material:

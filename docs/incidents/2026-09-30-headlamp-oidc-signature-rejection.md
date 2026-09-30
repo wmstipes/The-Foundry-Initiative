@@ -105,7 +105,7 @@ revoking an already issued JWT; no token-revocation outcome is claimed.
 | Investigate initial BasicAuth prompts | Mike / Codex | Fresh login succeeds without repeated challenges; failing path/status/realm captured safely if reproduced | Open; subsequent navigation stable |
 | Explain verifier state after issuer switch | Mike / Codex | Reproducible isolated evidence or upstream explanation; avoid another live issuer switch solely to reproduce | Open hypothesis |
 | Finish rehearsal cleanup | Mike | Confirm zero replicas, temporary routes absent, then inventory/review namespace deletion; retained private exports verified | Pod stopped; namespace deletion pending |
-| Establish backup cadence | Mike | Destination, retention, schedule/owner and restore checks accepted and first run recorded | Proposal below; not automated |
+| Establish backup cadence | Mike | Destination, retention, schedule/owner and restore checks accepted and first run recorded | Deferred by operator September 30 until after initial central logging expansion; not automated |
 
 Proposed cadence: daily private Dex configuration/storage capture, weekly verified
 off-node etcd and control-plane backups, and fresh backups before/after identity

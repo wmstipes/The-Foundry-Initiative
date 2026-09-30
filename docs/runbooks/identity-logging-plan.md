@@ -1,6 +1,11 @@
-# Identity and control-plane logging plan
+# Forge central logging priorities
 
-**Status: proposed, not deployed. Reviewed 2026-09-30.**
+**Status: prioritized next platform work, not deployed. Reviewed 2026-09-30.**
+
+Operator decision: expand searchable logs for the main Forge applications before
+implementing the proposed identity backup cadence. Complete the bounded recovery
+namespace cleanup first. Existing retained backups remain protected; deferral
+does not establish a backup schedule or a guaranteed recovery point.
 
 The repository's [Alloy configuration](../../k8s/central-logging/alloy-config.yaml)
 discovers only `forge-pulse`; its [RBAC](../../k8s/central-logging/alloy-rbac.yaml)
@@ -9,7 +14,29 @@ therefore does not establish collection of API-server, Dex, Headlamp or gateway
 logs. Confirm live configuration before any rollout; repository intent is not a
 fresh live readback. See the [incident](../incidents/2026-09-30-headlamp-oidc-signature-rejection.md).
 
-## Proposed first increment
+## Sequenced coverage
+
+| Priority | Sources | Acceptance |
+| --- | --- | --- |
+| 1 — Identity and entry | API server, Dex, Headlamp, Traefik | Find a known benign line per source and safely classify an authentication failure; preserve existing Pulse collection |
+| 2 — Main applications and observability | ForgeOps Console, portal, Restaurant API, YAML Workbench; Grafana, Prometheus, Loki and Alloy | Search each emitting container by namespace/pod/container; identify deliberately quiet apps; measure log volume and collector health |
+| 3 — Platform dependencies | CoreDNS, controller manager, scheduler, cert-manager, Calico/Tigera, MetalLB; Istio control plane and learning lab | Scoped error correlation, namespace RBAC review and resource/capacity acceptance |
+| Separate follow-up | Kubernetes Events and host kubelet/containerd journals | Reviewed event permissions and host access; prove collection behavior during API unavailability |
+
+Roll out incrementally. Do not grant cluster-wide logs access merely to avoid
+listing namespaces. Admission, API discovery, network access and source-specific
+sensitive-data review must pass for each increment. No application is claimed
+covered until a known record is found in Loki. Quiet services need an approved
+benign request or other coverage evidence, not a fabricated error in production.
+
+Create a coverage table during rollout: namespace, workload/container, collection
+method, last verified timestamp, sample/query reference, retention limit and
+known gaps. This makes missing logs visible before an incident. Application logs,
+gateway access logs, Kubernetes Events and audit records are separate data types.
+For Loki/Alloy's own failure, keep direct Pod logs as a fallback; self-observation
+through an unavailable Loki cannot be the only diagnostic path.
+
+## First increment details
 
 | Source | Purpose | Boundary |
 | --- | --- | --- |

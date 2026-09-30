@@ -1,8 +1,23 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-28
+**Last updated:** 2026-09-30
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
+
+## Immediate platform priority — September 30
+
+1. Complete isolated Dex recovery namespace cleanup while retaining private backups.
+2. Expand [central logging](docs/runbooks/identity-logging-plan.md) beyond Pulse:
+   identity/entry first, main Forge applications and observability next, then
+   platform dependencies. Verify searchability, permissions, sensitive-data handling
+   and storage/collector impact at each increment. No expanded collection is live yet.
+3. Revisit the proposed identity backup cadence after the first logging increment.
+   Scheduling, destination/retention decisions and repeat acceptance remain deferred;
+   existing backup procedures and retained copies are not removed.
+
+Use the [TokenReview/signature how-to](docs/guides/tokenreview-and-signature-verification.md)
+and [incident workflow](docs/incidents/README.md) to shorten future diagnosis and
+preserve what was actually established by each check.
 
 ## Current position
 

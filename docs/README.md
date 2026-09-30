@@ -18,6 +18,8 @@ it. A historical successful check does not establish today's cluster health.
 
 ## Learning and product guides
 
+- [TokenReview and signature verification: why, when, how and results](guides/tokenreview-and-signature-verification.md)
+
 - [ForgeOps operator learning guide](guides/forgeops-operator-learning-guide.md)
 - [Incident-copilot demonstration](guides/forgeops-incident-copilot-demonstration.md)
 - [Console operator exercise](guides/forgeops-console-c5-operator-exercise.md)

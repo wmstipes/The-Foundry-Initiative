@@ -1,6 +1,6 @@
 # Project Status
 
-**Last updated:** 2026-09-29
+**Last updated:** 2026-09-30
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
@@ -452,9 +452,12 @@ For the platform, maintain the accepted OIDC preservation inputs and supply
 the explicit patch directory during future upgrades. The September 30 running
 Dex rehearsal and original-login recovery are recorded in the
 [incident review](incidents/2026-09-30-headlamp-oidc-signature-rejection.md).
-Finish recovery-namespace cleanup, accept a backup cadence, review scoped identity
-log collection, and verify naturally elapsed Loki retention. Whole-cluster
-recovery remains untested.
+Finish recovery-namespace cleanup, then prioritize [central logging coverage](runbooks/identity-logging-plan.md)
+for identity/entry, main applications/observability and platform dependencies.
+The operator deferred implementation of the proposed identity backup cadence;
+retain existing backups and revisit destination, retention, ownership and restore
+checks after the first logging increment. Naturally elapsed Loki retention and
+whole-cluster recovery remain untested.
 NUC client trust remains deferred.
 
 Maintain the accepted ForgeOps v1.0.0 baseline. Any future milestone must

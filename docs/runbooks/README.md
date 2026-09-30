@@ -84,6 +84,7 @@ by the component restore tests.
 ## Incidents and troubleshooting
 
 - [Incident workflow, records and after-action template](../incidents/README.md)
+- [TokenReview and signature verification how-to](../guides/tokenreview-and-signature-verification.md)
 - [Headlamp OIDC signature troubleshooting](headlamp-oidc-troubleshooting.md)
 - [Identity logging expansion plan](identity-logging-plan.md) (not deployed)
 
