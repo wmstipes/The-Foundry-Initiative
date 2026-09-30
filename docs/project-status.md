@@ -452,7 +452,8 @@ For the platform, maintain the accepted OIDC preservation inputs and supply
 the explicit patch directory during future upgrades. The September 30 running
 Dex rehearsal and original-login recovery are recorded in the
 [incident review](incidents/2026-09-30-headlamp-oidc-signature-rejection.md).
-Finish recovery-namespace cleanup, then prioritize [central logging coverage](runbooks/identity-logging-plan.md)
+Recovery namespace cleanup passed September 30 at 16:02 EDT, including original
+Dex rollout and API readiness checks. Next prioritize [central logging coverage](runbooks/identity-logging-plan.md)
 for identity/entry, main applications/observability and platform dependencies.
 The operator deferred implementation of the proposed identity backup cadence;
 retain existing backups and revisit destination, retention, ownership and restore

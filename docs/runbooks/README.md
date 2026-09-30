@@ -70,7 +70,7 @@ The current single control plane can interrupt API access during replacement.
 | Prometheus | Head-local PV; off-node cold archive and isolated TSDB validation | Weekly manual backup; inspect helper retention; full service restore timing unmeasured |
 | Grafana | Head-local PV; isolated recovery reached usable dashboards in 4.37 minutes | Weekly and pre-upgrade archives; preserve matching encryption key and credentials separately |
 | Loki | Head-local PV; off-node backup, restart persistence, and isolated service restore accepted | Maintain backup freshness; naturally elapsed seven-day retention and elapsed recovery time remain open |
-| Dex / Kubernetes identity | Off-node etcd snapshot and host archive hash-verified; private files copied; offline database reconstruction passed September 29 | Running Dex logical recovery and restored original login accepted September 30; full cluster recovery, cleanup completion and backup cadence remain open |
+| Dex / Kubernetes identity | Off-node etcd snapshot and host archive hash-verified; private files copied; offline database reconstruction passed September 29 | Running Dex logical recovery and restored original login accepted September 30; recovery namespace cleanup accepted at 16:02 EDT; full cluster recovery and backup cadence remain open |
 | Private CA | Offline root backup; online intermediate and gateway leaf | Keep original root and passphrase protected; review intermediate/root expiry and client trust |
 | Stateless apps | Reviewed manifests, images, and required configuration | Preserve exact versions and private inputs; a reinstall does not restore in-memory Pulse samples |
 

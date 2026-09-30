@@ -40,6 +40,7 @@ including the Istio lab. This was not a zero-impact operation.
 | 15:31–15:32 | API recovered; same-token TokenReview passed | Authenticated and expected user true; no error |
 | 15:35 | Fresh Headlamp entry worked after three BasicAuth prompts | Cluster overview usable; every listed Pod ready; API `/readyz=ok` |
 | 15:37 | Namespaces/Pods navigation and refresh accepted | No further BasicAuth challenge reported |
+| 16:02 | Recovery namespace deleted after scoped inventory | Namespace absence check, original Dex rollout and API readiness passed |
 
 ## Diagnosis and confidence
 
@@ -82,8 +83,11 @@ storage RBAC, default-deny ingress, and initially zero replicas. Content and
 expected permission/denial checks passed before startup. A temporary narrowly
 scoped gateway policy and higher-priority ingress enabled the browser test.
 Both temporary resources were removed on rollback. Recovery Dex was subsequently
-scaled down; the final Pod inventory contained no recovery Pod. Namespace and
-restored objects have **not** been confirmed deleted. Private exports remain.
+scaled down; the final Pod inventory contained no recovery Pod. At 16:02 the
+operator deleted `forge-identity-recovery` after confirming zero replicas, no
+Pods/ingress/PVCs and the expected rehearsal resources. Namespace absence,
+original Dex rollout and API readiness checks passed. Private exports were not
+cleanup targets. Closure of any local port-forward was advised but not confirmed.
 This proves a running Dex logical recovery rehearsal, not whole-cluster etcd
 recovery, restoration of PVs, or seamless continuity of all sessions across rotation.
 
@@ -104,7 +108,7 @@ revoking an already issued JWT; no token-revocation outcome is claimed.
 | Expand identity logging | Mike / Codex | Scoped sources searchable with timestamps; ingestion and sensitive-data handling verified | [Plan](../runbooks/identity-logging-plan.md), not deployed |
 | Investigate initial BasicAuth prompts | Mike / Codex | Fresh login succeeds without repeated challenges; failing path/status/realm captured safely if reproduced | Open; subsequent navigation stable |
 | Explain verifier state after issuer switch | Mike / Codex | Reproducible isolated evidence or upstream explanation; avoid another live issuer switch solely to reproduce | Open hypothesis |
-| Finish rehearsal cleanup | Mike | Confirm zero replicas, temporary routes absent, then inventory/review namespace deletion; retained private exports verified | Pod stopped; namespace deletion pending |
+| Finish rehearsal cleanup | Mike | Confirm zero replicas and scoped inventory, namespace absence, original Dex rollout and API readiness | Completed September 30 at 16:02 EDT; private exports not targeted |
 | Establish backup cadence | Mike | Destination, retention, schedule/owner and restore checks accepted and first run recorded | Deferred by operator September 30 until after initial central logging expansion; not automated |
 
 Proposed cadence: daily private Dex configuration/storage capture, weekly verified

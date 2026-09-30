@@ -6,7 +6,8 @@ The roadmap favors small, demonstrable outcomes over large unfinished plans. It 
 
 ## Immediate platform priority — September 30
 
-1. Complete isolated Dex recovery namespace cleanup while retaining private backups.
+1. Isolated Dex recovery namespace cleanup completed September 30 at 16:02 EDT;
+   original Dex and API health checks passed. Private backups were not targeted.
 2. Expand [central logging](docs/runbooks/identity-logging-plan.md) beyond Pulse:
    identity/entry first, main Forge applications and observability next, then
    platform dependencies. Verify searchability, permissions, sensitive-data handling

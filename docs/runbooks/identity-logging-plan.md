@@ -3,8 +3,9 @@
 **Status: prioritized next platform work, not deployed. Reviewed 2026-09-30.**
 
 Operator decision: expand searchable logs for the main Forge applications before
-implementing the proposed identity backup cadence. Complete the bounded recovery
-namespace cleanup first. Existing retained backups remain protected; deferral
+implementing the proposed identity backup cadence. The bounded recovery
+namespace cleanup completed September 30 at 16:02 EDT, with original Dex and API
+health checks passing. Existing retained backups remain protected; deferral
 does not establish a backup schedule or a guaranteed recovery point.
 
 The repository's [Alloy configuration](../../k8s/central-logging/alloy-config.yaml)

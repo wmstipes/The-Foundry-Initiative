@@ -109,8 +109,10 @@ were Ready, and Headlamp navigation/refresh succeeded without further prompts.
 Three initial BasicAuth prompts remain unexplained. See the
 [incident and after-action record](../incidents/2026-09-30-headlamp-oidc-signature-rejection.md)
 for timing, diagnostic commands, rotation limits, and remaining work. The recovery
-Pod is stopped; namespace/object cleanup is not yet confirmed. No restored etcd
-server was started and no full cluster recovery is claimed.
+namespace was deleted September 30 at 16:02 EDT after inventory review. Its
+absence, original Dex rollout and API readiness checks passed. Private recovery
+files were not targeted. No restored etcd server was started and no full cluster
+recovery is claimed.
 
 ## Remaining acceptance
 
@@ -121,7 +123,7 @@ server was started and no full cluster recovery is claimed.
   topology and Kubernetes-aware etcd revision handling. The offline restore
   above did not start etcd or test watch consumers, token validation, fresh
   login, private-file reinstallation, or application PV recovery.
-- Accept and implement backup cadence; finish recovery-namespace cleanup and
+- Revisit the deferred backup cadence after the first central logging increment;
   follow up on the September 30 verifier-state and initial BasicAuth behavior.
 
 See [identity operations](../runbooks/headlamp-oidc.md),
