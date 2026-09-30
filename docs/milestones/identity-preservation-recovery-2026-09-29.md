@@ -98,16 +98,31 @@ work. Retained head-node and laptop recovery copies, private identity files,
 and installed preservation inputs were not cleanup targets. The audit helper
 itself remains with the private recovery material.
 
+## Subsequent outcome — September 30
+
+A separate logical Dex export was restored into an isolated namespace. Content
+and RBAC checks passed; recovered Dex served a fresh Headlamp login through an
+authorized temporary issuer route. After rollback, original login failed OIDC
+signature verification. The same token verified locally and was accepted by the
+API after an approved API-server restart with unchanged manifest. Final Pods
+were Ready, and Headlamp navigation/refresh succeeded without further prompts.
+Three initial BasicAuth prompts remain unexplained. See the
+[incident and after-action record](../incidents/2026-09-30-headlamp-oidc-signature-rejection.md)
+for timing, diagnostic commands, rotation limits, and remaining work. The recovery
+Pod is stopped; namespace/object cleanup is not yet confirmed. No restored etcd
+server was started and no full cluster recovery is claimed.
+
 ## Remaining acceptance
 
 - Supply the explicit patch directory on every applicable future kubeadm
   upgrade, and repeat the generated-manifest review for the target version.
 - Retain updated preservation inputs with the private recovery copies.
-- Rehearse running cluster/Dex recovery separately, with a reviewed recovery
+- Rehearse whole-cluster recovery separately, with a reviewed recovery
   topology and Kubernetes-aware etcd revision handling. The offline restore
   above did not start etcd or test watch consumers, token validation, fresh
   login, private-file reinstallation, or application PV recovery.
-- Establish backup cadence and verify fresh login/restart/rotation behavior.
+- Accept and implement backup cadence; finish recovery-namespace cleanup and
+  follow up on the September 30 verifier-state and initial BasicAuth behavior.
 
 See [identity operations](../runbooks/headlamp-oidc.md),
 [etcd recovery](https://etcd.io/docs/v3.6/op-guide/recovery/), and

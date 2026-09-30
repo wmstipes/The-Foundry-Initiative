@@ -44,7 +44,7 @@ historical evidence rather than being rewritten when the suite grows.
 - Workbench and Restaurant API have HTTPS routes; Grafana has HTTPS plus its own login. Prometheus uses a distinct BasicAuth gate; its anonymous query returned `401`. Headlamp and Service Pulse now have separate protected HTTPS routes, ingress policies, and active portal cards. Each anonymous route check returned `401`; authenticated browser access was reported working.
 - Dex chart `0.24.1` is deployed in a restricted identity namespace; HTTPS discovery returned the expected issuer. The API server recovered to `/readyz=ok` after its OIDC configuration change, with the replacement Pod `1/1` Running; Tigera also recovered after the brief API restart. Headlamp chart `0.45.0` revision 2 rolled out with a private OIDC overlay. Mike confirmed the Dex sign-in and Headlamp access work. The ingress BasicAuth gate remains. The OIDC user is bound to `view` and scoped Node reads; impersonation checks allowed listing Pods and Nodes, denied Secrets reads and Deployment creation. These checks do not establish long-term identity-provider or gateway availability.
 - Identity provider configuration and client credentials, the Headlamp overlay, and API-server rollback copies remain outside Git. The repository's Headlamp base values alone do not represent the running release. See the [identity architecture](architecture.md#headlamp-identity-and-authorization) and [Headlamp operating notes](../k8s/headlamp/README.md).
-- On September 29, OIDC flags were preserved in kubeadm's saved configuration and the issuer host alias in an installed control-plane patch. Rendering with the explicit installed patch directory reproduced the reviewed candidate; the live manifest hash stayed unchanged and the API remained ready. An off-node etcd snapshot and control-plane archive passed SHA-256 verification; offline etcd reconstruction passed. Full cluster/Dex login recovery remains untested. See [preservation and recovery evidence](milestones/identity-preservation-recovery-2026-09-29.md).
+- On September 29, OIDC flags were preserved in kubeadm's saved configuration and the issuer host alias in an installed control-plane patch. Rendering with the explicit installed patch directory reproduced the reviewed candidate; the live manifest hash stayed unchanged and the API remained ready. An off-node etcd snapshot and control-plane archive passed SHA-256 verification; offline etcd reconstruction passed. Running Dex logical recovery and restoration of original Headlamp access were subsequently accepted September 30; whole-cluster recovery remains untested. See [preservation and recovery evidence](milestones/identity-preservation-recovery-2026-09-29.md).
 - The [ForgeOps Console cluster pilot](../k8s/forgeops-console/README.md) runs in `forge-console` with one Ready Pod, a ClusterIP Service, restricted read-only ServiceAccount and Traefik-only ingress policy. Release `0.1.1` is pinned to OCI index digest `sha256:1ce34a44e2c711ffb12449ca60cdfc9716482e6eaf5b86d91ce0850cd5f3ab14`. Its EndpointSlice, successful rollout, anonymous `401`, and fresh private-browser BasicAuth prompt were observed. Mike reported the authenticated page and checks worked. No high-availability or multi-operator claim follows from this acceptance.
 - The initial `0.1.0` image crashed on the cluster bind address and was superseded by `0.1.1`. Root CA private key is held offline; the public certificate alone is trusted on the laptop. The single control plane and gateway remain availability constraints.
 
@@ -449,9 +449,12 @@ The NVMe cutover is live. Pod-replacement persistence and six-block off-node bac
 ## Immediate next step
 
 For the platform, maintain the accepted OIDC preservation inputs and supply
-the explicit patch directory during future upgrades. Complete running
-cluster/Dex recovery acceptance beyond the demonstrated offline database
-restore, establish backup cadence, and verify naturally elapsed Loki retention.
+the explicit patch directory during future upgrades. The September 30 running
+Dex rehearsal and original-login recovery are recorded in the
+[incident review](incidents/2026-09-30-headlamp-oidc-signature-rejection.md).
+Finish recovery-namespace cleanup, accept a backup cadence, review scoped identity
+log collection, and verify naturally elapsed Loki retention. Whole-cluster
+recovery remains untested.
 NUC client trust remains deferred.
 
 Maintain the accepted ForgeOps v1.0.0 baseline. Any future milestone must

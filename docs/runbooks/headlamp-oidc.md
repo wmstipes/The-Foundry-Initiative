@@ -33,10 +33,17 @@ On September 29, an off-node etcd snapshot and control-plane archive passed
 SHA-256 transfer verification, and an offline etcd reconstruction retained
 the snapshot revision and key count. Private identity files were copied too.
 See the [recovery evidence and limits](../milestones/identity-preservation-recovery-2026-09-29.md).
-No restored etcd server or recovered Dex login was exercised. Do not equate
-offline database reconstruction with recovery after loss of the control plane.
+On September 30, a recovered Dex instance supported fresh Headlamp login.
+Original login was restored after a signature-rejection incident and an approved
+API-server restart; see the [incident record](../incidents/2026-09-30-headlamp-oidc-signature-rejection.md).
+No restored etcd server was started. Do not equate this logical Dex rehearsal
+with recovery after loss of the control plane.
 
 ## Diagnose a login failure
+
+For signature errors, use the [detailed troubleshooting procedure](headlamp-oidc-troubleshooting.md),
+including private log capture, TokenReview, local verification and conditional
+restart checks. Record incidents through the [incident workflow](../incidents/README.md).
 
 | Observation | Check next |
 | --- | --- |

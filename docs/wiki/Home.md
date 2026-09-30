@@ -18,6 +18,7 @@ The Foundry Initiative is a personal engineering, learning, and portfolio projec
 - **Access cluster services:** Start with the [LAN portal guide](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/k8s/lan-portal/README.md), [Headlamp guide](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/k8s/headlamp/README.md), and [Service Pulse guide](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/k8s/service-pulse/README.md).
 - **Explore service-mesh behavior:** Follow the [Istio learning lab](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/k8s/istio-lab/README.md).
 - **Maintain the project:** Read the [contribution process](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/CONTRIBUTING.md) and [security policy](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/SECURITY.md).
+- **Review operational incidents:** Use the [incident index and after-action workflow](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/incidents/README.md).
 - **Inspect implementation evidence:** Browse the [milestone records](https://github.com/wmstipes/The-Foundry-Initiative/tree/main/docs/milestones).
 - **Understand the purpose:** Read the [project vision](https://github.com/wmstipes/The-Foundry-Initiative/blob/main/docs/vision.md).
 

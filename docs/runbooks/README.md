@@ -1,6 +1,6 @@
 # SignalForge operations index
 
-**Reviewed:** 2026-09-28
+**Reviewed:** 2026-09-30
 
 This is the starting point for operating the existing cluster. Commands in
 component runbooks can deploy, restart, or remove resources; use their named
@@ -70,7 +70,7 @@ The current single control plane can interrupt API access during replacement.
 | Prometheus | Head-local PV; off-node cold archive and isolated TSDB validation | Weekly manual backup; inspect helper retention; full service restore timing unmeasured |
 | Grafana | Head-local PV; isolated recovery reached usable dashboards in 4.37 minutes | Weekly and pre-upgrade archives; preserve matching encryption key and credentials separately |
 | Loki | Head-local PV; off-node backup, restart persistence, and isolated service restore accepted | Maintain backup freshness; naturally elapsed seven-day retention and elapsed recovery time remain open |
-| Dex / Kubernetes identity | Off-node etcd snapshot and host archive hash-verified; private files copied; offline database reconstruction passed September 29 | Maintain backup freshness and explicit upgrade patch usage; full running cluster/Dex recovery remains untested |
+| Dex / Kubernetes identity | Off-node etcd snapshot and host archive hash-verified; private files copied; offline database reconstruction passed September 29 | Running Dex logical recovery and restored original login accepted September 30; full cluster recovery, cleanup completion and backup cadence remain open |
 | Private CA | Offline root backup; online intermediate and gateway leaf | Keep original root and passphrase protected; review intermediate/root expiry and client trust |
 | Stateless apps | Reviewed manifests, images, and required configuration | Preserve exact versions and private inputs; a reinstall does not restore in-memory Pulse samples |
 
@@ -80,6 +80,12 @@ and [PKI](../../k8s/private-pki/README.md) procedures. Their destructive or
 interrupting steps are not routine health checks. A local PV with `Retain`
 is not an off-node backup. Whole-cluster disaster recovery is not demonstrated
 by the component restore tests.
+
+## Incidents and troubleshooting
+
+- [Incident workflow, records and after-action template](../incidents/README.md)
+- [Headlamp OIDC signature troubleshooting](headlamp-oidc-troubleshooting.md)
+- [Identity logging expansion plan](identity-logging-plan.md) (not deployed)
 
 ## Other operating paths
 

@@ -1,5 +1,10 @@
 # Service Pulse central logging
 
+Identity/control-plane logs are outside the current Pulse-only collection scope.
+See the [proposed identity logging expansion](../../docs/runbooks/identity-logging-plan.md)
+and [September 30 incident](../../docs/incidents/2026-09-30-headlamp-oidc-signature-rejection.md).
+That plan has not been deployed.
+
 The [Loki recovery record](../../docs/milestones/loki-recovery-candidate.md)
 records the verified cold off-node backup, Loki restart persistence, isolated
 service restore, and cleanup on 2026-09-24. Seven-day retention remains
