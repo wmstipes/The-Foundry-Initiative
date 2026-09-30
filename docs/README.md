@@ -9,6 +9,7 @@ it. A historical successful check does not establish today's cluster health.
 | Components, identities, traffic, and availability limits | [Architecture](architecture.md) |
 | Service access, routine checks, upgrades, and recovery | [Operations index](runbooks/README.md) |
 | Kubernetes manifests and component runbooks | [Kubernetes index](../k8s/README.md) |
+| Operational incidents, after-action reviews and follow-ups | [Incident management](incidents/README.md) |
 | Reasoning, acceptance, and historical results | [Milestone records](milestones/README.md) |
 | Direction and planned work | [Roadmap](../ROADMAP.md) |
 | Test counts and what each check establishes | [Testing and validation](testing-and-validation.md) |
@@ -16,6 +17,8 @@ it. A historical successful check does not establish today's cluster health.
 | Security reporting and repository controls | [Security policy](../SECURITY.md) |
 
 ## Learning and product guides
+
+- [TokenReview and signature verification: why, when, how and results](guides/tokenreview-and-signature-verification.md)
 
 - [ForgeOps operator learning guide](guides/forgeops-operator-learning-guide.md)
 - [Incident-copilot demonstration](guides/forgeops-incident-copilot-demonstration.md)

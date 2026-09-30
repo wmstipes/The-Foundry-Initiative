@@ -77,18 +77,54 @@ Future upgrade commands must include
 `--patches /etc/kubernetes/forge-kubeadm-patches`; merely installing the patch
 does not arrange automatic use.
 
+## Cleanup acceptance — September 29
+
+After PR #162 merged, the operator rechecked both off-node SHA-256 values;
+the snapshot and control-plane archive still matched the recorded hashes.
+The temporary snapshot in the etcd data-directory mount was compared with
+the retained head-node copy before removal. The two dry-run manifests were
+compared before their temporary directories were removed; absence checks
+passed for all three staging targets.
+
+The etcd image had no `/bin/rm`. A narrowly scoped host-Python helper instead
+verified the retained snapshot hash, located exactly one running etcd process
+whose database mount matched the live host database, rejected symlink targets
+and the live database, and removed only the known offline-restore directory
+through that container's `/proc/<pid>/root/tmp` path. Its absence check passed.
+
+The final API readiness response was `ok`. The etcd Pod was 1/1 Running;
+its four restarts were dated 27 days earlier, with no restart caused by this
+work. Retained head-node and laptop recovery copies, private identity files,
+and installed preservation inputs were not cleanup targets. The audit helper
+itself remains with the private recovery material.
+
+## Subsequent outcome — September 30
+
+A separate logical Dex export was restored into an isolated namespace. Content
+and RBAC checks passed; recovered Dex served a fresh Headlamp login through an
+authorized temporary issuer route. After rollback, original login failed OIDC
+signature verification. The same token verified locally and was accepted by the
+API after an approved API-server restart with unchanged manifest. Final Pods
+were Ready, and Headlamp navigation/refresh succeeded without further prompts.
+Three initial BasicAuth prompts remain unexplained. See the
+[incident and after-action record](../incidents/2026-09-30-headlamp-oidc-signature-rejection.md)
+for timing, diagnostic commands, rotation limits, and remaining work. The recovery
+namespace was deleted September 30 at 16:02 EDT after inventory review. Its
+absence, original Dex rollout and API readiness checks passed. Private recovery
+files were not targeted. No restored etcd server was started and no full cluster
+recovery is claimed.
+
 ## Remaining acceptance
 
 - Supply the explicit patch directory on every applicable future kubeadm
   upgrade, and repeat the generated-manifest review for the target version.
 - Retain updated preservation inputs with the private recovery copies.
-- Remove only confirmed disposable snapshot staging and offline-restore
-  output after the retained copies have been verified.
-- Rehearse running cluster/Dex recovery separately, with a reviewed recovery
+- Rehearse whole-cluster recovery separately, with a reviewed recovery
   topology and Kubernetes-aware etcd revision handling. The offline restore
   above did not start etcd or test watch consumers, token validation, fresh
   login, private-file reinstallation, or application PV recovery.
-- Establish backup cadence and verify fresh login/restart/rotation behavior.
+- Revisit the deferred backup cadence after the first central logging increment;
+  follow up on the September 30 verifier-state and initial BasicAuth behavior.
 
 See [identity operations](../runbooks/headlamp-oidc.md),
 [etcd recovery](https://etcd.io/docs/v3.6/op-guide/recovery/), and

@@ -23,6 +23,8 @@ The goal is to keep building, documenting, learning, and turning experience into
 Use the [documentation map](docs/README.md) to find current architecture,
 operations, learning guides, and dated evidence. The
 [operations index](docs/runbooks/README.md) covers service access and recovery.
+[Incident records and after-action reviews](docs/incidents/README.md) track real
+operational failures, verified fixes, and follow-up work.
 
 The active workstream is **SignalForge**, a Raspberry Pi Kubernetes lab designed to build practical experience with Kubernetes, containerized applications, infrastructure troubleshooting, deterministic incident analysis, and carefully gated future assistance.
 

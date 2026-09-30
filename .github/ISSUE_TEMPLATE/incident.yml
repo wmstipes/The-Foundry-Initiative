@@ -1,0 +1,61 @@
+name: Operational incident
+description: Track a service incident, recovery evidence and after-action follow-ups.
+title: "[Incident]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use docs/incidents/README.md and its after-action template. Never attach tokens,
+        cookies, Secrets, raw authentication logs or private backups. Report security
+        vulnerabilities through the private reporting route, not this public form.
+  - type: input
+    id: owner
+    attributes:
+      label: Incident owner
+    validations:
+      required: true
+  - type: dropdown
+    id: state
+    attributes:
+      label: State
+      options:
+        - Investigating
+        - Mitigated
+        - Monitoring
+        - Resolved
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Impact severity
+      options:
+        - SEV1 - Cluster management unavailable or data integrity at risk
+        - SEV2 - Important service or access path unusable
+        - SEV3 - Degraded behavior with a usable workaround
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact and environment
+      description: Affected services, user impact, fallback access, versions and first observed time with timezone.
+    validations:
+      required: true
+  - type: textarea
+    id: timeline
+    attributes:
+      label: Timeline and sanitized evidence
+      description: Separate observed facts, hypotheses, actions and outcomes. Link the incident record and fix PR when available.
+  - type: textarea
+    id: recovery
+    attributes:
+      label: Recovery acceptance and follow-ups
+      description: Record infrastructure and user checks, side effects, and follow-up owner/status/acceptance criteria.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Evidence handling
+      options:
+        - label: I removed credentials and sensitive data from this report.
+          required: true
