@@ -28,13 +28,26 @@ The repository uses GitHub-hosted controls together with tracked policy:
 - Merges require the always-running `Gate 4 required validation` status check,
   which covers complete Python discovery, Workbench tests/build/audit,
   native Linux/Windows Console tests/build/installed verification,
-  repository and manifest validators, and dependency review. CodeQL must
+  repository and manifest validators, and dependency review. PRs require
+  dependency-review success; only non-PR events may skip it. CodeQL must
   report no errors and no security alert at high severity or above.
-- Published GitHub releases are immutable. Release-tag rules block updates,
+- New GitHub releases use immutable publication. The September 19, 2026
+  `forgeops-v1.0.0` release predates that protection and remains mutable;
+  its tag is protected, but its attached assets are a documented legacy
+  exception. The September 22 Console preview is immutable. See the
+  [October security record](docs/security/review-2026-10-01.md) for asset hashes,
+  evidence limits, and administrative controls still awaiting verification.
+  Release-tag rules block updates,
   deletion, and force pushes for ForgeOps, ForgeOps Console, Workbench, and
   Restaurant API tags.
   GitHub Actions publication jobs use the deployment-scoped `release`
-  environment. The Console preview was published manually through the reviewed
+  environment. Publication preflight requires the exact commit to have passed
+  the main-push Required Validation workflow and its Gate 4 job. Manual
+  publication requires `main` and an explicit matching source SHA; versioned
+  container publication rejects existing tags and API uncertainty. All
+  publication jobs are serialized. These checks do not replace GitHub
+  environment/ref restrictions or registry-enforced immutability.
+  The Console preview was published manually through the reviewed
   [exact-asset procedure](docs/releases/forgeops-console-v0.1.0-rc.1-publish.md),
   which verifies draft downloads before publication; that CLI operation is not
   governed by an Actions environment approval. Release immutability still applies.

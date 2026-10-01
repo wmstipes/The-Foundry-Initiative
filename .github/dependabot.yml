@@ -160,3 +160,43 @@ updates:
           - "*"
         update-types:
           - "patch"
+
+  - package-ecosystem: "docker"
+    directory: "/apps/forgeops-console"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    groups:
+      console-base-image-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+      console-base-image-patches:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+
+  - package-ecosystem: "docker"
+    directory: "/apps/service-pulse"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    groups:
+      pulse-base-image-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+      pulse-base-image-patches:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"

@@ -118,3 +118,25 @@ the reviewed wheel and checksum to the exact product tag.
 
 The workflow cannot deploy, access a cluster, contact an application endpoint,
 publish to PyPI, build or publish a container, or authorize remediation.
+
+## Publication hardening (October 2026)
+
+Future publication requires a successful Required Validation push run on
+`main` for the exact source commit, including its Gate 4 job. The preflight
+waits at most ten minutes and fails closed on missing or failed evidence.
+Publication uses the `release` environment, creates a draft with both tested
+assets, downloads and byte-compares those draft assets, then publishes and
+runs `gh release verify`. A failed upload/verification leaves the draft for
+operator investigation; the workflow does not overwrite or delete it.
+The workflow is still explicitly scoped to v1.0.0 filenames: update product
+version, assets and release notes together before preparing another version.
+Do not reuse the existing v1.0.0 tag or release to test this workflow.
+
+The existing September 19 v1.0.0 release is a legacy mutable release. Its
+[recorded asset hashes](../security/review-2026-10-01.md) are an additional
+comparison point, not retroactive immutability or proof of authorship. New
+immutable releases also provide GitHub release attestations. Verify them with
+`gh release verify <tag> --repo wmstipes/The-Foundry-Initiative` and verify
+local downloaded assets with `gh release verify-asset <tag> <file> --repo
+wmstipes/The-Foundry-Initiative`. The legacy release cannot provide that
+immutable-release verification.

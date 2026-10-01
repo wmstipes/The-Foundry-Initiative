@@ -172,6 +172,7 @@ jobs:
           CONSOLE_GO_RESULT: ${{ needs.console-go.result }}
           CONSOLE_WEB_RESULT: ${{ needs.console-web.result }}
           REPOSITORY_RESULT: ${{ needs.repository.result }}
+          EVENT_NAME: ${{ github.event_name }}
           DEPENDENCY_RESULT: ${{ needs.dependencies.result }}
         run: |
           test "$PYTHON_RESULT" = success
@@ -179,4 +180,8 @@ jobs:
           test "$CONSOLE_GO_RESULT" = success
           test "$CONSOLE_WEB_RESULT" = success
           test "$REPOSITORY_RESULT" = success
-          test "$DEPENDENCY_RESULT" = success -o "$DEPENDENCY_RESULT" = skipped
+          if [ "$EVENT_NAME" = pull_request ]; then
+            test "$DEPENDENCY_RESULT" = success
+          else
+            test "$DEPENDENCY_RESULT" = skipped
+          fi

@@ -1,10 +1,17 @@
 # Project Status
 
-**Last updated:** 2026-09-30
+**Last updated:** 2026-10-01
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
 ## Summary
+
+October repository security hardening covers dependency-update gaps, publication
+source validation, version overwrite checks, and required-check policy. See the
+[review record](security/review-2026-10-01.md). Administrative access inventories,
+security alerts, and hosted protection settings still require verification;
+tracked code checks do not establish those controls. No new release or cluster
+change is part of this work.
 
 Current procedures are collected in the [operations index](runbooks/README.md).
 The [access and OIDC acceptance record](milestones/private-access-and-headlamp-oidc.md)

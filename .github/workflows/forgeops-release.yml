@@ -91,21 +91,40 @@ jobs:
     needs: [test, build, install]
     runs-on: ubuntu-latest
     environment: release
+    concurrency:
+      group: release-publication
+      cancel-in-progress: false
     permissions:
       contents: write
+      actions: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: forgeops-v1-release
           path: dist
+      - name: Verify reviewed main source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/validate-publication.py
       - name: Publish only tested assets
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           gh release create "$GITHUB_REF_NAME" \
             dist/signalforge_forgeops-1.0.0-py3-none-any.whl \
             dist/SHA256SUMS.txt \
-            --verify-tag \
+            --verify-tag --draft \
             --title "ForgeOps v1.0.0" \
             --notes-file docs/releases/forgeops-v1.0.0.md
+          draft_assets="$RUNNER_TEMP/forgeops-draft-$GITHUB_RUN_ID"
+          mkdir "$draft_assets"
+          gh release download "$GITHUB_REF_NAME" --dir "$draft_assets" \
+            --pattern signalforge_forgeops-1.0.0-py3-none-any.whl --pattern SHA256SUMS.txt
+          cmp dist/signalforge_forgeops-1.0.0-py3-none-any.whl "$draft_assets/signalforge_forgeops-1.0.0-py3-none-any.whl"
+          cmp dist/SHA256SUMS.txt "$draft_assets/SHA256SUMS.txt"
+          gh release edit "$GITHUB_REF_NAME" --draft=false
+          gh release verify "$GITHUB_REF_NAME"
