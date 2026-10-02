@@ -76,8 +76,8 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
                 ("npm", "/apps/forge-yaml-workbench"),
                 ("gomod", "/apps/forgeops-console"),
                 ("npm", "/apps/forgeops-console/web"),
-                ("docker", "/apps/restaurant-api"),
-                ("docker", "/apps/forge-yaml-workbench"),
+                *(("docker", "/" + path.parent.relative_to(ROOT).as_posix())
+                  for path in ROOT.glob("apps/**/Dockerfile")),
             },
         )
 
@@ -85,8 +85,9 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
         self,
     ) -> None:
         config = read_text(ROOT / ".github" / "dependabot.yml")
-        self.assertEqual(config.count('applies-to: "security-updates"'), 8)
-        self.assertEqual(config.count('applies-to: "version-updates"'), 8)
+        entry_count = config.count('- package-ecosystem:')
+        self.assertEqual(config.count('applies-to: "security-updates"'), entry_count)
+        self.assertEqual(config.count('applies-to: "version-updates"'), entry_count)
 
         group_blocks = re.findall(
             r"(?m)^      [a-z][a-z-]+:\n(?P<body>(?:^ {8,}.*\n?)*)",
@@ -97,7 +98,7 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
             for block in group_blocks
             if 'applies-to: "version-updates"' in block
         ]
-        self.assertEqual(len(version_groups), 8)
+        self.assertEqual(len(version_groups), entry_count)
         for block in version_groups:
             with self.subTest(group=block.splitlines()[0]):
                 self.assertIn('update-types:\n          - "patch"', block)
@@ -147,20 +148,50 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
         self.assertIn("*.png binary", attributes)
 
     def test_every_publication_job_uses_the_release_environment(self) -> None:
-        expected_jobs = {
-            "forgeops-release.yml": "publish",
-            "forge-yaml-workbench-docker.yml": "publish",
-            "restaurant-api-docker.yml": "build-and-push",
-        }
-        for filename, job in expected_jobs.items():
-            with self.subTest(workflow=filename, job=job):
-                workflow = read_text(WORKFLOW_DIR / filename)
-                match = re.search(
-                    rf"(?ms)^  {re.escape(job)}:\n(?P<body>.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)",
-                    workflow,
-                )
-                self.assertIsNotNone(match, f"missing publication job {job}")
-                self.assertIn("    environment: release\n", match.group("body"))
+        found = []
+        for path in WORKFLOW_FILES:
+            for match in re.finditer(
+                r"(?ms)^  (?P<job>[a-z][a-z0-9-]*):\n(?P<body>.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)",
+                read_text(path),
+            ):
+                body = match.group("body")
+                if "docker/login-action@" not in body and "gh release create" not in body:
+                    continue
+                found.append((path.name, match.group("job")))
+                with self.subTest(workflow=path.name, job=match.group("job")):
+                    self.assertIn("    environment: release\n", body)
+                    self.assertIn("scripts/validate-publication.py", body)
+                    self.assertIn("      actions: read\n", body)
+                    self.assertIn("          persist-credentials: false\n", body)
+                    self.assertIn("      group: release-publication\n", body)
+                    self.assertIn("    needs:", body)
+                    credential_step = body.find("docker/login-action@")
+                    if credential_step < 0:
+                        credential_step = body.index("gh release create")
+                    self.assertLess(body.index("scripts/validate-publication.py"), credential_step)
+        self.assertEqual(len(found), 5)
+
+    def test_dependency_review_cannot_be_skipped_on_pull_requests(self) -> None:
+        workflow = read_text(WORKFLOW_DIR / "required-validation.yml")
+        self.assertIn('if [ "$EVENT_NAME" = pull_request ]; then\n'
+                      '            test "$DEPENDENCY_RESULT" = success\n'
+                      '          else\n', workflow)
+
+    def test_console_build_images_are_digest_pinned(self) -> None:
+        dockerfile = read_text(ROOT / "apps/forgeops-console/Dockerfile")
+        images = re.findall(r"(?m)^FROM (\S+)", dockerfile)
+        self.assertEqual(len(images), 3)
+        for image in images:
+            if image != "scratch":
+                self.assertRegex(image, r"@sha256:[0-9a-f]{64}$")
+
+    def test_github_release_is_verified_as_draft_before_publication(self) -> None:
+        workflow = read_text(WORKFLOW_DIR / "forgeops-release.yml")
+        self.assertIn("--verify-tag --draft", workflow)
+        self.assertLess(workflow.index("gh release download"), workflow.index("gh release edit"))
+        self.assertLess(workflow.index("cmp dist/SHA256SUMS.txt" , workflow.index("gh release download")),
+                        workflow.index("gh release edit"))
+        self.assertIn('gh release verify "$GITHUB_REF_NAME"', workflow)
 
 
 if __name__ == "__main__":

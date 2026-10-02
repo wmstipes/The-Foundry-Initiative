@@ -1,6 +1,6 @@
 # Testing and validation
 
-**Inventory date:** 2026-09-28
+**Inventory date:** 2026-10-01
 
 This document defines what The Foundry Initiative means when it reports tests
 and validation results. It separates executable test cases, generated scenario
@@ -12,22 +12,28 @@ is not collapsed into one misleading total.
 | Suite | Current count | Scope |
 | --- | ---: | --- |
 | ForgeOps Python tests | 184 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 259 | Everything collected below `tests/` |
+| Top-level Python tests | 270 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
 | Service Pulse Python tests | 7 | `apps/service-pulse/tests`; included in complete Python discovery |
-| Complete repository Python discovery | 275 | Top-level 259 plus Restaurant API 9 plus Service Pulse 7 |
+| Complete repository Python discovery | 286 | Top-level 270 plus Restaurant API 9 plus Service Pulse 7 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
 | ForgeOps Console Go tests | 63 | Test functions across core and demo packages; table subtests not added to this count; separate from Python totals |
 | ForgeOps Console Vitest tests | 21 | API, App resource-transition, and Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
 The Python counts are nested, not additive: the 184 ForgeOps tests are part of
-the 259 top-level tests. Those plus nine Restaurant API tests and seven
-Service Pulse tests produce the 275-case complete Python discovery. The browser, Go, and promtool
+the 270 top-level tests. Those plus nine Restaurant API tests and seven
+Service Pulse tests produce the 286-case complete Python discovery. The browser, Go, and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
-Reconciled against [PR #158 required validation](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/36468840565): Python reported 275 cases and 288 unittest subtests; subtests are not added to the case total. Workbench reported 92 and Console browser validation 21. Local unittest discovery found 259 top-level cases (including five Loki recovery cases), 184 focused ForgeOps cases, and seven Pulse cases with no discovery errors. The Go count is the 63 top-level `Test*` functions in the current source; no claim is made that Go reports a runner case total.
+October 1 local unittest discovery passed 270 top-level cases. The security
+hardening adds three repository-policy tests and eight publication-preflight
+cases. The complete-discovery inventory is 270 + Restaurant API 9 + Pulse 7;
+its hosted pytest result must be confirmed on the hardening PR. Previous
+[PR #158 required validation](https://github.com/wmstipes/The-Foundry-Initiative/actions/runs/36468840565)
+reported 275 Python cases before these additions. Browser and Go counts are
+unchanged; the Go count describes top-level source functions, not runner cases.
 
 A runner test count is the number of cases it collects; the Go row above is
 explicitly a source-function count. Neither is a count
@@ -338,7 +344,15 @@ cause, or remediation authorization.
   Restaurant API pytest security floor, private vulnerability-reporting
   guidance, the required validation/dependency-review gate, contribution
   templates, line-ending policy, and release-environment use by every
-  publication job.
+  publication job discovered from registry login or GitHub release creation.
+  Docker dependency coverage is discovered from tracked application Dockerfiles
+  instead of a fixed directory list. Additional checks enforce Console build
+  image digests, event-specific dependency-review gating, and draft verification.
+- `tests/test_publication_guard.py` covers exact source/ref/repository checks,
+  successful main-push validation and its required gate, failed/newer runs,
+  missing/skipped/truncated gate evidence, registry failure and overwrite
+  rejection, and unsafe image inputs. Network/API responses are mocked; these
+  tests do not publish artifacts or prove environment/registry settings.
 - `tests/test_forgeops_console_design.py` covers the C1 documentation contract:
   explicit local configuration, loopback-only intent, absent shell and mutation
   authority, strict brokered plugin capabilities, deferred third-party plugin
