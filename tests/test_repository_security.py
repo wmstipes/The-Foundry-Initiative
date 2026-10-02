@@ -87,23 +87,43 @@ class RepositorySecurityPolicyTests(unittest.TestCase):
         config = read_text(ROOT / ".github" / "dependabot.yml")
         entry_count = config.count('- package-ecosystem:')
         self.assertEqual(config.count('applies-to: "security-updates"'), entry_count)
-        self.assertEqual(config.count('applies-to: "version-updates"'), entry_count)
+        self.assertEqual(config.count('applies-to: "version-updates"'), entry_count + 1)
 
         group_blocks = re.findall(
-            r"(?m)^      [a-z][a-z-]+:\n(?P<body>(?:^ {8,}.*\n?)*)",
+            r"(?m)^      (?P<name>[a-z][a-z-]+):\n(?P<body>(?:^ {8,}.*\n?)*)",
             config,
         )
         version_groups = [
-            block
-            for block in group_blocks
+            (name, block)
+            for name, block in group_blocks
             if 'applies-to: "version-updates"' in block
         ]
-        self.assertEqual(len(version_groups), entry_count)
-        for block in version_groups:
-            with self.subTest(group=block.splitlines()[0]):
+        self.assertEqual(len(version_groups), entry_count + 1)
+        kubernetes_patterns = (
+            '          - "k8s.io/api"\n'
+            '          - "k8s.io/apimachinery"\n'
+            '          - "k8s.io/client-go"\n'
+        )
+        groups_by_name = dict(version_groups)
+        self.assertEqual(
+            groups_by_name["console-go-kubernetes"],
+            '        applies-to: "version-updates"\n'
+            '        patterns:\n' + kubernetes_patterns
+            + '        update-types:\n'
+            '          - "patch"\n'
+            '          - "minor"\n'
+            '          - "major"\n',
+        )
+        self.assertIn(
+            '        exclude-patterns:\n' + kubernetes_patterns,
+            groups_by_name["console-go-patches"],
+        )
+        for name, block in version_groups:
+            with self.subTest(group=name):
                 self.assertIn('update-types:\n          - "patch"', block)
-                self.assertNotIn('- "minor"', block)
-                self.assertNotIn('- "major"', block)
+                if name != "console-go-kubernetes":
+                    self.assertNotIn('- "minor"', block)
+                    self.assertNotIn('- "major"', block)
 
     def test_restaurant_api_pytest_version_contains_security_fix(self) -> None:
         requirements = read_text(

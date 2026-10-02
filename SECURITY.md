@@ -16,8 +16,12 @@ The repository uses GitHub-hosted controls together with tracked policy:
   updates, secret scanning, push protection, and private vulnerability
   reporting are enabled.
 - Dependabot checks GitHub Actions, Python, Go modules, npm, and Docker dependencies on a
-  weekly schedule. Security updates are separated from patch-only version
-  groups so higher-risk minor and major upgrades can be reviewed individually.
+  weekly schedule. Security updates are separated from version-update groups.
+  Version groups are patch-only except for the Console's `k8s.io/api`,
+  `k8s.io/apimachinery`, and `k8s.io/client-go`: these coupled libraries share
+  one group for all version-update types to avoid incompatible mixed releases.
+  Other minor and major upgrades remain individually reviewed. Grouping does
+  not enable automatic merging.
 - Trusted reusable GitHub Actions are pinned to full commit SHAs, workflows
   declare read-only repository contents by default, and privileged
   `pull_request_target` execution is forbidden.
