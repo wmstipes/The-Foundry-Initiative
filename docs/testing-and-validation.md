@@ -1,6 +1,6 @@
 # Testing and validation
 
-**Inventory date:** 2026-10-01
+**Inventory date:** 2026-10-02
 
 This document defines what The Foundry Initiative means when it reports tests
 and validation results. It separates executable test cases, generated scenario
@@ -299,6 +299,14 @@ post-read identity check bounds the log race but does not create durable
 historical logging or prove an outage time.
 
 ## What the suites cover
+
+The October 2 Kubernetes dependency follow-up keeps the test counts unchanged.
+`tests/test_forgeops_console_c2.py` now requires exact, matching stable versions
+for `k8s.io/api`, `k8s.io/apimachinery`, and `k8s.io/client-go`, instead of
+requiring the historical client-go `v0.36.4` literal. The Go runtime assertion
+remains unchanged. Locked module-graph checks, Go tests and vet, dependency
+review, and native candidate verification still gate coordinated upgrades.
+These checks do not establish live-cluster compatibility.
 
 ### ForgeOps
 
