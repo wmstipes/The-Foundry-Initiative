@@ -56,8 +56,26 @@
       "section": "Run Smoke Tests Only",
       "signals": [
         {
-          "match": "prefix",
-          "checkId": "http.restaurant-api.",
+          "match": "exact",
+          "checkId": "http.restaurant-api/health",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
+        },
+        {
+          "match": "exact",
+          "checkId": "http.restaurant-api/ready",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
+        },
+        {
+          "match": "exact",
+          "checkId": "http.restaurant-api/status",
+          "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
+          "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
+        },
+        {
+          "match": "exact",
+          "checkId": "http.restaurant-api/version",
           "deltaKinds": ["ADDED", "STATUS_CHANGED", "EVIDENCE_CHANGED"],
           "afterStatuses": ["WARN", "FAIL", "UNKNOWN"]
         }

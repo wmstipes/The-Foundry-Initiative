@@ -467,7 +467,11 @@ def render_incident_brief_text(brief: IncidentBrief, stream: TextIO) -> None:
         f"Supplied window: {brief.before_collected_at_utc} -> "
         f"{brief.after_collected_at_utc}\n"
     )
-    stream.write(f"Bounded state: {brief.state.value}\n")
+    stream.write(f"Bounded state: {brief.state.value} (deltas only)\n")
+    stream.write(
+        "Unchanged WARN, FAIL, or UNKNOWN checks may remain; "
+        "review both source snapshot summaries.\n"
+    )
 
     stream.write("\nDeterministic facts\n")
     if not brief.facts:

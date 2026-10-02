@@ -27,11 +27,22 @@ committed. Review every artifact before retaining or sharing it.
 - Do not inject an outage, restart a workload, change configuration, broaden
   RBAC, discover other endpoints, or execute a referenced runbook merely to
   make the demonstration more dramatic.
-- Treat a live `STABLE` brief as a truthful successful result when no natural
-  change occurs.
+- Read `STABLE` as no recorded change, even when a failure or evidence gap
+  persists. Read `RECOVERED` as changed checks returning to `PASS`; other checks
+  may still fail or remain unknown. Review both snapshot summaries alongside
+  the brief. The JSON v1alpha1 brief omits unchanged checks and overall status.
 - Keep model and retrieval integration deferred unless the completed
   demonstration identifies a concrete operator question that the deterministic
   brief cannot answer.
+
+The [October incident reasoning review](../design/forgeops-incident-reasoning-review-2026-10-02.md)
+records reproduced semantic gaps, the focused repairs, and realistic Kubernetes
+and Istio scenarios that must not be mistaken for causal proof. Its offline
+regressions run with:
+
+~~~powershell
+python -m unittest tests.test_forgeops_incident_semantics -v
+~~~
 
 ## Prepare the exact checkout
 
@@ -287,6 +298,8 @@ Record answers without overstating the evidence:
    catalog rules?
 6. Did text and JSON preserve the same bounded state, facts, uncertainty, and
    authority limitations?
+   Did the reviewer distinguish changed-check state from both snapshots'
+   overall status, including unchanged failures and unknowns?
 7. What operator question, if any, remained unanswered by the deterministic
    brief?
 
