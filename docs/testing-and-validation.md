@@ -340,7 +340,8 @@ cause, or remediation authorization.
 - `tests/test_repository_security.py` covers explicit read-only workflow
   defaults, immutable trusted Action references, forbidden privileged pull
   request triggers, bounded write permission, complete Dependabot ecosystem
-  coverage, separated security and patch-only version-update groups, the
+  coverage, separated security and version-update groups, the exact Kubernetes
+  compatibility group and its exclusion from otherwise patch-only groups, the
   Restaurant API pytest security floor, private vulnerability-reporting
   guidance, the required validation/dependency-review gate, contribution
   templates, line-ending policy, and release-environment use by every

@@ -134,10 +134,25 @@ updates:
         applies-to: "security-updates"
         patterns:
           - "*"
+      # These libraries share APIs and must move together across minor releases.
+      console-go-kubernetes:
+        applies-to: "version-updates"
+        patterns:
+          - "k8s.io/api"
+          - "k8s.io/apimachinery"
+          - "k8s.io/client-go"
+        update-types:
+          - "patch"
+          - "minor"
+          - "major"
       console-go-patches:
         applies-to: "version-updates"
         patterns:
           - "*"
+        exclude-patterns:
+          - "k8s.io/api"
+          - "k8s.io/apimachinery"
+          - "k8s.io/client-go"
         update-types:
           - "patch"
 
