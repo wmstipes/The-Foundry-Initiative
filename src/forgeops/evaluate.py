@@ -96,12 +96,29 @@ def evaluate(snapshot: RawSnapshot) -> EvaluatedSnapshot:
         state = _mapping(value.get("status")) if value else None
         fields = (spec.get("replicas") if spec else None, state.get("updatedReplicas", 0) if state else None,
                   state.get("readyReplicas", 0) if state else None, state.get("availableReplicas", 0) if state else None)
+        generation = metadata.get("generation") if metadata else None
+        observed_generation = state.get("observedGeneration") if state else None
         identity_ok = metadata and metadata.get("name") == target.deployment and metadata.get("namespace") == target.namespace
-        if deployment.error or not identity_ok or any(not isinstance(item, int) for item in fields):
+        if (
+            deployment.error or not identity_ok
+            or any(type(item) is not int or item < 0 for item in fields)
+            or type(generation) is not int or generation < 1
+            or type(observed_generation) is not int or observed_generation < 0
+        ):
             checks.append(_result(
                 snapshot, evidence_id, Status.UNKNOWN, "Deployment evidence is unavailable or malformed", deployment.source,
                 expected=f"{target.replicas} desired/updated/ready/available",
                 error_category=deployment.error.category if deployment.error else "unexpected-shape",
+            ))
+        elif observed_generation != generation:
+            stale = observed_generation < generation
+            checks.append(_result(
+                snapshot, evidence_id, Status.UNKNOWN,
+                "Deployment status has not observed the desired generation" if stale
+                else "Deployment observed generation is ahead of the desired generation",
+                deployment.source, "observedGeneration=generation",
+                f"generation={generation}, observedGeneration={observed_generation}",
+                "stale-generation" if stale else "inconsistent-generation",
             ))
         else:
             observed = "/".join(str(item) for item in fields)
@@ -111,8 +128,9 @@ def evaluate(snapshot: RawSnapshot) -> EvaluatedSnapshot:
                 snapshot, evidence_id, Status.PASS if healthy else Status.FAIL,
                 "Deployment replica state matches" if healthy else "Deployment replica state does not match",
                 deployment.source,
-                f"{target.replicas}/{target.replicas}/{target.replicas}/{target.replicas}, images={[target.image]}",
-                f"{observed}, images={images}",
+                f"{target.replicas}/{target.replicas}/{target.replicas}/{target.replicas}, images={[target.image]}, "
+                "observedGeneration=generation",
+                f"{observed}, images={images}, generation={generation}, observedGeneration={observed_generation}",
             ))
 
     for target in WORKLOADS:
@@ -189,6 +207,26 @@ def evaluate(snapshot: RawSnapshot) -> EvaluatedSnapshot:
                     error_category="unexpected-shape",
                 ))
                 continue
+            conditions = state.get("conditions", [])
+            ready_conditions = [
+                condition for condition in conditions
+                if _mapping(condition) and condition.get("type") == "Ready"
+            ] if isinstance(conditions, list) else []
+            if not isinstance(conditions, list) or len(ready_conditions) != 1:
+                checks.append(_result(
+                    snapshot, f"pod.{target.namespace}.{name}", Status.UNKNOWN,
+                    "Pod Ready condition is missing, duplicated, or malformed", pods.source,
+                    error_category="incomplete-evidence" if isinstance(conditions, list) else "unexpected-shape",
+                ))
+                continue
+            pod_ready = ready_conditions[0].get("status")
+            if pod_ready not in ("True", "False"):
+                checks.append(_result(
+                    snapshot, f"pod.{target.namespace}.{name}", Status.UNKNOWN,
+                    "Pod Ready condition is unknown or malformed", pods.source,
+                    error_category="condition-unknown" if pod_ready == "Unknown" else "unexpected-shape",
+                ))
+                continue
             phase = state.get("phase")
             ready = all(status["ready"] is True for status in status_maps if status)
             restarts = sum(status["restartCount"] for status in status_maps if status)
@@ -202,7 +240,7 @@ def evaluate(snapshot: RawSnapshot) -> EvaluatedSnapshot:
                     digest_match = digest_match and any(isinstance(image_id, str) and image_id.endswith(digest) for image_id in runtime)
             status_value = Status.PASS
             observation = "Pod is Running, ready, and has not restarted"
-            if phase != "Running" or not ready or not configured_match or not digest_match:
+            if phase != "Running" or pod_ready != "True" or not ready or not configured_match or not digest_match:
                 status_value = Status.FAIL
                 observation = "Pod runtime state does not match expectations"
             elif restarts > 0:
@@ -210,9 +248,9 @@ def evaluate(snapshot: RawSnapshot) -> EvaluatedSnapshot:
                 observation = "Pod is ready but has restarted"
             checks.append(_result(
                 snapshot, f"pod.{target.namespace}.{name}", status_value, observation, pods.source,
-                f"phase=Running, ready=true, restarts=0, configuredImages={[target.image]}, "
+                f"phase=Running, podReady=True, ready=true, restarts=0, configuredImages={[target.image]}, "
                 "pinned digest matched when present",
-                f"phase={phase}, ready={str(ready).lower()}, restarts={restarts}, "
+                f"phase={phase}, podReady={pod_ready}, ready={str(ready).lower()}, restarts={restarts}, "
                 f"configuredImages={configured}, runtimeImageIDs={runtime}, "
                 f"configuredMatched={str(configured_match).lower()}, "
                 f"digestMatched={str(digest_match).lower()}",

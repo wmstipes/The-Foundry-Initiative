@@ -22,6 +22,22 @@ It does not collect logs, Events, Secrets, ConfigMaps, environment values, addre
 
 Optional HTTP checks run only when the operator supplies explicit base URLs. Redirects are disabled, response bodies are bounded, and unrecognized response fields are discarded.
 
+## Readiness evidence
+
+Current source requires both the Pod Ready condition and container readiness
+before a Pod can pass its existing phase, image, digest, and restart checks.
+Ready=False fails even with ready containers; missing, unknown, duplicate, or
+malformed conditions remain UNKNOWN. Deployment checks require valid matching
+desired/observed generations before replica counts can establish a pass. Stale
+controller status remains UNKNOWN, not a failed-rollout diagnosis.
+
+The [October 2 readiness decision](../design/forgeops-readiness-evidence-2026-10-02.md)
+records the exact fields, status precedence, compatibility, and offline tests.
+These source changes are not in the previously published 1.0.0 wheel. Older
+saved snapshots remain valid but cannot prove the stronger checks occurred;
+comparing old and new collector output may report evidence changes. Record the
+reviewed source identity when demonstrating this behavior.
+
 ## Install locally for operator use
 
 From a clean repository checkout:

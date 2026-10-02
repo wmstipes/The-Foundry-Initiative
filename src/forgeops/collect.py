@@ -83,12 +83,16 @@ def _normalize_kubernetes(operation: Operation, payload: Any) -> dict[str, Any]:
         pod_spec = _as_mapping(template.get("spec")) if isinstance(template.get("spec"), dict) else {}
         containers = pod_spec.get("containers", [])
         return {
-            "metadata": {"namespace": metadata.get("namespace"), "name": metadata.get("name")},
+            "metadata": {
+                "namespace": metadata.get("namespace"), "name": metadata.get("name"),
+                "generation": metadata.get("generation"),
+            },
             "spec": {
                 "replicas": spec.get("replicas"),
                 "images": [item.get("image") for item in containers if isinstance(item, dict)],
             },
             "status": {
+                "observedGeneration": state.get("observedGeneration"),
                 "updatedReplicas": state.get("updatedReplicas", 0),
                 "readyReplicas": state.get("readyReplicas", 0),
                 "availableReplicas": state.get("availableReplicas", 0),
@@ -106,6 +110,7 @@ def _normalize_kubernetes(operation: Operation, payload: Any) -> dict[str, Any]:
             state = _as_mapping(item.get("status"))
             containers = spec.get("containers", [])
             statuses = state.get("containerStatuses", [])
+            conditions = state.get("conditions", [])
             selected.append({
                 "metadata": {"name": metadata.get("name")},
                 "spec": {
@@ -117,6 +122,11 @@ def _normalize_kubernetes(operation: Operation, payload: Any) -> dict[str, Any]:
                 },
                 "status": {
                     "phase": state.get("phase"),
+                    "conditions": [
+                        {"type": "Ready", "status": condition.get("status")}
+                        for condition in conditions
+                        if isinstance(condition, dict) and condition.get("type") == "Ready"
+                    ] if isinstance(conditions, list) else None,
                     "containerStatuses": [
                         {
                             "ready": status.get("ready"),
