@@ -27,8 +27,11 @@ A green runner is not a promise of support for every Linux distribution,
 Windows application-control policy, browser, or Kubernetes server. macOS,
 Linux arm64/Raspberry Pi binaries, containers, and in-cluster deployment are
 not candidate targets. There is no public Kubernetes compatibility matrix yet.
-The client library is pinned to client-go v0.36.4; that alone does not prove
-server compatibility. C3/C4 historical SignalForge walkthroughs used Kubernetes
+The source now pins client-go and its API companion modules together at
+v0.37.1. This October 2 dependency update does not replace the historical C7
+candidate's v0.36.4 build or establish live acceptance of the new module set.
+Exact client pins alone do not prove server compatibility.
+C3/C4 historical SignalForge walkthroughs used Kubernetes
 v1.36.4 and do not replace acceptance of this installed candidate.
 
 Windows Smart App Control may block these unsigned executables or Go test

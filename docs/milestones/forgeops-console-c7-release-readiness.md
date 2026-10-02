@@ -160,6 +160,13 @@ fails compilation. Its attempt to update k8s.io/api alone also failed dependency
 resolution. Patch-only grouping does not prohibit individual minor/major PRs.
 Keep the accepted module set until a coordinated update is reviewed separately.
 
+October 2 follow-up: [PR #168](https://github.com/wmstipes/The-Foundry-Initiative/pull/168)
+proposes the coordinated v0.37.1 module set. Its policy-test repair checks exact,
+matching versions instead of freezing the historical v0.36.4 value. Historical
+C7 operator evidence above remains tied to its original build; the new set
+requires its own live acceptance before deployment. See the
+[October security review follow-up](../security/review-2026-10-01.md).
+
 ## Packaged Windows operator acceptance — 2026-09-22
 
 The operator supplied terminal output and confirmed all five requested manual

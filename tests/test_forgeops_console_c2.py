@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import re
 import unittest
 
 
@@ -11,10 +12,18 @@ class ForgeOpsConsoleC2PolicyTests(unittest.TestCase):
     def read(self, relative: str) -> str:
         return (CONSOLE / relative).read_text(encoding="utf-8")
 
-    def test_go_runtime_and_client_go_are_exactly_declared(self) -> None:
+    def test_go_runtime_and_kubernetes_modules_are_exactly_pinned_and_aligned(self) -> None:
         module = self.read("go.mod")
         self.assertIn("go 1.27.0", module)
-        self.assertIn("k8s.io/client-go v0.36.4", module)
+        versions = []
+        for dependency in ("k8s.io/api", "k8s.io/apimachinery", "k8s.io/client-go"):
+            declared = re.findall(
+                rf"(?m)^\s*{re.escape(dependency)}\s+(\S+)\s*$", module
+            )
+            self.assertEqual(len(declared), 1, f"missing or duplicate pin: {dependency}")
+            self.assertRegex(declared[0], r"^v\d+\.\d+\.\d+$")
+            versions.append(declared[0])
+        self.assertEqual(len(set(versions)), 1, "Kubernetes modules must move together")
 
     def test_browser_dependencies_are_exactly_pinned(self) -> None:
         package = json.loads(self.read("web/package.json"))
