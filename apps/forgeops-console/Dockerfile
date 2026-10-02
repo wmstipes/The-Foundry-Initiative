@@ -1,5 +1,5 @@
 # Build from the repository root so both halves see the same source tree.
-FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS browser
+FROM node:26-alpine@sha256:0b36e8c136b94cd4fcf02188228e76c31ad5872eef3fec8cbd2eee500cfd9e80 AS browser
 WORKDIR /src
 COPY apps/forgeops-console/web/package.json apps/forgeops-console/web/package-lock.json ./apps/forgeops-console/web/
 RUN cd apps/forgeops-console/web && npm ci
