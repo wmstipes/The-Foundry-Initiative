@@ -8,6 +8,11 @@
 
 **Baseline:** `main` at `90c4b369516881943ed3c00d1070f7c70b5fc7ae`
 
+**Subsequent outcome (October 2):** The
+[readiness evidence repair](../design/forgeops-readiness-evidence-2026-10-02.md)
+extends the selected fields with Pod Ready conditions and Deployment generations.
+The original collection observations below remain historical evidence.
+
 ## Goal
 
 Define the first bounded ForgeOps collection contract before implementing it: a local command that gathers an attributable, read-only snapshot of selected SignalForge health evidence without changing the cluster, reading secret data, or treating missing evidence as healthy.

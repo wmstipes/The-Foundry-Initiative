@@ -341,6 +341,13 @@ Milestone 045 implements the Milestone 044 contract as a separate local Python c
 
 The first contract is deliberately SignalForge-specific. It covers the four expected nodes; the Restaurant API, Prometheus, Grafana, Forge YAML Workbench, and Metrics Server Deployments and Pods; allowlisted EndpointSlices; Metrics APIService availability; and optional GET requests to explicitly configured Restaurant API and Workbench endpoints. Missing or incomplete evidence remains `UNKNOWN` and prevents a healthy overall result.
 
+The [October 2 readiness repair](design/forgeops-readiness-evidence-2026-10-02.md)
+retains Pod Ready conditions and desired/observed Deployment generations from
+those same reads. Pod and container readiness must both permit a pass; stale
+Deployment status remains UNKNOWN even with matching counts. This strengthens
+newly collected evidence without reinterpreting historical saved snapshots or
+changing serialized v1alpha1 schemas.
+
 The boundary excludes broad discovery, Events, logs, Secrets, ConfigMaps, RBAC contents, arbitrary API paths, port-forwarding, temporary Pods, AI reasoning, remediation, and every cluster mutation. In particular, it does not reuse the existing mutating smoke-test path. Collection, normalization, deterministic evaluation, and rendering are separate and covered by synthetic offline fixtures. Milestone 045 live acceptance passed against the original snapshot implementation, and Milestone 046 live acceptance passed against the exact published JSON implementation without changing the collection boundary.
 
 ```mermaid

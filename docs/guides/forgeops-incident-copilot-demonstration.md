@@ -46,6 +46,15 @@ python -m unittest tests.test_forgeops_incident_semantics -v
 
 ## Prepare the exact checkout
 
+For an offline readiness rehearsal, run
+`python -m unittest tests.test_forgeops_readiness -v` from the reviewed source.
+The [readiness evidence decision](../design/forgeops-readiness-evidence-2026-10-02.md)
+documents Pod/container disagreement, stale deployment generation, strict
+parsing through the brief, and historical-artifact compatibility. These
+synthetic cases prove bounded behavior and do not establish live health.
+Review both source snapshot summaries: the v1alpha1 brief still summarizes
+deltas and can omit unchanged failures or unknowns.
+
 From the repository root in PowerShell:
 
 ~~~powershell
