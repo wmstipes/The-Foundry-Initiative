@@ -121,3 +121,8 @@ jobs:
           forgeops runbook mapping validate --input mapping.json
           forgeops incident brief --comparison "$GITHUB_WORKSPACE/tests/fixtures/forgeops/scenarios/routing-regression/expected-comparison.json" --mapping mapping.json --format json
           forgeops incident replay --comparison "$GITHUB_WORKSPACE/tests/fixtures/forgeops/scenarios/routing-regression/expected-comparison.json" --mapping mapping.json --expected "$GITHUB_WORKSPACE/tests/fixtures/forgeops/scenarios/routing-regression/expected-incident-brief.json"
+          context="$GITHUB_WORKSPACE/tests/fixtures/forgeops/incident-context/partial-recovery"
+          forgeops incident brief --brief-version v1alpha2 --before "$context/before.json" --after "$context/after.json" --comparison "$context/comparison.json" --mapping "$context/mapping.json" --format text
+          forgeops incident brief --brief-version v1alpha2 --before "$context/before.json" --after "$context/after.json" --comparison "$context/comparison.json" --mapping "$context/mapping.json" --format json > context-brief.json
+          cmp context-brief.json "$context/expected.json"
+          forgeops incident replay --brief-version v1alpha2 --before "$context/before.json" --after "$context/after.json" --comparison "$context/comparison.json" --mapping "$context/mapping.json" --expected "$context/expected.json"

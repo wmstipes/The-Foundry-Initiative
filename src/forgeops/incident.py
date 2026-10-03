@@ -472,6 +472,11 @@ def render_incident_brief_text(brief: IncidentBrief, stream: TextIO) -> None:
         "Unchanged WARN, FAIL, or UNKNOWN checks may remain; "
         "review both source snapshot summaries.\n"
     )
+    render_incident_brief_details(brief, stream)
+
+
+def render_incident_brief_details(brief: IncidentBrief, stream: TextIO) -> None:
+    """Shared delta facts and authority boundaries, without a state heading."""
 
     stream.write("\nDeterministic facts\n")
     if not brief.facts:

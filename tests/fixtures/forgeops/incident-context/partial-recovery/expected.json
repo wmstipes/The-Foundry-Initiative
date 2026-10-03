@@ -1,0 +1,111 @@
+{
+  "schema": "forgeops.incident-brief/v1alpha2",
+  "evidenceSchema": "forgeops.snapshot/v1alpha1",
+  "before": {
+    "collectedAtUtc": "2026-10-03T00:00:00Z",
+    "summary": {
+      "pass": 0,
+      "warn": 0,
+      "fail": 2,
+      "unknown": 0,
+      "overallStatus": "FAIL",
+      "exitCode": 1
+    },
+    "checks": [
+      {
+        "id": "http.restaurant-api/ready",
+        "status": "FAIL"
+      },
+      {
+        "id": "metrics-api-service",
+        "status": "FAIL"
+      }
+    ]
+  },
+  "after": {
+    "collectedAtUtc": "2026-10-03T00:01:00Z",
+    "summary": {
+      "pass": 1,
+      "warn": 0,
+      "fail": 1,
+      "unknown": 0,
+      "overallStatus": "FAIL",
+      "exitCode": 1
+    },
+    "checks": [
+      {
+        "id": "http.restaurant-api/ready",
+        "status": "PASS"
+      },
+      {
+        "id": "metrics-api-service",
+        "status": "FAIL"
+      }
+    ]
+  },
+  "coverage": {
+    "completeness": "NOT_ESTABLISHED",
+    "addedCheckIds": [],
+    "removedCheckIds": [],
+    "limitations": [
+      "Checks absent from both snapshots are not assessed. Optional HTTP and mesh/path coverage, and collection completeness, are not established."
+    ]
+  },
+  "assessment": {
+    "recovery": "PARTIAL",
+    "knownRecoveredCheckIds": [
+      "http.restaurant-api/ready"
+    ],
+    "regainedEvidenceCheckIds": [],
+    "remainingNonPassingCheckIds": [
+      "metrics-api-service"
+    ]
+  },
+  "deltaBrief": {
+    "schema": "forgeops.incident-brief/v1alpha1",
+    "comparisonSchema": "forgeops.comparison/v1alpha1",
+    "mappingSchema": "forgeops.runbook-mapping/v1alpha1",
+    "beforeCollectedAtUtc": "2026-10-03T00:00:00Z",
+    "afterCollectedAtUtc": "2026-10-03T00:01:00Z",
+    "state": "RECOVERED",
+    "facts": [
+      {
+        "id": "http.restaurant-api/ready",
+        "kind": "STATUS_CHANGED",
+        "beforeStatus": "FAIL",
+        "afterStatus": "PASS"
+      }
+    ],
+    "runbooks": [
+      {
+        "runbookId": "success-verification",
+        "title": "Verify recovery against the success standard",
+        "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+        "section": "Success Standard",
+        "reasons": [
+          {
+            "checkId": "http.restaurant-api/ready",
+            "deltaKind": "STATUS_CHANGED",
+            "afterStatus": "PASS"
+          }
+        ]
+      }
+    ],
+    "unmappedDeltaIds": [],
+    "uncertainties": [
+      "cause-not-established",
+      "point-in-time-only"
+    ],
+    "limitations": [
+      "This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.",
+      "Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution."
+    ]
+  },
+  "limitations": [
+    "This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.",
+    "Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution.",
+    "Recovery applies only to supplied check identities; it does not establish complete collection coverage.",
+    "Snapshot/comparison linkage establishes consistency, not artifact authenticity or trusted collection time.",
+    "Saved briefs cannot recheck raw evidence changes. Runbook coverage remains delta-only."
+  ]
+}

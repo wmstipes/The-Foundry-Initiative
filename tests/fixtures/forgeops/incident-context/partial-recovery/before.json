@@ -1,0 +1,34 @@
+{
+  "schema": "forgeops.snapshot/v1alpha1",
+  "collectedAtUtc": "2026-10-03T00:00:00Z",
+  "context": "kubernetes-admin@kubernetes",
+  "scope": "fixed SignalForge nodes, workloads, routing, Metrics APIService, and explicitly configured HTTP endpoints",
+  "redaction": "credentials, kubeconfig paths, addresses, headers, and complete objects omitted",
+  "summary": {
+    "pass": 0,
+    "warn": 0,
+    "fail": 2,
+    "unknown": 0,
+    "overallStatus": "FAIL",
+    "exitCode": 1
+  },
+  "checks": [
+    {
+      "id": "http.restaurant-api/ready",
+      "status": "FAIL",
+      "observation": "synthetic observation",
+      "source": "synthetic source",
+      "collectedAtUtc": "2026-10-03T00:00:00Z"
+    },
+    {
+      "id": "metrics-api-service",
+      "status": "FAIL",
+      "observation": "synthetic observation",
+      "source": "synthetic source",
+      "collectedAtUtc": "2026-10-03T00:00:00Z"
+    }
+  ],
+  "limitations": [
+    "This is a bounded point-in-time observation, not continuous monitoring, a compliance assessment, or a complete statement of cluster health."
+  ]
+}

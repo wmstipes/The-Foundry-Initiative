@@ -99,6 +99,66 @@ output explicitly as UTF-8 without a byte-order mark.
 
 ## Track A — Rehearse a synthetic incident offline
 
+### Snapshot-context rehearsal (source candidate)
+
+The October 3 [v1alpha2 contract](../design/forgeops-snapshot-context-brief.md)
+adds an opt-in view that retains unchanged checks. Run this offline extension
+from the reviewed source checkout; it is not part of the published v1.0.0
+artifact. The existing demonstration below continues to exercise v1alpha1.
+
+The five new cases are synthetic, with fixed timestamps and no live endpoints.
+Their `expectations.json` records semantic expectations independently of the
+rendered goldens. This loop displays each brief and checks exact replay:
+
+~~~powershell
+$contextRoot = '.\tests\fixtures\forgeops\incident-context'
+$contextCases = @(
+  'persistent-failure', 'partial-recovery', 'regained-evidence',
+  'missing-coverage', 'complete-recovery'
+)
+foreach ($case in $contextCases) {
+  $caseRoot = Join-Path $contextRoot $case
+  python .\scripts\run-forgeops-dev.py incident brief `
+    --brief-version v1alpha2 `
+    --before "$caseRoot\before.json" --after "$caseRoot\after.json" `
+    --comparison "$caseRoot\comparison.json" --mapping "$caseRoot\mapping.json" `
+    --format text
+  if ($LASTEXITCODE -ne 0) { throw "Context brief failed: $case" }
+  python .\scripts\run-forgeops-dev.py incident replay `
+    --brief-version v1alpha2 `
+    --before "$caseRoot\before.json" --after "$caseRoot\after.json" `
+    --comparison "$caseRoot\comparison.json" --mapping "$caseRoot\mapping.json" `
+    --expected "$caseRoot\expected.json"
+  if ($LASTEXITCODE -ne 0) { throw "Context replay failed: $case" }
+}
+~~~
+
+| Case | Required interpretation |
+| --- | --- |
+| Persistent failure | Delta STABLE, but after snapshot FAIL and metrics API failure still visible |
+| Partial recovery | Restaurant readiness recovered; metrics API still FAIL; recovery PARTIAL despite delta RECOVERED |
+| Regained evidence | UNKNOWN became PASS, but no known WARN/FAIL recovery was established |
+| Missing coverage | Failing metrics check disappeared; the remaining PASS does not establish recovery or complete coverage |
+| Complete recovery | Known FAIL became PASS with the same check identities; COMPLETE_FOR_SUPPLIED_CHECKS only |
+
+All five report collection completeness NOT_ESTABLISHED. Neither omitted HTTP
+checks nor absent mesh evidence becomes healthy by inference. Runbook references
+still cover changed checks only. Use `--format json` with the same inputs to
+inspect retained before/after counts, every check ID/status, coverage and
+assessment; no raw observation strings are added. Valid generation returns 0
+even when failures persist. Replay matches the full context, including unchanged
+checks, and returns 1 for an otherwise valid mismatch. Invalid or inconsistent
+inputs return 2 without a partial brief.
+
+The source suite (`python -m unittest tests.test_forgeops_incident_context -v`)
+also checks malformed inputs, tampered aggregates, Pod readiness disagreement,
+stale generation and non-JSON HTTP failure through the new brief. The ordinary
+ForgeOps CI installs the exact wheel and checks opt-in text, byte-for-byte JSON
+and replay on supported Python versions. These observations prove offline
+behavior; they do not establish live cluster health.
+
+### Original v1alpha1 routing rehearsal
+
 The routing-regression scenario is reviewed synthetic evaluation data. It is
 not captured SignalForge evidence and makes no current-health claim.
 

@@ -1,0 +1,20 @@
+{
+  "schema": "forgeops.runbook-mapping/v1alpha1",
+  "comparisonSchema": "forgeops.comparison/v1alpha1",
+  "beforeCollectedAtUtc": "2026-10-03T00:00:00Z",
+  "afterCollectedAtUtc": "2026-10-03T00:01:00Z",
+  "summary": {
+    "totalDeltas": 1,
+    "mappedDeltas": 0,
+    "unmappedDeltas": 1,
+    "runbookMatches": 0,
+    "mappingExit": 1
+  },
+  "matches": [],
+  "unmappedDeltaIds": [
+    "metrics-api-service"
+  ],
+  "limitations": [
+    "This deterministic mapping reports catalog rules matched by comparison deltas; it does not establish causation, operational severity, diagnosis, recommendation, or remediation authority."
+  ]
+}

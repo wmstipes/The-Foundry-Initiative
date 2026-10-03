@@ -237,6 +237,17 @@ forgeops incident replay `
 
 Replay exit `0` means an exact deterministic match, not healthy contained state.
 
+The source candidate also supports an explicit opt-in
+[v1alpha2 brief](docs/design/forgeops-snapshot-context-brief.md). Add
+`--brief-version v1alpha2 --before before.json --after after.json` to either
+incident command to retain both snapshot summaries and all supplied check
+statuses. It reports remaining failures/unknowns, known recovery, regained
+evidence, and added/removed check identities separately. Collection completeness
+remains unestablished. The default v1alpha1 contract and existing replay files
+remain compatible; a released v1.0.0 installation does not gain this source
+candidate automatically. The [offline demonstration](docs/guides/forgeops-incident-copilot-demonstration.md#snapshot-context-rehearsal-source-candidate)
+provides reviewed examples.
+
 The [Milestone 061 readiness decision](docs/design/forgeops-model-readiness-decision.md)
 defers model and retrieval integration. The approved
 [Milestone 062 demonstration](docs/guides/forgeops-incident-copilot-demonstration.md)

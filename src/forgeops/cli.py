@@ -11,6 +11,7 @@ from .collect import Collector, validate_kubeconfig
 from .comparison import (
     ComparisonValidationError,
     EvidenceComparisonError,
+    EvidenceComparison,
     compare_evidence,
     load_comparison_file,
     render_comparison_json,
@@ -38,13 +39,18 @@ from .incident import (
     render_incident_brief_json,
     render_incident_brief_text,
 )
-from .incident_replay import render_incident_replay, replay_incident_brief
+from .incident_context import (
+    build_snapshot_incident_brief, load_snapshot_brief,
+    render_snapshot_brief_json, render_snapshot_brief_text,
+)
+from .incident_replay import render_incident_replay, replay_incident_brief, replay_snapshot_brief
 from .provenance import inspect_execution_provenance, render_execution_provenance
 from .replay import render_scenario_replay, replay_scenario
 from .render import render_json, render_markdown, render_text
 from .runbooks import RunbookCatalogError, load_runbook_catalog
 from .runbook_mapping import (
     RunbookMappingError,
+    RunbookMapping,
     load_runbook_mapping,
     map_runbooks,
     render_runbook_mapping_json,
@@ -191,12 +197,44 @@ def build_parser() -> argparse.ArgumentParser:
     incident_replay.add_argument(
         "--expected", required=True, help="explicit expected incident-brief file",
     )
+    for command in (brief, incident_replay):
+        command.add_argument(
+            "--brief-version", choices=("v1alpha1", "v1alpha2"), default="v1alpha1",
+            help="brief artifact contract (default: v1alpha1)",
+        )
+        command.add_argument("--before", help="explicit earlier snapshot, required for v1alpha2")
+        command.add_argument("--after", help="explicit later snapshot, required for v1alpha2")
     return parser
 
 
 def _fail(message: str) -> int:
     sys.stderr.write(f"forgeops: error: {message}\n")
     return 2
+
+
+def _snapshot_incident(
+    args: argparse.Namespace, comparison: EvidenceComparison, mapping: RunbookMapping,
+) -> int:
+    try:
+        before = load_evidence_file(args.before)
+        after = load_evidence_file(args.after)
+    except EvidenceValidationError as exc:
+        return _fail(f"snapshot invalid: {exc.code}: {exc.summary}")
+    try:
+        brief = build_snapshot_incident_brief(before, after, comparison, mapping)
+    except (IncidentBriefError, EvidenceComparisonError) as exc:
+        return _fail(f"incident brief invalid: {exc.code}: {exc.summary}")
+    if args.incident_command == "brief":
+        if args.output_format == "json":
+            render_snapshot_brief_json(brief, sys.stdout)
+        else:
+            render_snapshot_brief_text(brief, sys.stdout)
+        return 0
+    try:
+        expected = load_snapshot_brief(args.expected)
+    except IncidentBriefError as exc:
+        return _fail(f"expected incident brief invalid: {exc.code}: {exc.summary}")
+    return replay_snapshot_brief(brief, expected, sys.stdout)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -233,6 +271,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             render_runbook_mapping_text(mapping, sys.stdout)
         return mapping.exit_code
     if args.command == "incident" and args.incident_command in ("brief", "replay"):
+        if args.brief_version == "v1alpha2" and (not args.before or not args.after):
+            return _fail("v1alpha2 requires both --before and --after snapshots")
+        if args.brief_version == "v1alpha1" and (args.before or args.after):
+            return _fail("--before and --after require --brief-version v1alpha2")
         try:
             comparison = load_comparison_file(args.comparison)
         except ComparisonValidationError as exc:
@@ -241,6 +283,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             mapping = load_runbook_mapping(args.mapping)
         except RunbookMappingError as exc:
             return _fail(f"runbook mapping invalid: {exc.code}: {exc.summary}")
+        if args.brief_version == "v1alpha2":
+            return _snapshot_incident(args, comparison, mapping)
         try:
             brief = build_incident_brief(comparison, mapping)
         except IncidentBriefError as exc:

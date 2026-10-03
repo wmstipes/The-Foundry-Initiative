@@ -6,16 +6,20 @@
 
 ## Summary
 
-The source-hardening follow-up in draft PR #170 addresses the Pod-readiness and
-stale-Deployment false-PASS cases identified in
-[PR #169](https://github.com/wmstipes/The-Foundry-Initiative/pull/169).
-The [readiness decision and offline evidence](design/forgeops-readiness-evidence-2026-10-02.md)
-records the change. PR #169 merged on October 3 at `0e50669`; its uncertainty,
-mapping, and text-warning changes are now included in the updated PR #170
-baseline. Aggregate evidence loss in
-brief JSON remains the next versioned-contract decision. These repairs improve
-the incident-copilot demonstration's trustworthiness; no new release or live
-cluster change is included.
+The [readiness repair in PR #170](https://github.com/wmstipes/The-Foundry-Initiative/pull/170)
+merged on October 3 at `b4d9673`, following the uncertainty, mapping, and
+delta-warning repairs in [PR #169](https://github.com/wmstipes/The-Foundry-Initiative/pull/169).
+Pod readiness and stale Deployment generation now remain non-passing when
+the evidence cannot support PASS.
+
+The next source candidate adds an explicit opt-in
+[snapshot-context brief contract](design/forgeops-snapshot-context-brief.md).
+It preserves unchanged failures and unknowns, distinguishes partial recovery
+from regained evidence, and exposes changes in supplied coverage. Five synthetic
+scenarios provide exact text/JSON expectations and offline replay; the default
+v1alpha1 contract remains compatible. These changes improve the final
+incident-copilot demonstration and prove bounded conclusions. They do not
+publish a new release or establish fresh live health; no cluster changes occur.
 
 October repository security hardening covers dependency-update gaps, publication
 source validation, version overwrite checks, and required-check policy. See the
