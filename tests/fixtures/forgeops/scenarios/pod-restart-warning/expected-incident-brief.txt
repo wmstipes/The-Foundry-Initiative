@@ -1,6 +1,7 @@
 ForgeOps incident brief
 Supplied window: 2026-09-17T15:10:00Z -> 2026-09-17T15:15:00Z
-Bounded state: DEGRADED
+Bounded state: DEGRADED (deltas only)
+Unchanged WARN, FAIL, or UNKNOWN checks may remain; review both source snapshot summaries.
 
 Deterministic facts
 - pod.forge-restaurant.synthetic-restaurant-api: STATUS_CHANGED PASS -> WARN

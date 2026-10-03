@@ -11,19 +11,19 @@ is not collapsed into one misleading total.
 
 | Suite | Current count | Scope |
 | --- | ---: | --- |
-| ForgeOps Python tests | 184 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 270 | Everything collected below `tests/` |
+| ForgeOps Python tests | 190 | `tests/test_forgeops*.py`; included in both Python totals below |
+| Top-level Python tests | 276 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
 | Service Pulse Python tests | 7 | `apps/service-pulse/tests`; included in complete Python discovery |
-| Complete repository Python discovery | 286 | Top-level 270 plus Restaurant API 9 plus Service Pulse 7 |
+| Complete repository Python discovery | 292 | Top-level 276 plus Restaurant API 9 plus Service Pulse 7 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
 | ForgeOps Console Go tests | 63 | Test functions across core and demo packages; table subtests not added to this count; separate from Python totals |
 | ForgeOps Console Vitest tests | 21 | API, App resource-transition, and Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
-The Python counts are nested, not additive: the 184 ForgeOps tests are part of
-the 270 top-level tests. Those plus nine Restaurant API tests and seven
-Service Pulse tests produce the 286-case complete Python discovery. The browser, Go, and promtool
+The Python counts are nested, not additive: the 190 ForgeOps tests are part of
+the 276 top-level tests. Those plus nine Restaurant API tests and seven
+Service Pulse tests produce the 292-case complete Python discovery. The browser, Go, and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -40,6 +40,16 @@ explicitly a source-function count. Neither is a count
 of assertions or behaviors. One test may verify several invariants or iterate
 over a reviewed scenario corpus. For example, one Milestone 061 test executes
 all nine adversarial incident-brief cases.
+
+The October 2 [incident reasoning review](design/forgeops-incident-reasoning-review-2026-10-02.md)
+adds six test functions in `tests/test_forgeops_incident_semantics.py`. They
+exercise collected synthetic Kubernetes/HTTP evidence through snapshot,
+comparison, mapping, and brief serialization and strict parsing. Cases cover
+unknown and malformed condition values, each collected Restaurant HTTP path,
+503 and unavailable evidence, selector lookalikes, unchanged non-passing
+checks, partial recovery, and omitted HTTP/mesh coverage. Parameterized
+subcases are not added to the function inventory. Existing JSON goldens remain
+unchanged; the five text goldens now state the delta-only scope at the heading.
 
 ## Headlamp pilot validation
 

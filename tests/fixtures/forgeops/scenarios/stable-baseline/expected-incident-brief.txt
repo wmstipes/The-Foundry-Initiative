@@ -1,6 +1,7 @@
 ForgeOps incident brief
 Supplied window: 2026-09-17T15:00:00Z -> 2026-09-17T15:05:00Z
-Bounded state: STABLE
+Bounded state: STABLE (deltas only)
+Unchanged WARN, FAIL, or UNKNOWN checks may remain; review both source snapshot summaries.
 
 Deterministic facts
 - none
