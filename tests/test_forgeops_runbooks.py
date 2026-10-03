@@ -43,7 +43,7 @@ class ForgeOpsRunbookCatalogTests(unittest.TestCase):
         identifiers = [entry.runbook_id for entry in catalog.entries]
         self.assertEqual(sorted(identifiers), identifiers)
         self.assertEqual(7, len(catalog.entries))
-        self.assertEqual(14, sum(len(entry.signals) for entry in catalog.entries))
+        self.assertEqual(17, sum(len(entry.signals) for entry in catalog.entries))
 
     def test_every_catalog_target_and_section_exists(self) -> None:
         catalog = load_runbook_catalog(str(CATALOG_PATH))
@@ -105,7 +105,7 @@ class ForgeOpsRunbookCatalogTests(unittest.TestCase):
             ])
         self.assertEqual(0, exit_code)
         self.assertEqual(
-            "VALID forgeops.runbook-catalog/v1alpha1 entries=7 signals=14\n",
+            "VALID forgeops.runbook-catalog/v1alpha1 entries=7 signals=17\n",
             output.getvalue(),
         )
         kubectl.assert_not_called()

@@ -1,6 +1,7 @@
 ForgeOps incident brief
 Supplied window: 2026-09-17T15:30:00Z -> 2026-09-17T15:35:00Z
-Bounded state: INCOMPLETE
+Bounded state: INCOMPLETE (deltas only)
+Unchanged WARN, FAIL, or UNKNOWN checks may remain; review both source snapshot summaries.
 
 Deterministic facts
 - metrics-api-service: STATUS_CHANGED PASS -> UNKNOWN

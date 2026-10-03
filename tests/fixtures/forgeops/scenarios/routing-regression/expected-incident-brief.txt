@@ -1,6 +1,7 @@
 ForgeOps incident brief
 Supplied window: 2026-09-17T15:20:00Z -> 2026-09-17T15:25:00Z
-Bounded state: DEGRADED
+Bounded state: DEGRADED (deltas only)
+Unchanged WARN, FAIL, or UNKNOWN checks may remain; review both source snapshot summaries.
 
 Deterministic facts
 - routing.forge-restaurant.synthetic-service: STATUS_CHANGED PASS -> FAIL

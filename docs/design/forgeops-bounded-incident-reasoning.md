@@ -2,8 +2,10 @@
 
 ## Status
 
-Accepted Milestone 056 design and synthetic evaluation boundary, advanced by
-Milestone 058's deterministic structured brief. No model integration exists.
+Accepted Milestone 056 design and synthetic evaluation boundary, implemented
+through the structured brief, offline replay, and Milestone 060 text renderer.
+No model integration exists. The [October 2 semantic review](forgeops-incident-reasoning-review-2026-10-02.md)
+records current limitations and bounded repairs.
 
 ## Purpose
 
@@ -22,7 +24,7 @@ forgeops incident brief \
 ~~~
 
 Milestones 057 and 058 implement strict mapping loading and the JSON format.
-Text rendering remains deferred.
+Milestone 060 implements text rendering, which is the default format.
 
 ## Proposed deterministic state vocabulary
 
@@ -31,12 +33,22 @@ Text rendering remains deferred.
 | `STABLE` | The supplied comparison contains no deltas. |
 | `CHANGED` | Valid deltas exist but do not establish stable, degraded, incomplete, or recovered state. |
 | `DEGRADED` | At least one supplied delta ends in `WARN` or `FAIL`. |
-| `INCOMPLETE` | At least one supplied delta ends in `UNKNOWN`; uncertainty takes precedence. |
+| `INCOMPLETE` | At least one supplied delta ends in `UNKNOWN` or removes a check; uncertainty takes precedence. |
 | `RECOVERED` | Changed checks end in `PASS` after an earlier non-passing state, with no later non-passing delta. |
 
 `CHANGED` closes the original neutral-delta gap. These labels summarize the
 supplied artifacts only. They are not incident
 severity, current health, business impact, or causal analysis.
+
+The v1alpha1 state and facts cover **deltas only**. Identical failing or unknown
+snapshots produce `STABLE`; a passing transition can produce `RECOVERED` while
+an unchanged failure or unknown remains. `UNKNOWN` to `PASS` also meets the
+existing recovery rule; that establishes regained evidence, not recovery from
+a known failure. Text displays the delta-only scope beside the state. JSON
+consumers must consult the comparison and source snapshot summaries because
+the brief contract does not retain aggregate status or unchanged checks.
+Changing this semantic boundary requires an explicit versioned contract and
+compatibility review, not silently reinterpreting old v1alpha1 artifacts.
 
 ## Proposed brief contract
 

@@ -6,7 +6,7 @@ This change strengthens the incident-copilot demonstration by preventing two
 known false-PASS results before evidence reaches the brief. It adds no model,
 new resource query, HTTP endpoint, permission, or cluster operation.
 
-Reviewed [draft PR #169](https://github.com/wmstipes/The-Foundry-Initiative/pull/169)
+Reviewed [PR #169](https://github.com/wmstipes/The-Foundry-Initiative/pull/169) while draft
 at `c80f76fc64eca2d1a30d8b68a95daefef5e08202`, including its
 [ranked review](https://github.com/wmstipes/The-Foundry-Initiative/blob/c80f76fc64eca2d1a30d8b68a95daefef5e08202/docs/design/forgeops-incident-reasoning-review-2026-10-02.md)
 and bounded incident-reasoning design. Its Node/APIService uncertainty repairs,
@@ -15,11 +15,12 @@ documented scope. Hosted Required Validation, ForgeOps CI, and Repository
 Security Validation passed on that head. The local semantic regression module
 also passed. Those checks do not close the remaining evidence gaps.
 
-This independent follow-up starts from main
-`2ae9f5ebfceb703a7b9a688c6f9074e8b300b108`. PR #169 remains draft and
-unmerged. This follow-up does not include or replace its changes. Both must be
-reviewed together before accepting a demonstration baseline. ForgeOps 1.0.0 is
-already released; this is source hardening, not a new v1 release or publication.
+This follow-up originally started from main
+`2ae9f5ebfceb703a7b9a688c6f9074e8b300b108`. On October 3, PR #169 merged
+at `0e50669de078d02a75cb9fdbacaa6c0b863805e1`. PR #170 now incorporates
+that main commit, preserves both implementations, and reconciles their shared
+test inventory. PR #170 remains draft and unmerged. ForgeOps 1.0.0 is already
+released; this is source hardening, not a new v1 release or publication.
 
 ## Collection and evaluation decision
 
@@ -101,9 +102,10 @@ The local focused pipeline selection passed 122 unittest cases, including all
 brief, and replay suites.
 Combining the source and tests with PR #169 in an isolated offline checkout
 passed the same selection plus its semantic regressions: 128 unittest cases.
-Source changes combine cleanly; the documentation inventory must be reconciled
-to 203 ForgeOps / 289 top-level / 305 complete Python functions when both land.
-Local Windows execution has three pre-existing path/archive test failures in
+Source changes combined cleanly. The October 3 conflict resolution preserves
+both suites and reconciles the documentation inventory to 203 ForgeOps /
+289 top-level / 305 complete Python functions.
+Original local Windows execution had three pre-existing path/archive test failures in
 the wider ForgeOps suite (197 run: 194 pass, three fail): archive path rejection,
 normal-install provenance path formatting, and explicit kubectl path formatting.
 Complete local discovery also lacks optional test dependencies. These

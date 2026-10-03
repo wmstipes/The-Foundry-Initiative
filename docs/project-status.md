@@ -1,17 +1,18 @@
 # Project Status
 
-**Last updated:** 2026-10-02
+**Last updated:** 2026-10-03
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
 ## Summary
 
-An independent source-hardening follow-up addresses the Pod-readiness and
-stale-Deployment false-PASS cases identified in draft
+The source-hardening follow-up in draft PR #170 addresses the Pod-readiness and
+stale-Deployment false-PASS cases identified in
 [PR #169](https://github.com/wmstipes/The-Foundry-Initiative/pull/169).
 The [readiness decision and offline evidence](design/forgeops-readiness-evidence-2026-10-02.md)
-records the change. PR #169 remains draft and unmerged; its uncertainty,
-mapping, and text-warning changes are separate. Aggregate evidence loss in
+records the change. PR #169 merged on October 3 at `0e50669`; its uncertainty,
+mapping, and text-warning changes are now included in the updated PR #170
+baseline. Aggregate evidence loss in
 brief JSON remains the next versioned-contract decision. These repairs improve
 the incident-copilot demonstration's trustworthiness; no new release or live
 cluster change is included.

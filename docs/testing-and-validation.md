@@ -1,6 +1,6 @@
 # Testing and validation
 
-**Inventory date:** 2026-10-02
+**Inventory date:** 2026-10-03
 
 This document defines what The Foundry Initiative means when it reports tests
 and validation results. It separates executable test cases, generated scenario
@@ -11,19 +11,19 @@ is not collapsed into one misleading total.
 
 | Suite | Current count | Scope |
 | --- | ---: | --- |
-| ForgeOps Python tests | 197 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 283 | Everything collected below `tests/` |
+| ForgeOps Python tests | 203 | `tests/test_forgeops*.py`; included in both Python totals below |
+| Top-level Python tests | 289 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
 | Service Pulse Python tests | 7 | `apps/service-pulse/tests`; included in complete Python discovery |
-| Complete repository Python discovery | 299 | Top-level 283 plus Restaurant API 9 plus Service Pulse 7 |
+| Complete repository Python discovery | 305 | Top-level 289 plus Restaurant API 9 plus Service Pulse 7 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
 | ForgeOps Console Go tests | 63 | Test functions across core and demo packages; table subtests not added to this count; separate from Python totals |
 | ForgeOps Console Vitest tests | 21 | API, App resource-transition, and Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
-The Python counts are nested, not additive: the 197 ForgeOps tests are part of
-the 283 top-level tests. Those plus nine Restaurant API tests and seven
-Service Pulse tests produce the 299-case complete Python discovery. The browser, Go, and promtool
+The Python counts are nested, not additive: the 203 ForgeOps tests are part of
+the 289 top-level tests. Those plus nine Restaurant API tests and seven
+Service Pulse tests produce the 305-case complete Python discovery. The browser, Go, and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -47,9 +47,18 @@ container disagreement, absent/malformed conditions, strict generation/count
 types, stale controller evidence, current-generation positive controls, all
 five workloads, and simultaneous symptoms through collection, strict snapshot
 loading, comparison, mapping, and brief parsing. Historical evaluated goldens
-are unchanged. The inventory here excludes the six separate tests in draft
-PR #169; applying both changes yields 203 ForgeOps, 289 top-level, and 305
-complete Python test functions. Subcases are not added to these counts.
+are unchanged. The October 3 inventory includes these 13 functions and the six
+semantic regressions from merged PR #169. Subcases are not added to these counts.
+
+The October 2 [incident reasoning review](design/forgeops-incident-reasoning-review-2026-10-02.md)
+adds six test functions in `tests/test_forgeops_incident_semantics.py`. They
+exercise collected synthetic Kubernetes/HTTP evidence through snapshot,
+comparison, mapping, and brief serialization and strict parsing. Cases cover
+unknown and malformed condition values, each collected Restaurant HTTP path,
+503 and unavailable evidence, selector lookalikes, unchanged non-passing
+checks, partial recovery, and omitted HTTP/mesh coverage. Parameterized
+subcases are not added to the function inventory. Existing JSON goldens remain
+unchanged; the five text goldens now state the delta-only scope at the heading.
 
 ## Headlamp pilot validation
 

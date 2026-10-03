@@ -79,7 +79,15 @@ def evaluate(snapshot: RawSnapshot) -> EvaluatedSnapshot:
                     "incomplete-evidence",
                 ))
             else:
-                observed = str(ready[0].get("status"))
+                observed = ready[0].get("status")
+                if observed not in ("True", "False"):
+                    checks.append(_result(
+                        snapshot, f"node.{name}", Status.UNKNOWN,
+                        "Node Ready condition is unknown or malformed",
+                        nodes.source, "Ready=True", f"Ready={observed}",
+                        "condition-unknown" if observed == "Unknown" else "unexpected-shape",
+                    ))
+                    continue
                 status_value = Status.PASS if observed == "True" else Status.FAIL
                 checks.append(_result(
                     snapshot, f"node.{name}", status_value,
@@ -302,12 +310,20 @@ def evaluate(snapshot: RawSnapshot) -> EvaluatedSnapshot:
             error_category=metrics.error.category if metrics.error else "incomplete-evidence",
         ))
     else:
-        observed = str(available[0].get("status"))
-        checks.append(_result(
-            snapshot, "metrics-api-service", Status.PASS if observed == "True" else Status.FAIL,
-            "Metrics APIService is available" if observed == "True" else "Metrics APIService is unavailable",
-            metrics.source, "Available=True", f"Available={observed}",
-        ))
+        observed = available[0].get("status")
+        if observed not in ("True", "False"):
+            checks.append(_result(
+                snapshot, "metrics-api-service", Status.UNKNOWN,
+                "Metrics APIService Available condition is unknown or malformed",
+                metrics.source, "Available=True", f"Available={observed}",
+                "condition-unknown" if observed == "Unknown" else "unexpected-shape",
+            ))
+        else:
+            checks.append(_result(
+                snapshot, "metrics-api-service", Status.PASS if observed == "True" else Status.FAIL,
+                "Metrics APIService is available" if observed == "True" else "Metrics APIService is unavailable",
+                metrics.source, "Available=True", f"Available={observed}",
+            ))
 
     for evidence in snapshot.evidence:
         if not evidence.evidence_id.startswith("http."):
