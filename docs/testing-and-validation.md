@@ -11,19 +11,19 @@ is not collapsed into one misleading total.
 
 | Suite | Current count | Scope |
 | --- | ---: | --- |
-| ForgeOps Python tests | 203 | `tests/test_forgeops*.py`; included in both Python totals below |
-| Top-level Python tests | 289 | Everything collected below `tests/` |
+| ForgeOps Python tests | 225 | `tests/test_forgeops*.py`; included in both Python totals below |
+| Top-level Python tests | 311 | Everything collected below `tests/` |
 | Restaurant API Python tests | 9 | `apps/restaurant-api/tests/test_main.py` |
 | Service Pulse Python tests | 7 | `apps/service-pulse/tests`; included in complete Python discovery |
-| Complete repository Python discovery | 305 | Top-level 289 plus Restaurant API 9 plus Service Pulse 7 |
+| Complete repository Python discovery | 327 | Top-level 311 plus Restaurant API 9 plus Service Pulse 7 |
 | Forge YAML Workbench Vitest tests | 92 | Seven `apps/forge-yaml-workbench/src/*.test.js` files; separate from Python totals |
 | ForgeOps Console Go tests | 63 | Test functions across core and demo packages; table subtests not added to this count; separate from Python totals |
 | ForgeOps Console Vitest tests | 21 | API, App resource-transition, and Pod diagnostics DOM lifecycle/rendering tests; separate from Python totals |
 | Prometheus alert scenarios | 19 | Generated cases executed by pinned `promtool`; separate from Python totals |
 
-The Python counts are nested, not additive: the 203 ForgeOps tests are part of
-the 289 top-level tests. Those plus nine Restaurant API tests and seven
-Service Pulse tests produce the 305-case complete Python discovery. The browser, Go, and promtool
+The Python counts are nested, not additive: the 225 ForgeOps tests are part of
+the 311 top-level tests. Those plus nine Restaurant API tests and seven
+Service Pulse tests produce the 327-case complete Python discovery. The browser, Go, and promtool
 scenarios use different runners and must be reported separately rather than as
 an artificial grand total.
 
@@ -40,6 +40,21 @@ explicitly a source-function count. Neither is a count
 of assertions or behaviors. One test may verify several invariants or iterate
 over a reviewed scenario corpus. For example, one Milestone 061 test executes
 all nine adversarial incident-brief cases.
+
+The October 3 [snapshot-context brief candidate](design/forgeops-snapshot-context-brief.md)
+adds 22 functions in `tests/test_forgeops_incident_context.py`. They exercise
+persistent WARN/FAIL/UNKNOWN, partial and complete recovery, regained evidence,
+added/removed/absent coverage, source-comparison linkage, strict types and bounds,
+malformed/tampered inputs, no partial CLI output, and replay that includes
+unchanged checks. Five synthetic scenarios have independently specified semantic
+expectations and exact JSON/text goldens. Existing v1alpha1 goldens remain
+unchanged. Installed-wheel CI exercises the opt-in commands on Python 3.11-3.14.
+These are offline checks; neither synthetic replay nor hosted CI establishes
+current cluster health or artifact authenticity. Run the new suite with:
+
+~~~powershell
+python -m unittest tests.test_forgeops_incident_context -v
+~~~
 
 The October 2 [readiness evidence repair](design/forgeops-readiness-evidence-2026-10-02.md)
 adds 13 functions in `tests/test_forgeops_readiness.py`. They test Pod Ready and

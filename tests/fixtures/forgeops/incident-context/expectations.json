@@ -1,0 +1,64 @@
+{
+  "persistent-failure": {
+    "afterOverall": "FAIL",
+    "recovery": "NONE_ESTABLISHED",
+    "knownRecoveredCheckIds": [],
+    "regainedEvidenceCheckIds": [],
+    "remainingNonPassingCheckIds": [
+      "metrics-api-service"
+    ],
+    "addedCheckIds": [],
+    "removedCheckIds": [],
+    "deltaState": "STABLE"
+  },
+  "partial-recovery": {
+    "afterOverall": "FAIL",
+    "recovery": "PARTIAL",
+    "knownRecoveredCheckIds": [
+      "http.restaurant-api/ready"
+    ],
+    "regainedEvidenceCheckIds": [],
+    "remainingNonPassingCheckIds": [
+      "metrics-api-service"
+    ],
+    "addedCheckIds": [],
+    "removedCheckIds": [],
+    "deltaState": "RECOVERED"
+  },
+  "regained-evidence": {
+    "afterOverall": "PASS",
+    "recovery": "NONE_ESTABLISHED",
+    "knownRecoveredCheckIds": [],
+    "regainedEvidenceCheckIds": [
+      "metrics-api-service"
+    ],
+    "remainingNonPassingCheckIds": [],
+    "addedCheckIds": [],
+    "removedCheckIds": [],
+    "deltaState": "RECOVERED"
+  },
+  "missing-coverage": {
+    "afterOverall": "PASS",
+    "recovery": "NONE_ESTABLISHED",
+    "knownRecoveredCheckIds": [],
+    "regainedEvidenceCheckIds": [],
+    "remainingNonPassingCheckIds": [],
+    "addedCheckIds": [],
+    "removedCheckIds": [
+      "metrics-api-service"
+    ],
+    "deltaState": "INCOMPLETE"
+  },
+  "complete-recovery": {
+    "afterOverall": "PASS",
+    "recovery": "COMPLETE_FOR_SUPPLIED_CHECKS",
+    "knownRecoveredCheckIds": [
+      "http.restaurant-api/ready"
+    ],
+    "regainedEvidenceCheckIds": [],
+    "remainingNonPassingCheckIds": [],
+    "addedCheckIds": [],
+    "removedCheckIds": [],
+    "deltaState": "RECOVERED"
+  }
+}

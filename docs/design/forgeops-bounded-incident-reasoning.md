@@ -6,6 +6,9 @@ Accepted Milestone 056 design and synthetic evaluation boundary, implemented
 through the structured brief, offline replay, and Milestone 060 text renderer.
 No model integration exists. The [October 2 semantic review](forgeops-incident-reasoning-review-2026-10-02.md)
 records current limitations and bounded repairs.
+The [October 3 snapshot-context extension](forgeops-snapshot-context-brief.md)
+preserves this v1alpha1 contract and adds opt-in v1alpha2 context and recovery
+assessment. It does not reinterpret historical delta-only artifacts.
 
 ## Purpose
 

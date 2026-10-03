@@ -1,0 +1,32 @@
+{
+  "schema": "forgeops.runbook-mapping/v1alpha1",
+  "comparisonSchema": "forgeops.comparison/v1alpha1",
+  "beforeCollectedAtUtc": "2026-10-03T00:00:00Z",
+  "afterCollectedAtUtc": "2026-10-03T00:01:00Z",
+  "summary": {
+    "totalDeltas": 1,
+    "mappedDeltas": 1,
+    "unmappedDeltas": 0,
+    "runbookMatches": 1,
+    "mappingExit": 0
+  },
+  "matches": [
+    {
+      "runbookId": "success-verification",
+      "title": "Verify recovery against the success standard",
+      "path": "docs/runbooks/restaurant-api-operator-runbook.md",
+      "section": "Success Standard",
+      "reasons": [
+        {
+          "checkId": "metrics-api-service",
+          "deltaKind": "STATUS_CHANGED",
+          "afterStatus": "PASS"
+        }
+      ]
+    }
+  ],
+  "unmappedDeltaIds": [],
+  "limitations": [
+    "This deterministic mapping reports catalog rules matched by comparison deltas; it does not establish causation, operational severity, diagnosis, recommendation, or remediation authority."
+  ]
+}

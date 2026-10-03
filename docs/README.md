@@ -23,6 +23,7 @@ it. A historical successful check does not establish today's cluster health.
 - [ForgeOps operator learning guide](guides/forgeops-operator-learning-guide.md)
 - [Incident-copilot demonstration](guides/forgeops-incident-copilot-demonstration.md)
 - [Incident reasoning review and adversarial scenarios, October 2](design/forgeops-incident-reasoning-review-2026-10-02.md)
+- [Snapshot context, recovery, and coverage in opt-in incident briefs](design/forgeops-snapshot-context-brief.md)
 - [Console operator exercise](guides/forgeops-console-c5-operator-exercise.md)
 - [Istio learning lab](../k8s/istio-lab/README.md)
 - [ForgeOps release procedure](guides/forgeops-release.md)

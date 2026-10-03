@@ -38,6 +38,13 @@ saved snapshots remain valid but cannot prove the stronger checks occurred;
 comparing old and new collector output may report evidence changes. Record the
 reviewed source identity when demonstrating this behavior.
 
+For offline briefing, the opt-in [snapshot-context contract](../design/forgeops-snapshot-context-brief.md)
+retains both summaries and unchanged check statuses. Supply both saved snapshots
+alongside their comparison and mapping using `--brief-version v1alpha2`; the
+[demonstration](../guides/forgeops-incident-copilot-demonstration.md#snapshot-context-rehearsal-source-candidate)
+shows exact commands and expected partial-recovery behavior. This source
+candidate does not add collection or change the default v1alpha1 brief.
+
 ## Install locally for operator use
 
 From a clean repository checkout:

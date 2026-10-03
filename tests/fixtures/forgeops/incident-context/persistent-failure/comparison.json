@@ -1,0 +1,22 @@
+{
+  "schema": "forgeops.comparison/v1alpha1",
+  "evidenceSchema": "forgeops.snapshot/v1alpha1",
+  "beforeCollectedAtUtc": "2026-10-03T00:00:00Z",
+  "afterCollectedAtUtc": "2026-10-03T00:01:00Z",
+  "beforeOverallStatus": "FAIL",
+  "afterOverallStatus": "FAIL",
+  "summary": {
+    "totalChecks": 2,
+    "unchangedChecks": 2,
+    "changedChecks": 0,
+    "added": 0,
+    "removed": 0,
+    "statusChanged": 0,
+    "evidenceChanged": 0,
+    "comparisonExit": 0
+  },
+  "deltas": [],
+  "limitations": [
+    "This deterministic comparison reports validated field differences only; it does not establish provenance, operational severity, causation, diagnosis, or recommendation."
+  ]
+}

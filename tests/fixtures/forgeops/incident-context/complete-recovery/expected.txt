@@ -1,0 +1,49 @@
+ForgeOps incident brief with snapshot context
+Supplied window: 2026-10-03T00:00:00Z -> 2026-10-03T00:01:00Z
+Before snapshot: FAIL (1 PASS, 0 WARN, 1 FAIL, 0 UNKNOWN)
+After snapshot: PASS (2 PASS, 0 WARN, 0 FAIL, 0 UNKNOWN)
+Recovery: COMPLETE_FOR_SUPPLIED_CHECKS (supplied checks only)
+Delta state: RECOVERED (changed checks only)
+
+Remaining non-passing checks (including unchanged checks)
+- none in supplied after snapshot
+
+Known WARN/FAIL-to-PASS recovery
+- http.restaurant-api/ready
+
+Regained evidence (UNKNOWN to a known status; not proof of recovery)
+- none
+
+Added check identities
+- none
+
+Removed check identities
+- none
+
+Collection completeness: NOT_ESTABLISHED
+Checks absent from both snapshots are not assessed. Optional HTTP and mesh/path coverage, and collection completeness, are not established.
+
+Delta details and references (mapping covers changed checks only)
+
+Deterministic facts
+- http.restaurant-api/ready: STATUS_CHANGED FAIL -> PASS
+
+Cataloged runbook references (informational only)
+- success-verification: Verify recovery against the success standard [docs/runbooks/restaurant-api-operator-runbook.md#Success Standard]
+  matched rule: http.restaurant-api/ready STATUS_CHANGED after=PASS
+
+Unmapped deltas
+- none
+
+Uncertainty
+- cause-not-established
+- point-in-time-only
+
+Authority limitations
+- This brief summarizes only supplied validated artifacts; it does not establish current health, causation, operational severity, diagnosis, impact, or remediation authority.
+- Runbook references are catalog-rule matches for operator review; they do not prove that a procedure applies or authorize its execution.
+
+Snapshot context limitations
+- Recovery applies only to supplied check identities; it does not establish complete collection coverage.
+- Snapshot/comparison linkage establishes consistency, not artifact authenticity or trusted collection time.
+- Saved briefs cannot recheck raw evidence changes. Runbook coverage remains delta-only.

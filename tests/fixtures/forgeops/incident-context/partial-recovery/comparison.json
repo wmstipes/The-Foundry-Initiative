@@ -1,0 +1,32 @@
+{
+  "schema": "forgeops.comparison/v1alpha1",
+  "evidenceSchema": "forgeops.snapshot/v1alpha1",
+  "beforeCollectedAtUtc": "2026-10-03T00:00:00Z",
+  "afterCollectedAtUtc": "2026-10-03T00:01:00Z",
+  "beforeOverallStatus": "FAIL",
+  "afterOverallStatus": "FAIL",
+  "summary": {
+    "totalChecks": 2,
+    "unchangedChecks": 1,
+    "changedChecks": 1,
+    "added": 0,
+    "removed": 0,
+    "statusChanged": 1,
+    "evidenceChanged": 0,
+    "comparisonExit": 1
+  },
+  "deltas": [
+    {
+      "id": "http.restaurant-api/ready",
+      "kind": "STATUS_CHANGED",
+      "beforeStatus": "FAIL",
+      "afterStatus": "PASS",
+      "changedFields": [
+        "status"
+      ]
+    }
+  ],
+  "limitations": [
+    "This deterministic comparison reports validated field differences only; it does not establish provenance, operational severity, causation, diagnosis, or recommendation."
+  ]
+}

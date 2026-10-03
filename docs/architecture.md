@@ -423,6 +423,16 @@ immutable model with one strict expected brief. Text and JSON are two views of
 the same model. `CHANGED` closes the neutral-delta gap without implying health,
 while `INCOMPLETE` preserves precedence for unknown or removed evidence.
 
+The October 3 [snapshot-context candidate](design/forgeops-snapshot-context-brief.md)
+adds `incident_context.py` and opt-in `forgeops.incident-brief/v1alpha2`.
+It recomputes the supplied comparison from both validated source snapshots,
+retains every check ID/status and both aggregate summaries, and embeds the
+unchanged v1alpha1 delta brief. Recovery and regained evidence are separate
+assessments; replay compares complete retained context. Unchanged non-passing
+checks remain visible without inventing runbook matches. Coverage completeness
+is always NOT_ESTABLISHED because snapshots do not carry an expected evidence
+profile. The default v1alpha1 commands, contracts, and replay remain compatible.
+
 Milestone 061 adds only synthetic adversarial evaluation and a decision record.
 It defers model and retrieval integration because no measured unmet operator
 need or adequate model-quality boundary exists. Structural validation remains
