@@ -1,6 +1,6 @@
 # Project Status
 
-**Last updated:** 2026-10-03
+**Last updated:** 2026-10-29 (repository checkpoint; no fresh cluster-health check)
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
@@ -12,7 +12,8 @@ delta-warning repairs in [PR #169](https://github.com/wmstipes/The-Foundry-Initi
 Pod readiness and stale Deployment generation now remain non-passing when
 the evidence cannot support PASS.
 
-The next source candidate adds an explicit opt-in
+The source update in [PR #171](https://github.com/wmstipes/The-Foundry-Initiative/pull/171),
+merged October 3 at `d55f9f7`, adds an explicit opt-in
 [snapshot-context brief contract](design/forgeops-snapshot-context-brief.md).
 It preserves unchanged failures and unknowns, distinguishes partial recovery
 from regained evidence, and exposes changes in supplied coverage. Five synthetic
@@ -20,6 +21,13 @@ scenarios provide exact text/JSON expectations and offline replay; the default
 v1alpha1 contract remains compatible. These changes improve the final
 incident-copilot demonstration and prove bounded conclusions. They do not
 publish a new release or establish fresh live health; no cluster changes occur.
+
+An October 29 [Terraform and Terragrunt learning pilot](../experiments/terragrunt-lab/README.md)
+adds a direct Terraform example and two Terragrunt units using local built-in
+data resources. Its Linux amd64 lifecycle, independent state and cache-recreation
+checks passed. It is a source learning exercise; Windows/ARM64 acceptance,
+hosted Terragrunt CI and any real infrastructure integration remain follow-ups.
+The immediate platform objective remains broader central logging.
 
 October repository security hardening covers dependency-update gaps, publication
 source validation, version overwrite checks, and required-check policy. See the
