@@ -1,6 +1,6 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-09-30
+**Last updated:** 2026-10-29
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
@@ -866,6 +866,14 @@ operator need.
 ## Phase 7 — Portfolio and hybrid-cloud expansion
 
 **Status:** Planned
+
+The October 29 [Terraform and Terragrunt learning pilot](experiments/terragrunt-lab/README.md)
+provides a local starting point: one Terraform module, a direct Terraform
+example, and two Terragrunt units with independent state and shared configuration.
+Its built-in data resource exercises plans, inputs, outputs and repeatability
+without accessing the cluster or a cloud. Complete this bounded lesson before
+considering a new lab namespace and ConfigMap. Existing deployment ownership
+and the immediate central logging priority remain as recorded above.
 
 Potential outcomes:
 

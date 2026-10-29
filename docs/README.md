@@ -26,6 +26,7 @@ it. A historical successful check does not establish today's cluster health.
 - [Snapshot context, recovery, and coverage in opt-in incident briefs](design/forgeops-snapshot-context-brief.md)
 - [Console operator exercise](guides/forgeops-console-c5-operator-exercise.md)
 - [Istio learning lab](../k8s/istio-lab/README.md)
+- [Terraform and Terragrunt learning pilot](../experiments/terragrunt-lab/README.md)
 - [ForgeOps release procedure](guides/forgeops-release.md)
 - [Pod and Deployment readiness evidence repair, October 2](design/forgeops-readiness-evidence-2026-10-02.md)
 - [Console Windows preview](releases/forgeops-console-v0.1.0-rc.1.md)
