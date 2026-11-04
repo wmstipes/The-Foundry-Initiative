@@ -32,11 +32,30 @@ class ForgeOpsConsoleC2PolicyTests(unittest.TestCase):
                 self.assertRegex(version, r"^\d+\.\d+\.\d+$")
                 self.assertNotIn("^", version)
                 self.assertNotIn("~", version)
+        self.assertEqual(
+            package["dependencies"]["react"],
+            package["dependencies"]["react-dom"],
+            "React and React DOM must move together",
+        )
 
     def test_browser_lockfile_is_committed(self) -> None:
+        package = json.loads(self.read("web/package.json"))
         lock = json.loads(self.read("web/package-lock.json"))
         self.assertEqual(lock["lockfileVersion"], 3)
-        self.assertEqual(lock["packages"][""]["dependencies"]["react"], "19.3.0")
+        for group in ("dependencies", "devDependencies"):
+            self.assertEqual(
+                lock["packages"][""][group],
+                package[group],
+                f"Locked {group} must match the manifest",
+            )
+            for dependency, version in package[group].items():
+                entry = f"node_modules/{dependency}"
+                self.assertIn(entry, lock["packages"], f"Missing lock entry: {dependency}")
+                self.assertEqual(
+                    lock["packages"][entry]["version"],
+                    version,
+                    f"Resolved {dependency} must match its exact manifest pin",
+                )
 
     def test_configuration_loader_has_no_ambient_fallback(self) -> None:
         loader = self.read("internal/config/loader.go")

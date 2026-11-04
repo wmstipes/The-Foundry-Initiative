@@ -133,8 +133,12 @@ cd web
 npm ci
 npm test
 npm run build
-npm audit --omit=dev --audit-level=high
+npm audit
 ```
+
+The full browser audit includes development tools. See the
+[November 4 dependency review](../../docs/security/console-browser-dependencies-2026-11-04.md)
+for the tested security updates and their evidence boundary.
 
 Return to `apps/forgeops-console` after building the browser, then start the progress demo with:
 

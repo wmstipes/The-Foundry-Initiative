@@ -1,6 +1,6 @@
 # Project Status
 
-**Last updated:** 2026-10-29 (repository checkpoint; no fresh cluster-health check)
+**Last updated:** 2026-11-04 (repository checkpoint; no fresh cluster-health check)
 
 **Current phase:** ForgeOps v1.0.0 supported baseline
 
@@ -22,12 +22,26 @@ v1alpha1 contract remains compatible. These changes improve the final
 incident-copilot demonstration and prove bounded conclusions. They do not
 publish a new release or establish fresh live health; no cluster changes occur.
 
-An October 29 [Terraform and Terragrunt learning pilot](../experiments/terragrunt-lab/README.md)
-adds a direct Terraform example and two Terragrunt units using local built-in
-data resources. Its Linux amd64 lifecycle, independent state and cache-recreation
-checks passed. It is a source learning exercise; Windows/ARM64 acceptance,
+The [Terraform and Terragrunt learning pilot](../experiments/terragrunt-lab/README.md),
+prepared October 29 and refreshed November 4, adds a direct Terraform example
+and two Terragrunt units using local built-in data resources. Its Linux amd64
+lifecycle, independent state, cache-recreation and scoped cleanup checks passed
+again after integrating the current source baseline. It is a source learning
+exercise; Windows/ARM64 acceptance,
 hosted Terragrunt CI and any real infrastructure integration remain follow-ups.
 The immediate platform objective remains broader central logging.
+
+The November 4 browser dependency updates in
+[PR #185](https://github.com/wmstipes/The-Foundry-Initiative/pull/185),
+[PR #186](https://github.com/wmstipes/The-Foundry-Initiative/pull/186) and
+[PR #196](https://github.com/wmstipes/The-Foundry-Initiative/pull/196) are merged;
+`main` includes them at `dcd1466`. Console now audits development dependencies,
+and its policy checks require matching manifest/lockfile pins and aligned React
+and React DOM versions. These source updates do not update the published
+Console preview or the deployed images. See the dated
+[Console](security/console-browser-dependencies-2026-11-04.md) and
+[Workbench](security/workbench-dependencies-2026-11-04.md) security records and
+the PR validation evidence.
 
 October repository security hardening covers dependency-update gaps, publication
 source validation, version overwrite checks, and required-check policy. See the

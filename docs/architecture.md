@@ -1,6 +1,6 @@
 # SignalForge Architecture
 
-**Last updated:** 2026-09-29
+**Last updated:** 2026-11-04 (source checkpoint; live observations retain their recorded dates)
 
 This document describes the current architecture of the active Foundry Initiative workstream. Detailed implementation history lives under `docs/milestones`, while operating procedures live under `docs/runbooks`.
 
@@ -493,12 +493,18 @@ Potential next architecture steps include:
 2. Continue the demonstrated Prometheus and Grafana backup cadence.
 3. Observe Dex and Headlamp login behavior across restarts, then decide whether
    the extra Headlamp BasicAuth prompt is useful for the longer-term pilot.
-4. Finish the naturally elapsed Loki retention check and maintain backup freshness; evaluate OpenTelemetry only for a defined tracing question.
+4. Expand the existing Loki/Alloy path to API server, Dex, Headlamp and Traefik
+   under the [identity logging plan](runbooks/identity-logging-plan.md), preserving
+   Pulse collection. Verify source coverage, sensitive-data handling and resource
+   impact before recording acceptance. The retention check and backup
+   freshness remain separate requirements.
 5. Preserve ForgeOps v1.0.0 as the deterministic, informational baseline and
    admit post-v1 work only through the
    [ForgeOps improvement roadmap](roadmaps/forgeops-post-v1-roadmap.md).
-6. Keep model, retrieval, broader telemetry, and remediation deferred until a
-   concrete operator question and measurable acceptance boundary justify them.
+6. Keep model, retrieval, additional telemetry beyond that logging increment,
+   and remediation deferred until a concrete operator question and measurable
+   acceptance boundary justify them. OpenTelemetry still needs a defined tracing
+   question.
 
 ## Decision records
 

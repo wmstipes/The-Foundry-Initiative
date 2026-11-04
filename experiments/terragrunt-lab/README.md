@@ -2,6 +2,9 @@
 
 **Prepared:** 2026-10-29
 
+**Refreshed:** 2026-11-04 against `main` at `dcd1466`, including the merged
+browser dependency fixes.
+
 **Scope:** Local learning exercise; no cluster or cloud resources.
 
 **Versions:** Terraform `1.17.1`, Terragrunt `1.2.1`.
@@ -63,6 +66,20 @@ Choose Windows amd64 for the Windows laptop, or Linux arm64 for the Spark.
 Verify the selected release checksum and its available signature/attestation
 before placing the binaries on your `PATH`. This repository does not install
 tools globally or change your shell profile.
+
+| Workstation | Terraform 1.17.1 archive | Terragrunt 1.2.1 executable |
+| --- | --- | --- |
+| Windows laptop, amd64 | [Windows amd64 ZIP](https://releases.hashicorp.com/terraform/1.17.1/terraform_1.17.1_windows_amd64.zip) | [Windows amd64 executable](https://github.com/gruntwork-io/terragrunt/releases/download/v1.2.1/terragrunt_windows_amd64.exe) |
+| Spark, Linux arm64 | [Linux arm64 ZIP](https://releases.hashicorp.com/terraform/1.17.1/terraform_1.17.1_linux_arm64.zip) | [Linux arm64 executable](https://github.com/gruntwork-io/terragrunt/releases/download/v1.2.1/terragrunt_linux_arm64) |
+
+Extract the Terraform archive. The Terragrunt links above are raw executables:
+rename the selected file to `terragrunt.exe` on Windows or `terragrunt` on Linux.
+On Linux, give both binaries execute permission with `chmod u+x terraform terragrunt`.
+Keep the two verified binaries together in a directory on your workstation's
+`PATH`, then check the versions from a new shell. Follow the publishers'
+[Terraform verification guide](https://developer.hashicorp.com/well-architected-framework/verify-hashicorp-binary)
+and Terragrunt installation guide for checksum signatures and signing-key
+fingerprints; the download links alone are not verification evidence.
 
 ```text
 terraform version
@@ -181,6 +198,34 @@ Scoped cleanup of all three local learning records also passed.
 This is local binary execution evidence. Windows and Linux arm64 acceptance,
 user walkthrough, hosted Terragrunt CI and live infrastructure integration
 remain separate follow-ups. Existing application test counts are unchanged.
+
+## Validation record — November 4, 2026
+
+After integrating `main` at `dcd1466`, the exercise was repeated with the pinned
+Linux amd64 binaries in a fresh directory whose path contains spaces. The
+Terraform archive and Terragrunt executable matched their publishers' signed
+SHA-256 lists. Both checksum-file GPG signatures were verified against the
+published HashiCorp and Gruntwork key fingerprints, with valid current signing
+keys. The Terraform executable also matched the copy inside its verified
+archive.
+
+Terraform formatting and Terragrunt HCL formatting passed. All three examples passed
+initialization, validation, saved-plan review/application and output checks.
+Each saved plan contained exactly one built-in `terraform_data` resource, and
+each resulting state had a distinct lineage and resource ID. All repeated
+plans returned exit `0`.
+
+Deleting and recreating both Terragrunt caches preserved each unit's state
+lineage and resource ID; both plans still returned `0`. Changing only `lab-a`'s
+input produced exit `2` for that unit while `lab-b` remained at `0`. After
+restoring the input, the combined plan returned `0`. Scoped cleanup left no
+resources or outputs in any of the three states.
+
+This refresh does not change the module or HCL configuration. It confirms the
+local learning workflow on Linux amd64; Windows and Linux arm64 walkthroughs,
+hosted Terraform/Terragrunt execution and the proposed real integration remain
+unverified follow-ups. Existing repository CI validates the source changes but
+does not run this infrastructure-as-code exercise.
 
 ## First real integration, after the lesson
 

@@ -342,6 +342,18 @@ remains unchanged. Locked module-graph checks, Go tests and vet, dependency
 review, and native candidate verification still gate coordinated upgrades.
 These checks do not establish live-cluster compatibility.
 
+The November 4 Console browser dependency follow-up in
+[PR #196](https://github.com/wmstipes/The-Foundry-Initiative/pull/196) replaces
+the historical React `19.3.0` literal in the lockfile policy test with checks
+that the lockfile's production and development declarations match the manifest
+and every resolved direct dependency matches its exact manifest pin. React and
+React DOM must have equal versions. Lockfile format v3 and exact stable pins
+remain required; version ranges, tags, and prereleases remain rejected.
+The ten C2 policy test functions and the inventory above are unchanged.
+Browser tests, production builds, full dependency audits, dependency review,
+and native candidate verification still gate dependency compatibility. The
+original C2 milestone retains its dated dependency baseline.
+
 ### ForgeOps
 
 The focused ForgeOps suite covers:
@@ -479,10 +491,14 @@ Push-Location .\web
 npm ci
 npm test
 npm run build
-npm audit --omit=dev --audit-level=high
+npm audit
 Pop-Location
 Pop-Location
 ~~~
+
+The Console browser dependency audit includes both production and development
+dependencies, including the Vite build tool, Vitest runner, and Happy DOM test
+environment. CI uses the same full audit and fails on any reported severity.
 
 For Workbench pull requests, the Docker workflow also builds and starts a
 native AMD64 image under the deployment's read-only, non-root, no-added-

@@ -1,6 +1,6 @@
 # The Foundry Initiative Roadmap
 
-**Last updated:** 2026-10-29
+**Last updated:** 2026-11-04
 
 The roadmap favors small, demonstrable outcomes over large unfinished plans. It describes direction and sequencing; detailed implementation evidence belongs in `docs/milestones`, and the live system state belongs in `docs/project-status.md`.
 
@@ -402,15 +402,24 @@ See [Milestone 043](docs/milestones/milestone-043-curated-documentation-front-do
 
 ## Phase 5 — Platform access and broader telemetry
 
-**Status:** Planned
+**Status:** In progress — private LAN access and Pulse logging accepted;
+broader logging coverage is the next platform increment
 
-Potential outcomes:
+The [private access acceptance record](docs/milestones/private-access-and-headlamp-oidc.md)
+documents the protected Ingress/TLS routes, portal and Headlamp identity flow.
+Loki and Alloy are installed for Pulse, with bounded
+[retrieval and recovery evidence](docs/milestones/loki-recovery-candidate.md).
+These are dated observations; the November 4 repository refresh does not
+establish fresh cluster health or complete the pending retention check.
 
-- Introduce Ingress as a cleaner application-access pattern.
-- Add TLS and document certificate management for the private lab.
-- Evaluate centralized logging, with Loki as a candidate rather than a predetermined choice.
-- Evaluate OpenTelemetry for traces and correlated application signals.
-- Improve cluster and application security controls as externally reachable components expand.
+Remaining work:
+
+- Expand the existing logging path to API server, Dex, Headlamp and Traefik,
+  preserving Pulse ingestion and reviewing each source's access and data
+  boundaries under the [identity logging plan](docs/runbooks/identity-logging-plan.md).
+- Verify retention, resource/storage impact and the documented recovery limits.
+- Maintain the private TLS and identity operating procedures as services evolve.
+- Evaluate OpenTelemetry when a concrete tracing question justifies it.
 
 Each telemetry layer should answer a specific operational question before it is installed.
 
@@ -874,6 +883,8 @@ Its built-in data resource exercises plans, inputs, outputs and repeatability
 without accessing the cluster or a cloud. Complete this bounded lesson before
 considering a new lab namespace and ConfigMap. Existing deployment ownership
 and the immediate central logging priority remain as recorded above.
+The November 4 refresh incorporates the merged dependency fixes and repeats
+the local lifecycle, state-isolation and cache-recreation checks.
 
 Potential outcomes:
 
