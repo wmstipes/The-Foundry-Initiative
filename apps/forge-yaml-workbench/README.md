@@ -191,7 +191,12 @@ npm.cmd run validators:check
 npm.cmd test
 npm.cmd run build
 npm.cmd run csp:check
+npm.cmd audit
 ~~~
+
+The full dependency audit includes development tools. See the
+[November 4 dependency review](../../docs/security/workbench-dependencies-2026-11-04.md)
+for the tested security updates and their evidence boundary.
 
 ## Container
 

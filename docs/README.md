@@ -15,6 +15,7 @@ it. A historical successful check does not establish today's cluster health.
 | Test counts and what each check establishes | [Testing and validation](testing-and-validation.md) |
 | How changes and documentation are maintained | [Contributing](../CONTRIBUTING.md) |
 | Security reporting and repository controls | [Security policy](../SECURITY.md), [October review and settings checklist](security/review-2026-10-01.md) |
+| Browser dependency security reviews | [Workbench, November 4](security/workbench-dependencies-2026-11-04.md) |
 
 ## Learning and product guides
 
