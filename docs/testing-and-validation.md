@@ -479,10 +479,14 @@ Push-Location .\web
 npm ci
 npm test
 npm run build
-npm audit --omit=dev --audit-level=high
+npm audit
 Pop-Location
 Pop-Location
 ~~~
+
+The Console browser dependency audit includes both production and development
+dependencies, including the Vite build tool, Vitest runner, and Happy DOM test
+environment. CI uses the same full audit and fails on any reported severity.
 
 For Workbench pull requests, the Docker workflow also builds and starts a
 native AMD64 image under the deployment's read-only, non-root, no-added-
