@@ -354,6 +354,15 @@ Browser tests, production builds, full dependency audits, dependency review,
 and native candidate verification still gate dependency compatibility. The
 original C2 milestone retains its dated dependency baseline.
 
+The [November 5 dependency queue review](security/dependency-queue-2026-11-05.md)
+refreshes build tools, Restaurant dependencies, aligned Kubernetes modules and
+pinned Console/Pulse images. All five explicit CI setuptools bootstraps match
+the build-system declaration at 84.2.1. The complete Python candidate passed
+327 tests and 473 subtests; repeated real wheel builds were byte-identical.
+Test definitions and the inventory above are unchanged. Fresh hosted Go,
+browser, container, dependency-review and CodeQL checks remain the acceptance
+gates for the consolidated source; the dated review explains publication effects.
+
 ### ForgeOps
 
 The focused ForgeOps suite covers:
