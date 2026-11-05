@@ -16,6 +16,7 @@ it. A historical successful check does not establish today's cluster health.
 | How changes and documentation are maintained | [Contributing](../CONTRIBUTING.md) |
 | Security reporting and repository controls | [Security policy](../SECURITY.md), [October review and settings checklist](security/review-2026-10-01.md) |
 | Browser dependency security reviews | [Workbench, November 4](security/workbench-dependencies-2026-11-04.md), [Console, November 4](security/console-browser-dependencies-2026-11-04.md) |
+| Dependency queue decisions and build/runtime refresh | [November 5 review](security/dependency-queue-2026-11-05.md) |
 
 ## Learning and product guides
 
